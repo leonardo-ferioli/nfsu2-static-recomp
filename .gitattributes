@@ -1,0 +1,8 @@
+* text=auto
+generated/** linguist-generated=true
+generated_fast/** linguist-generated=true
+generated_optests/** linguist-generated=true
+export/** linguist-generated=true
+third_party/** linguist-vendored=true
+*.sla binary
+*.gz binary

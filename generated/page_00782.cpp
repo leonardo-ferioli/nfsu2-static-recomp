@@ -1,0 +1,1456 @@
+#include "runtime.hpp"
+namespace nfsu2raw {
+uint32_t page_782(Cpu& c){switch(c.pc){
+case 0x782000:{ // MOV ECX,0x863770
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x863770ull));
+return 0x782005;}
+case 0x782005:{ // JMP 0x0052c420
+return 0x52c420;
+return 0x78200a;}
+case 0x782010:{ // MOV ECX,0x839c30
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x839c30ull));
+return 0x782015;}
+case 0x782015:{ // JMP 0x0052c420
+return 0x52c420;
+return 0x78201a;}
+case 0x782020:{ // MOV ECX,0x839bd0
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x839bd0ull));
+return 0x782025;}
+case 0x782025:{ // JMP 0x0052c420
+return 0x52c420;
+return 0x78202a;}
+case 0x782030:{ // MOV ECX,0x863768
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x863768ull));
+return 0x782035;}
+case 0x782035:{ // JMP 0x00531940
+return 0x531940;
+return 0x78203a;}
+case 0x782040:{ // MOV ECX,0x838980
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x838980ull));
+return 0x782045;}
+case 0x782045:{ // JMP 0x005398e0
+return 0x5398e0;
+return 0x78204a;}
+case 0x782050:{ // MOV ECX,0x8637bc
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x8637bcull));
+return 0x782055;}
+case 0x782055:{ // JMP 0x004835c0
+return 0x4835c0;
+return 0x78205a;}
+case 0x782060:{ // PUSH 0x4022c0
+wu<4>(c,0x84f00,eval<Op::COPY,4,4>(0x4022c0ull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84f00));
+return 0x782065;}
+case 0x782065:{ // PUSH 0x6
+wu<4>(c,0x84b00,eval<Op::COPY,4,4>(0x6ull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84b00));
+return 0x782067;}
+case 0x782067:{ // PUSH 0x20
+wu<4>(c,0x84b00,eval<Op::COPY,4,4>(0x20ull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84b00));
+return 0x782069;}
+case 0x782069:{ // PUSH 0x864640
+wu<4>(c,0x84f00,eval<Op::COPY,4,4>(0x864640ull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84f00));
+return 0x78206e;}
+case 0x78206e:{ // CALL 0x0075c401
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),0x782073ull);
+return 0x75c401;
+return 0x782073;}
+case 0x782073:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x782074;}
+case 0x782080:{ // MOV ECX,0x864630
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x864630ull));
+return 0x782085;}
+case 0x782085:{ // JMP 0x004def30
+return 0x4def30;
+return 0x78208a;}
+case 0x782090:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x782091;}
+case 0x7820a0:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x7820a1;}
+case 0x7820b0:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x7820b1;}
+case 0x7820c0:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x7820c1;}
+case 0x7820d0:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x7820d1;}
+case 0x7820e0:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x7820e1;}
+case 0x7820f0:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x7820f1;}
+case 0x782100:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x782101;}
+case 0x782110:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x782111;}
+case 0x782120:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x782121;}
+case 0x782130:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x782131;}
+case 0x782140:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x782141;}
+case 0x782150:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x782151;}
+case 0x782160:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x782161;}
+case 0x782170:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x782171;}
+case 0x782180:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x782181;}
+case 0x782190:{ // PUSH 0x4022c0
+wu<4>(c,0x84f00,eval<Op::COPY,4,4>(0x4022c0ull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84f00));
+return 0x782195;}
+case 0x782195:{ // PUSH 0x4
+wu<4>(c,0x84b00,eval<Op::COPY,4,4>(0x4ull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84b00));
+return 0x782197;}
+case 0x782197:{ // PUSH 0x30
+wu<4>(c,0x84b00,eval<Op::COPY,4,4>(0x30ull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84b00));
+return 0x782199;}
+case 0x782199:{ // PUSH 0x8653b0
+wu<4>(c,0x84f00,eval<Op::COPY,4,4>(0x8653b0ull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84f00));
+return 0x78219e;}
+case 0x78219e:{ // CALL 0x0075c401
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),0x7821a3ull);
+return 0x75c401;
+return 0x7821a3;}
+case 0x7821a3:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x7821a4;}
+case 0x7821b0:{ // PUSH 0x4022c0
+wu<4>(c,0x84f00,eval<Op::COPY,4,4>(0x4022c0ull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84f00));
+return 0x7821b5;}
+case 0x7821b5:{ // PUSH 0x2
+wu<4>(c,0x84b00,eval<Op::COPY,4,4>(0x2ull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84b00));
+return 0x7821b7;}
+case 0x7821b7:{ // PUSH 0x20
+wu<4>(c,0x84b00,eval<Op::COPY,4,4>(0x20ull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84b00));
+return 0x7821b9;}
+case 0x7821b9:{ // PUSH 0x865360
+wu<4>(c,0x84f00,eval<Op::COPY,4,4>(0x865360ull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84f00));
+return 0x7821be;}
+case 0x7821be:{ // CALL 0x0075c401
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),0x7821c3ull);
+return 0x75c401;
+return 0x7821c3;}
+case 0x7821c3:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x7821c4;}
+case 0x7821d0:{ // MOV dword ptr [0x00865930],0x7a0604
+wm<4>(c,0x865930,eval<Op::COPY,4,4>(0x7a0604ull));
+return 0x7821da;}
+case 0x7821da:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x7821db;}
+case 0x7821e0:{ // MOV ECX,0x8652f8
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x8652f8ull));
+return 0x7821e5;}
+case 0x7821e5:{ // JMP 0x00577a70
+return 0x577a70;
+return 0x7821ea;}
+case 0x7821f0:{ // MOV ECX,0x8651a4
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x8651a4ull));
+return 0x7821f5;}
+case 0x7821f5:{ // JMP 0x0057a280
+return 0x57a280;
+return 0x7821fa;}
+case 0x782200:{ // MOV ECX,0x86519c
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x86519cull));
+return 0x782205;}
+case 0x782205:{ // JMP 0x0057a250
+return 0x57a250;
+return 0x78220a;}
+case 0x782210:{ // MOV ECX,0x866584
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x866584ull));
+return 0x782215;}
+case 0x782215:{ // JMP 0x0057a2c0
+return 0x57a2c0;
+return 0x78221a;}
+case 0x782220:{ // MOV ECX,0x86555c
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x86555cull));
+return 0x782225;}
+case 0x782225:{ // JMP 0x0057a250
+return 0x57a250;
+return 0x78222a;}
+case 0x782230:{ // MOV ECX,0x865564
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x865564ull));
+return 0x782235;}
+case 0x782235:{ // JMP 0x0057af70
+return 0x57af70;
+return 0x78223a;}
+case 0x782240:{ // MOV ECX,0x865220
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x865220ull));
+return 0x782245;}
+case 0x782245:{ // JMP 0x0057bc50
+return 0x57bc50;
+return 0x78224a;}
+case 0x782250:{ // MOV ECX,0x865550
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x865550ull));
+return 0x782255;}
+case 0x782255:{ // JMP 0x0057bc50
+return 0x57bc50;
+return 0x78225a;}
+case 0x782260:{ // MOV ECX,0x8652f0
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x8652f0ull));
+return 0x782265;}
+case 0x782265:{ // JMP 0x0057bc90
+return 0x57bc90;
+return 0x78226a;}
+case 0x782270:{ // MOV ECX,0x865190
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x865190ull));
+return 0x782275;}
+case 0x782275:{ // JMP 0x0057bc90
+return 0x57bc90;
+return 0x78227a;}
+case 0x782280:{ // MOV ECX,0x865210
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x865210ull));
+return 0x782285;}
+case 0x782285:{ // JMP 0x004835c0
+return 0x4835c0;
+return 0x78228a;}
+case 0x782290:{ // PUSH 0x57c320
+wu<4>(c,0x84f00,eval<Op::COPY,4,4>(0x57c320ull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84f00));
+return 0x782295;}
+case 0x782295:{ // PUSH 0x2
+wu<4>(c,0x84b00,eval<Op::COPY,4,4>(0x2ull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84b00));
+return 0x782297;}
+case 0x782297:{ // PUSH 0x1c8
+wu<4>(c,0x84f00,eval<Op::COPY,4,4>(0x1c8ull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84f00));
+return 0x78229c;}
+case 0x78229c:{ // PUSH 0x8655a0
+wu<4>(c,0x84f00,eval<Op::COPY,4,4>(0x8655a0ull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84f00));
+return 0x7822a1;}
+case 0x7822a1:{ // CALL 0x0075c401
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),0x7822a6ull);
+return 0x75c401;
+return 0x7822a6;}
+case 0x7822a6:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x7822a7;}
+case 0x7822b0:{ // MOV ECX,0x865218
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x865218ull));
+return 0x7822b5;}
+case 0x7822b5:{ // JMP 0x0057a250
+return 0x57a250;
+return 0x7822ba;}
+case 0x7822c0:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x7822c1;}
+case 0x7822d0:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x7822d1;}
+case 0x7822e0:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x7822e1;}
+case 0x7822f0:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x7822f1;}
+case 0x782300:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x782301;}
+case 0x782310:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x782311;}
+case 0x782320:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x782321;}
+case 0x782330:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x782331;}
+case 0x782340:{ // PUSH 0x4022c0
+wu<4>(c,0x84f00,eval<Op::COPY,4,4>(0x4022c0ull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84f00));
+return 0x782345;}
+case 0x782345:{ // PUSH 0x5
+wu<4>(c,0x84b00,eval<Op::COPY,4,4>(0x5ull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84b00));
+return 0x782347;}
+case 0x782347:{ // PUSH 0x20
+wu<4>(c,0x84b00,eval<Op::COPY,4,4>(0x20ull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84b00));
+return 0x782349;}
+case 0x782349:{ // PUSH 0x8693c8
+wu<4>(c,0x84f00,eval<Op::COPY,4,4>(0x8693c8ull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84f00));
+return 0x78234e;}
+case 0x78234e:{ // CALL 0x0075c401
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),0x782353ull);
+return 0x75c401;
+return 0x782353;}
+case 0x782353:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x782354;}
+case 0x782360:{ // MOV ECX,0x86a454
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x86a454ull));
+return 0x782365;}
+case 0x782365:{ // JMP 0x00584730
+return 0x584730;
+return 0x78236a;}
+case 0x782370:{ // MOV ECX,0x86a388
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x86a388ull));
+return 0x782375;}
+case 0x782375:{ // JMP 0x005884e0
+return 0x5884e0;
+return 0x78237a;}
+case 0x782380:{ // MOV ECX,0x86a490
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x86a490ull));
+return 0x782385;}
+case 0x782385:{ // JMP 0x00588580
+return 0x588580;
+return 0x78238a;}
+case 0x782390:{ // MOV ECX,0x86a5e8
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x86a5e8ull));
+return 0x782395;}
+case 0x782395:{ // JMP 0x004def30
+return 0x4def30;
+return 0x78239a;}
+case 0x7823a0:{ // MOV ECX,0x86a5f4
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x86a5f4ull));
+return 0x7823a5;}
+case 0x7823a5:{ // JMP 0x004def30
+return 0x4def30;
+return 0x7823aa;}
+case 0x7823b0:{ // MOV ECX,0x86a758
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x86a758ull));
+return 0x7823b5;}
+case 0x7823b5:{ // JMP 0x0058a1d0
+return 0x58a1d0;
+return 0x7823ba;}
+case 0x7823c0:{ // MOV ECX,0x86a834
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x86a834ull));
+return 0x7823c5;}
+case 0x7823c5:{ // JMP 0x0058f560
+return 0x58f560;
+return 0x7823ca;}
+case 0x7823d0:{ // MOV ECX,0x86a858
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x86a858ull));
+return 0x7823d5;}
+case 0x7823d5:{ // JMP 0x0058f5c0
+return 0x58f5c0;
+return 0x7823da;}
+case 0x7823e0:{ // MOV ECX,0x86b4c8
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x86b4c8ull));
+return 0x7823e5;}
+case 0x7823e5:{ // JMP 0x004358e0
+return 0x4358e0;
+return 0x7823ea;}
+case 0x7823f0:{ // MOV ECX,0x86b490
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x86b490ull));
+return 0x7823f5;}
+case 0x7823f5:{ // JMP 0x005a8fd0
+return 0x5a8fd0;
+return 0x7823fa;}
+case 0x782400:{ // MOV ECX,0x86b598
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x86b598ull));
+return 0x782405;}
+case 0x782405:{ // JMP 0x005e0800
+return 0x5e0800;
+return 0x78240a;}
+case 0x782410:{ // MOV ECX,0x86b5a0
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x86b5a0ull));
+return 0x782415;}
+case 0x782415:{ // JMP 0x004835c0
+return 0x4835c0;
+return 0x78241a;}
+case 0x782420:{ // MOV ECX,0x86b4c0
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x86b4c0ull));
+return 0x782425;}
+case 0x782425:{ // JMP 0x004def30
+return 0x4def30;
+return 0x78242a;}
+case 0x782430:{ // MOV ECX,0x86b5a8
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x86b5a8ull));
+return 0x782435;}
+case 0x782435:{ // JMP 0x005b3320
+return 0x5b3320;
+return 0x78243a;}
+case 0x782440:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x782441;}
+case 0x782450:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x782451;}
+case 0x782460:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x782461;}
+case 0x782470:{ // PUSH 0x5b8000
+wu<4>(c,0x84f00,eval<Op::COPY,4,4>(0x5b8000ull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84f00));
+return 0x782475;}
+case 0x782475:{ // PUSH 0x6
+wu<4>(c,0x84b00,eval<Op::COPY,4,4>(0x6ull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84b00));
+return 0x782477;}
+case 0x782477:{ // PUSH 0x370
+wu<4>(c,0x84f00,eval<Op::COPY,4,4>(0x370ull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84f00));
+return 0x78247c;}
+case 0x78247c:{ // PUSH 0x874c40
+wu<4>(c,0x84f00,eval<Op::COPY,4,4>(0x874c40ull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84f00));
+return 0x782481;}
+case 0x782481:{ // CALL 0x0075c401
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),0x782486ull);
+return 0x75c401;
+return 0x782486;}
+case 0x782486:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x782487;}
+case 0x782490:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x782491;}
+case 0x7824a0:{ // MOV ECX,0x872b4c
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x872b4cull));
+return 0x7824a5;}
+case 0x7824a5:{ // JMP 0x004def30
+return 0x4def30;
+return 0x7824aa;}
+case 0x7824b0:{ // MOV ECX,0x8763b0
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x8763b0ull));
+return 0x7824b5;}
+case 0x7824b5:{ // JMP 0x004835c0
+return 0x4835c0;
+return 0x7824ba;}
+case 0x7824c0:{ // MOV ECX,0x872ed0
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x872ed0ull));
+return 0x7824c5;}
+case 0x7824c5:{ // JMP 0x004def30
+return 0x4def30;
+return 0x7824ca;}
+case 0x7824d0:{ // MOV ECX,0x872b44
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x872b44ull));
+return 0x7824d5;}
+case 0x7824d5:{ // JMP 0x004835c0
+return 0x4835c0;
+return 0x7824da;}
+case 0x7824e0:{ // MOV ECX,0x870d28
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x870d28ull));
+return 0x7824e5;}
+case 0x7824e5:{ // JMP 0x004835c0
+return 0x4835c0;
+return 0x7824ea;}
+case 0x7824f0:{ // PUSH 0x5cf410
+wu<4>(c,0x84f00,eval<Op::COPY,4,4>(0x5cf410ull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84f00));
+return 0x7824f5;}
+case 0x7824f5:{ // PUSH 0x10
+wu<4>(c,0x84b00,eval<Op::COPY,4,4>(0x10ull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84b00));
+return 0x7824f7;}
+case 0x7824f7:{ // PUSH 0xb8
+wu<4>(c,0x84f00,eval<Op::COPY,4,4>(0xb8ull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84f00));
+return 0x7824fc;}
+case 0x7824fc:{ // PUSH 0x870d30
+wu<4>(c,0x84f00,eval<Op::COPY,4,4>(0x870d30ull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84f00));
+return 0x782501;}
+case 0x782501:{ // CALL 0x0075c401
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),0x782506ull);
+return 0x75c401;
+return 0x782506;}
+case 0x782506:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x782507;}
+case 0x782510:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x782511;}
+case 0x782520:{ // PUSH 0x605400
+wu<4>(c,0x84f00,eval<Op::COPY,4,4>(0x605400ull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84f00));
+return 0x782525;}
+case 0x782525:{ // PUSH 0x2
+wu<4>(c,0x84b00,eval<Op::COPY,4,4>(0x2ull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84b00));
+return 0x782527;}
+case 0x782527:{ // PUSH 0x30
+wu<4>(c,0x84b00,eval<Op::COPY,4,4>(0x30ull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84b00));
+return 0x782529;}
+case 0x782529:{ // PUSH 0x88a2c0
+wu<4>(c,0x84f00,eval<Op::COPY,4,4>(0x88a2c0ull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84f00));
+return 0x78252e;}
+case 0x78252e:{ // CALL 0x0075c401
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),0x782533ull);
+return 0x75c401;
+return 0x782533;}
+case 0x782533:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x782534;}
+case 0x782540:{ // PUSH 0x605400
+wu<4>(c,0x84f00,eval<Op::COPY,4,4>(0x605400ull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84f00));
+return 0x782545;}
+case 0x782545:{ // PUSH 0x2
+wu<4>(c,0x84b00,eval<Op::COPY,4,4>(0x2ull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84b00));
+return 0x782547;}
+case 0x782547:{ // PUSH 0x30
+wu<4>(c,0x84b00,eval<Op::COPY,4,4>(0x30ull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84b00));
+return 0x782549;}
+case 0x782549:{ // PUSH 0x88ea08
+wu<4>(c,0x84f00,eval<Op::COPY,4,4>(0x88ea08ull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84f00));
+return 0x78254e;}
+case 0x78254e:{ // CALL 0x0075c401
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),0x782553ull);
+return 0x75c401;
+return 0x782553;}
+case 0x782553:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x782554;}
+case 0x782560:{ // PUSH 0x605400
+wu<4>(c,0x84f00,eval<Op::COPY,4,4>(0x605400ull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84f00));
+return 0x782565;}
+case 0x782565:{ // PUSH 0x2
+wu<4>(c,0x84b00,eval<Op::COPY,4,4>(0x2ull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84b00));
+return 0x782567;}
+case 0x782567:{ // PUSH 0x30
+wu<4>(c,0x84b00,eval<Op::COPY,4,4>(0x30ull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84b00));
+return 0x782569;}
+case 0x782569:{ // PUSH 0x88f210
+wu<4>(c,0x84f00,eval<Op::COPY,4,4>(0x88f210ull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84f00));
+return 0x78256e;}
+case 0x78256e:{ // CALL 0x0075c401
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),0x782573ull);
+return 0x75c401;
+return 0x782573;}
+case 0x782573:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x782574;}
+case 0x782580:{ // MOV ECX,0x88ea68
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x88ea68ull));
+return 0x782585;}
+case 0x782585:{ // JMP 0x004367c0
+return 0x4367c0;
+return 0x78258a;}
+case 0x782590:{ // MOV ECX,0x88ea8c
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x88ea8cull));
+return 0x782595;}
+case 0x782595:{ // JMP 0x005dc590
+return 0x5dc590;
+return 0x78259a;}
+case 0x7825a0:{ // MOV ECX,0x88e9fc
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x88e9fcull));
+return 0x7825a5;}
+case 0x7825a5:{ // JMP 0x005dc5c0
+return 0x5dc5c0;
+return 0x7825aa;}
+case 0x7825b0:{ // MOV ECX,0x88ea84
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x88ea84ull));
+return 0x7825b5;}
+case 0x7825b5:{ // JMP 0x005dc600
+return 0x5dc600;
+return 0x7825ba;}
+case 0x7825c0:{ // MOV ECX,0x88eadc
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x88eadcull));
+return 0x7825c5;}
+case 0x7825c5:{ // JMP 0x005dc640
+return 0x5dc640;
+return 0x7825ca;}
+case 0x7825d0:{ // MOV ECX,0x88f760
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x88f760ull));
+return 0x7825d5;}
+case 0x7825d5:{ // JMP 0x004def30
+return 0x4def30;
+return 0x7825da;}
+case 0x7825e0:{ // MOV ECX,0x88e9c4
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x88e9c4ull));
+return 0x7825e5;}
+case 0x7825e5:{ // JMP 0x005e0830
+return 0x5e0830;
+return 0x7825ea;}
+case 0x7825f0:{ // MOV ECX,0x88f208
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x88f208ull));
+return 0x7825f5;}
+case 0x7825f5:{ // JMP 0x005e0870
+return 0x5e0870;
+return 0x7825fa;}
+case 0x782600:{ // MOV ECX,0x88ff98
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x88ff98ull));
+return 0x782605;}
+case 0x782605:{ // JMP 0x004835c0
+return 0x4835c0;
+return 0x78260a;}
+case 0x782610:{ // MOV ECX,0x88f270
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x88f270ull));
+return 0x782615;}
+case 0x782615:{ // JMP 0x005e57e0
+return 0x5e57e0;
+return 0x78261a;}
+case 0x782620:{ // MOV ECX,0x88f740
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x88f740ull));
+return 0x782625;}
+case 0x782625:{ // JMP 0x004def30
+return 0x4def30;
+return 0x78262a;}
+case 0x782630:{ // MOV ECX,0x88f298
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x88f298ull));
+return 0x782635;}
+case 0x782635:{ // JMP 0x005e48a0
+return 0x5e48a0;
+return 0x78263a;}
+case 0x782640:{ // MOV ECX,0x88ead4
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x88ead4ull));
+return 0x782645;}
+case 0x782645:{ // JMP 0x004def30
+return 0x4def30;
+return 0x78264a;}
+case 0x782650:{ // PUSH 0x4def30
+wu<4>(c,0x84f00,eval<Op::COPY,4,4>(0x4def30ull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84f00));
+return 0x782655;}
+case 0x782655:{ // PUSH 0x8
+wu<4>(c,0x84b00,eval<Op::COPY,4,4>(0x8ull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84b00));
+return 0x782657;}
+case 0x782657:{ // PUSH 0x8
+wu<4>(c,0x84b00,eval<Op::COPY,4,4>(0x8ull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84b00));
+return 0x782659;}
+case 0x782659:{ // PUSH 0x88f1c8
+wu<4>(c,0x84f00,eval<Op::COPY,4,4>(0x88f1c8ull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84f00));
+return 0x78265e;}
+case 0x78265e:{ // CALL 0x0075c401
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),0x782663ull);
+return 0x75c401;
+return 0x782663;}
+case 0x782663:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x782664;}
+case 0x782670:{ // MOV ECX,0x88f28c
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x88f28cull));
+return 0x782675;}
+case 0x782675:{ // JMP 0x004def30
+return 0x4def30;
+return 0x78267a;}
+case 0x782680:{ // MOV ECX,0x88ffa0
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x88ffa0ull));
+return 0x782685;}
+case 0x782685:{ // JMP 0x004def30
+return 0x4def30;
+return 0x78268a;}
+case 0x782690:{ // MOV ECX,0x88f1bc
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x88f1bcull));
+return 0x782695;}
+case 0x782695:{ // JMP 0x005e66a0
+return 0x5e66a0;
+return 0x78269a;}
+case 0x7826a0:{ // MOV ECX,0x88a320
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x88a320ull));
+return 0x7826a5;}
+case 0x7826a5:{ // JMP 0x005e5b10
+return 0x5e5b10;
+return 0x7826aa;}
+case 0x7826b0:{ // MOV ECX,0x883e70
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x883e70ull));
+return 0x7826b5;}
+case 0x7826b5:{ // JMP 0x005e6490
+return 0x5e6490;
+return 0x7826ba;}
+case 0x7826c0:{ // MOV ECX,0x88f768
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x88f768ull));
+return 0x7826c5;}
+case 0x7826c5:{ // JMP 0x005e8200
+return 0x5e8200;
+return 0x7826ca;}
+case 0x7826d0:{ // PUSH 0x50f7d0
+wu<4>(c,0x84f00,eval<Op::COPY,4,4>(0x50f7d0ull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84f00));
+return 0x7826d5;}
+case 0x7826d5:{ // PUSH 0x16
+wu<4>(c,0x84b00,eval<Op::COPY,4,4>(0x16ull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84b00));
+return 0x7826d7;}
+case 0x7826d7:{ // PUSH 0x940
+wu<4>(c,0x84f00,eval<Op::COPY,4,4>(0x940ull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84f00));
+return 0x7826dc;}
+case 0x7826dc:{ // PUSH 0x890160
+wu<4>(c,0x84f00,eval<Op::COPY,4,4>(0x890160ull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84f00));
+return 0x7826e1;}
+case 0x7826e1:{ // CALL 0x0075c401
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),0x7826e6ull);
+return 0x75c401;
+return 0x7826e6;}
+case 0x7826e6:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x7826e7;}
+case 0x7826f0:{ // MOV ECX,0x89cf48
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x89cf48ull));
+return 0x7826f5;}
+case 0x7826f5:{ // JMP 0x005efcb0
+return 0x5efcb0;
+return 0x7826fa;}
+case 0x782700:{ // MOV ECX,0x89e838
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x89e838ull));
+return 0x782705;}
+case 0x782705:{ // JMP 0x004358e0
+return 0x4358e0;
+return 0x78270a;}
+case 0x782710:{ // MOV ECX,0x89e844
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x89e844ull));
+return 0x782715;}
+case 0x782715:{ // JMP 0x0060b2f0
+return 0x60b2f0;
+return 0x78271a;}
+case 0x782720:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x782721;}
+case 0x782730:{ // MOV ECX,0x8a1f28
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x8a1f28ull));
+return 0x782735;}
+case 0x782735:{ // JMP 0x00605390
+return 0x605390;
+return 0x78273a;}
+case 0x782740:{ // PUSH 0x605400
+wu<4>(c,0x84f00,eval<Op::COPY,4,4>(0x605400ull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84f00));
+return 0x782745;}
+case 0x782745:{ // PUSH 0x2
+wu<4>(c,0x84b00,eval<Op::COPY,4,4>(0x2ull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84b00));
+return 0x782747;}
+case 0x782747:{ // PUSH 0x30
+wu<4>(c,0x84b00,eval<Op::COPY,4,4>(0x30ull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84b00));
+return 0x782749;}
+case 0x782749:{ // PUSH 0x8a3180
+wu<4>(c,0x84f00,eval<Op::COPY,4,4>(0x8a3180ull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84f00));
+return 0x78274e;}
+case 0x78274e:{ // CALL 0x0075c401
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),0x782753ull);
+return 0x75c401;
+return 0x782753;}
+case 0x782753:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x782754;}
+case 0x782760:{ // PUSH 0x605400
+wu<4>(c,0x84f00,eval<Op::COPY,4,4>(0x605400ull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84f00));
+return 0x782765;}
+case 0x782765:{ // PUSH 0x2
+wu<4>(c,0x84b00,eval<Op::COPY,4,4>(0x2ull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84b00));
+return 0x782767;}
+case 0x782767:{ // PUSH 0x30
+wu<4>(c,0x84b00,eval<Op::COPY,4,4>(0x30ull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84b00));
+return 0x782769;}
+case 0x782769:{ // PUSH 0x8a1e90
+wu<4>(c,0x84f00,eval<Op::COPY,4,4>(0x8a1e90ull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84f00));
+return 0x78276e;}
+case 0x78276e:{ // CALL 0x0075c401
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),0x782773ull);
+return 0x75c401;
+return 0x782773;}
+case 0x782773:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x782774;}
+case 0x782780:{ // PUSH 0x605400
+wu<4>(c,0x84f00,eval<Op::COPY,4,4>(0x605400ull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84f00));
+return 0x782785;}
+case 0x782785:{ // PUSH 0x2
+wu<4>(c,0x84b00,eval<Op::COPY,4,4>(0x2ull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84b00));
+return 0x782787;}
+case 0x782787:{ // PUSH 0x30
+wu<4>(c,0x84b00,eval<Op::COPY,4,4>(0x30ull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84b00));
+return 0x782789;}
+case 0x782789:{ // PUSH 0x8a31f0
+wu<4>(c,0x84f00,eval<Op::COPY,4,4>(0x8a31f0ull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84f00));
+return 0x78278e;}
+case 0x78278e:{ // CALL 0x0075c401
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),0x782793ull);
+return 0x75c401;
+return 0x782793;}
+case 0x782793:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x782794;}
+case 0x7827a0:{ // PUSH 0x605400
+wu<4>(c,0x84f00,eval<Op::COPY,4,4>(0x605400ull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84f00));
+return 0x7827a5;}
+case 0x7827a5:{ // PUSH 0x2
+wu<4>(c,0x84b00,eval<Op::COPY,4,4>(0x2ull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84b00));
+return 0x7827a7;}
+case 0x7827a7:{ // PUSH 0x30
+wu<4>(c,0x84b00,eval<Op::COPY,4,4>(0x30ull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84b00));
+return 0x7827a9;}
+case 0x7827a9:{ // PUSH 0x8a1e30
+wu<4>(c,0x84f00,eval<Op::COPY,4,4>(0x8a1e30ull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84f00));
+return 0x7827ae;}
+case 0x7827ae:{ // CALL 0x0075c401
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),0x7827b3ull);
+return 0x75c401;
+return 0x7827b3;}
+case 0x7827b3:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x7827b4;}
+case 0x7827c0:{ // PUSH 0x605390
+wu<4>(c,0x84f00,eval<Op::COPY,4,4>(0x605390ull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84f00));
+return 0x7827c5;}
+case 0x7827c5:{ // PUSH 0x2
+wu<4>(c,0x84b00,eval<Op::COPY,4,4>(0x2ull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84b00));
+return 0x7827c7;}
+case 0x7827c7:{ // PUSH 0x1c
+wu<4>(c,0x84b00,eval<Op::COPY,4,4>(0x1cull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84b00));
+return 0x7827c9;}
+case 0x7827c9:{ // PUSH 0x8a3250
+wu<4>(c,0x84f00,eval<Op::COPY,4,4>(0x8a3250ull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84f00));
+return 0x7827ce;}
+case 0x7827ce:{ // CALL 0x0075c401
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),0x7827d3ull);
+return 0x75c401;
+return 0x7827d3;}
+case 0x7827d3:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x7827d4;}
+case 0x7827e0:{ // MOV ECX,0x8a1de4
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x8a1de4ull));
+return 0x7827e5;}
+case 0x7827e5:{ // JMP 0x004903b0
+return 0x4903b0;
+return 0x7827ea;}
+case 0x7827f0:{ // MOV ECX,0x8a3168
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x8a3168ull));
+return 0x7827f5;}
+case 0x7827f5:{ // JMP 0x004903b0
+return 0x4903b0;
+return 0x7827fa;}
+case 0x782800:{ // MOV ECX,0x8a1dfc
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x8a1dfcull));
+return 0x782805;}
+case 0x782805:{ // JMP 0x004903b0
+return 0x4903b0;
+return 0x78280a;}
+case 0x782810:{ // MOV ECX,0x8a1f10
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x8a1f10ull));
+return 0x782815;}
+case 0x782815:{ // JMP 0x004903b0
+return 0x4903b0;
+return 0x78281a;}
+case 0x782820:{ // PUSH 0x4022c0
+wu<4>(c,0x84f00,eval<Op::COPY,4,4>(0x4022c0ull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84f00));
+return 0x782825;}
+case 0x782825:{ // PUSH 0x1
+wu<4>(c,0x84b00,eval<Op::COPY,4,4>(0x1ull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84b00));
+return 0x782827;}
+case 0x782827:{ // PUSH 0x64
+wu<4>(c,0x84b00,eval<Op::COPY,4,4>(0x64ull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84b00));
+return 0x782829;}
+case 0x782829:{ // PUSH 0x8a42c0
+wu<4>(c,0x84f00,eval<Op::COPY,4,4>(0x8a42c0ull));
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),u<4>(c,0x84f00));
+return 0x78282e;}
+case 0x78282e:{ // CALL 0x0075c401
+wr<4>(c,0x10,eval<Op::INT_SUB,4,4,4>(r<4>(c,0x10),0x4ull));
+wm<4>(c,r<4>(c,0x10),0x782833ull);
+return 0x75c401;
+return 0x782833;}
+case 0x782833:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x782834;}
+case 0x782840:{ // MOV ECX,0x8a2b50
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x8a2b50ull));
+return 0x782845;}
+case 0x782845:{ // JMP 0x00637ed0
+return 0x637ed0;
+return 0x78284a;}
+case 0x782850:{ // MOV ECX,0x8a2b68
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x8a2b68ull));
+return 0x782855;}
+case 0x782855:{ // JMP 0x004def30
+return 0x4def30;
+return 0x78285a;}
+case 0x782860:{ // MOV ECX,0x8a31e4
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x8a31e4ull));
+return 0x782865;}
+case 0x782865:{ // JMP 0x004def30
+return 0x4def30;
+return 0x78286a;}
+case 0x782870:{ // MOV ECX,0x8a3288
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x8a3288ull));
+return 0x782875;}
+case 0x782875:{ // JMP 0x006379b0
+return 0x6379b0;
+return 0x78287a;}
+case 0x782880:{ // MOV ECX,0x8a3148
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x8a3148ull));
+return 0x782885;}
+case 0x782885:{ // JMP 0x004def30
+return 0x4def30;
+return 0x78288a;}
+case 0x782890:{ // MOV ECX,0x8a4260
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x8a4260ull));
+return 0x782895;}
+case 0x782895:{ // JMP 0x00637f10
+return 0x637f10;
+return 0x78289a;}
+case 0x7828a0:{ // MOV ECX,0x8a2ca4
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x8a2ca4ull));
+return 0x7828a5;}
+case 0x7828a5:{ // JMP 0x0063b4d0
+return 0x63b4d0;
+return 0x7828aa;}
+case 0x7828b0:{ // MOV ECX,0x8a30f0
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x8a30f0ull));
+return 0x7828b5;}
+case 0x7828b5:{ // JMP 0x0063b510
+return 0x63b510;
+return 0x7828ba;}
+case 0x7828c0:{ // MOV ECX,0x8a2c9c
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x8a2c9cull));
+return 0x7828c5;}
+case 0x7828c5:{ // JMP 0x0063b550
+return 0x63b550;
+return 0x7828ca;}
+case 0x7828d0:{ // MOV ECX,0x8a7114
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x8a7114ull));
+return 0x7828d5;}
+case 0x7828d5:{ // JMP 0x006d86e0
+return 0x6d86e0;
+return 0x7828da;}
+case 0x7828e0:{ // MOV ECX,0x8a7168
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x8a7168ull));
+return 0x7828e5;}
+case 0x7828e5:{ // JMP 0x006d87c0
+return 0x6d87c0;
+return 0x7828ea;}
+case 0x7828f0:{ // MOV ECX,0x8a7140
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x8a7140ull));
+return 0x7828f5;}
+case 0x7828f5:{ // JMP 0x006d87c0
+return 0x6d87c0;
+return 0x7828fa;}
+case 0x782900:{ // MOV ECX,0x8a7bf8
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x8a7bf8ull));
+return 0x782905;}
+case 0x782905:{ // JMP 0x004022c0
+return 0x4022c0;
+return 0x78290a;}
+case 0x782910:{ // MOV ECX,0x8a7e38
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x8a7e38ull));
+return 0x782915;}
+case 0x782915:{ // JMP 0x004022c0
+return 0x4022c0;
+return 0x78291a;}
+case 0x782920:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x782921;}
+case 0x782930:{ // MOV ECX,0x8a85f0
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x8a85f0ull));
+return 0x782935;}
+case 0x782935:{ // JMP 0x006de3a0
+return 0x6de3a0;
+return 0x78293a;}
+case 0x782940:{ // MOV ECX,0x8a8738
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x8a8738ull));
+return 0x782945;}
+case 0x782945:{ // JMP 0x006de3a0
+return 0x6de3a0;
+return 0x78294a;}
+case 0x782950:{ // MOV ECX,0x8a8718
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x8a8718ull));
+return 0x782955;}
+case 0x782955:{ // JMP 0x006de650
+return 0x6de650;
+return 0x78295a;}
+case 0x782960:{ // MOV ECX,0x8aaad8
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x8aaad8ull));
+return 0x782965;}
+case 0x782965:{ // JMP 0x004022c0
+return 0x4022c0;
+return 0x78296a;}
+case 0x782970:{ // MOV ECX,0x8ab668
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x8ab668ull));
+return 0x782975;}
+case 0x782975:{ // JMP 0x006dae70
+return 0x6dae70;
+return 0x78297a;}
+case 0x782980:{ // MOV ECX,0x8ab6b8
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x8ab6b8ull));
+return 0x782985;}
+case 0x782985:{ // JMP 0x006dae70
+return 0x6dae70;
+return 0x78298a;}
+case 0x782990:{ // MOV dword ptr [0x008ad618],0x7a0358
+wm<4>(c,0x8ad618,eval<Op::COPY,4,4>(0x7a0358ull));
+return 0x78299a;}
+case 0x78299a:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x78299b;}
+case 0x78299b:{ // MOV ECX,0x8ad69c
+wr<4>(c,0x4,eval<Op::COPY,4,4>(0x8ad69cull));
+return 0x7829a0;}
+case 0x7829a0:{ // JMP 0x006f6b35
+return 0x6f6b35;
+return 0x7829a5;}
+case 0x7829a5:{ // MOV dword ptr [0x008ad74c],0x7a0358
+wm<4>(c,0x8ad74c,eval<Op::COPY,4,4>(0x7a0358ull));
+return 0x7829af;}
+case 0x7829af:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x7829b0;}
+case 0x7829b0:{ // MOV dword ptr [0x008ad7b0],0x7a0358
+wm<4>(c,0x8ad7b0,eval<Op::COPY,4,4>(0x7a0358ull));
+return 0x7829ba;}
+case 0x7829ba:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x7829bb;}
+case 0x7829bb:{ // MOV dword ptr [0x008ad7d8],0x7a0358
+wm<4>(c,0x8ad7d8,eval<Op::COPY,4,4>(0x7a0358ull));
+return 0x7829c5;}
+case 0x7829c5:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x7829c6;}
+case 0x7829c6:{ // MOV dword ptr [0x008ad710],0x7a0358
+wm<4>(c,0x8ad710,eval<Op::COPY,4,4>(0x7a0358ull));
+return 0x7829d0;}
+case 0x7829d0:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x7829d1;}
+case 0x7829d1:{ // MOV dword ptr [0x008ad800],0x7a0358
+wm<4>(c,0x8ad800,eval<Op::COPY,4,4>(0x7a0358ull));
+return 0x7829db;}
+case 0x7829db:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x7829dc;}
+case 0x7829dc:{ // MOV dword ptr [0x008ad760],0x7a0358
+wm<4>(c,0x8ad760,eval<Op::COPY,4,4>(0x7a0358ull));
+return 0x7829e6;}
+case 0x7829e6:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x7829e7;}
+case 0x7829e7:{ // MOV dword ptr [0x008ad850],0x7a0358
+wm<4>(c,0x8ad850,eval<Op::COPY,4,4>(0x7a0358ull));
+return 0x7829f1;}
+case 0x7829f1:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x7829f2;}
+case 0x7829f2:{ // MOV dword ptr [0x008ad724],0x7a0358
+wm<4>(c,0x8ad724,eval<Op::COPY,4,4>(0x7a0358ull));
+return 0x7829fc;}
+case 0x7829fc:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x7829fd;}
+case 0x7829fd:{ // MOV dword ptr [0x008ad83c],0x7a0358
+wm<4>(c,0x8ad83c,eval<Op::COPY,4,4>(0x7a0358ull));
+return 0x782a07;}
+case 0x782a07:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x782a08;}
+case 0x782a08:{ // MOV dword ptr [0x008ad788],0x7a0358
+wm<4>(c,0x8ad788,eval<Op::COPY,4,4>(0x7a0358ull));
+return 0x782a12;}
+case 0x782a12:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x782a13;}
+case 0x782a13:{ // MOV dword ptr [0x008ad814],0x7a0358
+wm<4>(c,0x8ad814,eval<Op::COPY,4,4>(0x7a0358ull));
+return 0x782a1d;}
+case 0x782a1d:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x782a1e;}
+case 0x782a1e:{ // MOV dword ptr [0x008ad8b4],0x7a0358
+wm<4>(c,0x8ad8b4,eval<Op::COPY,4,4>(0x7a0358ull));
+return 0x782a28;}
+case 0x782a28:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x782a29;}
+case 0x782a29:{ // MOV dword ptr [0x008ad904],0x7a0358
+wm<4>(c,0x8ad904,eval<Op::COPY,4,4>(0x7a0358ull));
+return 0x782a33;}
+case 0x782a33:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x782a34;}
+case 0x782a34:{ // MOV dword ptr [0x008ad878],0x7a0358
+wm<4>(c,0x8ad878,eval<Op::COPY,4,4>(0x7a0358ull));
+return 0x782a3e;}
+case 0x782a3e:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x782a3f;}
+case 0x782a3f:{ // MOV dword ptr [0x008ad864],0x7a0358
+wm<4>(c,0x8ad864,eval<Op::COPY,4,4>(0x7a0358ull));
+return 0x782a49;}
+case 0x782a49:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x782a4a;}
+case 0x782a4a:{ // MOV dword ptr [0x008ad8c8],0x7a0358
+wm<4>(c,0x8ad8c8,eval<Op::COPY,4,4>(0x7a0358ull));
+return 0x782a54;}
+case 0x782a54:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x782a55;}
+case 0x782a55:{ // MOV dword ptr [0x008ad738],0x7a0358
+wm<4>(c,0x8ad738,eval<Op::COPY,4,4>(0x7a0358ull));
+return 0x782a5f;}
+case 0x782a5f:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x782a60;}
+case 0x782a60:{ // MOV dword ptr [0x008ad828],0x7a0358
+wm<4>(c,0x8ad828,eval<Op::COPY,4,4>(0x7a0358ull));
+return 0x782a6a;}
+case 0x782a6a:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x782a6b;}
+case 0x782a6b:{ // MOV dword ptr [0x008ad774],0x7a0358
+wm<4>(c,0x8ad774,eval<Op::COPY,4,4>(0x7a0358ull));
+return 0x782a75;}
+case 0x782a75:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x782a76;}
+case 0x782a76:{ // MOV dword ptr [0x008ad8a0],0x7a0358
+wm<4>(c,0x8ad8a0,eval<Op::COPY,4,4>(0x7a0358ull));
+return 0x782a80;}
+case 0x782a80:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x782a81;}
+case 0x782a81:{ // MOV dword ptr [0x008ad8dc],0x7a0358
+wm<4>(c,0x8ad8dc,eval<Op::COPY,4,4>(0x7a0358ull));
+return 0x782a8b;}
+case 0x782a8b:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x782a8c;}
+case 0x782a8c:{ // MOV dword ptr [0x008ad8f0],0x7a0358
+wm<4>(c,0x8ad8f0,eval<Op::COPY,4,4>(0x7a0358ull));
+return 0x782a96;}
+case 0x782a96:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x782a97;}
+case 0x782a97:{ // MOV dword ptr [0x008ad7c4],0x7a0358
+wm<4>(c,0x8ad7c4,eval<Op::COPY,4,4>(0x7a0358ull));
+return 0x782aa1;}
+case 0x782aa1:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x782aa2;}
+case 0x782aa2:{ // MOV dword ptr [0x008ad88c],0x7a0358
+wm<4>(c,0x8ad88c,eval<Op::COPY,4,4>(0x7a0358ull));
+return 0x782aac;}
+case 0x782aac:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x782aad;}
+case 0x782aad:{ // MOV dword ptr [0x008ad79c],0x7a0358
+wm<4>(c,0x8ad79c,eval<Op::COPY,4,4>(0x7a0358ull));
+return 0x782ab7;}
+case 0x782ab7:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x782ab8;}
+case 0x782ab8:{ // MOV dword ptr [0x008ad7ec],0x7a0358
+wm<4>(c,0x8ad7ec,eval<Op::COPY,4,4>(0x7a0358ull));
+return 0x782ac2;}
+case 0x782ac2:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x782ac3;}
+case 0x782ac3:{ // MOV dword ptr [0x008161e8],0x7c3508
+wm<4>(c,0x8161e8,eval<Op::COPY,4,4>(0x7c3508ull));
+return 0x782acd;}
+case 0x782acd:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x782ace;}
+case 0x782ace:{ // MOV dword ptr [0x008161f8],0x786dbc
+wm<4>(c,0x8161f8,eval<Op::COPY,4,4>(0x786dbcull));
+return 0x782ad8;}
+case 0x782ad8:{ // RET
+wr<4>(c,0x284,m<4>(c,r<4>(c,0x10)));
+wr<4>(c,0x10,eval<Op::INT_ADD,4,4,4>(r<4>(c,0x10),0x4ull));
+return uint32_t(r<4>(c,0x284));
+return 0x782ad9;}
+default:missing_instruction(c.pc);}}
+}

@@ -1,0 +1,3215 @@
+[
+  {
+    "address": "0x409ff0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x00784618, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x40a030",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x0078461c, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x40a0a0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x00784644, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4101d9",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x00805b84 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x416f66",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007e6d34 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x419b43",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original instruction at 0x00419b3e carries this undecoded .text address as an immediate; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x430016",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x008124a4 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x432d00",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x007860d4, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4355d0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x007862f8, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x435720",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x00786300, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x435750",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x00786308, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x435880",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x00786310, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x435a4c",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007a0dc8 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x43c0a0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007eb3fc, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x43cae0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x0044003f refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x44003c",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x008077a8 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x440043",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x008043c8 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x44004b",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x008076e8 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x455a43",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007d887c refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x455a49",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x00799054 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x45fd10",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007ed3fc, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x45fd70",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007ed40c, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4615dd",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007f0588 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x461a80",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007ed4a0, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4624d9",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007f0784 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x462637",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007f0720 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x462638",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007f07a4 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x4627d0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007ed5a4, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x462fe0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007ed5c4, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4637c0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007ed668, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x464e49",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x00786d7c refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x467420",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x0078a5b8, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x467b60",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x0078a6c0, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x46df40",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007ed250, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x46e820",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007ed260, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x46eb50",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007ed288, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x46eb90",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007ed298, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x46ebd0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007ed2b0, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x46f170",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007ed2c0, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x46ffa0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007ed2e0, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4700f0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007ed2f0, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x470a00",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007ed300, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x470cf0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007ed310, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x471000",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007ed320, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4718f0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007ed330, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x471930",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007ed340, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x471ce0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007ed354, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x471d20",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007ed364, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x471d80",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007ed278, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x00471e00",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "classification": "OBSERVED",
+    "evidence": "Boot trace boot_missing_471e00.log reached this callback after 575036792 main-thread translated instructions; initialized .data pointer at 0x007ed38c."
+  },
+  {
+    "address": "0x476f40",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007ecb54, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x47bfd0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007ed2d0, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x47c7a0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007ed374, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x47c800",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007ed3a0, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x47ca70",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007ed3b4, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x47cbe0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007ed3c4, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x47cc40",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007ed3d4, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x47cd00",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007ed3e8, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x47d430",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007ed41c, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x47d500",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007ed42c, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x47d5d0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007ed43c, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x47d680",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007ed450, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x47d6e0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007ed460, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x47dae0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007ed470, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x47dfe0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007ed480, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x47e070",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007ed490, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x47e220",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007ed4b0, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x47e260",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007ed4c0, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x47e3b0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007ed4d0, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x47e410",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007ed4e0, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x47e450",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007ed4f0, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x47e4b0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007ed500, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x47e4f0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007ed510, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x47e550",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007ed520, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x47e5b0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007ed530, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x47e610",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007ed540, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x47e6a0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007ed550, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x47e870",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007ed560, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x47e9d0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007ed574, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x47f2b0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007ed584, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x47f2f0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007ed594, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x47f350",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007ed5b4, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x47f3b0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007ed5d4, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x47f480",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007ed648, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x47f4e0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007ed658, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x47f520",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007ed678, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x47f600",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007ed8c4, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x47f7b0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007ed8d4, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x0047f7f0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "classification": "OBSERVED",
+    "evidence": "Boot trace boot_missing_47f7f0.log reached this callback after 575621646 main-thread translated instructions; original .data callback pointer at 0x007ed8e4."
+  },
+  {
+    "address": "0x47fc10",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007ed8f4, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4816e0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007ecb64, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x481770",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007ecb34, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4836c0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007ed688, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x483700",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007ed790, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x483e60",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007ecb44, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x483ec0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007ecb74, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x496d70",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x00790f00, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x49a620",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x007918bc, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x49a640",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x007918c4, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x49a660",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x007918cc, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x49a680",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x007918d4, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x49a6a0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x007918dc, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x49a6c0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x007918e4, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x49a6e0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x007918ec, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x49a700",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x007918f4, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4aecb0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x00790c3c, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4aece0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x00790c44, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4aed30",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x00790c4c, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4aed80",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x00790c54, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4aedb0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x00790c5c, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4aede0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x00790c64, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4af090",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x00790cbc, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4af0c0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x00790cc4, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4af0e0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x00790ccc, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4af630",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x00790cf8, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4af6b0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x00790d08, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4af6e0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x00790d28, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4af710",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x00790d48, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4af740",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x00790d68, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4af780",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x00790d70, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4af7d0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x00790d90, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4afb00",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x00790e2c, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4afb20",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x00790e34, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4afb40",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x00790e3c, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4b1780",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x00795d34, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4b1990",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x00795d24, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4b2be0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x00790fd8, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4b2c70",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x00790fe0, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4b2c90",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x00790fe8, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4b2cb0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x00790ff0, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4b2cd0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x00790ff8, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4b2cf0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x00791000, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4b2d20",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x00791008, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4b2d40",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x00791010, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4bc5e0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x00794dc0, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4bc6c0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x00794de4, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4bc6f0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x00794dec, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4bc730",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x00794e08, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4bc760",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x00794e10, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4bddb0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x00794f14, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4bdde0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x00794f38, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4bde10",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x00794f40, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4bea30",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x00797e0c, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4bec20",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x00794ffc, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4becc0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x00795020, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4bed10",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x00795028, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4bed40",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x00795030, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4bed90",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x00795038, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4bedc0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x00795040, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4c001d",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x00804404 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x4c004c",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x00814c68 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x4c24c0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x007954d4, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4c2510",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x007954dc, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4c2560",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x007954e4, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4c25d0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x007954ec, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4c26b0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x007954f4, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4c2700",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x00795514, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4c2730",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x0079551c, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4c2780",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x00795524, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4c2820",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x0079552c, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4c4149",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007bbfd4 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x4c414e",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007ae68c refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x4c51f0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x0079078c, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4c5254",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": true,
+    "classification": "OBSERVED_MISSING_CODE",
+    "evidence": "Runtime stop: address given on the command line"
+  },
+  {
+    "address": "0x4c57f0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x007959d8, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4c5820",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x007959e0, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4c5850",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x007959e8, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4c5880",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x007959f0, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4c99e0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x00795b6c, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4c9c20",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x00795b9c, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4c9c70",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x00795ba4, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4d4554",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007a6fe4 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x4d4950",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x00796254, adjacent to a recognized code entry, with 16-byte entry alignment or an MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4fc050",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x00790c34, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4fe2b0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original PUSH/MOV/LEA at 0x00566056 contains this aligned/hotpatch code-address literal. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x4fe320",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original PUSH/MOV/LEA at 0x00566060 contains this aligned/hotpatch code-address literal. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x50007b",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x006d5b12 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x50414d",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x0079e954 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x504354",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original instruction at 0x007519cc carries this undecoded .text address as an immediate; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x5048d0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x0079aaf8, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x005048f0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "classification": "OBSERVED",
+    "evidence": "Boot trace boot_missing_5048f0.log reached this virtual method after 231170171 translated main-thread instructions; original .rdata pointer at 0x0079ab00."
+  },
+  {
+    "address": "0x510015",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007cfbd0 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x51007b",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x006d5b22 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x517ee0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x0079aaf0, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x51c860",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x0079ab90, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x51c8a0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x0079ab98, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x51cea0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x0079abfc, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x523650",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x0079aa98, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x52b430",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x0079ab08, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x53494e",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x0078e4ac refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x534c45",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007a71e8 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x5374f0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x0079aba0, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x537630",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x0079abf4, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x5382f0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x00795cb8, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x53c7d0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x0079b724, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x53c830",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x0079b734, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x53c860",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x0079b744, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x53c890",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x0079b74c, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x53d8f0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x0079b820, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x53daa0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x0079aa94, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x53de60",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x0079b844, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x544545",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x0079a050 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x544547",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007d2c58 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x544e41",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007ada50 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x544e45",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x00783d88 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x544e49",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x0078e8b0 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x544e4f",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007862cc refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x549830",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x0079b790, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x54b000",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x0079b824, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x55e790",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x0079b574, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x55ffff",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007cf824 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x560000",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x00815a90, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x5616a0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x0079b57c, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x564c80",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x0079b72c, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x564cf0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x0079b73c, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x564d60",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x0079b75c, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x564ea0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x0079b788, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x566240",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x0079ab88, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x571bd0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007fdd1c, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x571c10",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007fdd5c, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x571c70",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007fdd9c, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x571cc0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007fe03c, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x571d50",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007fe23c, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x5795c0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007fe43c, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x580e81",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original instruction at 0x00580e7c carries this undecoded .text address as an immediate; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x5b0029",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x008076c8 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x5b7670",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x007fb58c, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x5bc6f0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x007a4540, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x5bcad0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x007a4564, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x5bcb10",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x007a4570, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x5cdfc5",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original instruction at 0x005cdfbf carries this undecoded .text address as an immediate; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x5ce06d",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original instruction at 0x005ce068 carries this undecoded .text address as an immediate; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x5cf3c0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x007d991c, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x5d02c0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original instruction at 0x005d02bb carries this undecoded .text address as an immediate; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x5d085a",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original instruction at 0x005d0855 carries this undecoded .text address as an immediate; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x5d0860",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x007e493c, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x5e00c9",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007cfd44 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x5f012c",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x00807838 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x603d10",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x0080216c, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x625401",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "origin_kind": "indexed_jump_table",
+    "table": "0x630db4",
+    "table_index": 0,
+    "evidence": "Original indexed JMP at 0x006253fa reads this absolute destination from 0x00630db4. Bound is unreviewed; contiguous in-text destinations, capped at 512. Existing code/data is never cleared."
+  },
+  {
+    "address": "0x63a240",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original instruction at 0x0063a23b carries this undecoded .text address as an immediate; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x63c114",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x00803f58, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x63c140",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x00803f5c, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x63c22c",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x00803f30, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x63c82d",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x00803f74, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x63c853",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x00803f78, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x63c97e",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x00803f3c, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x63e627",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x00803edc, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x63e63a",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x00803ec8, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x63ede8",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x00803efc, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x63f533",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x00803f84, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x640060",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x00804b10 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x640064",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x00814d10 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x6416be",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original instruction at 0x006416b2 carries this undecoded .text address as an immediate; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x673169",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x007b77a8, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x673202",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x007b77c0, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x67325d",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x007b77cc, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x67328d",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x007b77d8, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x6732df",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x007b77e4, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x673355",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x007b77f0, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x6733dd",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x007b77fc, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x673438",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x007b7808, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x6734bf",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x007b7820, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x6736e0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x007b7838, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x673877",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x007b785c, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x6738e1",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x007b7868, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x67391f",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x007b7874, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x69a6f5",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007bac30 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x6c1811",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x007bd438, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x6d6143",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007958f4 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x6d6165",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x00789908 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x6d88e0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .data pointer at 0x0080c0c0, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x6dc550",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x007c0e68, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x6e24db",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007e62d8 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x6e2950",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x007c14a4, adjacent to a recognized code entry. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x6e2974",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "origin_kind": "indexed_jump_table",
+    "table": "0x6e2b7c",
+    "table_index": 0,
+    "evidence": "Original indexed JMP at 0x006e296d reads this absolute destination from 0x006e2b7c. Bound is unreviewed; contiguous in-text destinations, capped at 512. Existing code/data is never cleared."
+  },
+  {
+    "address": "0x6e298a",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "origin_kind": "indexed_jump_table",
+    "table": "0x6e2b7c",
+    "table_index": 1,
+    "evidence": "Original indexed JMP at 0x006e296d reads this absolute destination from 0x006e2b80. Bound is unreviewed; contiguous in-text destinations, capped at 512. Existing code/data is never cleared."
+  },
+  {
+    "address": "0x6e29a0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "origin_kind": "indexed_jump_table",
+    "table": "0x6e2b7c",
+    "table_index": 2,
+    "evidence": "Original indexed JMP at 0x006e296d reads this absolute destination from 0x006e2b84. Bound is unreviewed; contiguous in-text destinations, capped at 512. Existing code/data is never cleared."
+  },
+  {
+    "address": "0x6e29b6",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "origin_kind": "indexed_jump_table",
+    "table": "0x6e2b7c",
+    "table_index": 3,
+    "evidence": "Original indexed JMP at 0x006e296d reads this absolute destination from 0x006e2b88. Bound is unreviewed; contiguous in-text destinations, capped at 512. Existing code/data is never cleared."
+  },
+  {
+    "address": "0x6e29d9",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "origin_kind": "indexed_jump_table",
+    "table": "0x6e2b7c",
+    "table_index": 4,
+    "evidence": "Original indexed JMP at 0x006e296d reads this absolute destination from 0x006e2b8c. Bound is unreviewed; contiguous in-text destinations, capped at 512. Existing code/data is never cleared."
+  },
+  {
+    "address": "0x6e29fc",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "origin_kind": "indexed_jump_table",
+    "table": "0x6e2b7c",
+    "table_index": 5,
+    "evidence": "Original indexed JMP at 0x006e296d reads this absolute destination from 0x006e2b90. Bound is unreviewed; contiguous in-text destinations, capped at 512. Existing code/data is never cleared."
+  },
+  {
+    "address": "0x6e2a1f",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "origin_kind": "indexed_jump_table",
+    "table": "0x6e2b7c",
+    "table_index": 6,
+    "evidence": "Original indexed JMP at 0x006e296d reads this absolute destination from 0x006e2b94. Bound is unreviewed; contiguous in-text destinations, capped at 512. Existing code/data is never cleared."
+  },
+  {
+    "address": "0x6e2a35",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "origin_kind": "indexed_jump_table",
+    "table": "0x6e2b7c",
+    "table_index": 7,
+    "evidence": "Original indexed JMP at 0x006e296d reads this absolute destination from 0x006e2b98. Bound is unreviewed; contiguous in-text destinations, capped at 512. Existing code/data is never cleared."
+  },
+  {
+    "address": "0x6e2a4b",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "origin_kind": "indexed_jump_table",
+    "table": "0x6e2b7c",
+    "table_index": 8,
+    "evidence": "Original indexed JMP at 0x006e296d reads this absolute destination from 0x006e2b9c. Bound is unreviewed; contiguous in-text destinations, capped at 512. Existing code/data is never cleared."
+  },
+  {
+    "address": "0x6e2a61",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "origin_kind": "indexed_jump_table",
+    "table": "0x6e2b7c",
+    "table_index": 9,
+    "evidence": "Original indexed JMP at 0x006e296d reads this absolute destination from 0x006e2ba0. Bound is unreviewed; contiguous in-text destinations, capped at 512. Existing code/data is never cleared."
+  },
+  {
+    "address": "0x6e2a77",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "origin_kind": "indexed_jump_table",
+    "table": "0x6e2b7c",
+    "table_index": 10,
+    "evidence": "Original indexed JMP at 0x006e296d reads this absolute destination from 0x006e2ba4. Bound is unreviewed; contiguous in-text destinations, capped at 512. Existing code/data is never cleared."
+  },
+  {
+    "address": "0x6e2a8d",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "origin_kind": "indexed_jump_table",
+    "table": "0x6e2b7c",
+    "table_index": 11,
+    "evidence": "Original indexed JMP at 0x006e296d reads this absolute destination from 0x006e2ba8. Bound is unreviewed; contiguous in-text destinations, capped at 512. Existing code/data is never cleared."
+  },
+  {
+    "address": "0x6e2aa3",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "origin_kind": "indexed_jump_table",
+    "table": "0x6e2b7c",
+    "table_index": 12,
+    "evidence": "Original indexed JMP at 0x006e296d reads this absolute destination from 0x006e2bac. Bound is unreviewed; contiguous in-text destinations, capped at 512. Existing code/data is never cleared."
+  },
+  {
+    "address": "0x6e2ab9",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "origin_kind": "indexed_jump_table",
+    "table": "0x6e2b7c",
+    "table_index": 13,
+    "evidence": "Original indexed JMP at 0x006e296d reads this absolute destination from 0x006e2bb0. Bound is unreviewed; contiguous in-text destinations, capped at 512. Existing code/data is never cleared."
+  },
+  {
+    "address": "0x6e2acf",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "origin_kind": "indexed_jump_table",
+    "table": "0x6e2b7c",
+    "table_index": 14,
+    "evidence": "Original indexed JMP at 0x006e296d reads this absolute destination from 0x006e2bb4. Bound is unreviewed; contiguous in-text destinations, capped at 512. Existing code/data is never cleared."
+  },
+  {
+    "address": "0x6e2ae5",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "origin_kind": "indexed_jump_table",
+    "table": "0x6e2b7c",
+    "table_index": 15,
+    "evidence": "Original indexed JMP at 0x006e296d reads this absolute destination from 0x006e2bb8. Bound is unreviewed; contiguous in-text destinations, capped at 512. Existing code/data is never cleared."
+  },
+  {
+    "address": "0x6e2afb",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "origin_kind": "indexed_jump_table",
+    "table": "0x6e2b7c",
+    "table_index": 16,
+    "evidence": "Original indexed JMP at 0x006e296d reads this absolute destination from 0x006e2bbc. Bound is unreviewed; contiguous in-text destinations, capped at 512. Existing code/data is never cleared."
+  },
+  {
+    "address": "0x6e2b0d",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "origin_kind": "indexed_jump_table",
+    "table": "0x6e2b7c",
+    "table_index": 17,
+    "evidence": "Original indexed JMP at 0x006e296d reads this absolute destination from 0x006e2bc0. Bound is unreviewed; contiguous in-text destinations, capped at 512. Existing code/data is never cleared."
+  },
+  {
+    "address": "0x6e2b1f",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "origin_kind": "indexed_jump_table",
+    "table": "0x6e2b7c",
+    "table_index": 18,
+    "evidence": "Original indexed JMP at 0x006e296d reads this absolute destination from 0x006e2bc4. Bound is unreviewed; contiguous in-text destinations, capped at 512. Existing code/data is never cleared."
+  },
+  {
+    "address": "0x6e2b31",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "origin_kind": "indexed_jump_table",
+    "table": "0x6e2b7c",
+    "table_index": 19,
+    "evidence": "Original indexed JMP at 0x006e296d reads this absolute destination from 0x006e2bc8. Bound is unreviewed; contiguous in-text destinations, capped at 512. Existing code/data is never cleared."
+  },
+  {
+    "address": "0x6e2b43",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "origin_kind": "indexed_jump_table",
+    "table": "0x6e2b7c",
+    "table_index": 20,
+    "evidence": "Original indexed JMP at 0x006e296d reads this absolute destination from 0x006e2bcc. Bound is unreviewed; contiguous in-text destinations, capped at 512. Existing code/data is never cleared."
+  },
+  {
+    "address": "0x6e2b55",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "origin_kind": "indexed_jump_table",
+    "table": "0x6e2b7c",
+    "table_index": 21,
+    "evidence": "Original indexed JMP at 0x006e296d reads this absolute destination from 0x006e2bd0. Bound is unreviewed; contiguous in-text destinations, capped at 512. Existing code/data is never cleared."
+  },
+  {
+    "address": "0x6e2b67",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "origin_kind": "indexed_jump_table",
+    "table": "0x6e2b7c",
+    "table_index": 24,
+    "evidence": "Original indexed JMP at 0x006e296d reads this absolute destination from 0x006e2bdc. Bound is unreviewed; contiguous in-text destinations, capped at 512. Existing code/data is never cleared."
+  },
+  {
+    "address": "0x006f6c46",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "evidence": "Worker reached this address during the optimized translated boot. Original byte C3 is RET, immediately before function 0x006f6c47; omitted by the saved analysis."
+  },
+  {
+    "address": "0x700213",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "CONFIRMED_TABLE_DESTINATION",
+    "origin_kind": "indexed_jump_table",
+    "table": "0x700499",
+    "table_index": 0,
+    "evidence": "Original indexed JMP at 0x0070020c reads this absolute destination from 0x00700499. Bound is reviewed (8 entries). Existing code/data is never cleared."
+  },
+  {
+    "address": "0x00700266",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "classification": "OBSERVED",
+    "evidence": "Boot trace boot_missing_700266.log reached this switch branch after 588252847 main-thread translated instructions. It is entry 1 of original table 0x700499; function 0x700150 bounds the index to 0..7."
+  },
+  {
+    "address": "0x7002c2",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "CONFIRMED_TABLE_DESTINATION",
+    "origin_kind": "indexed_jump_table",
+    "table": "0x700499",
+    "table_index": 2,
+    "evidence": "Original indexed JMP at 0x0070020c reads this absolute destination from 0x007004a1. Bound is reviewed (8 entries). Existing code/data is never cleared."
+  },
+  {
+    "address": "0x700333",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "CONFIRMED_TABLE_DESTINATION",
+    "origin_kind": "indexed_jump_table",
+    "table": "0x700499",
+    "table_index": 4,
+    "evidence": "Original indexed JMP at 0x0070020c reads this absolute destination from 0x007004a9. Bound is reviewed (8 entries). Existing code/data is never cleared."
+  },
+  {
+    "address": "0x7003a4",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "CONFIRMED_TABLE_DESTINATION",
+    "origin_kind": "indexed_jump_table",
+    "table": "0x700499",
+    "table_index": 6,
+    "evidence": "Original indexed JMP at 0x0070020c reads this absolute destination from 0x007004b1. Bound is reviewed (8 entries). Existing code/data is never cleared."
+  },
+  {
+    "address": "0x703e63",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original instruction at 0x0070d264 carries this undecoded .text address as an immediate; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x71d09e",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007c67cc refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x71d0ac",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007c67d0 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x71d0d8",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007c67dc refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x71d0e6",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007c67e0 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x720bbf",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x00817fa0 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x720bcd",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x00817fb0 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x72d977",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007c6b5c refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x72d97b",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007c6b60 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x72d99d",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007c6b68 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x72d9a1",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007c6b6c refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x737466",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x00797adc refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x737469",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x0079860c refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x73746c",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x00796124 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x73746e",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x00790b14 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x73756d",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x00789c74 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x750cf0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original PUSH/MOV/LEA at 0x00750ec0 contains this aligned/hotpatch code-address literal. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x750e40",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original PUSH/MOV/LEA at 0x00750eea contains this aligned/hotpatch code-address literal. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x750e50",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original PUSH/MOV/LEA at 0x00750ef1 contains this aligned/hotpatch code-address literal. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x750e60",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original PUSH/MOV/LEA at 0x00750ef8 contains this aligned/hotpatch code-address literal. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x75bca0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original instruction at 0x0075bc9a carries this undecoded .text address as an immediate; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x75be4a",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007d399c refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x75be5e",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007d39a0 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x75c3d2",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007d39ac refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x75c3f6",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007d39b0 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x75c690",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x007d39f0, within four words of a recognized/plausible code entry, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x75d9aa",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007d3a74 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x75f553",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007d3dac refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x75f69b",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007d3dc4 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x75f6af",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007d3dc8 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x76114a",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007d3e64 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x761db0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x007d418c, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x761df4",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007d419c refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x762000",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x007d41b0, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x762660",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x007d4210, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x762669",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007d4214 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x76269a",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007d4208 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x7626ef",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007d421c refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x7626f8",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007d4220 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x7627a2",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007d4238 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x7627e5",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007d423c refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x76285a",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007d4230 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x762a34",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007d4244 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x762a38",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007d4248 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x762e10",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x007d4254, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x762e3d",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007d4264 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x762ffc",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007d4278 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x7646bd",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007d4304 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x766e39",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007d7d00 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x76790f",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007d7d50 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x767913",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007d7d54 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x7679dd",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007d7d5c refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x7679e1",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007d7d60 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x767b12",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007d7d44 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x767b16",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007d7d48 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x7680cc",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x00819ea4 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x7693a1",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007d904c refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x7693a5",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007d9050 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x76c297",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007d984c refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x76c29b",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007d9850 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x76c413",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007d9894 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x76c421",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007d9898 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x76ce65",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "origin_kind": "indexed_jump_table",
+    "table": "0x76d090",
+    "table_index": 5,
+    "evidence": "Original indexed JMP at 0x0076ccec reads this absolute destination from 0x0076d0a4. Bound is unreviewed; contiguous in-text destinations, capped at 512. Existing code/data is never cleared."
+  },
+  {
+    "address": "0x76cf2f",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "origin_kind": "indexed_jump_table",
+    "table": "0x76d090",
+    "table_index": 11,
+    "evidence": "Original indexed JMP at 0x0076ccec reads this absolute destination from 0x0076d0bc. Bound is unreviewed; contiguous in-text destinations, capped at 512. Existing code/data is never cleared."
+  },
+  {
+    "address": "0x76d1de",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007d98a4 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x76d1e2",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007d98a8 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x76d8e7",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007d98b4 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x76d8eb",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007d98b8 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x76d981",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007d98c0 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x76d985",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007d98c4 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x76e559",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007d98ec refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x76e55d",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007d98f0 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x76e680",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x007d98fc, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x76e684",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007d9900 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x76e996",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original instruction at 0x0076e991 carries this undecoded .text address as an immediate; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x76e997",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007e5bd4 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x76e9ee",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original instruction at 0x0076e9e9 carries this undecoded .text address as an immediate; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x76f1bd",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007dc564 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x76f463",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007dc588 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x77121c",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007dd64c refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x771230",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original .rdata pointer at 0x007dd650, with a compiler entry prefix and 16-byte alignment or MSVC hotpatch prefix. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x771241",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007e8cfc refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x7712b4",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007dd66c refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x7712da",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007dd660 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x77732e",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x007b7694 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x777b3b",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original instruction at 0x0054bf78 carries this undecoded .text address as an immediate; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x780028",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS_GAP_CODE",
+    "evidence": "Original 32-bit value at 0x0080a888 refers to an undecoded .text address; a linear decode is valid, branch targets stay in .text, and it ends in RET/JMP/UD2 within the undecoded gap. Decode only if Ghidra accepts it without clearing existing code/data."
+  },
+  {
+    "address": "0x781940",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original PUSH/MOV/LEA at 0x0077a6e0 contains this aligned/hotpatch code-address literal. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x781950",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original PUSH/MOV/LEA at 0x0077a980 contains this aligned/hotpatch code-address literal. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x781b80",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original PUSH/MOV/LEA at 0x0077b60a contains this aligned/hotpatch code-address literal. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x781c00",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original PUSH/MOV/LEA at 0x0077c3b7 contains this aligned/hotpatch code-address literal. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x781c10",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original PUSH/MOV/LEA at 0x0077c3ef contains this aligned/hotpatch code-address literal. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x781c20",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original PUSH/MOV/LEA at 0x0077c41f contains this aligned/hotpatch code-address literal. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x781c30",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original PUSH/MOV/LEA at 0x0077c44f contains this aligned/hotpatch code-address literal. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x781c40",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original PUSH/MOV/LEA at 0x0077c4bb contains this aligned/hotpatch code-address literal. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x781c50",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original PUSH/MOV/LEA at 0x0077c501 contains this aligned/hotpatch code-address literal. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x781c60",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original PUSH/MOV/LEA at 0x0077c5f3 contains this aligned/hotpatch code-address literal. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x781c70",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original PUSH/MOV/LEA at 0x0077c61f contains this aligned/hotpatch code-address literal. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x781c90",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original PUSH/MOV/LEA at 0x0077be90 contains this aligned/hotpatch code-address literal. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x781ca0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original PUSH/MOV/LEA at 0x0077bf5f contains this aligned/hotpatch code-address literal. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x781cb0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original PUSH/MOV/LEA at 0x0077bf8f contains this aligned/hotpatch code-address literal. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x781cc0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original PUSH/MOV/LEA at 0x0077bfdb contains this aligned/hotpatch code-address literal. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x781cd0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original PUSH/MOV/LEA at 0x0077c04f contains this aligned/hotpatch code-address literal. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x781ce0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original PUSH/MOV/LEA at 0x0077c070 contains this aligned/hotpatch code-address literal. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x781cf0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original PUSH/MOV/LEA at 0x0077c080 contains this aligned/hotpatch code-address literal. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x781d00",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original PUSH/MOV/LEA at 0x0077c090 contains this aligned/hotpatch code-address literal. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x781d10",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original PUSH/MOV/LEA at 0x0077c0a0 contains this aligned/hotpatch code-address literal. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x781d20",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original PUSH/MOV/LEA at 0x0077c0b0 contains this aligned/hotpatch code-address literal. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x781d60",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original PUSH/MOV/LEA at 0x0077cb80 contains this aligned/hotpatch code-address literal. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x781d70",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original PUSH/MOV/LEA at 0x0077cc10 contains this aligned/hotpatch code-address literal. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x781f70",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original PUSH/MOV/LEA at 0x0077d610 contains this aligned/hotpatch code-address literal. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x781f90",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original PUSH/MOV/LEA at 0x0077d300 contains this aligned/hotpatch code-address literal. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x782090",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original PUSH/MOV/LEA at 0x0077d8d0 contains this aligned/hotpatch code-address literal. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x7820a0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original PUSH/MOV/LEA at 0x0077d9f0 contains this aligned/hotpatch code-address literal. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x7820b0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original PUSH/MOV/LEA at 0x0077da00 contains this aligned/hotpatch code-address literal. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x7820c0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original PUSH/MOV/LEA at 0x0077da10 contains this aligned/hotpatch code-address literal. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x7820d0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original PUSH/MOV/LEA at 0x0077da20 contains this aligned/hotpatch code-address literal. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x7820e0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original PUSH/MOV/LEA at 0x0077da30 contains this aligned/hotpatch code-address literal. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x7820f0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original PUSH/MOV/LEA at 0x0077da40 contains this aligned/hotpatch code-address literal. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x782100",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original PUSH/MOV/LEA at 0x0077da50 contains this aligned/hotpatch code-address literal. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x782110",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original PUSH/MOV/LEA at 0x0077da60 contains this aligned/hotpatch code-address literal. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x782120",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original PUSH/MOV/LEA at 0x0077da70 contains this aligned/hotpatch code-address literal. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x782130",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original PUSH/MOV/LEA at 0x0077da80 contains this aligned/hotpatch code-address literal. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x782140",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original PUSH/MOV/LEA at 0x0077da90 contains this aligned/hotpatch code-address literal. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x782150",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original PUSH/MOV/LEA at 0x0077daa0 contains this aligned/hotpatch code-address literal. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x782160",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original PUSH/MOV/LEA at 0x0077dab0 contains this aligned/hotpatch code-address literal. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x782170",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original PUSH/MOV/LEA at 0x0077dac0 contains this aligned/hotpatch code-address literal. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x782180",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original PUSH/MOV/LEA at 0x0077dad0 contains this aligned/hotpatch code-address literal. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x7822c0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original PUSH/MOV/LEA at 0x0077dd22 contains this aligned/hotpatch code-address literal. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x7822d0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original PUSH/MOV/LEA at 0x0058b957 contains this aligned/hotpatch code-address literal. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x7822e0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original PUSH/MOV/LEA at 0x0077dd50 contains this aligned/hotpatch code-address literal. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x7822f0",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original PUSH/MOV/LEA at 0x0077dd60 contains this aligned/hotpatch code-address literal. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x782300",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original PUSH/MOV/LEA at 0x0077dd90 contains this aligned/hotpatch code-address literal. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x782310",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original PUSH/MOV/LEA at 0x0077dda0 contains this aligned/hotpatch code-address literal. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x782320",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original PUSH/MOV/LEA at 0x0077dddf contains this aligned/hotpatch code-address literal. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x782330",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original PUSH/MOV/LEA at 0x0077ddf0 contains this aligned/hotpatch code-address literal. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x782440",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original PUSH/MOV/LEA at 0x0077e470 contains this aligned/hotpatch code-address literal. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x782450",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original PUSH/MOV/LEA at 0x0077e570 contains this aligned/hotpatch code-address literal. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x782460",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original PUSH/MOV/LEA at 0x0077e58a contains this aligned/hotpatch code-address literal. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x782490",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original PUSH/MOV/LEA at 0x0077e5aa contains this aligned/hotpatch code-address literal. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x782510",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original PUSH/MOV/LEA at 0x0077e66a contains this aligned/hotpatch code-address literal. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x782720",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original PUSH/MOV/LEA at 0x0077f180 contains this aligned/hotpatch code-address literal. Decode only if Ghidra accepts it without clearing existing data/code."
+  },
+  {
+    "address": "0x782920",
+    "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+    "required": false,
+    "classification": "HYPOTHESIS",
+    "evidence": "Original PUSH/MOV/LEA at 0x007801fa contains this aligned/hotpatch code-address literal. Decode only if Ghidra accepts it without clearing existing data/code."
+  }
+]

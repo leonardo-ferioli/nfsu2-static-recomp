@@ -1,0 +1,47 @@
+# Build output and local runs
+build/
+build32/
+dist/
+logs/
+*.log
+*.obj
+*.o
+*.lib
+*.exe
+*.pdb
+*.ilk
+*.exp
+__pycache__/
+tools/classes/
+
+# The user's game: never in the repository (you supply your own copy)
+data/
+data game (pc)/
+binaries/
+SPEED2.EXE
+*.bin
+*.lzc
+*.bun
+
+# Verbatim dumps and databases of the game's executable (the export is regenerated from your own copy with tools/export.ps1)
+export/memory_*.bin
+analysis/
+
+# Machine- and session-specific records
+boot_attempts.jsonl
+boot_current.json
+current_task_changes.json
+asset_inventory.json
+verification.json
+performance.json
+coverage.json
+
+# Screenshots and captures
+*.png
+*.jpg
+*.jpeg
+*.bmp
+*.gif
+
+# Local tool paths
+tools/export_java.args

@@ -1,0 +1,1009 @@
+{
+ "vars": [
+  {
+   "name": "hook_before_end_scene",
+   "default": 0
+  },
+  {
+   "name": "hook_delta_time",
+   "default": 0
+  },
+  {
+   "name": "hook_before_reset",
+   "default": 0
+  },
+  {
+   "name": "hook_main_loop",
+   "default": 0
+  },
+  {
+   "name": "supported_res_1",
+   "default": 8841344
+  },
+  {
+   "name": "supported_res_2",
+   "default": 8841344
+  },
+  {
+   "name": "hook_inc_screen_res",
+   "default": 0
+  },
+  {
+   "name": "res_store_nop",
+   "default": 0
+  },
+  {
+   "name": "hook_get_racing_resolution",
+   "default": 0
+  },
+  {
+   "name": "hook_locg_racing_resolution",
+   "default": 0
+  },
+  {
+   "name": "hook_res_set",
+   "default": 0
+  },
+  {
+   "name": "hook_res_get",
+   "default": 0
+  },
+  {
+   "name": "hook_window_placement",
+   "default": 0
+  },
+  {
+   "name": "hook_wndproc",
+   "default": 0
+  },
+  {
+   "name": "hook_show_cursor",
+   "default": 0
+  },
+  {
+   "name": "frame_time_imm",
+   "default": 1015580809
+  },
+  {
+   "name": "steering_fix",
+   "default": 0
+  },
+  {
+   "name": "cutscene_fps_imm",
+   "default": 1106247680
+  },
+  {
+   "name": "no_optical_drive",
+   "default": 0
+  },
+  {
+   "name": "hook_sound_update",
+   "default": 0
+  },
+  {
+   "name": "hook_nos_trail",
+   "default": 0
+  },
+  {
+   "name": "hook_camera_look_at",
+   "default": 0
+  },
+  {
+   "name": "hook_camera_data",
+   "default": 0
+  },
+  {
+   "name": "hook_catch_pad",
+   "default": 0
+  },
+  {
+   "name": "hook_menu_text",
+   "default": 0
+  },
+  {
+   "name": "hook_fe_remap",
+   "default": 0
+  },
+  {
+   "name": "hook_buttons",
+   "default": 0
+  },
+  {
+   "name": "hook_joy_state",
+   "default": 0
+  },
+  {
+   "name": "hook_mouse_state",
+   "default": 0
+  },
+  {
+   "name": "hook_keyboard_state",
+   "default": 0
+  },
+  {
+   "name": "hook_cursor_function",
+   "default": 0
+  },
+  {
+   "name": "hook_movie_start",
+   "default": 0
+  },
+  {
+   "name": "hook_movie_end_1",
+   "default": 0
+  },
+  {
+   "name": "hook_movie_end_2",
+   "default": 0
+  },
+  {
+   "name": "hook_set_transform",
+   "default": 0
+  },
+  {
+   "name": "hook_movie_crash_fix",
+   "default": 0
+  },
+  {
+   "name": "hook_fov",
+   "default": 0
+  },
+  {
+   "name": "fov_fix",
+   "default": 0
+  },
+  {
+   "name": "fov_ptr1",
+   "default": 7881296
+  },
+  {
+   "name": "fov_ptr2",
+   "default": 7881312
+  },
+  {
+   "name": "fov_ptr3",
+   "default": 7881296
+  },
+  {
+   "name": "hook_rain_x",
+   "default": 0
+  },
+  {
+   "name": "hook_rain_y",
+   "default": 0
+  },
+  {
+   "name": "hud_pos_x",
+   "default": 1134559232
+  },
+  {
+   "name": "mirror_left_x1",
+   "default": 1128792064
+  },
+  {
+   "name": "mirror_left_x2",
+   "default": 1128792064
+  },
+  {
+   "name": "mirror_right_x1",
+   "default": 1138491392
+  },
+  {
+   "name": "mirror_right_x2",
+   "default": 1138491392
+  },
+  {
+   "name": "cutscene_border_1",
+   "default": 1142947840
+  },
+  {
+   "name": "cutscene_border_2",
+   "default": 1142947840
+  },
+  {
+   "name": "cutscene_border_3",
+   "default": 1142947840
+  },
+  {
+   "name": "cutscene_border_4",
+   "default": 1142947840
+  },
+  {
+   "name": "radar_width_1",
+   "default": 1142947840
+  },
+  {
+   "name": "radar_width_2",
+   "default": 1142947840
+  },
+  {
+   "name": "radar_height_1",
+   "default": 1139802112
+  },
+  {
+   "name": "radar_height_2",
+   "default": 1139802112
+  },
+  {
+   "name": "screenshot_width_ptr",
+   "default": 8849792
+  },
+  {
+   "name": "hook_hud",
+   "default": 0
+  },
+  {
+   "name": "hook_blips",
+   "default": 0
+  },
+  {
+   "name": "hook_hud2",
+   "default": 0
+  },
+  {
+   "name": "hook_stop_sign",
+   "default": 0
+  },
+  {
+   "name": "fmv_bottom",
+   "default": 1056964608
+  },
+  {
+   "name": "fmv_right",
+   "default": 1056964608
+  },
+  {
+   "name": "fmv_top",
+   "default": 3204448256
+  },
+  {
+   "name": "fmv_left",
+   "default": 3204448256
+  },
+  {
+   "name": "skip_intro_string_0",
+   "default": 7931880
+  },
+  {
+   "name": "skip_intro_string_1",
+   "default": 7931908
+  },
+  {
+   "name": "skip_intro_string_2",
+   "default": 7932024
+  },
+  {
+   "name": "skip_intro_string_3",
+   "default": 7931976
+  }
+ ],
+ "immediates": [
+  {
+   "insn": 6023237,
+   "byte": 6023240,
+   "value": 8841344,
+   "var": "supported_res_1",
+   "note": "table of supported resolutions"
+  },
+  {
+   "insn": 6023252,
+   "byte": 6023255,
+   "value": 8841344,
+   "var": "supported_res_2",
+   "note": "table of supported resolutions"
+  },
+  {
+   "insn": 6106125,
+   "byte": 6106126,
+   "value": 1015580809,
+   "var": "frame_time_imm",
+   "note": "1/60 pushed as a float"
+  },
+  {
+   "insn": 4415395,
+   "byte": 4415396,
+   "value": 1106247680,
+   "var": "cutscene_fps_imm",
+   "note": "cutscene frame rate"
+  },
+  {
+   "insn": 5354436,
+   "byte": 5354443,
+   "value": 1134559232,
+   "var": "hud_pos_x",
+   "note": "HUD x origin 320.0 #0"
+  },
+  {
+   "insn": 5466308,
+   "byte": 5466312,
+   "value": 1134559232,
+   "var": "hud_pos_x",
+   "note": "HUD x origin 320.0 #1"
+  },
+  {
+   "insn": 5466770,
+   "byte": 5466777,
+   "value": 1134559232,
+   "var": "hud_pos_x",
+   "note": "HUD x origin 320.0 #2"
+  },
+  {
+   "insn": 5467330,
+   "byte": 5467337,
+   "value": 1134559232,
+   "var": "hud_pos_x",
+   "note": "HUD x origin 320.0 #3"
+  },
+  {
+   "insn": 5468173,
+   "byte": 5468177,
+   "value": 1134559232,
+   "var": "hud_pos_x",
+   "note": "HUD x origin 320.0 #4"
+  },
+  {
+   "insn": 4765242,
+   "byte": 4765248,
+   "value": 1134559232,
+   "var": "hud_pos_x",
+   "note": "HUD x origin 320.0 #5"
+  },
+  {
+   "insn": 5289198,
+   "byte": 5289205,
+   "value": 1134559232,
+   "var": "hud_pos_x",
+   "note": "HUD x origin 320.0 #6"
+  },
+  {
+   "insn": 6078725,
+   "byte": 6078729,
+   "value": 1128792064,
+   "var": "mirror_left_x1",
+   "note": "rear-view mirror"
+  },
+  {
+   "insn": 6078741,
+   "byte": 6078745,
+   "value": 1128792064,
+   "var": "mirror_left_x2",
+   "note": "rear-view mirror"
+  },
+  {
+   "insn": 6078709,
+   "byte": 6078713,
+   "value": 1138491392,
+   "var": "mirror_right_x1",
+   "note": "rear-view mirror"
+  },
+  {
+   "insn": 6078757,
+   "byte": 6078761,
+   "value": 1138491392,
+   "var": "mirror_right_x2",
+   "note": "rear-view mirror"
+  },
+  {
+   "insn": 6078193,
+   "byte": 6078197,
+   "value": 1142947840,
+   "var": "cutscene_border_1",
+   "note": ""
+  },
+  {
+   "insn": 6078209,
+   "byte": 6078213,
+   "value": 1142947840,
+   "var": "cutscene_border_2",
+   "note": ""
+  },
+  {
+   "insn": 6078085,
+   "byte": 6078089,
+   "value": 1142947840,
+   "var": "cutscene_border_3",
+   "note": ""
+  },
+  {
+   "insn": 6078109,
+   "byte": 6078113,
+   "value": 1142947840,
+   "var": "cutscene_border_4",
+   "note": ""
+  },
+  {
+   "insn": 6058598,
+   "byte": 6058602,
+   "value": 1142947840,
+   "var": "radar_width_1",
+   "note": "radar mask"
+  },
+  {
+   "insn": 6058614,
+   "byte": 6058618,
+   "value": 1142947840,
+   "var": "radar_width_2",
+   "note": "radar mask"
+  },
+  {
+   "insn": 6058622,
+   "byte": 6058626,
+   "value": 1139802112,
+   "var": "radar_height_1",
+   "note": "radar mask"
+  },
+  {
+   "insn": 6058638,
+   "byte": 6058642,
+   "value": 1139802112,
+   "var": "radar_height_2",
+   "note": "radar mask"
+  },
+  {
+   "insn": 5466654,
+   "byte": 5466655,
+   "value": 1056964608,
+   "var": "fmv_bottom",
+   "note": "video quad"
+  },
+  {
+   "insn": 5466659,
+   "byte": 5466660,
+   "value": 1056964608,
+   "var": "fmv_right",
+   "note": "video quad"
+  },
+  {
+   "insn": 5466664,
+   "byte": 5466665,
+   "value": 3204448256,
+   "var": "fmv_top",
+   "note": "video quad"
+  },
+  {
+   "insn": 5466669,
+   "byte": 5466670,
+   "value": 3204448256,
+   "var": "fmv_left",
+   "note": "video quad"
+  },
+  {
+   "insn": 4884618,
+   "byte": 4884619,
+   "value": 7931880,
+   "var": "skip_intro_string_0",
+   "note": "intro video name #0"
+  },
+  {
+   "insn": 4884826,
+   "byte": 4884827,
+   "value": 7931908,
+   "var": "skip_intro_string_1",
+   "note": "intro video name #1"
+  },
+  {
+   "insn": 4885738,
+   "byte": 4885739,
+   "value": 7932024,
+   "var": "skip_intro_string_2",
+   "note": "intro video name #2"
+  },
+  {
+   "insn": 4885363,
+   "byte": 4885364,
+   "value": 7931976,
+   "var": "skip_intro_string_3",
+   "note": "intro video name #3"
+  }
+ ],
+ "addresses": [
+  {
+   "insn": 6062056,
+   "byte": 6062058,
+   "value": 7881296,
+   "var": "fov_ptr1",
+   "note": ""
+  },
+  {
+   "insn": 6062074,
+   "byte": 6062076,
+   "value": 7881312,
+   "var": "fov_ptr2",
+   "note": ""
+  },
+  {
+   "insn": 6062111,
+   "byte": 6062113,
+   "value": 7881296,
+   "var": "fov_ptr3",
+   "note": ""
+  },
+  {
+   "insn": 6041948,
+   "byte": 6041950,
+   "value": 8849792,
+   "var": "screenshot_width_ptr",
+   "note": "screenshot aspect"
+  }
+ ],
+ "nops": [
+  {
+   "insn": 6023596,
+   "flag": "res_store_nop"
+  },
+  {
+   "insn": 6104936,
+   "flag": "res_store_nop"
+  },
+  {
+   "insn": 6090030,
+   "flag": "res_store_nop"
+  },
+  {
+   "insn": 6061921,
+   "flag": "fov_fix"
+  }
+ ],
+ "hooks": [
+  {
+   "name": "before_end_scene",
+   "begin": 6105957,
+   "end": null,
+   "mode": "before",
+   "pop": 0
+  },
+  {
+   "name": "delta_time",
+   "begin": 5772013,
+   "end": null,
+   "mode": "before",
+   "pop": 0
+  },
+  {
+   "name": "before_reset",
+   "begin": 6102167,
+   "end": null,
+   "mode": "before",
+   "pop": 0
+  },
+  {
+   "name": "main_loop",
+   "begin": 5771758,
+   "end": null,
+   "mode": "before",
+   "pop": 0
+  },
+  {
+   "name": "inc_screen_res",
+   "begin": 4830720,
+   "end": null,
+   "mode": "function",
+   "pop": 8
+  },
+  {
+   "name": "get_racing_resolution",
+   "begin": 6026768,
+   "end": null,
+   "mode": "function",
+   "pop": 8
+  },
+  {
+   "name": "locg_racing_resolution",
+   "begin": 4830864,
+   "end": null,
+   "mode": "function",
+   "pop": 0
+  },
+  {
+   "name": "res_set",
+   "begin": 6025568,
+   "end": null,
+   "mode": "before",
+   "pop": 0
+  },
+  {
+   "name": "res_get",
+   "begin": 6024762,
+   "end": null,
+   "mode": "before",
+   "pop": 0
+  },
+  {
+   "name": "window_placement",
+   "begin": 6102080,
+   "end": null,
+   "mode": "function",
+   "pop": 0
+  },
+  {
+   "name": "wndproc",
+   "begin": 6081888,
+   "end": null,
+   "mode": "function",
+   "pop": 16
+  },
+  {
+   "name": "show_cursor",
+   "begin": 6025732,
+   "end": null,
+   "mode": "before",
+   "pop": 0
+  },
+  {
+   "name": "sound_update",
+   "begin": 4733760,
+   "end": null,
+   "mode": "function",
+   "pop": 4
+  },
+  {
+   "name": "nos_trail",
+   "begin": 6401408,
+   "end": null,
+   "mode": "function",
+   "pop": 0
+  },
+  {
+   "name": "camera_look_at",
+   "begin": 4537156,
+   "end": 4537161,
+   "mode": "replace",
+   "pop": 0
+  },
+  {
+   "name": "camera_data",
+   "begin": 4535700,
+   "end": null,
+   "mode": "before",
+   "pop": 0
+  },
+  {
+   "name": "catch_pad",
+   "begin": 6093484,
+   "end": 6093489,
+   "mode": "replace",
+   "pop": 0
+  },
+  {
+   "name": "menu_text",
+   "begin": 5318013,
+   "end": 5318019,
+   "mode": "replace",
+   "pop": 0
+  },
+  {
+   "name": "fe_remap",
+   "begin": 6035975,
+   "end": 6035981,
+   "mode": "replace",
+   "pop": 0
+  },
+  {
+   "name": "buttons",
+   "begin": 4902801,
+   "end": 4902810,
+   "mode": "replace",
+   "pop": 0
+  },
+  {
+   "name": "joy_state",
+   "begin": 6064171,
+   "end": null,
+   "mode": "before",
+   "pop": 0
+  },
+  {
+   "name": "mouse_state",
+   "begin": 6027465,
+   "end": null,
+   "mode": "before",
+   "pop": 0
+  },
+  {
+   "name": "keyboard_state",
+   "begin": 6035598,
+   "end": null,
+   "mode": "before",
+   "pop": 0
+  },
+  {
+   "name": "cursor_function",
+   "begin": 5289056,
+   "end": null,
+   "mode": "function",
+   "pop": 0
+  },
+  {
+   "name": "movie_start",
+   "begin": 5660738,
+   "end": null,
+   "mode": "before",
+   "pop": 0
+  },
+  {
+   "name": "movie_end_1",
+   "begin": 5315545,
+   "end": null,
+   "mode": "before",
+   "pop": 0
+  },
+  {
+   "name": "movie_end_2",
+   "begin": 5661079,
+   "end": null,
+   "mode": "before",
+   "pop": 0
+  },
+  {
+   "name": "set_transform",
+   "begin": 6078605,
+   "end": 6078610,
+   "mode": "replace",
+   "pop": 0
+  },
+  {
+   "name": "movie_crash_fix",
+   "begin": 5466563,
+   "end": null,
+   "mode": "before",
+   "pop": 0
+  },
+  {
+   "name": "fov",
+   "begin": 6061907,
+   "end": 6061913,
+   "mode": "replace",
+   "pop": 0
+  },
+  {
+   "name": "rain_x",
+   "begin": 6061285,
+   "end": 6061293,
+   "mode": "replace",
+   "pop": 0
+  },
+  {
+   "name": "rain_y",
+   "begin": 6061315,
+   "end": 6061323,
+   "mode": "replace",
+   "pop": 0
+  },
+  {
+   "name": "hud",
+   "begin": 5353872,
+   "end": 5353880,
+   "mode": "replace",
+   "pop": 0
+  },
+  {
+   "name": "blips",
+   "begin": 5363285,
+   "end": 5363290,
+   "mode": "replace",
+   "pop": 0
+  },
+  {
+   "name": "hud2",
+   "begin": 5007187,
+   "end": 5007193,
+   "mode": "replace",
+   "pop": 0
+  },
+  {
+   "name": "stop_sign",
+   "begin": 5263723,
+   "end": 5263730,
+   "mode": "replace",
+   "pop": 0
+  }
+ ],
+ "data": [
+  {
+   "name": "hwnd",
+   "address": 8849808,
+   "byte": 6003323
+  },
+  {
+   "name": "window_rect",
+   "address": 8841044,
+   "byte": 6003328
+  },
+  {
+   "name": "windowed_mode",
+   "address": 8849804,
+   "byte": 6003312
+  },
+  {
+   "name": "racing_resolution",
+   "address": 8850716,
+   "byte": 4830731
+  },
+  {
+   "name": "race_coordinator",
+   "address": 8978648,
+   "byte": 5772058
+  },
+  {
+   "name": "exit_fe_options",
+   "address": 8619228,
+   "byte": 4862381
+  },
+  {
+   "name": "feng_instance",
+   "address": 8619204,
+   "byte": 5317713
+  },
+  {
+   "name": "fn_feng_make_dirty",
+   "address": 5294048,
+   "byte": 5294048
+  },
+  {
+   "name": "d3d_device",
+   "address": 8849780,
+   "byte": 6105958
+  },
+  {
+   "name": "options_changed",
+   "address": 8849873,
+   "byte": 4830837
+  },
+  {
+   "name": "fn_inc_screen_res",
+   "address": 4830720,
+   "byte": 4830720
+  },
+  {
+   "name": "fn_get_racing_resolution",
+   "address": 6026768,
+   "byte": 6026768
+  },
+  {
+   "name": "fn_set_language_hash",
+   "address": 5294336,
+   "byte": 5294336
+  },
+  {
+   "name": "fn_set_string",
+   "address": 5464032,
+   "byte": 5464032
+  },
+  {
+   "name": "fn_locg_racing_resolution",
+   "address": 4830864,
+   "byte": 4830864
+  },
+  {
+   "name": "fn_window_placement",
+   "address": 6102080,
+   "byte": 6102080
+  },
+  {
+   "name": "fn_wndproc",
+   "address": 6081888,
+   "byte": 6081888
+  },
+  {
+   "name": "frame_time_a",
+   "address": 8803672,
+   "byte": 5761804
+  },
+  {
+   "name": "frame_time_b",
+   "address": 8369936,
+   "byte": 5729489
+  },
+  {
+   "name": "frame_time_c",
+   "address": 7894460,
+   "byte": 5762016
+  },
+  {
+   "name": "frame_time_d",
+   "address": 8374360,
+   "byte": 5971471
+  },
+  {
+   "name": "cutscene_fps",
+   "address": 8017708,
+   "byte": 6289022
+  },
+  {
+   "name": "fn_sound_update",
+   "address": 4733760,
+   "byte": 4733760
+  },
+  {
+   "name": "fn_nos_trail",
+   "address": 6401408,
+   "byte": 6401408
+  },
+  {
+   "name": "fn_camera_look_at",
+   "address": 6007200,
+   "byte": 6007200
+  },
+  {
+   "name": "game_state",
+   "address": 8803492,
+   "byte": 8803492
+  },
+  {
+   "name": "menu_text_global",
+   "address": 8618972,
+   "byte": 5318015
+  },
+  {
+   "name": "buttons_empty",
+   "address": 4902829,
+   "byte": 4902829
+  },
+  {
+   "name": "joy_state_base",
+   "address": 8847296,
+   "byte": 6064132
+  },
+  {
+   "name": "fn_cursor_function",
+   "address": 5289056,
+   "byte": 5289056
+  },
+  {
+   "name": "fn_set_render_target",
+   "address": 6078272,
+   "byte": 6078272
+  },
+  {
+   "name": "fn_set_transform",
+   "address": 6020576,
+   "byte": 6020576
+  },
+  {
+   "name": "movie_crash_resume",
+   "address": 5466572,
+   "byte": 5466572
+  },
+  {
+   "name": "hud_scale_x",
+   "address": 7973904,
+   "byte": 5299472
+  },
+  {
+   "name": "hud_pos_x_global",
+   "address": 7961936,
+   "byte": 5161957
+  },
+  {
+   "name": "hud_pos_x2_global",
+   "address": 7961944,
+   "byte": 5161816
+  },
+  {
+   "name": "dyno_offset",
+   "address": 8364992,
+   "byte": 5493027
+  }
+ ],
+ "retargets": [
+  {
+   "insn": 6032702,
+   "flag": "no_optical_drive",
+   "old": 6032792,
+   "new": 6032824
+  },
+  {
+   "insn": 6032723,
+   "flag": "no_optical_drive",
+   "old": 6032737,
+   "new": 6032725
+  }
+ ],
+ "force_jumps": [
+  {
+   "insn": 4287874,
+   "flag": "steering_fix",
+   "target": 4287884
+  }
+ ]
+}

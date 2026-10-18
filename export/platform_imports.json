@@ -1,0 +1,1518 @@
+{
+  "input_sha256": "f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7",
+  "entry_point": 7716039,
+  "imports": [
+    {
+      "iat": 7876608,
+      "token": 4026531840,
+      "dll": "advapi32.dll",
+      "name": "RegSetValueExA"
+    },
+    {
+      "iat": 7876612,
+      "token": 4026531856,
+      "dll": "advapi32.dll",
+      "name": "RegQueryValueExA"
+    },
+    {
+      "iat": 7876616,
+      "token": 4026531872,
+      "dll": "advapi32.dll",
+      "name": "RegOpenKeyExA"
+    },
+    {
+      "iat": 7876620,
+      "token": 4026531888,
+      "dll": "advapi32.dll",
+      "name": "RegOpenKeyA"
+    },
+    {
+      "iat": 7876624,
+      "token": 4026531904,
+      "dll": "advapi32.dll",
+      "name": "RegCreateKeyA"
+    },
+    {
+      "iat": 7876628,
+      "token": 4026531920,
+      "dll": "advapi32.dll",
+      "name": "RegCloseKey"
+    },
+    {
+      "iat": 7876636,
+      "token": 4026531936,
+      "dll": "ddraw.dll",
+      "name": "DirectDrawCreate"
+    },
+    {
+      "iat": 7876644,
+      "token": 4026531952,
+      "dll": "dinput8.dll",
+      "name": "DirectInput8Create"
+    },
+    {
+      "iat": 7876652,
+      "token": 4026531968,
+      "dll": "dsound.dll",
+      "name": "#1"
+    },
+    {
+      "iat": 7876660,
+      "token": 4026531984,
+      "dll": "gdi32.dll",
+      "name": "SetTextColor"
+    },
+    {
+      "iat": 7876664,
+      "token": 4026532000,
+      "dll": "gdi32.dll",
+      "name": "CreateCompatibleDC"
+    },
+    {
+      "iat": 7876668,
+      "token": 4026532016,
+      "dll": "gdi32.dll",
+      "name": "CreateFontA"
+    },
+    {
+      "iat": 7876672,
+      "token": 4026532032,
+      "dll": "gdi32.dll",
+      "name": "CreateBitmap"
+    },
+    {
+      "iat": 7876676,
+      "token": 4026532048,
+      "dll": "gdi32.dll",
+      "name": "SetBkMode"
+    },
+    {
+      "iat": 7876680,
+      "token": 4026532064,
+      "dll": "gdi32.dll",
+      "name": "DeleteDC"
+    },
+    {
+      "iat": 7876684,
+      "token": 4026532080,
+      "dll": "gdi32.dll",
+      "name": "ExtTextOutA"
+    },
+    {
+      "iat": 7876688,
+      "token": 4026532096,
+      "dll": "gdi32.dll",
+      "name": "SetBkColor"
+    },
+    {
+      "iat": 7876692,
+      "token": 4026532112,
+      "dll": "gdi32.dll",
+      "name": "GetPixel"
+    },
+    {
+      "iat": 7876696,
+      "token": 4026532128,
+      "dll": "gdi32.dll",
+      "name": "DeleteObject"
+    },
+    {
+      "iat": 7876700,
+      "token": 4026532144,
+      "dll": "gdi32.dll",
+      "name": "SelectObject"
+    },
+    {
+      "iat": 7876704,
+      "token": 4026532160,
+      "dll": "gdi32.dll",
+      "name": "BitBlt"
+    },
+    {
+      "iat": 7876712,
+      "token": 4026532176,
+      "dll": "kernel32.dll",
+      "name": "VirtualQuery"
+    },
+    {
+      "iat": 7876716,
+      "token": 4026532192,
+      "dll": "kernel32.dll",
+      "name": "IsBadCodePtr"
+    },
+    {
+      "iat": 7876720,
+      "token": 4026532208,
+      "dll": "kernel32.dll",
+      "name": "GetCurrentProcessId"
+    },
+    {
+      "iat": 7876724,
+      "token": 4026532224,
+      "dll": "kernel32.dll",
+      "name": "SetEndOfFile"
+    },
+    {
+      "iat": 7876728,
+      "token": 4026532240,
+      "dll": "kernel32.dll",
+      "name": "SetStdHandle"
+    },
+    {
+      "iat": 7876732,
+      "token": 4026532256,
+      "dll": "kernel32.dll",
+      "name": "FlushFileBuffers"
+    },
+    {
+      "iat": 7876736,
+      "token": 4026532272,
+      "dll": "kernel32.dll",
+      "name": "GetStringTypeW"
+    },
+    {
+      "iat": 7876740,
+      "token": 4026532288,
+      "dll": "kernel32.dll",
+      "name": "GetStringTypeA"
+    },
+    {
+      "iat": 7876744,
+      "token": 4026532304,
+      "dll": "kernel32.dll",
+      "name": "IsValidCodePage"
+    },
+    {
+      "iat": 7876748,
+      "token": 4026532320,
+      "dll": "kernel32.dll",
+      "name": "IsValidLocale"
+    },
+    {
+      "iat": 7876752,
+      "token": 4026532336,
+      "dll": "kernel32.dll",
+      "name": "EnumSystemLocalesA"
+    },
+    {
+      "iat": 7876756,
+      "token": 4026532352,
+      "dll": "kernel32.dll",
+      "name": "CompareStringA"
+    },
+    {
+      "iat": 7876760,
+      "token": 4026532368,
+      "dll": "kernel32.dll",
+      "name": "CompareStringW"
+    },
+    {
+      "iat": 7876764,
+      "token": 4026532384,
+      "dll": "kernel32.dll",
+      "name": "SetEnvironmentVariableA"
+    },
+    {
+      "iat": 7876768,
+      "token": 4026532400,
+      "dll": "kernel32.dll",
+      "name": "IsDebuggerPresent"
+    },
+    {
+      "iat": 7876772,
+      "token": 4026532416,
+      "dll": "kernel32.dll",
+      "name": "DebugBreak"
+    },
+    {
+      "iat": 7876776,
+      "token": 4026532432,
+      "dll": "kernel32.dll",
+      "name": "GetLocaleInfoW"
+    },
+    {
+      "iat": 7876780,
+      "token": 4026532448,
+      "dll": "kernel32.dll",
+      "name": "GetExitCodeThread"
+    },
+    {
+      "iat": 7876784,
+      "token": 4026532464,
+      "dll": "kernel32.dll",
+      "name": "GetLocaleInfoA"
+    },
+    {
+      "iat": 7876788,
+      "token": 4026532480,
+      "dll": "kernel32.dll",
+      "name": "GetUserDefaultLCID"
+    },
+    {
+      "iat": 7876792,
+      "token": 4026532496,
+      "dll": "kernel32.dll",
+      "name": "LCMapStringW"
+    },
+    {
+      "iat": 7876796,
+      "token": 4026532512,
+      "dll": "kernel32.dll",
+      "name": "LCMapStringA"
+    },
+    {
+      "iat": 7876800,
+      "token": 4026532528,
+      "dll": "kernel32.dll",
+      "name": "SetUnhandledExceptionFilter"
+    },
+    {
+      "iat": 7876804,
+      "token": 4026532544,
+      "dll": "kernel32.dll",
+      "name": "GetCPInfo"
+    },
+    {
+      "iat": 7876808,
+      "token": 4026532560,
+      "dll": "kernel32.dll",
+      "name": "GetOEMCP"
+    },
+    {
+      "iat": 7876812,
+      "token": 4026532576,
+      "dll": "kernel32.dll",
+      "name": "GetACP"
+    },
+    {
+      "iat": 7876816,
+      "token": 4026532592,
+      "dll": "kernel32.dll",
+      "name": "HeapSize"
+    },
+    {
+      "iat": 7876820,
+      "token": 4026532608,
+      "dll": "kernel32.dll",
+      "name": "HeapReAlloc"
+    },
+    {
+      "iat": 7876824,
+      "token": 4026532624,
+      "dll": "kernel32.dll",
+      "name": "HeapCreate"
+    },
+    {
+      "iat": 7876828,
+      "token": 4026532640,
+      "dll": "kernel32.dll",
+      "name": "HeapDestroy"
+    },
+    {
+      "iat": 7876832,
+      "token": 4026532656,
+      "dll": "kernel32.dll",
+      "name": "TlsAlloc"
+    },
+    {
+      "iat": 7876836,
+      "token": 4026532672,
+      "dll": "kernel32.dll",
+      "name": "SetLastError"
+    },
+    {
+      "iat": 7876840,
+      "token": 4026532688,
+      "dll": "kernel32.dll",
+      "name": "TlsFree"
+    },
+    {
+      "iat": 7876844,
+      "token": 4026532704,
+      "dll": "kernel32.dll",
+      "name": "GetStartupInfoA"
+    },
+    {
+      "iat": 7876848,
+      "token": 4026532720,
+      "dll": "kernel32.dll",
+      "name": "SetHandleCount"
+    },
+    {
+      "iat": 7876852,
+      "token": 4026532736,
+      "dll": "kernel32.dll",
+      "name": "GetEnvironmentStringsW"
+    },
+    {
+      "iat": 7876856,
+      "token": 4026532752,
+      "dll": "kernel32.dll",
+      "name": "FreeEnvironmentStringsW"
+    },
+    {
+      "iat": 7876860,
+      "token": 4026532768,
+      "dll": "kernel32.dll",
+      "name": "GetEnvironmentStrings"
+    },
+    {
+      "iat": 7876864,
+      "token": 4026532784,
+      "dll": "kernel32.dll",
+      "name": "FreeEnvironmentStringsA"
+    },
+    {
+      "iat": 7876868,
+      "token": 4026532800,
+      "dll": "kernel32.dll",
+      "name": "UnhandledExceptionFilter"
+    },
+    {
+      "iat": 7876872,
+      "token": 4026532816,
+      "dll": "kernel32.dll",
+      "name": "GetStdHandle"
+    },
+    {
+      "iat": 7876876,
+      "token": 4026532832,
+      "dll": "kernel32.dll",
+      "name": "IsBadWritePtr"
+    },
+    {
+      "iat": 7876880,
+      "token": 4026532848,
+      "dll": "kernel32.dll",
+      "name": "IsBadReadPtr"
+    },
+    {
+      "iat": 7876884,
+      "token": 4026532864,
+      "dll": "kernel32.dll",
+      "name": "GetLastError"
+    },
+    {
+      "iat": 7876888,
+      "token": 4026532880,
+      "dll": "kernel32.dll",
+      "name": "QueryPerformanceFrequency"
+    },
+    {
+      "iat": 7876892,
+      "token": 4026532896,
+      "dll": "kernel32.dll",
+      "name": "QueryPerformanceCounter"
+    },
+    {
+      "iat": 7876896,
+      "token": 4026532912,
+      "dll": "kernel32.dll",
+      "name": "FindClose"
+    },
+    {
+      "iat": 7876900,
+      "token": 4026532928,
+      "dll": "kernel32.dll",
+      "name": "FindNextFileA"
+    },
+    {
+      "iat": 7876904,
+      "token": 4026532944,
+      "dll": "kernel32.dll",
+      "name": "FindFirstFileA"
+    },
+    {
+      "iat": 7876908,
+      "token": 4026532960,
+      "dll": "kernel32.dll",
+      "name": "CreateDirectoryA"
+    },
+    {
+      "iat": 7876912,
+      "token": 4026532976,
+      "dll": "kernel32.dll",
+      "name": "MultiByteToWideChar"
+    },
+    {
+      "iat": 7876916,
+      "token": 4026532992,
+      "dll": "kernel32.dll",
+      "name": "GetModuleFileNameA"
+    },
+    {
+      "iat": 7876920,
+      "token": 4026533008,
+      "dll": "kernel32.dll",
+      "name": "GetModuleHandleA"
+    },
+    {
+      "iat": 7876924,
+      "token": 4026533024,
+      "dll": "kernel32.dll",
+      "name": "GetLongPathNameA"
+    },
+    {
+      "iat": 7876928,
+      "token": 4026533040,
+      "dll": "kernel32.dll",
+      "name": "SetErrorMode"
+    },
+    {
+      "iat": 7876932,
+      "token": 4026533056,
+      "dll": "kernel32.dll",
+      "name": "CloseHandle"
+    },
+    {
+      "iat": 7876936,
+      "token": 4026533072,
+      "dll": "kernel32.dll",
+      "name": "Process32Next"
+    },
+    {
+      "iat": 7876940,
+      "token": 4026533088,
+      "dll": "kernel32.dll",
+      "name": "Process32First"
+    },
+    {
+      "iat": 7876944,
+      "token": 4026533104,
+      "dll": "kernel32.dll",
+      "name": "Sleep"
+    },
+    {
+      "iat": 7876948,
+      "token": 4026533120,
+      "dll": "kernel32.dll",
+      "name": "CreateToolhelp32Snapshot"
+    },
+    {
+      "iat": 7876952,
+      "token": 4026533136,
+      "dll": "kernel32.dll",
+      "name": "SuspendThread"
+    },
+    {
+      "iat": 7876956,
+      "token": 4026533152,
+      "dll": "kernel32.dll",
+      "name": "ResumeThread"
+    },
+    {
+      "iat": 7876960,
+      "token": 4026533168,
+      "dll": "kernel32.dll",
+      "name": "GetDriveTypeA"
+    },
+    {
+      "iat": 7876964,
+      "token": 4026533184,
+      "dll": "kernel32.dll",
+      "name": "GetLogicalDrives"
+    },
+    {
+      "iat": 7876968,
+      "token": 4026533200,
+      "dll": "kernel32.dll",
+      "name": "GetVersionExA"
+    },
+    {
+      "iat": 7876972,
+      "token": 4026533216,
+      "dll": "kernel32.dll",
+      "name": "OutputDebugStringA"
+    },
+    {
+      "iat": 7876976,
+      "token": 4026533232,
+      "dll": "kernel32.dll",
+      "name": "SetProcessAffinityMask"
+    },
+    {
+      "iat": 7876980,
+      "token": 4026533248,
+      "dll": "kernel32.dll",
+      "name": "SetThreadPriority"
+    },
+    {
+      "iat": 7876984,
+      "token": 4026533264,
+      "dll": "kernel32.dll",
+      "name": "SetPriorityClass"
+    },
+    {
+      "iat": 7876988,
+      "token": 4026533280,
+      "dll": "kernel32.dll",
+      "name": "GetProcessAffinityMask"
+    },
+    {
+      "iat": 7876992,
+      "token": 4026533296,
+      "dll": "kernel32.dll",
+      "name": "GetThreadPriority"
+    },
+    {
+      "iat": 7876996,
+      "token": 4026533312,
+      "dll": "kernel32.dll",
+      "name": "GetPriorityClass"
+    },
+    {
+      "iat": 7877000,
+      "token": 4026533328,
+      "dll": "kernel32.dll",
+      "name": "GetCurrentThread"
+    },
+    {
+      "iat": 7877004,
+      "token": 4026533344,
+      "dll": "kernel32.dll",
+      "name": "GetCurrentProcess"
+    },
+    {
+      "iat": 7877008,
+      "token": 4026533360,
+      "dll": "kernel32.dll",
+      "name": "FreeLibrary"
+    },
+    {
+      "iat": 7877012,
+      "token": 4026533376,
+      "dll": "kernel32.dll",
+      "name": "GetProcAddress"
+    },
+    {
+      "iat": 7877016,
+      "token": 4026533392,
+      "dll": "kernel32.dll",
+      "name": "LoadLibraryA"
+    },
+    {
+      "iat": 7877020,
+      "token": 4026533408,
+      "dll": "kernel32.dll",
+      "name": "WideCharToMultiByte"
+    },
+    {
+      "iat": 7877024,
+      "token": 4026533424,
+      "dll": "kernel32.dll",
+      "name": "GetSystemInfo"
+    },
+    {
+      "iat": 7877028,
+      "token": 4026533440,
+      "dll": "kernel32.dll",
+      "name": "IsProcessorFeaturePresent"
+    },
+    {
+      "iat": 7877032,
+      "token": 4026533456,
+      "dll": "kernel32.dll",
+      "name": "EnterCriticalSection"
+    },
+    {
+      "iat": 7877036,
+      "token": 4026533472,
+      "dll": "kernel32.dll",
+      "name": "InterlockedExchange"
+    },
+    {
+      "iat": 7877040,
+      "token": 4026533488,
+      "dll": "kernel32.dll",
+      "name": "InitializeCriticalSection"
+    },
+    {
+      "iat": 7877044,
+      "token": 4026533504,
+      "dll": "kernel32.dll",
+      "name": "InterlockedCompareExchange"
+    },
+    {
+      "iat": 7877048,
+      "token": 4026533520,
+      "dll": "kernel32.dll",
+      "name": "DeleteCriticalSection"
+    },
+    {
+      "iat": 7877052,
+      "token": 4026533536,
+      "dll": "kernel32.dll",
+      "name": "LeaveCriticalSection"
+    },
+    {
+      "iat": 7877056,
+      "token": 4026533552,
+      "dll": "kernel32.dll",
+      "name": "GetFullPathNameA"
+    },
+    {
+      "iat": 7877060,
+      "token": 4026533568,
+      "dll": "kernel32.dll",
+      "name": "MapViewOfFile"
+    },
+    {
+      "iat": 7877064,
+      "token": 4026533584,
+      "dll": "kernel32.dll",
+      "name": "GetFileSize"
+    },
+    {
+      "iat": 7877068,
+      "token": 4026533600,
+      "dll": "kernel32.dll",
+      "name": "CreateFileMappingA"
+    },
+    {
+      "iat": 7877072,
+      "token": 4026533616,
+      "dll": "kernel32.dll",
+      "name": "CreateFileA"
+    },
+    {
+      "iat": 7877076,
+      "token": 4026533632,
+      "dll": "kernel32.dll",
+      "name": "CreateFileW"
+    },
+    {
+      "iat": 7877080,
+      "token": 4026533648,
+      "dll": "kernel32.dll",
+      "name": "UnmapViewOfFile"
+    },
+    {
+      "iat": 7877084,
+      "token": 4026533664,
+      "dll": "kernel32.dll",
+      "name": "LockResource"
+    },
+    {
+      "iat": 7877088,
+      "token": 4026533680,
+      "dll": "kernel32.dll",
+      "name": "LoadResource"
+    },
+    {
+      "iat": 7877092,
+      "token": 4026533696,
+      "dll": "kernel32.dll",
+      "name": "SizeofResource"
+    },
+    {
+      "iat": 7877096,
+      "token": 4026533712,
+      "dll": "kernel32.dll",
+      "name": "FindResourceA"
+    },
+    {
+      "iat": 7877100,
+      "token": 4026533728,
+      "dll": "kernel32.dll",
+      "name": "FindResourceW"
+    },
+    {
+      "iat": 7877104,
+      "token": 4026533744,
+      "dll": "kernel32.dll",
+      "name": "VirtualFree"
+    },
+    {
+      "iat": 7877108,
+      "token": 4026533760,
+      "dll": "kernel32.dll",
+      "name": "VirtualAlloc"
+    },
+    {
+      "iat": 7877112,
+      "token": 4026533776,
+      "dll": "kernel32.dll",
+      "name": "lstrcmpiA"
+    },
+    {
+      "iat": 7877116,
+      "token": 4026533792,
+      "dll": "kernel32.dll",
+      "name": "DuplicateHandle"
+    },
+    {
+      "iat": 7877120,
+      "token": 4026533808,
+      "dll": "kernel32.dll",
+      "name": "GetCurrentThreadId"
+    },
+    {
+      "iat": 7877124,
+      "token": 4026533824,
+      "dll": "kernel32.dll",
+      "name": "TerminateThread"
+    },
+    {
+      "iat": 7877128,
+      "token": 4026533840,
+      "dll": "kernel32.dll",
+      "name": "SleepEx"
+    },
+    {
+      "iat": 7877132,
+      "token": 4026533856,
+      "dll": "kernel32.dll",
+      "name": "GetTickCount"
+    },
+    {
+      "iat": 7877136,
+      "token": 4026533872,
+      "dll": "kernel32.dll",
+      "name": "CreateEventA"
+    },
+    {
+      "iat": 7877140,
+      "token": 4026533888,
+      "dll": "kernel32.dll",
+      "name": "SetEvent"
+    },
+    {
+      "iat": 7877144,
+      "token": 4026533904,
+      "dll": "kernel32.dll",
+      "name": "WaitForSingleObject"
+    },
+    {
+      "iat": 7877148,
+      "token": 4026533920,
+      "dll": "kernel32.dll",
+      "name": "ResetEvent"
+    },
+    {
+      "iat": 7877152,
+      "token": 4026533936,
+      "dll": "kernel32.dll",
+      "name": "GetCurrentDirectoryA"
+    },
+    {
+      "iat": 7877156,
+      "token": 4026533952,
+      "dll": "kernel32.dll",
+      "name": "WriteFile"
+    },
+    {
+      "iat": 7877160,
+      "token": 4026533968,
+      "dll": "kernel32.dll",
+      "name": "SetFilePointer"
+    },
+    {
+      "iat": 7877164,
+      "token": 4026533984,
+      "dll": "kernel32.dll",
+      "name": "DeleteFileA"
+    },
+    {
+      "iat": 7877168,
+      "token": 4026534000,
+      "dll": "kernel32.dll",
+      "name": "MoveFileA"
+    },
+    {
+      "iat": 7877172,
+      "token": 4026534016,
+      "dll": "kernel32.dll",
+      "name": "ReadFile"
+    },
+    {
+      "iat": 7877176,
+      "token": 4026534032,
+      "dll": "kernel32.dll",
+      "name": "GetDiskFreeSpaceExA"
+    },
+    {
+      "iat": 7877180,
+      "token": 4026534048,
+      "dll": "kernel32.dll",
+      "name": "GlobalAlloc"
+    },
+    {
+      "iat": 7877184,
+      "token": 4026534064,
+      "dll": "kernel32.dll",
+      "name": "GlobalFree"
+    },
+    {
+      "iat": 7877188,
+      "token": 4026534080,
+      "dll": "kernel32.dll",
+      "name": "VirtualProtect"
+    },
+    {
+      "iat": 7877192,
+      "token": 4026534096,
+      "dll": "kernel32.dll",
+      "name": "CreateThread"
+    },
+    {
+      "iat": 7877196,
+      "token": 4026534112,
+      "dll": "kernel32.dll",
+      "name": "CreateMutexA"
+    },
+    {
+      "iat": 7877200,
+      "token": 4026534128,
+      "dll": "kernel32.dll",
+      "name": "ReleaseMutex"
+    },
+    {
+      "iat": 7877204,
+      "token": 4026534144,
+      "dll": "kernel32.dll",
+      "name": "HeapFree"
+    },
+    {
+      "iat": 7877208,
+      "token": 4026534160,
+      "dll": "kernel32.dll",
+      "name": "GetProcessHeap"
+    },
+    {
+      "iat": 7877212,
+      "token": 4026534176,
+      "dll": "kernel32.dll",
+      "name": "HeapAlloc"
+    },
+    {
+      "iat": 7877216,
+      "token": 4026534192,
+      "dll": "kernel32.dll",
+      "name": "WaitCommEvent"
+    },
+    {
+      "iat": 7877220,
+      "token": 4026534208,
+      "dll": "kernel32.dll",
+      "name": "GetOverlappedResult"
+    },
+    {
+      "iat": 7877224,
+      "token": 4026534224,
+      "dll": "kernel32.dll",
+      "name": "SetCommMask"
+    },
+    {
+      "iat": 7877228,
+      "token": 4026534240,
+      "dll": "kernel32.dll",
+      "name": "WaitForMultipleObjects"
+    },
+    {
+      "iat": 7877232,
+      "token": 4026534256,
+      "dll": "kernel32.dll",
+      "name": "PurgeComm"
+    },
+    {
+      "iat": 7877236,
+      "token": 4026534272,
+      "dll": "kernel32.dll",
+      "name": "SetCommState"
+    },
+    {
+      "iat": 7877240,
+      "token": 4026534288,
+      "dll": "kernel32.dll",
+      "name": "GetCommState"
+    },
+    {
+      "iat": 7877244,
+      "token": 4026534304,
+      "dll": "kernel32.dll",
+      "name": "SetCommConfig"
+    },
+    {
+      "iat": 7877248,
+      "token": 4026534320,
+      "dll": "kernel32.dll",
+      "name": "GetCommConfig"
+    },
+    {
+      "iat": 7877252,
+      "token": 4026534336,
+      "dll": "kernel32.dll",
+      "name": "SetCommTimeouts"
+    },
+    {
+      "iat": 7877256,
+      "token": 4026534352,
+      "dll": "kernel32.dll",
+      "name": "SetupComm"
+    },
+    {
+      "iat": 7877260,
+      "token": 4026534368,
+      "dll": "kernel32.dll",
+      "name": "GetCommandLineA"
+    },
+    {
+      "iat": 7877264,
+      "token": 4026534384,
+      "dll": "kernel32.dll",
+      "name": "RtlUnwind"
+    },
+    {
+      "iat": 7877268,
+      "token": 4026534400,
+      "dll": "kernel32.dll",
+      "name": "ExitProcess"
+    },
+    {
+      "iat": 7877272,
+      "token": 4026534416,
+      "dll": "kernel32.dll",
+      "name": "TerminateProcess"
+    },
+    {
+      "iat": 7877276,
+      "token": 4026534432,
+      "dll": "kernel32.dll",
+      "name": "GetTimeZoneInformation"
+    },
+    {
+      "iat": 7877280,
+      "token": 4026534448,
+      "dll": "kernel32.dll",
+      "name": "GetSystemTimeAsFileTime"
+    },
+    {
+      "iat": 7877284,
+      "token": 4026534464,
+      "dll": "kernel32.dll",
+      "name": "RaiseException"
+    },
+    {
+      "iat": 7877288,
+      "token": 4026534480,
+      "dll": "kernel32.dll",
+      "name": "ExitThread"
+    },
+    {
+      "iat": 7877292,
+      "token": 4026534496,
+      "dll": "kernel32.dll",
+      "name": "TlsSetValue"
+    },
+    {
+      "iat": 7877296,
+      "token": 4026534512,
+      "dll": "kernel32.dll",
+      "name": "TlsGetValue"
+    },
+    {
+      "iat": 7877300,
+      "token": 4026534528,
+      "dll": "kernel32.dll",
+      "name": "FileTimeToSystemTime"
+    },
+    {
+      "iat": 7877304,
+      "token": 4026534544,
+      "dll": "kernel32.dll",
+      "name": "FileTimeToLocalFileTime"
+    },
+    {
+      "iat": 7877308,
+      "token": 4026534560,
+      "dll": "kernel32.dll",
+      "name": "GetDiskFreeSpaceA"
+    },
+    {
+      "iat": 7877312,
+      "token": 4026534576,
+      "dll": "kernel32.dll",
+      "name": "GetFileType"
+    },
+    {
+      "iat": 7877316,
+      "token": 4026534592,
+      "dll": "kernel32.dll",
+      "name": "RemoveDirectoryA"
+    },
+    {
+      "iat": 7877324,
+      "token": 4026534608,
+      "dll": "netapi32.dll",
+      "name": "Netbios"
+    },
+    {
+      "iat": 7877332,
+      "token": 4026534624,
+      "dll": "shell32.dll",
+      "name": "ShellExecuteA"
+    },
+    {
+      "iat": 7877340,
+      "token": 4026534640,
+      "dll": "shfolder.dll",
+      "name": "SHGetFolderPathA"
+    },
+    {
+      "iat": 7877348,
+      "token": 4026534656,
+      "dll": "tapi32.dll",
+      "name": "lineAnswer"
+    },
+    {
+      "iat": 7877352,
+      "token": 4026534672,
+      "dll": "tapi32.dll",
+      "name": "lineMakeCall"
+    },
+    {
+      "iat": 7877356,
+      "token": 4026534688,
+      "dll": "tapi32.dll",
+      "name": "lineGetID"
+    },
+    {
+      "iat": 7877360,
+      "token": 4026534704,
+      "dll": "tapi32.dll",
+      "name": "lineClose"
+    },
+    {
+      "iat": 7877364,
+      "token": 4026534720,
+      "dll": "tapi32.dll",
+      "name": "lineNegotiateAPIVersion"
+    },
+    {
+      "iat": 7877368,
+      "token": 4026534736,
+      "dll": "tapi32.dll",
+      "name": "lineOpen"
+    },
+    {
+      "iat": 7877372,
+      "token": 4026534752,
+      "dll": "tapi32.dll",
+      "name": "lineGetDevCaps"
+    },
+    {
+      "iat": 7877376,
+      "token": 4026534768,
+      "dll": "tapi32.dll",
+      "name": "lineInitialize"
+    },
+    {
+      "iat": 7877380,
+      "token": 4026534784,
+      "dll": "tapi32.dll",
+      "name": "lineShutdown"
+    },
+    {
+      "iat": 7877388,
+      "token": 4026534800,
+      "dll": "user32.dll",
+      "name": "ShowCursor"
+    },
+    {
+      "iat": 7877392,
+      "token": 4026534816,
+      "dll": "user32.dll",
+      "name": "GetCursorPos"
+    },
+    {
+      "iat": 7877396,
+      "token": 4026534832,
+      "dll": "user32.dll",
+      "name": "wvsprintfA"
+    },
+    {
+      "iat": 7877400,
+      "token": 4026534848,
+      "dll": "user32.dll",
+      "name": "MessageBoxA"
+    },
+    {
+      "iat": 7877404,
+      "token": 4026534864,
+      "dll": "user32.dll",
+      "name": "GetSystemMetrics"
+    },
+    {
+      "iat": 7877408,
+      "token": 4026534880,
+      "dll": "user32.dll",
+      "name": "DefWindowProcA"
+    },
+    {
+      "iat": 7877412,
+      "token": 4026534896,
+      "dll": "user32.dll",
+      "name": "ReleaseCapture"
+    },
+    {
+      "iat": 7877416,
+      "token": 4026534912,
+      "dll": "user32.dll",
+      "name": "GetMessageA"
+    },
+    {
+      "iat": 7877420,
+      "token": 4026534928,
+      "dll": "user32.dll",
+      "name": "DispatchMessageA"
+    },
+    {
+      "iat": 7877424,
+      "token": 4026534944,
+      "dll": "user32.dll",
+      "name": "PeekMessageA"
+    },
+    {
+      "iat": 7877428,
+      "token": 4026534960,
+      "dll": "user32.dll",
+      "name": "TranslateMessage"
+    },
+    {
+      "iat": 7877432,
+      "token": 4026534976,
+      "dll": "user32.dll",
+      "name": "LoadIconA"
+    },
+    {
+      "iat": 7877436,
+      "token": 4026534992,
+      "dll": "user32.dll",
+      "name": "LoadCursorA"
+    },
+    {
+      "iat": 7877440,
+      "token": 4026535008,
+      "dll": "user32.dll",
+      "name": "RegisterClassExA"
+    },
+    {
+      "iat": 7877444,
+      "token": 4026535024,
+      "dll": "user32.dll",
+      "name": "AdjustWindowRect"
+    },
+    {
+      "iat": 7877448,
+      "token": 4026535040,
+      "dll": "user32.dll",
+      "name": "GetDesktopWindow"
+    },
+    {
+      "iat": 7877452,
+      "token": 4026535056,
+      "dll": "user32.dll",
+      "name": "CreateWindowExA"
+    },
+    {
+      "iat": 7877456,
+      "token": 4026535072,
+      "dll": "user32.dll",
+      "name": "UpdateWindow"
+    },
+    {
+      "iat": 7877460,
+      "token": 4026535088,
+      "dll": "user32.dll",
+      "name": "SetCursor"
+    },
+    {
+      "iat": 7877464,
+      "token": 4026535104,
+      "dll": "user32.dll",
+      "name": "SetFocus"
+    },
+    {
+      "iat": 7877468,
+      "token": 4026535120,
+      "dll": "user32.dll",
+      "name": "SetForegroundWindow"
+    },
+    {
+      "iat": 7877472,
+      "token": 4026535136,
+      "dll": "user32.dll",
+      "name": "ShowWindow"
+    },
+    {
+      "iat": 7877476,
+      "token": 4026535152,
+      "dll": "user32.dll",
+      "name": "SetWindowLongA"
+    },
+    {
+      "iat": 7877480,
+      "token": 4026535168,
+      "dll": "user32.dll",
+      "name": "DestroyWindow"
+    },
+    {
+      "iat": 7877484,
+      "token": 4026535184,
+      "dll": "user32.dll",
+      "name": "BeginPaint"
+    },
+    {
+      "iat": 7877488,
+      "token": 4026535200,
+      "dll": "user32.dll",
+      "name": "EndPaint"
+    },
+    {
+      "iat": 7877492,
+      "token": 4026535216,
+      "dll": "user32.dll",
+      "name": "PostMessageA"
+    },
+    {
+      "iat": 7877496,
+      "token": 4026535232,
+      "dll": "user32.dll",
+      "name": "PostThreadMessageA"
+    },
+    {
+      "iat": 7877500,
+      "token": 4026535248,
+      "dll": "user32.dll",
+      "name": "PostQuitMessage"
+    },
+    {
+      "iat": 7877504,
+      "token": 4026535264,
+      "dll": "user32.dll",
+      "name": "SetCapture"
+    },
+    {
+      "iat": 7877508,
+      "token": 4026535280,
+      "dll": "user32.dll",
+      "name": "GetClientRect"
+    },
+    {
+      "iat": 7877512,
+      "token": 4026535296,
+      "dll": "user32.dll",
+      "name": "GetWindowRect"
+    },
+    {
+      "iat": 7877516,
+      "token": 4026535312,
+      "dll": "user32.dll",
+      "name": "SetRect"
+    },
+    {
+      "iat": 7877520,
+      "token": 4026535328,
+      "dll": "user32.dll",
+      "name": "UnregisterClassA"
+    },
+    {
+      "iat": 7877524,
+      "token": 4026535344,
+      "dll": "user32.dll",
+      "name": "SetActiveWindow"
+    },
+    {
+      "iat": 7877528,
+      "token": 4026535360,
+      "dll": "user32.dll",
+      "name": "GetForegroundWindow"
+    },
+    {
+      "iat": 7877532,
+      "token": 4026535376,
+      "dll": "user32.dll",
+      "name": "wsprintfA"
+    },
+    {
+      "iat": 7877536,
+      "token": 4026535392,
+      "dll": "user32.dll",
+      "name": "IsIconic"
+    },
+    {
+      "iat": 7877544,
+      "token": 4026535408,
+      "dll": "winmm.dll",
+      "name": "timeSetEvent"
+    },
+    {
+      "iat": 7877548,
+      "token": 4026535424,
+      "dll": "winmm.dll",
+      "name": "timeKillEvent"
+    },
+    {
+      "iat": 7877552,
+      "token": 4026535440,
+      "dll": "winmm.dll",
+      "name": "timeBeginPeriod"
+    },
+    {
+      "iat": 7877556,
+      "token": 4026535456,
+      "dll": "winmm.dll",
+      "name": "timeGetDevCaps"
+    },
+    {
+      "iat": 7877560,
+      "token": 4026535472,
+      "dll": "winmm.dll",
+      "name": "timeGetTime"
+    },
+    {
+      "iat": 7877564,
+      "token": 4026535488,
+      "dll": "winmm.dll",
+      "name": "timeEndPeriod"
+    },
+    {
+      "iat": 7877572,
+      "token": 4026535504,
+      "dll": "ws2_32.dll",
+      "name": "WSAGetLastError"
+    },
+    {
+      "iat": 7877576,
+      "token": 4026535520,
+      "dll": "ws2_32.dll",
+      "name": "WSAStartup"
+    },
+    {
+      "iat": 7877580,
+      "token": 4026535536,
+      "dll": "ws2_32.dll",
+      "name": "setsockopt"
+    },
+    {
+      "iat": 7877584,
+      "token": 4026535552,
+      "dll": "ws2_32.dll",
+      "name": "ioctlsocket"
+    },
+    {
+      "iat": 7877588,
+      "token": 4026535568,
+      "dll": "ws2_32.dll",
+      "name": "socket"
+    },
+    {
+      "iat": 7877592,
+      "token": 4026535584,
+      "dll": "ws2_32.dll",
+      "name": "closesocket"
+    },
+    {
+      "iat": 7877596,
+      "token": 4026535600,
+      "dll": "ws2_32.dll",
+      "name": "shutdown"
+    },
+    {
+      "iat": 7877600,
+      "token": 4026535616,
+      "dll": "ws2_32.dll",
+      "name": "bind"
+    },
+    {
+      "iat": 7877604,
+      "token": 4026535632,
+      "dll": "ws2_32.dll",
+      "name": "connect"
+    },
+    {
+      "iat": 7877608,
+      "token": 4026535648,
+      "dll": "ws2_32.dll",
+      "name": "listen"
+    },
+    {
+      "iat": 7877612,
+      "token": 4026535664,
+      "dll": "ws2_32.dll",
+      "name": "accept"
+    },
+    {
+      "iat": 7877616,
+      "token": 4026535680,
+      "dll": "ws2_32.dll",
+      "name": "sendto"
+    },
+    {
+      "iat": 7877620,
+      "token": 4026535696,
+      "dll": "ws2_32.dll",
+      "name": "send"
+    },
+    {
+      "iat": 7877624,
+      "token": 4026535712,
+      "dll": "ws2_32.dll",
+      "name": "recvfrom"
+    },
+    {
+      "iat": 7877628,
+      "token": 4026535728,
+      "dll": "ws2_32.dll",
+      "name": "recv"
+    },
+    {
+      "iat": 7877632,
+      "token": 4026535744,
+      "dll": "ws2_32.dll",
+      "name": "select"
+    },
+    {
+      "iat": 7877636,
+      "token": 4026535760,
+      "dll": "ws2_32.dll",
+      "name": "getpeername"
+    },
+    {
+      "iat": 7877640,
+      "token": 4026535776,
+      "dll": "ws2_32.dll",
+      "name": "getsockname"
+    },
+    {
+      "iat": 7877644,
+      "token": 4026535792,
+      "dll": "ws2_32.dll",
+      "name": "gethostbyname"
+    },
+    {
+      "iat": 7877648,
+      "token": 4026535808,
+      "dll": "ws2_32.dll",
+      "name": "gethostname"
+    },
+    {
+      "iat": 7877652,
+      "token": 4026535824,
+      "dll": "ws2_32.dll",
+      "name": "WSAIoctl"
+    },
+    {
+      "iat": 7877656,
+      "token": 4026535840,
+      "dll": "ws2_32.dll",
+      "name": "WSACleanup"
+    },
+    {
+      "iat": 7877664,
+      "token": 4026535856,
+      "dll": "d3d9.dll",
+      "name": "Direct3DCreate9"
+    }
+  ]
+}

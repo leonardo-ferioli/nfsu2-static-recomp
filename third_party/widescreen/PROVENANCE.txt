@@ -1,0 +1,16 @@
+The widescreen fix of nfsu2_launcher.exe is a port of the NFSU2 Widescreen Fix (build 22042026) of the open-source
+WidescreenFixesPack by ThirteenAG and contributors, https://github.com/ThirteenAG/WidescreenFixesPack (MIT License,
+LICENSE-MIT.txt).
+
+What was taken from it:
+  - the byte patterns that find the places to change in SPEED2.EXE (tools/mods/widescreen.py);
+  - the formulas and options (mods_*.cpp): resolution list, HUD, field of view, rain droplets, video and front-end scaling, windowed
+    modes, frame-time constants, camera, gamepad texts, NOS trail, console gamma, registry/settings handling, language;
+  - the HUD placement table (NFSUnderground2.WidescreenFix.dat), which tools/mods/embed_hud_table.py turns into mods_hud_table.inc,
+    compiled into the program.
+
+What was NOT taken: the plug-in (.asi) itself. Nothing of the mod is loaded or read at run time, the game is never patched in
+memory, and no file of the mod is shipped with the program; this notice and the license are.
+
+The shader of the gamma pass is the mod's X360GammaApprox function, compiled at run time by the system's HLSL compiler.
+third_party/widescreen/NFSUnderground2.WidescreenFix.dat is kept only as the source of the embedded table.

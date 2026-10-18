@@ -1,0 +1,5 @@
+x86.sla derived from Ghidra's x86.sla
+source SHA-256:  796340fe37d328a182bab735daf023e3f81b8b6c50c3a2e93f810f068f11005d
+output SHA-256:  52bb7d8371a164f6726702cdd1b5bc46a6341912798d59e1a935f405c51d8b46
+format: 4-byte header 'sla' + version 4, payload inflated (zlib stream removed)
+license: Apache License 2.0 (Ghidra)
