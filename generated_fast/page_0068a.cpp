@@ -1,1127 +1,46 @@
-#include "fast.hpp"
+#include "fast_regs.hpp"
 namespace nfsu2raw {
 #define EXIT(T) do{nx=u32(T);goto XIT;}while(0)
-u32 body_68b(u8* __restrict R,Cpu& c);
-u32 body_dispatch(u8* __restrict R,Cpu& c);
-#define TAIL_STATIC(T,PG) do{if(__builtin_expect(++c.chain<2048,1)){c.pc=u32(T);NFSU2_TR_EXIT(0x68a,u32(T));[[clang::musttail]] return body_##PG(R,c);}c.chain=0;EXIT(T);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);if(__builtin_expect(u32((t__>>12)-0x401u)<=0x41bu && ++c.chain<2048,1)){c.pc=t__;NFSU2_TR_EXIT(0x68a,t__);[[clang::musttail]] return body_dispatch(R,c);}c.chain=0;EXIT(t__);}while(0)
+PN u32 ent_dispatch(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68a7be(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68a7c5(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68a800(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68a81f(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68a896(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68a9f6(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68aeb9(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68b000(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68b0c6(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68a002(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68a10f(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68a1d0(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68a26c(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68a320(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68a3a7(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68a44e(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68a503(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68a59f(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68a627(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68a683(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68a6cb(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68a71c(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68a7cc(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68a8a4(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68a990(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68aa88(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68ab60(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68a002(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
-#define SPILL() NFSU2_BARRIER(R)
-u32 body_68a(u8* __restrict R,Cpu& c);
-u32 page_68a(Cpu& c){return body_68a(c.regs.data(),c);}
-__attribute__((noinline)) u32 body_68a(u8* __restrict R,Cpu& c){
-u32 nx=0,fpc=0;const char* fm=nullptr;
-switch(c.pc){
-case 0x68a002:goto L68a002;
-case 0x68a007:c.instructions+=73;goto B68a007;
-case 0x68a00b:c.instructions+=72;goto B68a00b;
-case 0x68a00f:c.instructions+=71;goto B68a00f;
-case 0x68a013:c.instructions+=70;goto B68a013;
-case 0x68a017:c.instructions+=69;goto B68a017;
-case 0x68a01a:c.instructions+=68;goto B68a01a;
-case 0x68a01d:c.instructions+=67;goto B68a01d;
-case 0x68a020:c.instructions+=66;goto B68a020;
-case 0x68a023:c.instructions+=65;goto B68a023;
-case 0x68a026:c.instructions+=64;goto B68a026;
-case 0x68a029:c.instructions+=63;goto B68a029;
-case 0x68a02c:c.instructions+=62;goto B68a02c;
-case 0x68a031:c.instructions+=61;goto B68a031;
-case 0x68a036:c.instructions+=60;goto B68a036;
-case 0x68a03b:c.instructions+=59;goto B68a03b;
-case 0x68a03f:c.instructions+=58;goto B68a03f;
-case 0x68a043:c.instructions+=57;goto B68a043;
-case 0x68a047:c.instructions+=56;goto B68a047;
-case 0x68a04a:c.instructions+=55;goto B68a04a;
-case 0x68a04d:c.instructions+=54;goto B68a04d;
-case 0x68a050:c.instructions+=53;goto B68a050;
-case 0x68a053:c.instructions+=52;goto B68a053;
-case 0x68a056:c.instructions+=51;goto B68a056;
-case 0x68a05b:c.instructions+=50;goto B68a05b;
-case 0x68a05f:c.instructions+=49;goto B68a05f;
-case 0x68a062:c.instructions+=48;goto B68a062;
-case 0x68a065:c.instructions+=47;goto B68a065;
-case 0x68a06a:c.instructions+=46;goto B68a06a;
-case 0x68a06f:c.instructions+=45;goto B68a06f;
-case 0x68a073:c.instructions+=44;goto B68a073;
-case 0x68a077:c.instructions+=43;goto B68a077;
-case 0x68a07a:c.instructions+=42;goto B68a07a;
-case 0x68a07d:c.instructions+=41;goto B68a07d;
-case 0x68a080:c.instructions+=40;goto B68a080;
-case 0x68a085:c.instructions+=39;goto B68a085;
-case 0x68a089:c.instructions+=38;goto B68a089;
-case 0x68a08c:c.instructions+=37;goto B68a08c;
-case 0x68a08f:c.instructions+=36;goto B68a08f;
-case 0x68a094:c.instructions+=35;goto B68a094;
-case 0x68a098:c.instructions+=34;goto B68a098;
-case 0x68a09b:c.instructions+=33;goto B68a09b;
-case 0x68a09e:c.instructions+=32;goto B68a09e;
-case 0x68a0a3:c.instructions+=31;goto B68a0a3;
-case 0x68a0a7:c.instructions+=30;goto B68a0a7;
-case 0x68a0aa:c.instructions+=29;goto B68a0aa;
-case 0x68a0af:c.instructions+=28;goto B68a0af;
-case 0x68a0b3:c.instructions+=27;goto B68a0b3;
-case 0x68a0b6:c.instructions+=26;goto B68a0b6;
-case 0x68a0bb:c.instructions+=25;goto B68a0bb;
-case 0x68a0bf:c.instructions+=24;goto B68a0bf;
-case 0x68a0c2:c.instructions+=23;goto B68a0c2;
-case 0x68a0c7:c.instructions+=22;goto B68a0c7;
-case 0x68a0cb:c.instructions+=21;goto B68a0cb;
-case 0x68a0ce:c.instructions+=20;goto B68a0ce;
-case 0x68a0d1:c.instructions+=19;goto B68a0d1;
-case 0x68a0d4:c.instructions+=18;goto B68a0d4;
-case 0x68a0d7:c.instructions+=17;goto B68a0d7;
-case 0x68a0da:c.instructions+=16;goto B68a0da;
-case 0x68a0dd:c.instructions+=15;goto B68a0dd;
-case 0x68a0e0:c.instructions+=14;goto B68a0e0;
-case 0x68a0e3:c.instructions+=13;goto B68a0e3;
-case 0x68a0e6:c.instructions+=12;goto B68a0e6;
-case 0x68a0e9:c.instructions+=11;goto B68a0e9;
-case 0x68a0ec:c.instructions+=10;goto B68a0ec;
-case 0x68a0f0:c.instructions+=9;goto B68a0f0;
-case 0x68a0f4:c.instructions+=8;goto B68a0f4;
-case 0x68a0f8:c.instructions+=7;goto B68a0f8;
-case 0x68a0fc:c.instructions+=6;goto B68a0fc;
-case 0x68a100:c.instructions+=5;goto B68a100;
-case 0x68a104:c.instructions+=4;goto B68a104;
-case 0x68a108:c.instructions+=3;goto B68a108;
-case 0x68a10b:c.instructions+=2;goto B68a10b;
-case 0x68a10c:c.instructions+=1;goto B68a10c;
-case 0x68a10f:goto L68a10f;
-case 0x68a111:c.instructions+=61;goto B68a111;
-case 0x68a112:c.instructions+=60;goto B68a112;
-case 0x68a114:c.instructions+=59;goto B68a114;
-case 0x68a115:c.instructions+=58;goto B68a115;
-case 0x68a118:c.instructions+=57;goto B68a118;
-case 0x68a11b:c.instructions+=56;goto B68a11b;
-case 0x68a11c:c.instructions+=55;goto B68a11c;
-case 0x68a11e:c.instructions+=54;goto B68a11e;
-case 0x68a121:c.instructions+=53;goto B68a121;
-case 0x68a124:c.instructions+=52;goto B68a124;
-case 0x68a128:c.instructions+=51;goto B68a128;
-case 0x68a12b:c.instructions+=50;goto B68a12b;
-case 0x68a12f:c.instructions+=49;goto B68a12f;
-case 0x68a132:c.instructions+=48;goto B68a132;
-case 0x68a136:c.instructions+=47;goto B68a136;
-case 0x68a139:c.instructions+=46;goto B68a139;
-case 0x68a13d:c.instructions+=45;goto B68a13d;
-case 0x68a140:c.instructions+=44;goto B68a140;
-case 0x68a144:c.instructions+=43;goto B68a144;
-case 0x68a147:c.instructions+=42;goto B68a147;
-case 0x68a14b:c.instructions+=41;goto B68a14b;
-case 0x68a14e:c.instructions+=40;goto B68a14e;
-case 0x68a152:c.instructions+=39;goto B68a152;
-case 0x68a155:c.instructions+=38;goto B68a155;
-case 0x68a158:c.instructions+=37;goto B68a158;
-case 0x68a15b:c.instructions+=36;goto B68a15b;
-case 0x68a15f:c.instructions+=35;goto B68a15f;
-case 0x68a162:c.instructions+=34;goto B68a162;
-case 0x68a166:c.instructions+=33;goto B68a166;
-case 0x68a169:c.instructions+=32;goto B68a169;
-case 0x68a16c:c.instructions+=31;goto B68a16c;
-case 0x68a170:c.instructions+=30;goto B68a170;
-case 0x68a173:c.instructions+=29;goto B68a173;
-case 0x68a177:c.instructions+=28;goto B68a177;
-case 0x68a17b:c.instructions+=27;goto B68a17b;
-case 0x68a17e:c.instructions+=26;goto B68a17e;
-case 0x68a181:c.instructions+=25;goto B68a181;
-case 0x68a185:c.instructions+=24;goto B68a185;
-case 0x68a189:c.instructions+=23;goto B68a189;
-case 0x68a18c:c.instructions+=22;goto B68a18c;
-case 0x68a190:c.instructions+=21;goto B68a190;
-case 0x68a193:c.instructions+=20;goto B68a193;
-case 0x68a197:c.instructions+=19;goto B68a197;
-case 0x68a19e:c.instructions+=18;goto B68a19e;
-case 0x68a1a1:c.instructions+=17;goto B68a1a1;
-case 0x68a1a5:c.instructions+=16;goto B68a1a5;
-case 0x68a1a8:c.instructions+=15;goto B68a1a8;
-case 0x68a1ab:c.instructions+=14;goto B68a1ab;
-case 0x68a1af:c.instructions+=13;goto B68a1af;
-case 0x68a1b2:c.instructions+=12;goto B68a1b2;
-case 0x68a1b5:c.instructions+=11;goto B68a1b5;
-case 0x68a1b8:c.instructions+=10;goto B68a1b8;
-case 0x68a1bb:c.instructions+=9;goto B68a1bb;
-case 0x68a1be:c.instructions+=8;goto B68a1be;
-case 0x68a1c1:c.instructions+=7;goto B68a1c1;
-case 0x68a1c4:c.instructions+=6;goto B68a1c4;
-case 0x68a1c7:c.instructions+=5;goto B68a1c7;
-case 0x68a1c9:c.instructions+=4;goto B68a1c9;
-case 0x68a1ca:c.instructions+=3;goto B68a1ca;
-case 0x68a1cc:c.instructions+=2;goto B68a1cc;
-case 0x68a1cd:c.instructions+=1;goto B68a1cd;
-case 0x68a1d0:goto L68a1d0;
-case 0x68a1d2:c.instructions+=38;goto B68a1d2;
-case 0x68a1d3:c.instructions+=37;goto B68a1d3;
-case 0x68a1d5:c.instructions+=36;goto B68a1d5;
-case 0x68a1d8:c.instructions+=35;goto B68a1d8;
-case 0x68a1dc:c.instructions+=34;goto B68a1dc;
-case 0x68a1e1:c.instructions+=33;goto B68a1e1;
-case 0x68a1e6:c.instructions+=32;goto B68a1e6;
-case 0x68a1eb:c.instructions+=31;goto B68a1eb;
-case 0x68a1ef:c.instructions+=30;goto B68a1ef;
-case 0x68a1f3:c.instructions+=29;goto B68a1f3;
-case 0x68a1f7:c.instructions+=28;goto B68a1f7;
-case 0x68a1fb:c.instructions+=27;goto B68a1fb;
-case 0x68a1ff:c.instructions+=26;goto B68a1ff;
-case 0x68a203:c.instructions+=25;goto B68a203;
-case 0x68a207:c.instructions+=24;goto B68a207;
-case 0x68a20b:c.instructions+=23;goto B68a20b;
-case 0x68a20f:c.instructions+=22;goto B68a20f;
-case 0x68a213:c.instructions+=21;goto B68a213;
-case 0x68a217:c.instructions+=20;goto B68a217;
-case 0x68a21b:c.instructions+=19;goto B68a21b;
-case 0x68a21f:c.instructions+=18;goto B68a21f;
-case 0x68a223:c.instructions+=17;goto B68a223;
-case 0x68a227:c.instructions+=16;goto B68a227;
-case 0x68a22f:c.instructions+=15;goto B68a22f;
-case 0x68a233:c.instructions+=14;goto B68a233;
-case 0x68a23b:c.instructions+=13;goto B68a23b;
-case 0x68a23f:c.instructions+=12;goto B68a23f;
-case 0x68a242:c.instructions+=11;goto B68a242;
-case 0x68a246:c.instructions+=10;goto B68a246;
-case 0x68a24a:c.instructions+=9;goto B68a24a;
-case 0x68a24e:c.instructions+=8;goto B68a24e;
-case 0x68a252:c.instructions+=7;goto B68a252;
-case 0x68a257:c.instructions+=6;goto B68a257;
-case 0x68a25b:c.instructions+=5;goto B68a25b;
-case 0x68a260:c.instructions+=4;goto B68a260;
-case 0x68a265:c.instructions+=3;goto B68a265;
-case 0x68a268:c.instructions+=2;goto B68a268;
-case 0x68a269:c.instructions+=1;goto B68a269;
-case 0x68a26c:goto L68a26c;
-case 0x68a26e:c.instructions+=48;goto B68a26e;
-case 0x68a26f:c.instructions+=47;goto B68a26f;
-case 0x68a271:c.instructions+=46;goto B68a271;
-case 0x68a276:c.instructions+=45;goto B68a276;
-case 0x68a27a:c.instructions+=44;goto B68a27a;
-case 0x68a27e:c.instructions+=43;goto B68a27e;
-case 0x68a282:c.instructions+=42;goto B68a282;
-case 0x68a286:c.instructions+=41;goto B68a286;
-case 0x68a28a:c.instructions+=40;goto B68a28a;
-case 0x68a28e:c.instructions+=39;goto B68a28e;
-case 0x68a295:c.instructions+=38;goto B68a295;
-case 0x68a299:c.instructions+=37;goto B68a299;
-case 0x68a2a0:c.instructions+=36;goto B68a2a0;
-case 0x68a2a7:c.instructions+=35;goto B68a2a7;
-case 0x68a2ae:c.instructions+=34;goto B68a2ae;
-case 0x68a2b1:c.instructions+=33;goto B68a2b1;
-case 0x68a2b4:c.instructions+=32;goto B68a2b4;
-case 0x68a2b7:c.instructions+=31;goto B68a2b7;
-case 0x68a2ba:c.instructions+=30;goto B68a2ba;
-case 0x68a2bd:c.instructions+=29;goto B68a2bd;
-case 0x68a2c0:c.instructions+=28;goto B68a2c0;
-case 0x68a2c4:c.instructions+=27;goto B68a2c4;
-case 0x68a2c7:c.instructions+=26;goto B68a2c7;
-case 0x68a2cb:c.instructions+=25;goto B68a2cb;
-case 0x68a2ce:c.instructions+=24;goto B68a2ce;
-case 0x68a2d2:c.instructions+=23;goto B68a2d2;
-case 0x68a2d6:c.instructions+=22;goto B68a2d6;
-case 0x68a2db:c.instructions+=21;goto B68a2db;
-case 0x68a2de:c.instructions+=20;goto B68a2de;
-case 0x68a2e1:c.instructions+=19;goto B68a2e1;
-case 0x68a2e4:c.instructions+=18;goto B68a2e4;
-case 0x68a2e9:c.instructions+=17;goto B68a2e9;
-case 0x68a2ec:c.instructions+=16;goto B68a2ec;
-case 0x68a2ef:c.instructions+=15;goto B68a2ef;
-case 0x68a2f4:c.instructions+=14;goto B68a2f4;
-case 0x68a2f7:c.instructions+=13;goto B68a2f7;
-case 0x68a2fa:c.instructions+=12;goto B68a2fa;
-case 0x68a2fd:c.instructions+=11;goto B68a2fd;
-case 0x68a300:c.instructions+=10;goto B68a300;
-case 0x68a305:c.instructions+=9;goto B68a305;
-case 0x68a308:c.instructions+=8;goto B68a308;
-case 0x68a30b:c.instructions+=7;goto B68a30b;
-case 0x68a30e:c.instructions+=6;goto B68a30e;
-case 0x68a311:c.instructions+=5;goto B68a311;
-case 0x68a314:c.instructions+=4;goto B68a314;
-case 0x68a319:c.instructions+=3;goto B68a319;
-case 0x68a31c:c.instructions+=2;goto B68a31c;
-case 0x68a31d:c.instructions+=1;goto B68a31d;
-case 0x68a320:goto L68a320;
-case 0x68a322:c.instructions+=37;goto B68a322;
-case 0x68a323:c.instructions+=36;goto B68a323;
-case 0x68a325:c.instructions+=35;goto B68a325;
-case 0x68a32a:c.instructions+=34;goto B68a32a;
-case 0x68a32e:c.instructions+=33;goto B68a32e;
-case 0x68a332:c.instructions+=32;goto B68a332;
-case 0x68a336:c.instructions+=31;goto B68a336;
-case 0x68a33a:c.instructions+=30;goto B68a33a;
-case 0x68a33e:c.instructions+=29;goto B68a33e;
-case 0x68a342:c.instructions+=28;goto B68a342;
-case 0x68a349:c.instructions+=27;goto B68a349;
-case 0x68a34d:c.instructions+=26;goto B68a34d;
-case 0x68a354:c.instructions+=25;goto B68a354;
-case 0x68a35b:c.instructions+=24;goto B68a35b;
-case 0x68a362:c.instructions+=23;goto B68a362;
-case 0x68a365:c.instructions+=22;goto B68a365;
-case 0x68a368:c.instructions+=21;goto B68a368;
-case 0x68a36b:c.instructions+=20;goto B68a36b;
-case 0x68a36e:c.instructions+=19;goto B68a36e;
-case 0x68a371:c.instructions+=18;goto B68a371;
-case 0x68a374:c.instructions+=17;goto B68a374;
-case 0x68a378:c.instructions+=16;goto B68a378;
-case 0x68a37c:c.instructions+=15;goto B68a37c;
-case 0x68a37f:c.instructions+=14;goto B68a37f;
-case 0x68a382:c.instructions+=13;goto B68a382;
-case 0x68a385:c.instructions+=12;goto B68a385;
-case 0x68a388:c.instructions+=11;goto B68a388;
-case 0x68a38b:c.instructions+=10;goto B68a38b;
-case 0x68a38e:c.instructions+=9;goto B68a38e;
-case 0x68a391:c.instructions+=8;goto B68a391;
-case 0x68a394:c.instructions+=7;goto B68a394;
-case 0x68a397:c.instructions+=6;goto B68a397;
-case 0x68a39a:c.instructions+=5;goto B68a39a;
-case 0x68a39d:c.instructions+=4;goto B68a39d;
-case 0x68a3a0:c.instructions+=3;goto B68a3a0;
-case 0x68a3a3:c.instructions+=2;goto B68a3a3;
-case 0x68a3a4:c.instructions+=1;goto B68a3a4;
-case 0x68a3a7:goto L68a3a7;
-case 0x68a3a9:c.instructions+=47;goto B68a3a9;
-case 0x68a3aa:c.instructions+=46;goto B68a3aa;
-case 0x68a3ac:c.instructions+=45;goto B68a3ac;
-case 0x68a3b1:c.instructions+=44;goto B68a3b1;
-case 0x68a3b5:c.instructions+=43;goto B68a3b5;
-case 0x68a3b9:c.instructions+=42;goto B68a3b9;
-case 0x68a3bd:c.instructions+=41;goto B68a3bd;
-case 0x68a3c1:c.instructions+=40;goto B68a3c1;
-case 0x68a3c5:c.instructions+=39;goto B68a3c5;
-case 0x68a3c9:c.instructions+=38;goto B68a3c9;
-case 0x68a3d0:c.instructions+=37;goto B68a3d0;
-case 0x68a3d4:c.instructions+=36;goto B68a3d4;
-case 0x68a3db:c.instructions+=35;goto B68a3db;
-case 0x68a3e2:c.instructions+=34;goto B68a3e2;
-case 0x68a3e9:c.instructions+=33;goto B68a3e9;
-case 0x68a3ec:c.instructions+=32;goto B68a3ec;
-case 0x68a3ef:c.instructions+=31;goto B68a3ef;
-case 0x68a3f2:c.instructions+=30;goto B68a3f2;
-case 0x68a3f5:c.instructions+=29;goto B68a3f5;
-case 0x68a3f8:c.instructions+=28;goto B68a3f8;
-case 0x68a3fb:c.instructions+=27;goto B68a3fb;
-case 0x68a3fe:c.instructions+=26;goto B68a3fe;
-case 0x68a402:c.instructions+=25;goto B68a402;
-case 0x68a405:c.instructions+=24;goto B68a405;
-case 0x68a409:c.instructions+=23;goto B68a409;
-case 0x68a40c:c.instructions+=22;goto B68a40c;
-case 0x68a410:c.instructions+=21;goto B68a410;
-case 0x68a413:c.instructions+=20;goto B68a413;
-case 0x68a417:c.instructions+=19;goto B68a417;
-case 0x68a41a:c.instructions+=18;goto B68a41a;
-case 0x68a41d:c.instructions+=17;goto B68a41d;
-case 0x68a420:c.instructions+=16;goto B68a420;
-case 0x68a423:c.instructions+=15;goto B68a423;
-case 0x68a426:c.instructions+=14;goto B68a426;
-case 0x68a429:c.instructions+=13;goto B68a429;
-case 0x68a42c:c.instructions+=12;goto B68a42c;
-case 0x68a42f:c.instructions+=11;goto B68a42f;
-case 0x68a432:c.instructions+=10;goto B68a432;
-case 0x68a435:c.instructions+=9;goto B68a435;
-case 0x68a438:c.instructions+=8;goto B68a438;
-case 0x68a43b:c.instructions+=7;goto B68a43b;
-case 0x68a43e:c.instructions+=6;goto B68a43e;
-case 0x68a441:c.instructions+=5;goto B68a441;
-case 0x68a444:c.instructions+=4;goto B68a444;
-case 0x68a447:c.instructions+=3;goto B68a447;
-case 0x68a44a:c.instructions+=2;goto B68a44a;
-case 0x68a44b:c.instructions+=1;goto B68a44b;
-case 0x68a44e:goto L68a44e;
-case 0x68a450:c.instructions+=48;goto B68a450;
-case 0x68a451:c.instructions+=47;goto B68a451;
-case 0x68a453:c.instructions+=46;goto B68a453;
-case 0x68a458:c.instructions+=45;goto B68a458;
-case 0x68a45c:c.instructions+=44;goto B68a45c;
-case 0x68a460:c.instructions+=43;goto B68a460;
-case 0x68a464:c.instructions+=42;goto B68a464;
-case 0x68a468:c.instructions+=41;goto B68a468;
-case 0x68a46c:c.instructions+=40;goto B68a46c;
-case 0x68a470:c.instructions+=39;goto B68a470;
-case 0x68a477:c.instructions+=38;goto B68a477;
-case 0x68a47b:c.instructions+=37;goto B68a47b;
-case 0x68a482:c.instructions+=36;goto B68a482;
-case 0x68a48a:c.instructions+=35;goto B68a48a;
-case 0x68a491:c.instructions+=34;goto B68a491;
-case 0x68a494:c.instructions+=33;goto B68a494;
-case 0x68a497:c.instructions+=32;goto B68a497;
-case 0x68a49a:c.instructions+=31;goto B68a49a;
-case 0x68a49d:c.instructions+=30;goto B68a49d;
-case 0x68a4a0:c.instructions+=29;goto B68a4a0;
-case 0x68a4a3:c.instructions+=28;goto B68a4a3;
-case 0x68a4a7:c.instructions+=27;goto B68a4a7;
-case 0x68a4aa:c.instructions+=26;goto B68a4aa;
-case 0x68a4ae:c.instructions+=25;goto B68a4ae;
-case 0x68a4b1:c.instructions+=24;goto B68a4b1;
-case 0x68a4b5:c.instructions+=23;goto B68a4b5;
-case 0x68a4b9:c.instructions+=22;goto B68a4b9;
-case 0x68a4be:c.instructions+=21;goto B68a4be;
-case 0x68a4c1:c.instructions+=20;goto B68a4c1;
-case 0x68a4c4:c.instructions+=19;goto B68a4c4;
-case 0x68a4c7:c.instructions+=18;goto B68a4c7;
-case 0x68a4cc:c.instructions+=17;goto B68a4cc;
-case 0x68a4cf:c.instructions+=16;goto B68a4cf;
-case 0x68a4d2:c.instructions+=15;goto B68a4d2;
-case 0x68a4d7:c.instructions+=14;goto B68a4d7;
-case 0x68a4da:c.instructions+=13;goto B68a4da;
-case 0x68a4dd:c.instructions+=12;goto B68a4dd;
-case 0x68a4e0:c.instructions+=11;goto B68a4e0;
-case 0x68a4e3:c.instructions+=10;goto B68a4e3;
-case 0x68a4e8:c.instructions+=9;goto B68a4e8;
-case 0x68a4eb:c.instructions+=8;goto B68a4eb;
-case 0x68a4ee:c.instructions+=7;goto B68a4ee;
-case 0x68a4f1:c.instructions+=6;goto B68a4f1;
-case 0x68a4f4:c.instructions+=5;goto B68a4f4;
-case 0x68a4f7:c.instructions+=4;goto B68a4f7;
-case 0x68a4fc:c.instructions+=3;goto B68a4fc;
-case 0x68a4ff:c.instructions+=2;goto B68a4ff;
-case 0x68a500:c.instructions+=1;goto B68a500;
-case 0x68a503:goto L68a503;
-case 0x68a505:c.instructions+=43;goto B68a505;
-case 0x68a506:c.instructions+=42;goto B68a506;
-case 0x68a508:c.instructions+=41;goto B68a508;
-case 0x68a50d:c.instructions+=40;goto B68a50d;
-case 0x68a511:c.instructions+=39;goto B68a511;
-case 0x68a515:c.instructions+=38;goto B68a515;
-case 0x68a519:c.instructions+=37;goto B68a519;
-case 0x68a51d:c.instructions+=36;goto B68a51d;
-case 0x68a521:c.instructions+=35;goto B68a521;
-case 0x68a525:c.instructions+=34;goto B68a525;
-case 0x68a52c:c.instructions+=33;goto B68a52c;
-case 0x68a530:c.instructions+=32;goto B68a530;
-case 0x68a537:c.instructions+=31;goto B68a537;
-case 0x68a53f:c.instructions+=30;goto B68a53f;
-case 0x68a546:c.instructions+=29;goto B68a546;
-case 0x68a549:c.instructions+=28;goto B68a549;
-case 0x68a54c:c.instructions+=27;goto B68a54c;
-case 0x68a54f:c.instructions+=26;goto B68a54f;
-case 0x68a552:c.instructions+=25;goto B68a552;
-case 0x68a556:c.instructions+=24;goto B68a556;
-case 0x68a559:c.instructions+=23;goto B68a559;
-case 0x68a55c:c.instructions+=22;goto B68a55c;
-case 0x68a560:c.instructions+=21;goto B68a560;
-case 0x68a563:c.instructions+=20;goto B68a563;
-case 0x68a567:c.instructions+=19;goto B68a567;
-case 0x68a56a:c.instructions+=18;goto B68a56a;
-case 0x68a56e:c.instructions+=17;goto B68a56e;
-case 0x68a571:c.instructions+=16;goto B68a571;
-case 0x68a574:c.instructions+=15;goto B68a574;
-case 0x68a577:c.instructions+=14;goto B68a577;
-case 0x68a57a:c.instructions+=13;goto B68a57a;
-case 0x68a57d:c.instructions+=12;goto B68a57d;
-case 0x68a580:c.instructions+=11;goto B68a580;
-case 0x68a583:c.instructions+=10;goto B68a583;
-case 0x68a586:c.instructions+=9;goto B68a586;
-case 0x68a589:c.instructions+=8;goto B68a589;
-case 0x68a58c:c.instructions+=7;goto B68a58c;
-case 0x68a58f:c.instructions+=6;goto B68a58f;
-case 0x68a592:c.instructions+=5;goto B68a592;
-case 0x68a595:c.instructions+=4;goto B68a595;
-case 0x68a598:c.instructions+=3;goto B68a598;
-case 0x68a59b:c.instructions+=2;goto B68a59b;
-case 0x68a59c:c.instructions+=1;goto B68a59c;
-case 0x68a59f:goto L68a59f;
-case 0x68a5a1:c.instructions+=37;goto B68a5a1;
-case 0x68a5a2:c.instructions+=36;goto B68a5a2;
-case 0x68a5a4:c.instructions+=35;goto B68a5a4;
-case 0x68a5a9:c.instructions+=34;goto B68a5a9;
-case 0x68a5ad:c.instructions+=33;goto B68a5ad;
-case 0x68a5b1:c.instructions+=32;goto B68a5b1;
-case 0x68a5b5:c.instructions+=31;goto B68a5b5;
-case 0x68a5b9:c.instructions+=30;goto B68a5b9;
-case 0x68a5bd:c.instructions+=29;goto B68a5bd;
-case 0x68a5c1:c.instructions+=28;goto B68a5c1;
-case 0x68a5c8:c.instructions+=27;goto B68a5c8;
-case 0x68a5cc:c.instructions+=26;goto B68a5cc;
-case 0x68a5d3:c.instructions+=25;goto B68a5d3;
-case 0x68a5db:c.instructions+=24;goto B68a5db;
-case 0x68a5e2:c.instructions+=23;goto B68a5e2;
-case 0x68a5e5:c.instructions+=22;goto B68a5e5;
-case 0x68a5e8:c.instructions+=21;goto B68a5e8;
-case 0x68a5eb:c.instructions+=20;goto B68a5eb;
-case 0x68a5ee:c.instructions+=19;goto B68a5ee;
-case 0x68a5f2:c.instructions+=18;goto B68a5f2;
-case 0x68a5f6:c.instructions+=17;goto B68a5f6;
-case 0x68a5f9:c.instructions+=16;goto B68a5f9;
-case 0x68a5fc:c.instructions+=15;goto B68a5fc;
-case 0x68a5ff:c.instructions+=14;goto B68a5ff;
-case 0x68a602:c.instructions+=13;goto B68a602;
-case 0x68a605:c.instructions+=12;goto B68a605;
-case 0x68a608:c.instructions+=11;goto B68a608;
-case 0x68a60b:c.instructions+=10;goto B68a60b;
-case 0x68a60e:c.instructions+=9;goto B68a60e;
-case 0x68a611:c.instructions+=8;goto B68a611;
-case 0x68a614:c.instructions+=7;goto B68a614;
-case 0x68a617:c.instructions+=6;goto B68a617;
-case 0x68a61a:c.instructions+=5;goto B68a61a;
-case 0x68a61d:c.instructions+=4;goto B68a61d;
-case 0x68a620:c.instructions+=3;goto B68a620;
-case 0x68a623:c.instructions+=2;goto B68a623;
-case 0x68a624:c.instructions+=1;goto B68a624;
-case 0x68a627:goto L68a627;
-case 0x68a629:c.instructions+=27;goto B68a629;
-case 0x68a62a:c.instructions+=26;goto B68a62a;
-case 0x68a62c:c.instructions+=25;goto B68a62c;
-case 0x68a631:c.instructions+=24;goto B68a631;
-case 0x68a634:c.instructions+=23;goto B68a634;
-case 0x68a638:c.instructions+=22;goto B68a638;
-case 0x68a63d:c.instructions+=21;goto B68a63d;
-case 0x68a640:c.instructions+=20;goto B68a640;
-case 0x68a643:c.instructions+=19;goto B68a643;
-case 0x68a648:c.instructions+=18;goto B68a648;
-case 0x68a64d:c.instructions+=17;goto B68a64d;
-case 0x68a650:c.instructions+=16;goto B68a650;
-case 0x68a654:c.instructions+=15;goto B68a654;
-case 0x68a657:c.instructions+=14;goto B68a657;
-case 0x68a65a:c.instructions+=13;goto B68a65a;
-case 0x68a65f:c.instructions+=12;goto B68a65f;
-case 0x68a662:c.instructions+=11;goto B68a662;
-case 0x68a665:c.instructions+=10;goto B68a665;
-case 0x68a668:c.instructions+=9;goto B68a668;
-case 0x68a66b:c.instructions+=8;goto B68a66b;
-case 0x68a66e:c.instructions+=7;goto B68a66e;
-case 0x68a671:c.instructions+=6;goto B68a671;
-case 0x68a674:c.instructions+=5;goto B68a674;
-case 0x68a679:c.instructions+=4;goto B68a679;
-case 0x68a67c:c.instructions+=3;goto B68a67c;
-case 0x68a67f:c.instructions+=2;goto B68a67f;
-case 0x68a680:c.instructions+=1;goto B68a680;
-case 0x68a683:goto L68a683;
-case 0x68a685:c.instructions+=23;goto B68a685;
-case 0x68a686:c.instructions+=22;goto B68a686;
-case 0x68a688:c.instructions+=21;goto B68a688;
-case 0x68a68d:c.instructions+=20;goto B68a68d;
-case 0x68a690:c.instructions+=19;goto B68a690;
-case 0x68a694:c.instructions+=18;goto B68a694;
-case 0x68a697:c.instructions+=17;goto B68a697;
-case 0x68a69a:c.instructions+=16;goto B68a69a;
-case 0x68a69f:c.instructions+=15;goto B68a69f;
-case 0x68a6a2:c.instructions+=14;goto B68a6a2;
-case 0x68a6a6:c.instructions+=13;goto B68a6a6;
-case 0x68a6a9:c.instructions+=12;goto B68a6a9;
-case 0x68a6ac:c.instructions+=11;goto B68a6ac;
-case 0x68a6af:c.instructions+=10;goto B68a6af;
-case 0x68a6b2:c.instructions+=9;goto B68a6b2;
-case 0x68a6b5:c.instructions+=8;goto B68a6b5;
-case 0x68a6b8:c.instructions+=7;goto B68a6b8;
-case 0x68a6bb:c.instructions+=6;goto B68a6bb;
-case 0x68a6be:c.instructions+=5;goto B68a6be;
-case 0x68a6c1:c.instructions+=4;goto B68a6c1;
-case 0x68a6c4:c.instructions+=3;goto B68a6c4;
-case 0x68a6c7:c.instructions+=2;goto B68a6c7;
-case 0x68a6c8:c.instructions+=1;goto B68a6c8;
-case 0x68a6cb:goto L68a6cb;
-case 0x68a6cd:c.instructions+=26;goto B68a6cd;
-case 0x68a6ce:c.instructions+=25;goto B68a6ce;
-case 0x68a6d0:c.instructions+=24;goto B68a6d0;
-case 0x68a6d3:c.instructions+=23;goto B68a6d3;
-case 0x68a6d8:c.instructions+=22;goto B68a6d8;
-case 0x68a6db:c.instructions+=21;goto B68a6db;
-case 0x68a6df:c.instructions+=20;goto B68a6df;
-case 0x68a6e2:c.instructions+=19;goto B68a6e2;
-case 0x68a6e5:c.instructions+=18;goto B68a6e5;
-case 0x68a6e8:c.instructions+=17;goto B68a6e8;
-case 0x68a6ed:c.instructions+=16;goto B68a6ed;
-case 0x68a6f0:c.instructions+=15;goto B68a6f0;
-case 0x68a6f3:c.instructions+=14;goto B68a6f3;
-case 0x68a6f7:c.instructions+=13;goto B68a6f7;
-case 0x68a6fa:c.instructions+=12;goto B68a6fa;
-case 0x68a6fd:c.instructions+=11;goto B68a6fd;
-case 0x68a700:c.instructions+=10;goto B68a700;
-case 0x68a703:c.instructions+=9;goto B68a703;
-case 0x68a706:c.instructions+=8;goto B68a706;
-case 0x68a709:c.instructions+=7;goto B68a709;
-case 0x68a70c:c.instructions+=6;goto B68a70c;
-case 0x68a70f:c.instructions+=5;goto B68a70f;
-case 0x68a712:c.instructions+=4;goto B68a712;
-case 0x68a715:c.instructions+=3;goto B68a715;
-case 0x68a718:c.instructions+=2;goto B68a718;
-case 0x68a719:c.instructions+=1;goto B68a719;
-case 0x68a71c:goto L68a71c;
-case 0x68a71e:c.instructions+=31;goto B68a71e;
-case 0x68a71f:c.instructions+=30;goto B68a71f;
-case 0x68a721:c.instructions+=29;goto B68a721;
-case 0x68a724:c.instructions+=28;goto B68a724;
-case 0x68a727:c.instructions+=27;goto B68a727;
-case 0x68a72a:c.instructions+=26;goto B68a72a;
-case 0x68a72d:c.instructions+=25;goto B68a72d;
-case 0x68a730:c.instructions+=24;goto B68a730;
-case 0x68a735:c.instructions+=23;goto B68a735;
-case 0x68a738:c.instructions+=22;goto B68a738;
-case 0x68a73b:c.instructions+=21;goto B68a73b;
-case 0x68a740:c.instructions+=20;goto B68a740;
-case 0x68a743:c.instructions+=19;goto B68a743;
-case 0x68a747:c.instructions+=18;goto B68a747;
-case 0x68a74a:c.instructions+=17;goto B68a74a;
-case 0x68a74e:c.instructions+=16;goto B68a74e;
-case 0x68a751:c.instructions+=15;goto B68a751;
-case 0x68a754:c.instructions+=14;goto B68a754;
-case 0x68a757:c.instructions+=13;goto B68a757;
-case 0x68a75a:c.instructions+=12;goto B68a75a;
-case 0x68a75d:c.instructions+=11;goto B68a75d;
-case 0x68a760:c.instructions+=10;goto B68a760;
-case 0x68a763:c.instructions+=9;goto B68a763;
-case 0x68a767:c.instructions+=8;goto B68a767;
-case 0x68a76b:c.instructions+=7;goto B68a76b;
-case 0x68a76f:c.instructions+=6;goto B68a76f;
-case 0x68a773:c.instructions+=5;goto B68a773;
-case 0x68a777:c.instructions+=4;goto B68a777;
-case 0x68a77b:c.instructions+=3;goto B68a77b;
-case 0x68a77f:c.instructions+=2;goto B68a77f;
-case 0x68a786:c.instructions+=1;goto B68a786;
-case 0x68a788:goto L68a788;
-case 0x68a78c:c.instructions+=14;goto B68a78c;
-case 0x68a790:c.instructions+=13;goto B68a790;
-case 0x68a794:c.instructions+=12;goto B68a794;
-case 0x68a798:c.instructions+=11;goto B68a798;
-case 0x68a79c:c.instructions+=10;goto B68a79c;
-case 0x68a7a0:c.instructions+=9;goto B68a7a0;
-case 0x68a7a4:c.instructions+=8;goto B68a7a4;
-case 0x68a7a8:c.instructions+=7;goto B68a7a8;
-case 0x68a7ab:c.instructions+=6;goto B68a7ab;
-case 0x68a7ae:c.instructions+=5;goto B68a7ae;
-case 0x68a7b1:c.instructions+=4;goto B68a7b1;
-case 0x68a7b4:c.instructions+=3;goto B68a7b4;
-case 0x68a7b7:c.instructions+=2;goto B68a7b7;
-case 0x68a7bc:c.instructions+=1;goto B68a7bc;
-case 0x68a7be:goto L68a7be;
-case 0x68a7c5:goto L68a7c5;
-case 0x68a7c8:c.instructions+=2;goto B68a7c8;
-case 0x68a7c9:c.instructions+=1;goto B68a7c9;
-case 0x68a7cc:goto L68a7cc;
-case 0x68a7ce:c.instructions+=14;goto B68a7ce;
-case 0x68a7cf:c.instructions+=13;goto B68a7cf;
-case 0x68a7d1:c.instructions+=12;goto B68a7d1;
-case 0x68a7d4:c.instructions+=11;goto B68a7d4;
-case 0x68a7d7:c.instructions+=10;goto B68a7d7;
-case 0x68a7da:c.instructions+=9;goto B68a7da;
-case 0x68a7db:c.instructions+=8;goto B68a7db;
-case 0x68a7dc:c.instructions+=7;goto B68a7dc;
-case 0x68a7df:c.instructions+=6;goto B68a7df;
-case 0x68a7e3:c.instructions+=5;goto B68a7e3;
-case 0x68a7e5:c.instructions+=4;goto B68a7e5;
-case 0x68a7e8:c.instructions+=3;goto B68a7e8;
-case 0x68a7eb:c.instructions+=2;goto B68a7eb;
-case 0x68a7ed:c.instructions+=1;goto B68a7ed;
-case 0x68a7ef:goto L68a7ef;
-case 0x68a7f2:c.instructions+=4;goto B68a7f2;
-case 0x68a7f6:c.instructions+=3;goto B68a7f6;
-case 0x68a7fa:c.instructions+=2;goto B68a7fa;
-case 0x68a7fe:c.instructions+=1;goto B68a7fe;
-case 0x68a800:goto L68a800;
-case 0x68a804:c.instructions+=7;goto B68a804;
-case 0x68a807:c.instructions+=6;goto B68a807;
-case 0x68a80b:c.instructions+=5;goto B68a80b;
-case 0x68a80f:c.instructions+=4;goto B68a80f;
-case 0x68a813:c.instructions+=3;goto B68a813;
-case 0x68a817:c.instructions+=2;goto B68a817;
-case 0x68a81b:c.instructions+=1;goto B68a81b;
-case 0x68a81f:goto L68a81f;
-case 0x68a823:c.instructions+=40;goto B68a823;
-case 0x68a827:c.instructions+=39;goto B68a827;
-case 0x68a82a:c.instructions+=38;goto B68a82a;
-case 0x68a82e:c.instructions+=37;goto B68a82e;
-case 0x68a831:c.instructions+=36;goto B68a831;
-case 0x68a834:c.instructions+=35;goto B68a834;
-case 0x68a838:c.instructions+=34;goto B68a838;
-case 0x68a83b:c.instructions+=33;goto B68a83b;
-case 0x68a83e:c.instructions+=32;goto B68a83e;
-case 0x68a841:c.instructions+=31;goto B68a841;
-case 0x68a845:c.instructions+=30;goto B68a845;
-case 0x68a848:c.instructions+=29;goto B68a848;
-case 0x68a84b:c.instructions+=28;goto B68a84b;
-case 0x68a84f:c.instructions+=27;goto B68a84f;
-case 0x68a852:c.instructions+=26;goto B68a852;
-case 0x68a856:c.instructions+=25;goto B68a856;
-case 0x68a859:c.instructions+=24;goto B68a859;
-case 0x68a85d:c.instructions+=23;goto B68a85d;
-case 0x68a860:c.instructions+=22;goto B68a860;
-case 0x68a864:c.instructions+=21;goto B68a864;
-case 0x68a868:c.instructions+=20;goto B68a868;
-case 0x68a86b:c.instructions+=19;goto B68a86b;
-case 0x68a86e:c.instructions+=18;goto B68a86e;
-case 0x68a871:c.instructions+=17;goto B68a871;
-case 0x68a874:c.instructions+=16;goto B68a874;
-case 0x68a877:c.instructions+=15;goto B68a877;
-case 0x68a87a:c.instructions+=14;goto B68a87a;
-case 0x68a87d:c.instructions+=13;goto B68a87d;
-case 0x68a880:c.instructions+=12;goto B68a880;
-case 0x68a883:c.instructions+=11;goto B68a883;
-case 0x68a886:c.instructions+=10;goto B68a886;
-case 0x68a889:c.instructions+=9;goto B68a889;
-case 0x68a88d:c.instructions+=8;goto B68a88d;
-case 0x68a891:c.instructions+=7;goto B68a891;
-case 0x68a896:c.instructions+=6;goto B68a896;
-case 0x68a899:c.instructions+=5;goto B68a899;
-case 0x68a89b:c.instructions+=4;goto B68a89b;
-case 0x68a89c:c.instructions+=3;goto B68a89c;
-case 0x68a89e:c.instructions+=2;goto B68a89e;
-case 0x68a89f:c.instructions+=1;goto B68a89f;
-case 0x68a8a4:goto L68a8a4;
-case 0x68a8a6:c.instructions+=69;goto B68a8a6;
-case 0x68a8a7:c.instructions+=68;goto B68a8a7;
-case 0x68a8a9:c.instructions+=67;goto B68a8a9;
-case 0x68a8ac:c.instructions+=66;goto B68a8ac;
-case 0x68a8af:c.instructions+=65;goto B68a8af;
-case 0x68a8b2:c.instructions+=64;goto B68a8b2;
-case 0x68a8b3:c.instructions+=63;goto B68a8b3;
-case 0x68a8b4:c.instructions+=62;goto B68a8b4;
-case 0x68a8b7:c.instructions+=61;goto B68a8b7;
-case 0x68a8bb:c.instructions+=60;goto B68a8bb;
-case 0x68a8bd:c.instructions+=59;goto B68a8bd;
-case 0x68a8c0:c.instructions+=58;goto B68a8c0;
-case 0x68a8c3:c.instructions+=57;goto B68a8c3;
-case 0x68a8c6:c.instructions+=56;goto B68a8c6;
-case 0x68a8cb:c.instructions+=55;goto B68a8cb;
-case 0x68a8d0:c.instructions+=54;goto B68a8d0;
-case 0x68a8d3:c.instructions+=53;goto B68a8d3;
-case 0x68a8d6:c.instructions+=52;goto B68a8d6;
-case 0x68a8d9:c.instructions+=51;goto B68a8d9;
-case 0x68a8dc:c.instructions+=50;goto B68a8dc;
-case 0x68a8e1:c.instructions+=49;goto B68a8e1;
-case 0x68a8e4:c.instructions+=48;goto B68a8e4;
-case 0x68a8e7:c.instructions+=47;goto B68a8e7;
-case 0x68a8ea:c.instructions+=46;goto B68a8ea;
-case 0x68a8ed:c.instructions+=45;goto B68a8ed;
-case 0x68a8f1:c.instructions+=44;goto B68a8f1;
-case 0x68a8f5:c.instructions+=43;goto B68a8f5;
-case 0x68a8f8:c.instructions+=42;goto B68a8f8;
-case 0x68a8fb:c.instructions+=41;goto B68a8fb;
-case 0x68a902:c.instructions+=40;goto B68a902;
-case 0x68a905:c.instructions+=39;goto B68a905;
-case 0x68a909:c.instructions+=38;goto B68a909;
-case 0x68a90d:c.instructions+=37;goto B68a90d;
-case 0x68a910:c.instructions+=36;goto B68a910;
-case 0x68a913:c.instructions+=35;goto B68a913;
-case 0x68a91a:c.instructions+=34;goto B68a91a;
-case 0x68a91d:c.instructions+=33;goto B68a91d;
-case 0x68a921:c.instructions+=32;goto B68a921;
-case 0x68a924:c.instructions+=31;goto B68a924;
-case 0x68a927:c.instructions+=30;goto B68a927;
-case 0x68a92a:c.instructions+=29;goto B68a92a;
-case 0x68a92d:c.instructions+=28;goto B68a92d;
-case 0x68a930:c.instructions+=27;goto B68a930;
-case 0x68a933:c.instructions+=26;goto B68a933;
-case 0x68a937:c.instructions+=25;goto B68a937;
-case 0x68a93b:c.instructions+=24;goto B68a93b;
-case 0x68a93e:c.instructions+=23;goto B68a93e;
-case 0x68a942:c.instructions+=22;goto B68a942;
-case 0x68a946:c.instructions+=21;goto B68a946;
-case 0x68a949:c.instructions+=20;goto B68a949;
-case 0x68a94d:c.instructions+=19;goto B68a94d;
-case 0x68a951:c.instructions+=18;goto B68a951;
-case 0x68a955:c.instructions+=17;goto B68a955;
-case 0x68a959:c.instructions+=16;goto B68a959;
-case 0x68a95d:c.instructions+=15;goto B68a95d;
-case 0x68a960:c.instructions+=14;goto B68a960;
-case 0x68a963:c.instructions+=13;goto B68a963;
-case 0x68a966:c.instructions+=12;goto B68a966;
-case 0x68a969:c.instructions+=11;goto B68a969;
-case 0x68a96c:c.instructions+=10;goto B68a96c;
-case 0x68a970:c.instructions+=9;goto B68a970;
-case 0x68a974:c.instructions+=8;goto B68a974;
-case 0x68a978:c.instructions+=7;goto B68a978;
-case 0x68a97f:c.instructions+=6;goto B68a97f;
-case 0x68a984:c.instructions+=5;goto B68a984;
-case 0x68a986:c.instructions+=4;goto B68a986;
-case 0x68a987:c.instructions+=3;goto B68a987;
-case 0x68a989:c.instructions+=2;goto B68a989;
-case 0x68a98a:c.instructions+=1;goto B68a98a;
-case 0x68a990:goto L68a990;
-case 0x68a992:c.instructions+=17;goto B68a992;
-case 0x68a993:c.instructions+=16;goto B68a993;
-case 0x68a995:c.instructions+=15;goto B68a995;
-case 0x68a996:c.instructions+=14;goto B68a996;
-case 0x68a999:c.instructions+=13;goto B68a999;
-case 0x68a99c:c.instructions+=12;goto B68a99c;
-case 0x68a99f:c.instructions+=11;goto B68a99f;
-case 0x68a9a5:c.instructions+=10;goto B68a9a5;
-case 0x68a9a9:c.instructions+=9;goto B68a9a9;
-case 0x68a9ac:c.instructions+=8;goto B68a9ac;
-case 0x68a9af:c.instructions+=7;goto B68a9af;
-case 0x68a9b2:c.instructions+=6;goto B68a9b2;
-case 0x68a9b5:c.instructions+=5;goto B68a9b5;
-case 0x68a9b9:c.instructions+=4;goto B68a9b9;
-case 0x68a9bd:c.instructions+=3;goto B68a9bd;
-case 0x68a9c0:c.instructions+=2;goto B68a9c0;
-case 0x68a9c3:c.instructions+=1;goto B68a9c3;
-case 0x68a9c5:goto L68a9c5;
-case 0x68a9c8:c.instructions+=10;goto B68a9c8;
-case 0x68a9cc:c.instructions+=9;goto B68a9cc;
-case 0x68a9cf:c.instructions+=8;goto B68a9cf;
-case 0x68a9d3:c.instructions+=7;goto B68a9d3;
-case 0x68a9d7:c.instructions+=6;goto B68a9d7;
-case 0x68a9df:c.instructions+=5;goto B68a9df;
-case 0x68a9e7:c.instructions+=4;goto B68a9e7;
-case 0x68a9eb:c.instructions+=3;goto B68a9eb;
-case 0x68a9ef:c.instructions+=2;goto B68a9ef;
-case 0x68a9f3:c.instructions+=1;goto B68a9f3;
-case 0x68a9f6:goto L68a9f6;
-case 0x68a9f9:c.instructions+=43;goto B68a9f9;
-case 0x68a9fc:c.instructions+=42;goto B68a9fc;
-case 0x68a9ff:c.instructions+=41;goto B68a9ff;
-case 0x68aa02:c.instructions+=40;goto B68aa02;
-case 0x68aa05:c.instructions+=39;goto B68aa05;
-case 0x68aa08:c.instructions+=38;goto B68aa08;
-case 0x68aa0b:c.instructions+=37;goto B68aa0b;
-case 0x68aa0f:c.instructions+=36;goto B68aa0f;
-case 0x68aa13:c.instructions+=35;goto B68aa13;
-case 0x68aa17:c.instructions+=34;goto B68aa17;
-case 0x68aa1a:c.instructions+=33;goto B68aa1a;
-case 0x68aa1d:c.instructions+=32;goto B68aa1d;
-case 0x68aa20:c.instructions+=31;goto B68aa20;
-case 0x68aa23:c.instructions+=30;goto B68aa23;
-case 0x68aa27:c.instructions+=29;goto B68aa27;
-case 0x68aa2b:c.instructions+=28;goto B68aa2b;
-case 0x68aa2f:c.instructions+=27;goto B68aa2f;
-case 0x68aa33:c.instructions+=26;goto B68aa33;
-case 0x68aa36:c.instructions+=25;goto B68aa36;
-case 0x68aa39:c.instructions+=24;goto B68aa39;
-case 0x68aa3c:c.instructions+=23;goto B68aa3c;
-case 0x68aa3f:c.instructions+=22;goto B68aa3f;
-case 0x68aa43:c.instructions+=21;goto B68aa43;
-case 0x68aa46:c.instructions+=20;goto B68aa46;
-case 0x68aa49:c.instructions+=19;goto B68aa49;
-case 0x68aa4d:c.instructions+=18;goto B68aa4d;
-case 0x68aa51:c.instructions+=17;goto B68aa51;
-case 0x68aa55:c.instructions+=16;goto B68aa55;
-case 0x68aa58:c.instructions+=15;goto B68aa58;
-case 0x68aa5b:c.instructions+=14;goto B68aa5b;
-case 0x68aa5e:c.instructions+=13;goto B68aa5e;
-case 0x68aa61:c.instructions+=12;goto B68aa61;
-case 0x68aa64:c.instructions+=11;goto B68aa64;
-case 0x68aa68:c.instructions+=10;goto B68aa68;
-case 0x68aa6c:c.instructions+=9;goto B68aa6c;
-case 0x68aa70:c.instructions+=8;goto B68aa70;
-case 0x68aa74:c.instructions+=7;goto B68aa74;
-case 0x68aa78:c.instructions+=6;goto B68aa78;
-case 0x68aa7c:c.instructions+=5;goto B68aa7c;
-case 0x68aa80:c.instructions+=4;goto B68aa80;
-case 0x68aa83:c.instructions+=3;goto B68aa83;
-case 0x68aa84:c.instructions+=2;goto B68aa84;
-case 0x68aa85:c.instructions+=1;goto B68aa85;
-case 0x68aa88:goto L68aa88;
-case 0x68aa8a:c.instructions+=58;goto B68aa8a;
-case 0x68aa8b:c.instructions+=57;goto B68aa8b;
-case 0x68aa8d:c.instructions+=56;goto B68aa8d;
-case 0x68aa8e:c.instructions+=55;goto B68aa8e;
-case 0x68aa8f:c.instructions+=54;goto B68aa8f;
-case 0x68aa92:c.instructions+=53;goto B68aa92;
-case 0x68aa96:c.instructions+=52;goto B68aa96;
-case 0x68aa98:c.instructions+=51;goto B68aa98;
-case 0x68aa9b:c.instructions+=50;goto B68aa9b;
-case 0x68aa9e:c.instructions+=49;goto B68aa9e;
-case 0x68aaa1:c.instructions+=48;goto B68aaa1;
-case 0x68aaa5:c.instructions+=47;goto B68aaa5;
-case 0x68aaa8:c.instructions+=46;goto B68aaa8;
-case 0x68aaaf:c.instructions+=45;goto B68aaaf;
-case 0x68aab2:c.instructions+=44;goto B68aab2;
-case 0x68aab5:c.instructions+=43;goto B68aab5;
-case 0x68aabd:c.instructions+=42;goto B68aabd;
-case 0x68aac5:c.instructions+=41;goto B68aac5;
-case 0x68aac8:c.instructions+=40;goto B68aac8;
-case 0x68aacb:c.instructions+=39;goto B68aacb;
-case 0x68aace:c.instructions+=38;goto B68aace;
-case 0x68aad1:c.instructions+=37;goto B68aad1;
-case 0x68aad5:c.instructions+=36;goto B68aad5;
-case 0x68aad9:c.instructions+=35;goto B68aad9;
-case 0x68aae0:c.instructions+=34;goto B68aae0;
-case 0x68aae3:c.instructions+=33;goto B68aae3;
-case 0x68aae7:c.instructions+=32;goto B68aae7;
-case 0x68aaeb:c.instructions+=31;goto B68aaeb;
-case 0x68aaef:c.instructions+=30;goto B68aaef;
-case 0x68aaf3:c.instructions+=29;goto B68aaf3;
-case 0x68aaf7:c.instructions+=28;goto B68aaf7;
-case 0x68aafb:c.instructions+=27;goto B68aafb;
-case 0x68aaff:c.instructions+=26;goto B68aaff;
-case 0x68ab02:c.instructions+=25;goto B68ab02;
-case 0x68ab05:c.instructions+=24;goto B68ab05;
-case 0x68ab08:c.instructions+=23;goto B68ab08;
-case 0x68ab0c:c.instructions+=22;goto B68ab0c;
-case 0x68ab0f:c.instructions+=21;goto B68ab0f;
-case 0x68ab16:c.instructions+=20;goto B68ab16;
-case 0x68ab19:c.instructions+=19;goto B68ab19;
-case 0x68ab1d:c.instructions+=18;goto B68ab1d;
-case 0x68ab20:c.instructions+=17;goto B68ab20;
-case 0x68ab27:c.instructions+=16;goto B68ab27;
-case 0x68ab2a:c.instructions+=15;goto B68ab2a;
-case 0x68ab2e:c.instructions+=14;goto B68ab2e;
-case 0x68ab31:c.instructions+=13;goto B68ab31;
-case 0x68ab38:c.instructions+=12;goto B68ab38;
-case 0x68ab3c:c.instructions+=11;goto B68ab3c;
-case 0x68ab3f:c.instructions+=10;goto B68ab3f;
-case 0x68ab46:c.instructions+=9;goto B68ab46;
-case 0x68ab49:c.instructions+=8;goto B68ab49;
-case 0x68ab4d:c.instructions+=7;goto B68ab4d;
-case 0x68ab51:c.instructions+=6;goto B68ab51;
-case 0x68ab55:c.instructions+=5;goto B68ab55;
-case 0x68ab57:c.instructions+=4;goto B68ab57;
-case 0x68ab58:c.instructions+=3;goto B68ab58;
-case 0x68ab5a:c.instructions+=2;goto B68ab5a;
-case 0x68ab5b:c.instructions+=1;goto B68ab5b;
-case 0x68ab60:goto L68ab60;
-case 0x68ab62:c.instructions+=183;goto B68ab62;
-case 0x68ab63:c.instructions+=182;goto B68ab63;
-case 0x68ab65:c.instructions+=181;goto B68ab65;
-case 0x68ab68:c.instructions+=180;goto B68ab68;
-case 0x68ab6b:c.instructions+=179;goto B68ab6b;
-case 0x68ab6e:c.instructions+=178;goto B68ab6e;
-case 0x68ab6f:c.instructions+=177;goto B68ab6f;
-case 0x68ab70:c.instructions+=176;goto B68ab70;
-case 0x68ab73:c.instructions+=175;goto B68ab73;
-case 0x68ab77:c.instructions+=174;goto B68ab77;
-case 0x68ab79:c.instructions+=173;goto B68ab79;
-case 0x68ab7f:c.instructions+=172;goto B68ab7f;
-case 0x68ab83:c.instructions+=171;goto B68ab83;
-case 0x68ab87:c.instructions+=170;goto B68ab87;
-case 0x68ab8a:c.instructions+=169;goto B68ab8a;
-case 0x68ab8d:c.instructions+=168;goto B68ab8d;
-case 0x68ab92:c.instructions+=167;goto B68ab92;
-case 0x68ab98:c.instructions+=166;goto B68ab98;
-case 0x68ab9b:c.instructions+=165;goto B68ab9b;
-case 0x68aba2:c.instructions+=164;goto B68aba2;
-case 0x68aba5:c.instructions+=163;goto B68aba5;
-case 0x68aba8:c.instructions+=162;goto B68aba8;
-case 0x68abab:c.instructions+=161;goto B68abab;
-case 0x68abae:c.instructions+=160;goto B68abae;
-case 0x68abb4:c.instructions+=159;goto B68abb4;
-case 0x68abb7:c.instructions+=158;goto B68abb7;
-case 0x68abbb:c.instructions+=157;goto B68abbb;
-case 0x68abc1:c.instructions+=156;goto B68abc1;
-case 0x68abc4:c.instructions+=155;goto B68abc4;
-case 0x68abcb:c.instructions+=154;goto B68abcb;
-case 0x68abd1:c.instructions+=153;goto B68abd1;
-case 0x68abd4:c.instructions+=152;goto B68abd4;
-case 0x68abd9:c.instructions+=151;goto B68abd9;
-case 0x68abe0:c.instructions+=150;goto B68abe0;
-case 0x68abe3:c.instructions+=149;goto B68abe3;
-case 0x68abe7:c.instructions+=148;goto B68abe7;
-case 0x68abee:c.instructions+=147;goto B68abee;
-case 0x68abf3:c.instructions+=146;goto B68abf3;
-case 0x68abfa:c.instructions+=145;goto B68abfa;
-case 0x68abfd:c.instructions+=144;goto B68abfd;
-case 0x68ac01:c.instructions+=143;goto B68ac01;
-case 0x68ac08:c.instructions+=142;goto B68ac08;
-case 0x68ac0d:c.instructions+=141;goto B68ac0d;
-case 0x68ac14:c.instructions+=140;goto B68ac14;
-case 0x68ac17:c.instructions+=139;goto B68ac17;
-case 0x68ac1a:c.instructions+=138;goto B68ac1a;
-case 0x68ac1e:c.instructions+=137;goto B68ac1e;
-case 0x68ac25:c.instructions+=136;goto B68ac25;
-case 0x68ac2a:c.instructions+=135;goto B68ac2a;
-case 0x68ac31:c.instructions+=134;goto B68ac31;
-case 0x68ac38:c.instructions+=133;goto B68ac38;
-case 0x68ac3c:c.instructions+=132;goto B68ac3c;
-case 0x68ac40:c.instructions+=131;goto B68ac40;
-case 0x68ac47:c.instructions+=130;goto B68ac47;
-case 0x68ac4c:c.instructions+=129;goto B68ac4c;
-case 0x68ac4f:c.instructions+=128;goto B68ac4f;
-case 0x68ac56:c.instructions+=127;goto B68ac56;
-case 0x68ac5a:c.instructions+=126;goto B68ac5a;
-case 0x68ac5d:c.instructions+=125;goto B68ac5d;
-case 0x68ac61:c.instructions+=124;goto B68ac61;
-case 0x68ac64:c.instructions+=123;goto B68ac64;
-case 0x68ac6b:c.instructions+=122;goto B68ac6b;
-case 0x68ac72:c.instructions+=121;goto B68ac72;
-case 0x68ac79:c.instructions+=120;goto B68ac79;
-case 0x68ac80:c.instructions+=119;goto B68ac80;
-case 0x68ac87:c.instructions+=118;goto B68ac87;
-case 0x68ac8a:c.instructions+=117;goto B68ac8a;
-case 0x68ac8e:c.instructions+=116;goto B68ac8e;
-case 0x68ac95:c.instructions+=115;goto B68ac95;
-case 0x68ac9c:c.instructions+=114;goto B68ac9c;
-case 0x68aca3:c.instructions+=113;goto B68aca3;
-case 0x68acaa:c.instructions+=112;goto B68acaa;
-case 0x68acae:c.instructions+=111;goto B68acae;
-case 0x68acb5:c.instructions+=110;goto B68acb5;
-case 0x68acb8:c.instructions+=109;goto B68acb8;
-case 0x68acbf:c.instructions+=108;goto B68acbf;
-case 0x68acc3:c.instructions+=107;goto B68acc3;
-case 0x68acc6:c.instructions+=106;goto B68acc6;
-case 0x68acc9:c.instructions+=105;goto B68acc9;
-case 0x68accc:c.instructions+=104;goto B68accc;
-case 0x68accf:c.instructions+=103;goto B68accf;
-case 0x68acd3:c.instructions+=102;goto B68acd3;
-case 0x68acd6:c.instructions+=101;goto B68acd6;
-case 0x68acdd:c.instructions+=100;goto B68acdd;
-case 0x68ace0:c.instructions+=99;goto B68ace0;
-case 0x68ace3:c.instructions+=98;goto B68ace3;
-case 0x68ace7:c.instructions+=97;goto B68ace7;
-case 0x68aceb:c.instructions+=96;goto B68aceb;
-case 0x68acf2:c.instructions+=95;goto B68acf2;
-case 0x68acf5:c.instructions+=94;goto B68acf5;
-case 0x68acf8:c.instructions+=93;goto B68acf8;
-case 0x68acff:c.instructions+=92;goto B68acff;
-case 0x68ad06:c.instructions+=91;goto B68ad06;
-case 0x68ad0a:c.instructions+=90;goto B68ad0a;
-case 0x68ad11:c.instructions+=89;goto B68ad11;
-case 0x68ad14:c.instructions+=88;goto B68ad14;
-case 0x68ad17:c.instructions+=87;goto B68ad17;
-case 0x68ad1a:c.instructions+=86;goto B68ad1a;
-case 0x68ad1e:c.instructions+=85;goto B68ad1e;
-case 0x68ad25:c.instructions+=84;goto B68ad25;
-case 0x68ad2c:c.instructions+=83;goto B68ad2c;
-case 0x68ad2f:c.instructions+=82;goto B68ad2f;
-case 0x68ad33:c.instructions+=81;goto B68ad33;
-case 0x68ad36:c.instructions+=80;goto B68ad36;
-case 0x68ad39:c.instructions+=79;goto B68ad39;
-case 0x68ad3d:c.instructions+=78;goto B68ad3d;
-case 0x68ad41:c.instructions+=77;goto B68ad41;
-case 0x68ad45:c.instructions+=76;goto B68ad45;
-case 0x68ad49:c.instructions+=75;goto B68ad49;
-case 0x68ad4c:c.instructions+=74;goto B68ad4c;
-case 0x68ad50:c.instructions+=73;goto B68ad50;
-case 0x68ad57:c.instructions+=72;goto B68ad57;
-case 0x68ad5e:c.instructions+=71;goto B68ad5e;
-case 0x68ad65:c.instructions+=70;goto B68ad65;
-case 0x68ad68:c.instructions+=69;goto B68ad68;
-case 0x68ad6b:c.instructions+=68;goto B68ad6b;
-case 0x68ad6f:c.instructions+=67;goto B68ad6f;
-case 0x68ad72:c.instructions+=66;goto B68ad72;
-case 0x68ad75:c.instructions+=65;goto B68ad75;
-case 0x68ad78:c.instructions+=64;goto B68ad78;
-case 0x68ad7b:c.instructions+=63;goto B68ad7b;
-case 0x68ad7f:c.instructions+=62;goto B68ad7f;
-case 0x68ad82:c.instructions+=61;goto B68ad82;
-case 0x68ad89:c.instructions+=60;goto B68ad89;
-case 0x68ad8c:c.instructions+=59;goto B68ad8c;
-case 0x68ad93:c.instructions+=58;goto B68ad93;
-case 0x68ad96:c.instructions+=57;goto B68ad96;
-case 0x68ad99:c.instructions+=56;goto B68ad99;
-case 0x68ad9d:c.instructions+=55;goto B68ad9d;
-case 0x68ada1:c.instructions+=54;goto B68ada1;
-case 0x68ada4:c.instructions+=53;goto B68ada4;
-case 0x68ada7:c.instructions+=52;goto B68ada7;
-case 0x68adaa:c.instructions+=51;goto B68adaa;
-case 0x68adad:c.instructions+=50;goto B68adad;
-case 0x68adb4:c.instructions+=49;goto B68adb4;
-case 0x68adbb:c.instructions+=48;goto B68adbb;
-case 0x68adc2:c.instructions+=47;goto B68adc2;
-case 0x68adc9:c.instructions+=46;goto B68adc9;
-case 0x68add0:c.instructions+=45;goto B68add0;
-case 0x68add4:c.instructions+=44;goto B68add4;
-case 0x68add7:c.instructions+=43;goto B68add7;
-case 0x68adda:c.instructions+=42;goto B68adda;
-case 0x68addd:c.instructions+=41;goto B68addd;
-case 0x68ade0:c.instructions+=40;goto B68ade0;
-case 0x68ade4:c.instructions+=39;goto B68ade4;
-case 0x68ade7:c.instructions+=38;goto B68ade7;
-case 0x68adee:c.instructions+=37;goto B68adee;
-case 0x68adf1:c.instructions+=36;goto B68adf1;
-case 0x68adf8:c.instructions+=35;goto B68adf8;
-case 0x68adfb:c.instructions+=34;goto B68adfb;
-case 0x68adfe:c.instructions+=33;goto B68adfe;
-case 0x68ae01:c.instructions+=32;goto B68ae01;
-case 0x68ae04:c.instructions+=31;goto B68ae04;
-case 0x68ae07:c.instructions+=30;goto B68ae07;
-case 0x68ae0e:c.instructions+=29;goto B68ae0e;
-case 0x68ae11:c.instructions+=28;goto B68ae11;
-case 0x68ae15:c.instructions+=27;goto B68ae15;
-case 0x68ae18:c.instructions+=26;goto B68ae18;
-case 0x68ae1b:c.instructions+=25;goto B68ae1b;
-case 0x68ae1e:c.instructions+=24;goto B68ae1e;
-case 0x68ae22:c.instructions+=23;goto B68ae22;
-case 0x68ae26:c.instructions+=22;goto B68ae26;
-case 0x68ae2a:c.instructions+=21;goto B68ae2a;
-case 0x68ae31:c.instructions+=20;goto B68ae31;
-case 0x68ae34:c.instructions+=19;goto B68ae34;
-case 0x68ae37:c.instructions+=18;goto B68ae37;
-case 0x68ae3e:c.instructions+=17;goto B68ae3e;
-case 0x68ae41:c.instructions+=16;goto B68ae41;
-case 0x68ae45:c.instructions+=15;goto B68ae45;
-case 0x68ae48:c.instructions+=14;goto B68ae48;
-case 0x68ae4b:c.instructions+=13;goto B68ae4b;
-case 0x68ae4e:c.instructions+=12;goto B68ae4e;
-case 0x68ae55:c.instructions+=11;goto B68ae55;
-case 0x68ae5c:c.instructions+=10;goto B68ae5c;
-case 0x68ae63:c.instructions+=9;goto B68ae63;
-case 0x68ae6a:c.instructions+=8;goto B68ae6a;
-case 0x68ae71:c.instructions+=7;goto B68ae71;
-case 0x68ae78:c.instructions+=6;goto B68ae78;
-case 0x68ae7f:c.instructions+=5;goto B68ae7f;
-case 0x68ae82:c.instructions+=4;goto B68ae82;
-case 0x68ae85:c.instructions+=3;goto B68ae85;
-case 0x68ae8c:c.instructions+=2;goto B68ae8c;
-case 0x68ae8e:c.instructions+=1;goto B68ae8e;
-case 0x68ae94:goto L68ae94;
-case 0x68ae9a:c.instructions+=79;goto B68ae9a;
-case 0x68aea0:c.instructions+=78;goto B68aea0;
-case 0x68aea2:c.instructions+=77;goto B68aea2;
-case 0x68aea4:c.instructions+=76;goto B68aea4;
-case 0x68aeaa:c.instructions+=75;goto B68aeaa;
-case 0x68aead:c.instructions+=74;goto B68aead;
-case 0x68aeb3:c.instructions+=73;goto B68aeb3;
-case 0x68aeb9:c.instructions+=72;goto B68aeb9;
-case 0x68aebf:c.instructions+=71;goto B68aebf;
-case 0x68aec1:c.instructions+=70;goto B68aec1;
-case 0x68aec7:c.instructions+=69;goto B68aec7;
-case 0x68aeca:c.instructions+=68;goto B68aeca;
-case 0x68aed0:c.instructions+=67;goto B68aed0;
-case 0x68aed8:c.instructions+=66;goto B68aed8;
-case 0x68aee0:c.instructions+=65;goto B68aee0;
-case 0x68aee8:c.instructions+=64;goto B68aee8;
-case 0x68aef0:c.instructions+=63;goto B68aef0;
-case 0x68aef8:c.instructions+=62;goto B68aef8;
-case 0x68af00:c.instructions+=61;goto B68af00;
-case 0x68af04:c.instructions+=60;goto B68af04;
-case 0x68af07:c.instructions+=59;goto B68af07;
-case 0x68af0b:c.instructions+=58;goto B68af0b;
-case 0x68af0f:c.instructions+=57;goto B68af0f;
-case 0x68af17:c.instructions+=56;goto B68af17;
-case 0x68af1b:c.instructions+=55;goto B68af1b;
-case 0x68af1e:c.instructions+=54;goto B68af1e;
-case 0x68af22:c.instructions+=53;goto B68af22;
-case 0x68af26:c.instructions+=52;goto B68af26;
-case 0x68af2d:c.instructions+=51;goto B68af2d;
-case 0x68af30:c.instructions+=50;goto B68af30;
-case 0x68af33:c.instructions+=49;goto B68af33;
-case 0x68af37:c.instructions+=48;goto B68af37;
-case 0x68af3a:c.instructions+=47;goto B68af3a;
-case 0x68af3e:c.instructions+=46;goto B68af3e;
-case 0x68af41:c.instructions+=45;goto B68af41;
-case 0x68af44:c.instructions+=44;goto B68af44;
-case 0x68af47:c.instructions+=43;goto B68af47;
-case 0x68af4a:c.instructions+=42;goto B68af4a;
-case 0x68af4e:c.instructions+=41;goto B68af4e;
-case 0x68af55:c.instructions+=40;goto B68af55;
-case 0x68af58:c.instructions+=39;goto B68af58;
-case 0x68af5b:c.instructions+=38;goto B68af5b;
-case 0x68af5f:c.instructions+=37;goto B68af5f;
-case 0x68af66:c.instructions+=36;goto B68af66;
-case 0x68af69:c.instructions+=35;goto B68af69;
-case 0x68af6c:c.instructions+=34;goto B68af6c;
-case 0x68af70:c.instructions+=33;goto B68af70;
-case 0x68af77:c.instructions+=32;goto B68af77;
-case 0x68af7a:c.instructions+=31;goto B68af7a;
-case 0x68af81:c.instructions+=30;goto B68af81;
-case 0x68af84:c.instructions+=29;goto B68af84;
-case 0x68af87:c.instructions+=28;goto B68af87;
-case 0x68af8a:c.instructions+=27;goto B68af8a;
-case 0x68af8e:c.instructions+=26;goto B68af8e;
-case 0x68af95:c.instructions+=25;goto B68af95;
-case 0x68af98:c.instructions+=24;goto B68af98;
-case 0x68af9b:c.instructions+=23;goto B68af9b;
-case 0x68af9f:c.instructions+=22;goto B68af9f;
-case 0x68afa6:c.instructions+=21;goto B68afa6;
-case 0x68afa9:c.instructions+=20;goto B68afa9;
-case 0x68afac:c.instructions+=19;goto B68afac;
-case 0x68afb0:c.instructions+=18;goto B68afb0;
-case 0x68afb7:c.instructions+=17;goto B68afb7;
-case 0x68afba:c.instructions+=16;goto B68afba;
-case 0x68afbd:c.instructions+=15;goto B68afbd;
-case 0x68afc0:c.instructions+=14;goto B68afc0;
-case 0x68afc3:c.instructions+=13;goto B68afc3;
-case 0x68afc7:c.instructions+=12;goto B68afc7;
-case 0x68afce:c.instructions+=11;goto B68afce;
-case 0x68afd1:c.instructions+=10;goto B68afd1;
-case 0x68afd4:c.instructions+=9;goto B68afd4;
-case 0x68afd8:c.instructions+=8;goto B68afd8;
-case 0x68afdf:c.instructions+=7;goto B68afdf;
-case 0x68afe2:c.instructions+=6;goto B68afe2;
-case 0x68afe5:c.instructions+=5;goto B68afe5;
-case 0x68afe9:c.instructions+=4;goto B68afe9;
-case 0x68aff0:c.instructions+=3;goto B68aff0;
-case 0x68aff3:c.instructions+=2;goto B68aff3;
-case 0x68affa:c.instructions+=1;goto B68affa;
-default:missing_instruction(c.pc);}
-B68a002:L68a002:{c.instructions+=74;NFSU2_TR(0x68a002);
+B68a002:L68a002:{bud-=74;NFSU2_TR(0x68a002);
 u8 U[8];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0xcull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0xcull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
 __builtin_memmove((R+5056),(U+4),4);
 w4(R+5060,u32(0x0ull));
@@ -1456,7 +375,7 @@ w4(R+4876,b32(f32(r4(R+4876))+f32(r4(R+5004))));
 }
 B68a02c:{NFSU2_TR(0x68a02c);
 u8 U[8];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x10ull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x10ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
 __builtin_memmove((R+4928),(U+4),4);
 w4(R+4932,u32(0x0ull));
@@ -1465,7 +384,7 @@ w4(R+4940,u32(0x0ull));
 }
 B68a031:{NFSU2_TR(0x68a031);
 u8 U[8];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x14ull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x14ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
 __builtin_memmove((R+4992),(U+4),4);
 w4(R+4996,u32(0x0ull));
@@ -1474,7 +393,7 @@ w4(R+5004,u32(0x0ull));
 }
 B68a036:{NFSU2_TR(0x68a036);
 u8 U[8];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x18ull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x18ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
 __builtin_memmove((R+5056),(U+4),4);
 w4(R+5060,u32(0x0ull));
@@ -1726,7 +645,7 @@ w4(R+4940,b32(f32(r4(R+4940))+f32(r4(R+5068))));
 }
 B68a056:{NFSU2_TR(0x68a056);
 u8 U[8];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x1cull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x1cull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
 __builtin_memmove((R+4992),(U+4),4);
 w4(R+4996,u32(0x0ull));
@@ -1818,7 +737,7 @@ w4(R+4940,b32(f32(r4(R+4940))+f32(r4(R+5004))));
 }
 B68a065:{NFSU2_TR(0x68a065);
 u8 U[8];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x20ull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x20ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
 __builtin_memmove((R+4992),(U+4),4);
 w4(R+4996,u32(0x0ull));
@@ -1827,7 +746,7 @@ w4(R+5004,u32(0x0ull));
 }
 B68a06a:{NFSU2_TR(0x68a06a);
 u8 U[8];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x24ull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x24ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
 __builtin_memmove((R+5056),(U+4),4);
 w4(R+5060,u32(0x0ull));
@@ -1996,7 +915,7 @@ w4(R+5004,b32(f32(r4(R+5004))+f32(r4(R+5068))));
 }
 B68a080:{NFSU2_TR(0x68a080);
 u8 U[8];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x28ull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x28ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
 __builtin_memmove((R+5056),(U+4),4);
 w4(R+5060,u32(0x0ull));
@@ -2088,7 +1007,7 @@ w4(R+5004,b32(f32(r4(R+5004))+f32(r4(R+5068))));
 }
 B68a08f:{NFSU2_TR(0x68a08f);
 u8 U[8];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x2cull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x2cull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
 __builtin_memmove((R+5056),(U+4),4);
 w4(R+5060,u32(0x0ull));
@@ -2180,7 +1099,7 @@ w4(R+5004,b32(f32(r4(R+5004))+f32(r4(R+5068))));
 }
 B68a09e:{NFSU2_TR(0x68a09e);
 u8 U[8];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x30ull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x30ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
 __builtin_memmove((R+5056),(U+4),4);
 w4(R+5060,u32(0x0ull));
@@ -2266,7 +1185,7 @@ w4(R+4620,b32(f32(r4(R+4620))*f32(r4(R+5068))));
 }
 B68a0aa:{NFSU2_TR(0x68a0aa);
 u8 U[8];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x34ull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x34ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
 __builtin_memmove((R+5056),(U+4),4);
 w4(R+5060,u32(0x0ull));
@@ -2352,7 +1271,7 @@ w4(R+4684,b32(f32(r4(R+4684))*f32(r4(R+5068))));
 }
 B68a0b6:{NFSU2_TR(0x68a0b6);
 u8 U[8];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x38ull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x38ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
 __builtin_memmove((R+5056),(U+4),4);
 w4(R+5060,u32(0x0ull));
@@ -2438,7 +1357,7 @@ w4(R+4748,b32(f32(r4(R+4748))*f32(r4(R+5068))));
 }
 B68a0c2:{NFSU2_TR(0x68a0c2);
 u8 U[8];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x3cull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x3cull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
 __builtin_memmove((R+5056),(U+4),4);
 w4(R+5060,u32(0x0ull));
@@ -2625,70 +1544,88 @@ B68a108:{NFSU2_TR(0x68a108);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68a10b:{NFSU2_TR(0x68a10b);
 u8 U[4];
-__builtin_memmove((U+0),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
 __builtin_memmove((R+20),(U+0),4);
 }
 B68a10c:{NFSU2_TR(0x68a10c);
-__builtin_memmove((R+644),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0xcull))));
+__builtin_memmove((R+644),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0xcull))));
 {u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
 }
-B68a10f:L68a10f:{c.instructions+=62;NFSU2_TR(0x68a10f);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68a10f(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68a10f:L68a10f:{bud-=62;NFSU2_TR(0x68a10f);
 __builtin_memmove((R+28),(R+28),4);
 }
 B68a111:{NFSU2_TR(0x68a111);
 u8 U[4];
 __builtin_memmove((U+0),(R+12),4);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x4ull))));
-s4(u32(r4(R+16)),r4(U+0));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
 }
 B68a112:{NFSU2_TR(0x68a112);
-__builtin_memmove((R+12),(R+16),4);
+__builtin_memmove((R+12),(G+16),4);
 }
 B68a114:{NFSU2_TR(0x68a114);
 u8 U[4];
-__builtin_memmove((U+0),(R+4),4);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x4ull))));
-s4(u32(r4(R+16)),r4(U+0));
+__builtin_memmove((U+0),(G+4),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
 }
 B68a115:{NFSU2_TR(0x68a115);
-w4(R+16,u32(u32(r4(R+16))&u32(u32(0xfffffff0ull))));
+w4(G+16,u32(u32(r4(G+16))&u32(u32(0xfffffff0ull))));
 }
 B68a118:{NFSU2_TR(0x68a118);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
 }
 B68a11b:{NFSU2_TR(0x68a11b);
 u8 U[4];
 __builtin_memmove((U+0),(R+20),4);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x4ull))));
-s4(u32(r4(R+16)),r4(U+0));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
 }
 B68a11c:{NFSU2_TR(0x68a11c);
-__builtin_memmove((R+20),(R+16),4);
+__builtin_memmove((R+20),(G+16),4);
 }
 B68a11e:{NFSU2_TR(0x68a11e);
 u8 U[6];
-w1(R+512,u8((r4(R+16))<(u32(0x10ull))));
-w1(R+523,sborrow<u32>(r4(R+16),u32(0x10ull)));
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x10ull))));
-w1(R+519,u8(s32(r4(R+16))<s32(u32(0x0ull))));
-w1(R+518,u8((r4(R+16))==(u32(0x0ull))));
-w4(U+0,u32(u32(r4(R+16))&u32(u32(0xffull))));
+w1(F+0,u8((r4(G+16))<(u32(0x10ull))));
+w1(F+11,sborrow<u32>(r4(G+16),u32(0x10ull)));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x10ull))));
+w1(F+7,u8(s32(r4(G+16))<s32(u32(0x0ull))));
+w1(F+6,u8((r4(G+16))==(u32(0x0ull))));
+w4(U+0,u32(u32(r4(G+16))&u32(u32(0xffull))));
 w1(U+4,u8(__builtin_popcountll(u64(r4(U+0)))));
 w1(U+5,u8(u32(r1(U+4))&u32(u8(0x1ull))));
-w1(R+514,u8((r1(U+5))==(u8(0x0ull))));
+w1(F+2,u8((r1(U+5))==(u8(0x0ull))));
 }
 B68a121:{NFSU2_TR(0x68a121);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+12))+u32(u32(0xcull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68a124:{NFSU2_TR(0x68a124);
 u8 U[36];
@@ -2702,12 +1639,12 @@ __builtin_memmove((R+4876),(U+32),4);
 }
 B68a128:{NFSU2_TR(0x68a128);
 u8 U[8];
-__builtin_memmove((U+0),gp(u32(r4(R+0))),8);
+__builtin_memmove((U+0),gp(u32(r4(G+0))),8);
 __builtin_memmove((R+4864),(U+0),8);
 }
 B68a12b:{NFSU2_TR(0x68a12b);
 u8 U[12];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x8ull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),8);
 __builtin_memmove((R+4872),(U+4),8);
 }
@@ -2715,7 +1652,7 @@ B68a12f:{NFSU2_TR(0x68a12f);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+12))+u32(u32(0x10ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68a132:{NFSU2_TR(0x68a132);
 u8 U[36];
@@ -2729,12 +1666,12 @@ __builtin_memmove((R+4620),(U+32),4);
 }
 B68a136:{NFSU2_TR(0x68a136);
 u8 U[8];
-__builtin_memmove((U+0),gp(u32(r4(R+0))),8);
+__builtin_memmove((U+0),gp(u32(r4(G+0))),8);
 __builtin_memmove((R+4608),(U+0),8);
 }
 B68a139:{NFSU2_TR(0x68a139);
 u8 U[12];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x8ull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),8);
 __builtin_memmove((R+4616),(U+4),8);
 }
@@ -2742,7 +1679,7 @@ B68a13d:{NFSU2_TR(0x68a13d);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+12))+u32(u32(0x14ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68a140:{NFSU2_TR(0x68a140);
 u8 U[36];
@@ -2756,12 +1693,12 @@ __builtin_memmove((R+4748),(U+32),4);
 }
 B68a144:{NFSU2_TR(0x68a144);
 u8 U[8];
-__builtin_memmove((U+0),gp(u32(r4(R+0))),8);
+__builtin_memmove((U+0),gp(u32(r4(G+0))),8);
 __builtin_memmove((R+4736),(U+0),8);
 }
 B68a147:{NFSU2_TR(0x68a147);
 u8 U[12];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x8ull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),8);
 __builtin_memmove((R+4744),(U+4),8);
 }
@@ -2769,7 +1706,7 @@ B68a14b:{NFSU2_TR(0x68a14b);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+12))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68a14e:{NFSU2_TR(0x68a14e);
 u8 U[76];
@@ -3634,53 +2571,71 @@ w4(R+4620,u32(u32(r4(R+4620))^u32(r4(R+4876))));
 B68a1c4:{NFSU2_TR(0x68a1c4);
 u8 U[16];
 __builtin_memmove((U+0),(R+4608),16);
-__builtin_memmove(gp(u32(r4(R+0))),(U+0),16);
+__builtin_memmove(gp(u32(r4(G+0))),(U+0),16);
 }
 B68a1c7:{NFSU2_TR(0x68a1c7);
-__builtin_memmove((R+16),(R+20),4);
+__builtin_memmove((G+16),(R+20),4);
 }
 B68a1c9:{NFSU2_TR(0x68a1c9);
 u8 U[4];
-__builtin_memmove((U+0),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
 __builtin_memmove((R+20),(U+0),4);
 }
 B68a1ca:{NFSU2_TR(0x68a1ca);
-__builtin_memmove((R+16),(R+12),4);
+__builtin_memmove((G+16),(R+12),4);
 }
 B68a1cc:{NFSU2_TR(0x68a1cc);
 u8 U[4];
-__builtin_memmove((U+0),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
 __builtin_memmove((R+12),(U+0),4);
 }
 B68a1cd:{NFSU2_TR(0x68a1cd);
-__builtin_memmove((R+644),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x10ull))));
+__builtin_memmove((R+644),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x10ull))));
 {u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
 }
-B68a1d0:L68a1d0:{c.instructions+=39;NFSU2_TR(0x68a1d0);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68a1d0(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68a1d0:L68a1d0:{bud-=39;NFSU2_TR(0x68a1d0);
 __builtin_memmove((R+28),(R+28),4);
 }
 B68a1d2:{NFSU2_TR(0x68a1d2);
 u8 U[4];
 __builtin_memmove((U+0),(R+20),4);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x4ull))));
-s4(u32(r4(R+16)),r4(U+0));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
 }
 B68a1d3:{NFSU2_TR(0x68a1d3);
-__builtin_memmove((R+20),(R+16),4);
+__builtin_memmove((R+20),(G+16),4);
 }
 B68a1d5:{NFSU2_TR(0x68a1d5);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0xcull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68a1d8:{NFSU2_TR(0x68a1d8);
 u8 U[4];
-__builtin_memmove((U+0),gp(u32(r4(R+0))),4);
+__builtin_memmove((U+0),gp(u32(r4(G+0))),4);
 __builtin_memmove((R+4608),(U+0),4);
 w4(R+4612,u32(0x0ull));
 w4(R+4616,u32(0x0ull));
@@ -3688,7 +2643,7 @@ w4(R+4620,u32(0x0ull));
 }
 B68a1dc:{NFSU2_TR(0x68a1dc);
 u8 U[8];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x4ull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x4ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
 __builtin_memmove((R+4672),(U+4),4);
 w4(R+4676,u32(0x0ull));
@@ -3697,7 +2652,7 @@ w4(R+4684,u32(0x0ull));
 }
 B68a1e1:{NFSU2_TR(0x68a1e1);
 u8 U[8];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x8ull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
 __builtin_memmove((R+4736),(U+4),4);
 w4(R+4740,u32(0x0ull));
@@ -3706,7 +2661,7 @@ w4(R+4748,u32(0x0ull));
 }
 B68a1e6:{NFSU2_TR(0x68a1e6);
 u8 U[8];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0xcull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0xcull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
 __builtin_memmove((R+4800),(U+4),4);
 w4(R+4804,u32(0x0ull));
@@ -3777,7 +2732,7 @@ B68a23f:{NFSU2_TR(0x68a23f);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68a242:{NFSU2_TR(0x68a242);
 w4(R+4608,b32(f32(r4(R+4608))*f32(r4(R+4928))));
@@ -3788,14 +2743,14 @@ w4(R+4672,b32(f32(r4(R+4672))*f32(r4(R+4928))));
 B68a24a:{NFSU2_TR(0x68a24a);
 u8 U[4];
 __builtin_memmove((U+0),(R+4608),4);
-s4(u32(r4(R+0)),r4(U+0));
+s4(u32(r4(G+0)),r4(U+0));
 }
 B68a24e:{NFSU2_TR(0x68a24e);
 w4(R+4736,b32(f32(r4(R+4736))*f32(r4(R+4928))));
 }
 B68a252:{NFSU2_TR(0x68a252);
 u8 U[8];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x4ull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x4ull))));
 __builtin_memmove((U+4),(R+4672),4);
 s4(u32(r4(U+0)),r4(U+4));
 }
@@ -3804,13 +2759,13 @@ w4(R+4800,b32(f32(r4(R+4800))*f32(r4(R+4928))));
 }
 B68a25b:{NFSU2_TR(0x68a25b);
 u8 U[8];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x8ull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),(R+4736),4);
 s4(u32(r4(U+0)),r4(U+4));
 }
 B68a260:{NFSU2_TR(0x68a260);
 u8 U[8];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0xcull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0xcull))));
 __builtin_memmove((U+4),(R+4800),4);
 s4(u32(r4(U+0)),r4(U+4));
 }
@@ -3818,31 +2773,49 @@ B68a265:{NFSU2_TR(0x68a265);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68a268:{NFSU2_TR(0x68a268);
 u8 U[4];
-__builtin_memmove((U+0),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
 __builtin_memmove((R+20),(U+0),4);
 }
 B68a269:{NFSU2_TR(0x68a269);
-__builtin_memmove((R+644),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x8ull))));
+__builtin_memmove((R+644),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x8ull))));
 {u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
 }
-B68a26c:L68a26c:{c.instructions+=49;NFSU2_TR(0x68a26c);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68a26c(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68a26c:L68a26c:{bud-=49;NFSU2_TR(0x68a26c);
 __builtin_memmove((R+28),(R+28),4);
 }
 B68a26e:{NFSU2_TR(0x68a26e);
 u8 U[4];
 __builtin_memmove((U+0),(R+20),4);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x4ull))));
-s4(u32(r4(R+16)),r4(U+0));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
 }
 B68a26f:{NFSU2_TR(0x68a26f);
-__builtin_memmove((R+20),(R+16),4);
+__builtin_memmove((R+20),(G+16),4);
 }
 B68a271:{NFSU2_TR(0x68a271);
 u8 U[8];
@@ -4126,13 +3099,13 @@ B68a2b4:{NFSU2_TR(0x68a2b4);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0xcull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68a2b7:{NFSU2_TR(0x68a2b7);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x10ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+4),(U+4),4);
+__builtin_memmove((G+4),(U+4),4);
 }
 B68a2ba:{NFSU2_TR(0x68a2ba);
 u8 U[8];
@@ -4444,7 +3417,7 @@ w4(R+4620,u32(u32(r4(U+31))+u32(r4(U+40))));
 }
 B68a2d6:{NFSU2_TR(0x68a2d6);
 u8 U[8];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x8ull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
 __builtin_memmove((R+4864),(U+4),4);
 w4(R+4868,u32(0x0ull));
@@ -4453,14 +3426,14 @@ w4(R+4876,u32(0x0ull));
 }
 B68a2db:{NFSU2_TR(0x68a2db);
 u8 U[8];
-__builtin_memmove((U+0),gp(u32(r4(R+0))),8);
+__builtin_memmove((U+0),gp(u32(r4(G+0))),8);
 __builtin_memmove((R+4872),(U+0),8);
 }
 B68a2de:{NFSU2_TR(0x68a2de);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x18ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68a2e1:{NFSU2_TR(0x68a2e1);
 w4(R+4864,b32(f32(r4(R+4864))*f32(r4(R+4608))));
@@ -4470,7 +3443,7 @@ w4(R+4876,b32(f32(r4(R+4876))*f32(r4(R+4620))));
 }
 B68a2e4:{NFSU2_TR(0x68a2e4);
 u8 U[8];
-w4(U+0,u32(u32(r4(R+4))+u32(u32(0x8ull))));
+w4(U+0,u32(u32(r4(G+4))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
 __builtin_memmove((R+4928),(U+4),4);
 w4(R+4932,u32(0x0ull));
@@ -4479,7 +3452,7 @@ w4(R+4940,u32(0x0ull));
 }
 B68a2e9:{NFSU2_TR(0x68a2e9);
 u8 U[8];
-__builtin_memmove((U+0),gp(u32(r4(R+4))),8);
+__builtin_memmove((U+0),gp(u32(r4(G+4))),8);
 __builtin_memmove((R+4936),(U+0),8);
 }
 B68a2ec:{NFSU2_TR(0x68a2ec);
@@ -4522,7 +3495,7 @@ w4(R+4876,b32(f32(r4(R+4876))+f32(r4(R+5004))));
 }
 B68a300:{NFSU2_TR(0x68a300);
 u8 U[8];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x8ull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
 __builtin_memmove((R+5056),(U+4),4);
 w4(R+5060,u32(0x0ull));
@@ -4531,14 +3504,14 @@ w4(R+5068,u32(0x0ull));
 }
 B68a305:{NFSU2_TR(0x68a305);
 u8 U[8];
-__builtin_memmove((U+0),gp(u32(r4(R+0))),8);
+__builtin_memmove((U+0),gp(u32(r4(G+0))),8);
 __builtin_memmove((R+5064),(U+0),8);
 }
 B68a308:{NFSU2_TR(0x68a308);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+4),(U+4),4);
+__builtin_memmove((G+4),(U+4),4);
 }
 B68a30b:{NFSU2_TR(0x68a30b);
 w4(R+5056,b32(f32(r4(R+5056))*f32(r4(R+4800))));
@@ -4555,11 +3528,11 @@ w4(R+4876,b32(f32(r4(R+4876))+f32(r4(R+5068))));
 B68a311:{NFSU2_TR(0x68a311);
 u8 U[8];
 __builtin_memmove((U+0),(R+4872),8);
-s8_(u32(r4(R+4)),r8(U+0));
+s8_(u32(r4(G+4)),r8(U+0));
 }
 B68a314:{NFSU2_TR(0x68a314);
 u8 U[8];
-w4(U+0,u32(u32(r4(R+4))+u32(u32(0x8ull))));
+w4(U+0,u32(u32(r4(G+4))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),(R+4864),4);
 s4(u32(r4(U+0)),r4(U+4));
 }
@@ -4567,31 +3540,49 @@ B68a319:{NFSU2_TR(0x68a319);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68a31c:{NFSU2_TR(0x68a31c);
 u8 U[4];
-__builtin_memmove((U+0),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
 __builtin_memmove((R+20),(U+0),4);
 }
 B68a31d:{NFSU2_TR(0x68a31d);
-__builtin_memmove((R+644),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x18ull))));
+__builtin_memmove((R+644),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x18ull))));
 {u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
 }
-B68a320:L68a320:{c.instructions+=38;NFSU2_TR(0x68a320);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68a320(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68a320:L68a320:{bud-=38;NFSU2_TR(0x68a320);
 __builtin_memmove((R+28),(R+28),4);
 }
 B68a322:{NFSU2_TR(0x68a322);
 u8 U[4];
 __builtin_memmove((U+0),(R+20),4);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x4ull))));
-s4(u32(r4(R+16)),r4(U+0));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
 }
 B68a323:{NFSU2_TR(0x68a323);
-__builtin_memmove((R+20),(R+16),4);
+__builtin_memmove((R+20),(G+16),4);
 }
 B68a325:{NFSU2_TR(0x68a325);
 u8 U[8];
@@ -4875,13 +3866,13 @@ B68a368:{NFSU2_TR(0x68a368);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0xcull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68a36b:{NFSU2_TR(0x68a36b);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x10ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+4),(U+4),4);
+__builtin_memmove((G+4),(U+4),4);
 }
 B68a36e:{NFSU2_TR(0x68a36e);
 u8 U[8];
@@ -5039,19 +4030,19 @@ w4(R+4620,u32(u32(r4(U+31))+u32(r4(U+40))));
 }
 B68a37c:{NFSU2_TR(0x68a37c);
 u8 U[8];
-__builtin_memmove((U+0),gp(u32(r4(R+0))),8);
+__builtin_memmove((U+0),gp(u32(r4(G+0))),8);
 __builtin_memmove((R+4864),(U+0),8);
 }
 B68a37f:{NFSU2_TR(0x68a37f);
 u8 U[8];
-__builtin_memmove((U+0),gp(u32(r4(R+4))),8);
+__builtin_memmove((U+0),gp(u32(r4(G+4))),8);
 __builtin_memmove((R+4872),(U+0),8);
 }
 B68a382:{NFSU2_TR(0x68a382);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x18ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68a385:{NFSU2_TR(0x68a385);
 w4(R+4864,b32(f32(r4(R+4864))*f32(r4(R+4608))));
@@ -5066,7 +4057,7 @@ __builtin_memmove((R+4992),(U+0),8);
 }
 B68a38b:{NFSU2_TR(0x68a38b);
 u8 U[8];
-__builtin_memmove((U+0),gp(u32(r4(R+0))),8);
+__builtin_memmove((U+0),gp(u32(r4(G+0))),8);
 __builtin_memmove((R+5000),(U+0),8);
 }
 B68a38e:{NFSU2_TR(0x68a38e);
@@ -5094,42 +4085,60 @@ B68a39a:{NFSU2_TR(0x68a39a);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+4),(U+4),4);
+__builtin_memmove((G+4),(U+4),4);
 }
 B68a39d:{NFSU2_TR(0x68a39d);
 u8 U[8];
 __builtin_memmove((U+0),(R+4864),8);
-s8_(u32(r4(R+4)),r8(U+0));
+s8_(u32(r4(G+4)),r8(U+0));
 }
 B68a3a0:{NFSU2_TR(0x68a3a0);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68a3a3:{NFSU2_TR(0x68a3a3);
 u8 U[4];
-__builtin_memmove((U+0),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
 __builtin_memmove((R+20),(U+0),4);
 }
 B68a3a4:{NFSU2_TR(0x68a3a4);
-__builtin_memmove((R+644),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x18ull))));
+__builtin_memmove((R+644),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x18ull))));
 {u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
 }
-B68a3a7:L68a3a7:{c.instructions+=48;NFSU2_TR(0x68a3a7);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68a3a7(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68a3a7:L68a3a7:{bud-=48;NFSU2_TR(0x68a3a7);
 __builtin_memmove((R+28),(R+28),4);
 }
 B68a3a9:{NFSU2_TR(0x68a3a9);
 u8 U[4];
 __builtin_memmove((U+0),(R+20),4);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x4ull))));
-s4(u32(r4(R+16)),r4(U+0));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
 }
 B68a3aa:{NFSU2_TR(0x68a3aa);
-__builtin_memmove((R+20),(R+16),4);
+__builtin_memmove((R+20),(G+16),4);
 }
 B68a3ac:{NFSU2_TR(0x68a3ac);
 u8 U[8];
@@ -5413,7 +4422,7 @@ B68a3ef:{NFSU2_TR(0x68a3ef);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0xcull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68a3f2:{NFSU2_TR(0x68a3f2);
 w4(R+4864,u32(u32(r4(R+4864))^u32(r4(R+4864))));
@@ -5425,7 +4434,7 @@ B68a3f5:{NFSU2_TR(0x68a3f5);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x10ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+4),(U+4),4);
+__builtin_memmove((G+4),(U+4),4);
 }
 B68a3f8:{NFSU2_TR(0x68a3f8);
 u8 U[8];
@@ -5743,7 +4752,7 @@ w4(R+4620,u32(u32(r4(U+31))+u32(r4(U+40))));
 }
 B68a417:{NFSU2_TR(0x68a417);
 u8 U[32];
-__builtin_memmove((U+0),gp(u32(r4(R+0))),16);
+__builtin_memmove((U+0),gp(u32(r4(G+0))),16);
 __builtin_memmove((U+16),(U+0),16);
 __builtin_memmove((R+4864),(U+16),4);
 __builtin_memmove((R+4868),(U+20),4);
@@ -5754,7 +4763,7 @@ B68a41a:{NFSU2_TR(0x68a41a);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x18ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68a41d:{NFSU2_TR(0x68a41d);
 w4(R+4864,b32(f32(r4(R+4864))*f32(r4(R+4608))));
@@ -5770,7 +4779,7 @@ w4(R+5004,u32(u32(r4(R+5004))^u32(r4(R+5004))));
 }
 B68a423:{NFSU2_TR(0x68a423);
 u8 U[32];
-__builtin_memmove((U+0),gp(u32(r4(R+4))),16);
+__builtin_memmove((U+0),gp(u32(r4(G+4))),16);
 __builtin_memmove((U+16),(U+0),16);
 __builtin_memmove((R+4928),(U+16),4);
 __builtin_memmove((R+4932),(U+20),4);
@@ -5818,7 +4827,7 @@ w4(R+4876,b32(f32(r4(R+4876))+f32(r4(R+5004))));
 }
 B68a438:{NFSU2_TR(0x68a438);
 u8 U[32];
-__builtin_memmove((U+0),gp(u32(r4(R+0))),16);
+__builtin_memmove((U+0),gp(u32(r4(G+0))),16);
 __builtin_memmove((U+16),(U+0),16);
 __builtin_memmove((R+5056),(U+16),4);
 __builtin_memmove((R+5060),(U+20),4);
@@ -5829,7 +4838,7 @@ B68a43b:{NFSU2_TR(0x68a43b);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+4),(U+4),4);
+__builtin_memmove((G+4),(U+4),4);
 }
 B68a43e:{NFSU2_TR(0x68a43e);
 w4(R+5056,b32(f32(r4(R+5056))*f32(r4(R+4800))));
@@ -5846,37 +4855,55 @@ w4(R+4876,b32(f32(r4(R+4876))+f32(r4(R+5068))));
 B68a444:{NFSU2_TR(0x68a444);
 u8 U[16];
 __builtin_memmove((U+0),(R+4864),16);
-__builtin_memmove(gp(u32(r4(R+4))),(U+0),16);
+__builtin_memmove(gp(u32(r4(G+4))),(U+0),16);
 }
 B68a447:{NFSU2_TR(0x68a447);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68a44a:{NFSU2_TR(0x68a44a);
 u8 U[4];
-__builtin_memmove((U+0),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
 __builtin_memmove((R+20),(U+0),4);
 }
 B68a44b:{NFSU2_TR(0x68a44b);
-__builtin_memmove((R+644),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x18ull))));
+__builtin_memmove((R+644),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x18ull))));
 {u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
 }
-B68a44e:L68a44e:{c.instructions+=49;NFSU2_TR(0x68a44e);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68a44e(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68a44e:L68a44e:{bud-=49;NFSU2_TR(0x68a44e);
 __builtin_memmove((R+28),(R+28),4);
 }
 B68a450:{NFSU2_TR(0x68a450);
 u8 U[4];
 __builtin_memmove((U+0),(R+20),4);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x4ull))));
-s4(u32(r4(R+16)),r4(U+0));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
 }
 B68a451:{NFSU2_TR(0x68a451);
-__builtin_memmove((R+20),(R+16),4);
+__builtin_memmove((R+20),(G+16),4);
 }
 B68a453:{NFSU2_TR(0x68a453);
 u8 U[8];
@@ -6155,13 +5182,13 @@ B68a497:{NFSU2_TR(0x68a497);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0xcull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68a49a:{NFSU2_TR(0x68a49a);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x10ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+4),(U+4),4);
+__builtin_memmove((G+4),(U+4),4);
 }
 B68a49d:{NFSU2_TR(0x68a49d);
 u8 U[8];
@@ -6473,7 +5500,7 @@ w4(R+4620,u32(u32(r4(U+31))+u32(r4(U+40))));
 }
 B68a4b9:{NFSU2_TR(0x68a4b9);
 u8 U[8];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x8ull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
 __builtin_memmove((R+4864),(U+4),4);
 w4(R+4868,u32(0x0ull));
@@ -6482,14 +5509,14 @@ w4(R+4876,u32(0x0ull));
 }
 B68a4be:{NFSU2_TR(0x68a4be);
 u8 U[8];
-__builtin_memmove((U+0),gp(u32(r4(R+0))),8);
+__builtin_memmove((U+0),gp(u32(r4(G+0))),8);
 __builtin_memmove((R+4872),(U+0),8);
 }
 B68a4c1:{NFSU2_TR(0x68a4c1);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x18ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68a4c4:{NFSU2_TR(0x68a4c4);
 w4(R+4864,b32(f32(r4(R+4864))*f32(r4(R+4608))));
@@ -6499,7 +5526,7 @@ w4(R+4876,b32(f32(r4(R+4876))*f32(r4(R+4620))));
 }
 B68a4c7:{NFSU2_TR(0x68a4c7);
 u8 U[8];
-w4(U+0,u32(u32(r4(R+4))+u32(u32(0x8ull))));
+w4(U+0,u32(u32(r4(G+4))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
 __builtin_memmove((R+4928),(U+4),4);
 w4(R+4932,u32(0x0ull));
@@ -6508,7 +5535,7 @@ w4(R+4940,u32(0x0ull));
 }
 B68a4cc:{NFSU2_TR(0x68a4cc);
 u8 U[8];
-__builtin_memmove((U+0),gp(u32(r4(R+4))),8);
+__builtin_memmove((U+0),gp(u32(r4(G+4))),8);
 __builtin_memmove((R+4936),(U+0),8);
 }
 B68a4cf:{NFSU2_TR(0x68a4cf);
@@ -6551,7 +5578,7 @@ w4(R+4876,b32(f32(r4(R+4876))+f32(r4(R+5004))));
 }
 B68a4e3:{NFSU2_TR(0x68a4e3);
 u8 U[8];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x8ull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
 __builtin_memmove((R+5056),(U+4),4);
 w4(R+5060,u32(0x0ull));
@@ -6560,14 +5587,14 @@ w4(R+5068,u32(0x0ull));
 }
 B68a4e8:{NFSU2_TR(0x68a4e8);
 u8 U[8];
-__builtin_memmove((U+0),gp(u32(r4(R+0))),8);
+__builtin_memmove((U+0),gp(u32(r4(G+0))),8);
 __builtin_memmove((R+5064),(U+0),8);
 }
 B68a4eb:{NFSU2_TR(0x68a4eb);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+4),(U+4),4);
+__builtin_memmove((G+4),(U+4),4);
 }
 B68a4ee:{NFSU2_TR(0x68a4ee);
 w4(R+5056,b32(f32(r4(R+5056))*f32(r4(R+4800))));
@@ -6584,11 +5611,11 @@ w4(R+4876,b32(f32(r4(R+4876))+f32(r4(R+5068))));
 B68a4f4:{NFSU2_TR(0x68a4f4);
 u8 U[8];
 __builtin_memmove((U+0),(R+4872),8);
-s8_(u32(r4(R+4)),r8(U+0));
+s8_(u32(r4(G+4)),r8(U+0));
 }
 B68a4f7:{NFSU2_TR(0x68a4f7);
 u8 U[8];
-w4(U+0,u32(u32(r4(R+4))+u32(u32(0x8ull))));
+w4(U+0,u32(u32(r4(G+4))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),(R+4864),4);
 s4(u32(r4(U+0)),r4(U+4));
 }
@@ -6596,31 +5623,49 @@ B68a4fc:{NFSU2_TR(0x68a4fc);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68a4ff:{NFSU2_TR(0x68a4ff);
 u8 U[4];
-__builtin_memmove((U+0),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
 __builtin_memmove((R+20),(U+0),4);
 }
 B68a500:{NFSU2_TR(0x68a500);
-__builtin_memmove((R+644),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x18ull))));
+__builtin_memmove((R+644),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x18ull))));
 {u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
 }
-B68a503:L68a503:{c.instructions+=44;NFSU2_TR(0x68a503);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68a503(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68a503:L68a503:{bud-=44;NFSU2_TR(0x68a503);
 __builtin_memmove((R+28),(R+28),4);
 }
 B68a505:{NFSU2_TR(0x68a505);
 u8 U[4];
 __builtin_memmove((U+0),(R+20),4);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x4ull))));
-s4(u32(r4(R+16)),r4(U+0));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
 }
 B68a506:{NFSU2_TR(0x68a506);
-__builtin_memmove((R+20),(R+16),4);
+__builtin_memmove((R+20),(G+16),4);
 }
 B68a508:{NFSU2_TR(0x68a508);
 u8 U[8];
@@ -6899,7 +5944,7 @@ B68a54c:{NFSU2_TR(0x68a54c);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0xcull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68a54f:{NFSU2_TR(0x68a54f);
 __builtin_memmove((R+4672),(R+4608),4);
@@ -6988,7 +6033,7 @@ B68a559:{NFSU2_TR(0x68a559);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x10ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+4),(U+4),4);
+__builtin_memmove((G+4),(U+4),4);
 }
 B68a55c:{NFSU2_TR(0x68a55c);
 u8 U[76];
@@ -7217,7 +6262,7 @@ w4(R+4620,u32(u32(r4(U+31))+u32(r4(U+40))));
 }
 B68a56e:{NFSU2_TR(0x68a56e);
 u8 U[32];
-__builtin_memmove((U+0),gp(u32(r4(R+0))),16);
+__builtin_memmove((U+0),gp(u32(r4(G+0))),16);
 __builtin_memmove((U+16),(U+0),16);
 __builtin_memmove((R+4864),(U+16),4);
 __builtin_memmove((R+4868),(U+20),4);
@@ -7228,7 +6273,7 @@ B68a571:{NFSU2_TR(0x68a571);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x18ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68a574:{NFSU2_TR(0x68a574);
 w4(R+4864,b32(f32(r4(R+4864))*f32(r4(R+4608))));
@@ -7238,7 +6283,7 @@ w4(R+4876,b32(f32(r4(R+4876))*f32(r4(R+4620))));
 }
 B68a577:{NFSU2_TR(0x68a577);
 u8 U[32];
-__builtin_memmove((U+0),gp(u32(r4(R+4))),16);
+__builtin_memmove((U+0),gp(u32(r4(G+4))),16);
 __builtin_memmove((U+16),(U+0),16);
 __builtin_memmove((R+4928),(U+16),4);
 __builtin_memmove((R+4932),(U+20),4);
@@ -7280,7 +6325,7 @@ w4(R+4876,b32(f32(r4(R+4876))+f32(r4(R+5004))));
 }
 B68a589:{NFSU2_TR(0x68a589);
 u8 U[32];
-__builtin_memmove((U+0),gp(u32(r4(R+0))),16);
+__builtin_memmove((U+0),gp(u32(r4(G+0))),16);
 __builtin_memmove((U+16),(U+0),16);
 __builtin_memmove((R+5056),(U+16),4);
 __builtin_memmove((R+5060),(U+20),4);
@@ -7291,7 +6336,7 @@ B68a58c:{NFSU2_TR(0x68a58c);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+4),(U+4),4);
+__builtin_memmove((G+4),(U+4),4);
 }
 B68a58f:{NFSU2_TR(0x68a58f);
 w4(R+5056,b32(f32(r4(R+5056))*f32(r4(R+4800))));
@@ -7308,37 +6353,55 @@ w4(R+4876,b32(f32(r4(R+4876))+f32(r4(R+5068))));
 B68a595:{NFSU2_TR(0x68a595);
 u8 U[16];
 __builtin_memmove((U+0),(R+4864),16);
-__builtin_memmove(gp(u32(r4(R+4))),(U+0),16);
+__builtin_memmove(gp(u32(r4(G+4))),(U+0),16);
 }
 B68a598:{NFSU2_TR(0x68a598);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68a59b:{NFSU2_TR(0x68a59b);
 u8 U[4];
-__builtin_memmove((U+0),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
 __builtin_memmove((R+20),(U+0),4);
 }
 B68a59c:{NFSU2_TR(0x68a59c);
-__builtin_memmove((R+644),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x18ull))));
+__builtin_memmove((R+644),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x18ull))));
 {u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
 }
-B68a59f:L68a59f:{c.instructions+=38;NFSU2_TR(0x68a59f);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68a59f(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68a59f:L68a59f:{bud-=38;NFSU2_TR(0x68a59f);
 __builtin_memmove((R+28),(R+28),4);
 }
 B68a5a1:{NFSU2_TR(0x68a5a1);
 u8 U[4];
 __builtin_memmove((U+0),(R+20),4);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x4ull))));
-s4(u32(r4(R+16)),r4(U+0));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
 }
 B68a5a2:{NFSU2_TR(0x68a5a2);
-__builtin_memmove((R+20),(R+16),4);
+__builtin_memmove((R+20),(G+16),4);
 }
 B68a5a4:{NFSU2_TR(0x68a5a4);
 u8 U[8];
@@ -7617,7 +6680,7 @@ B68a5e8:{NFSU2_TR(0x68a5e8);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0xcull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68a5eb:{NFSU2_TR(0x68a5eb);
 __builtin_memmove((R+4736),(R+4608),4);
@@ -7771,7 +6834,7 @@ B68a5f6:{NFSU2_TR(0x68a5f6);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x10ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+4),(U+4),4);
+__builtin_memmove((G+4),(U+4),4);
 }
 B68a5f9:{NFSU2_TR(0x68a5f9);
 u8 U[8];
@@ -7781,19 +6844,19 @@ __builtin_memmove((R+8),(U+4),4);
 }
 B68a5fc:{NFSU2_TR(0x68a5fc);
 u8 U[8];
-__builtin_memmove((U+0),gp(u32(r4(R+0))),8);
+__builtin_memmove((U+0),gp(u32(r4(G+0))),8);
 __builtin_memmove((R+4864),(U+0),8);
 }
 B68a5ff:{NFSU2_TR(0x68a5ff);
 u8 U[8];
-__builtin_memmove((U+0),gp(u32(r4(R+4))),8);
+__builtin_memmove((U+0),gp(u32(r4(G+4))),8);
 __builtin_memmove((R+4872),(U+0),8);
 }
 B68a602:{NFSU2_TR(0x68a602);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x18ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68a605:{NFSU2_TR(0x68a605);
 w4(R+4864,b32(f32(r4(R+4864))*f32(r4(R+4608))));
@@ -7808,7 +6871,7 @@ __builtin_memmove((R+4992),(U+0),8);
 }
 B68a60b:{NFSU2_TR(0x68a60b);
 u8 U[8];
-__builtin_memmove((U+0),gp(u32(r4(R+0))),8);
+__builtin_memmove((U+0),gp(u32(r4(G+0))),8);
 __builtin_memmove((R+5000),(U+0),8);
 }
 B68a60e:{NFSU2_TR(0x68a60e);
@@ -7821,7 +6884,7 @@ B68a611:{NFSU2_TR(0x68a611);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+4),(U+4),4);
+__builtin_memmove((G+4),(U+4),4);
 }
 B68a614:{NFSU2_TR(0x68a614);
 w4(R+4864,b32(f32(r4(R+4864))+f32(r4(R+4992))));
@@ -7841,37 +6904,55 @@ w4(R+4876,b32(f32(r4(R+4876))+f32(r4(R+4812))));
 B68a61d:{NFSU2_TR(0x68a61d);
 u8 U[8];
 __builtin_memmove((U+0),(R+4864),8);
-s8_(u32(r4(R+4)),r8(U+0));
+s8_(u32(r4(G+4)),r8(U+0));
 }
 B68a620:{NFSU2_TR(0x68a620);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68a623:{NFSU2_TR(0x68a623);
 u8 U[4];
-__builtin_memmove((U+0),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
 __builtin_memmove((R+20),(U+0),4);
 }
 B68a624:{NFSU2_TR(0x68a624);
-__builtin_memmove((R+644),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x18ull))));
+__builtin_memmove((R+644),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x18ull))));
 {u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
 }
-B68a627:L68a627:{c.instructions+=28;NFSU2_TR(0x68a627);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68a627(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68a627:L68a627:{bud-=28;NFSU2_TR(0x68a627);
 __builtin_memmove((R+28),(R+28),4);
 }
 B68a629:{NFSU2_TR(0x68a629);
 u8 U[4];
 __builtin_memmove((U+0),(R+20),4);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x4ull))));
-s4(u32(r4(R+16)),r4(U+0));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
 }
 B68a62a:{NFSU2_TR(0x68a62a);
-__builtin_memmove((R+20),(R+16),4);
+__builtin_memmove((R+20),(G+16),4);
 }
 B68a62c:{NFSU2_TR(0x68a62c);
 u8 U[8];
@@ -7886,7 +6967,7 @@ B68a631:{NFSU2_TR(0x68a631);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0xcull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68a634:{NFSU2_TR(0x68a634);
 u8 U[76];
@@ -7961,7 +7042,7 @@ w4(R+4620,u32(u32(r4(U+31))+u32(r4(U+40))));
 }
 B68a638:{NFSU2_TR(0x68a638);
 u8 U[8];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x8ull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
 __builtin_memmove((R+4736),(U+4),4);
 w4(R+4740,u32(0x0ull));
@@ -7972,11 +7053,11 @@ B68a63d:{NFSU2_TR(0x68a63d);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x10ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+4),(U+4),4);
+__builtin_memmove((G+4),(U+4),4);
 }
 B68a640:{NFSU2_TR(0x68a640);
 u8 U[8];
-__builtin_memmove((U+0),gp(u32(r4(R+0))),8);
+__builtin_memmove((U+0),gp(u32(r4(G+0))),8);
 __builtin_memmove((R+4744),(U+0),8);
 }
 B68a643:{NFSU2_TR(0x68a643);
@@ -7990,7 +7071,7 @@ w4(R+4684,u32(0x0ull));
 }
 B68a648:{NFSU2_TR(0x68a648);
 u8 U[8];
-w4(U+0,u32(u32(r4(R+4))+u32(u32(0x8ull))));
+w4(U+0,u32(u32(r4(G+4))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
 __builtin_memmove((R+4800),(U+4),4);
 w4(R+4804,u32(0x0ull));
@@ -7999,7 +7080,7 @@ w4(R+4812,u32(0x0ull));
 }
 B68a64d:{NFSU2_TR(0x68a64d);
 u8 U[8];
-__builtin_memmove((U+0),gp(u32(r4(R+4))),8);
+__builtin_memmove((U+0),gp(u32(r4(G+4))),8);
 __builtin_memmove((R+4808),(U+0),8);
 }
 B68a650:{NFSU2_TR(0x68a650);
@@ -8077,7 +7158,7 @@ B68a654:{NFSU2_TR(0x68a654);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x14ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68a657:{NFSU2_TR(0x68a657);
 w4(R+4800,b32(f32(r4(R+4800))-f32(r4(R+4736))));
@@ -8087,7 +7168,7 @@ w4(R+4812,b32(f32(r4(R+4812))-f32(r4(R+4748))));
 }
 B68a65a:{NFSU2_TR(0x68a65a);
 u8 U[8];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x8ull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
 __builtin_memmove((R+4864),(U+4),4);
 w4(R+4868,u32(0x0ull));
@@ -8096,7 +7177,7 @@ w4(R+4876,u32(0x0ull));
 }
 B68a65f:{NFSU2_TR(0x68a65f);
 u8 U[8];
-__builtin_memmove((U+0),gp(u32(r4(R+0))),8);
+__builtin_memmove((U+0),gp(u32(r4(G+0))),8);
 __builtin_memmove((R+4872),(U+0),8);
 }
 B68a662:{NFSU2_TR(0x68a662);
@@ -8115,7 +7196,7 @@ B68a668:{NFSU2_TR(0x68a668);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68a66b:{NFSU2_TR(0x68a66b);
 w4(R+4800,b32(f32(r4(R+4800))+f32(r4(R+4736))));
@@ -8137,44 +7218,62 @@ w4(R+4812,b32(f32(r4(R+4812))+f32(r4(R+4876))));
 }
 B68a674:{NFSU2_TR(0x68a674);
 u8 U[8];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x8ull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),(R+4800),4);
 s4(u32(r4(U+0)),r4(U+4));
 }
 B68a679:{NFSU2_TR(0x68a679);
 u8 U[8];
 __builtin_memmove((U+0),(R+4808),8);
-s8_(u32(r4(R+0)),r8(U+0));
+s8_(u32(r4(G+0)),r8(U+0));
 }
 B68a67c:{NFSU2_TR(0x68a67c);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68a67f:{NFSU2_TR(0x68a67f);
 u8 U[4];
-__builtin_memmove((U+0),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
 __builtin_memmove((R+20),(U+0),4);
 }
 B68a680:{NFSU2_TR(0x68a680);
-__builtin_memmove((R+644),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x18ull))));
+__builtin_memmove((R+644),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x18ull))));
 {u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
 }
-B68a683:L68a683:{c.instructions+=24;NFSU2_TR(0x68a683);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68a683(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68a683:L68a683:{bud-=24;NFSU2_TR(0x68a683);
 __builtin_memmove((R+28),(R+28),4);
 }
 B68a685:{NFSU2_TR(0x68a685);
 u8 U[4];
 __builtin_memmove((U+0),(R+20),4);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x4ull))));
-s4(u32(r4(R+16)),r4(U+0));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
 }
 B68a686:{NFSU2_TR(0x68a686);
-__builtin_memmove((R+20),(R+16),4);
+__builtin_memmove((R+20),(G+16),4);
 }
 B68a688:{NFSU2_TR(0x68a688);
 u8 U[8];
@@ -8189,7 +7288,7 @@ B68a68d:{NFSU2_TR(0x68a68d);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0xcull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68a690:{NFSU2_TR(0x68a690);
 u8 U[76];
@@ -8266,11 +7365,11 @@ B68a694:{NFSU2_TR(0x68a694);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x10ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+4),(U+4),4);
+__builtin_memmove((G+4),(U+4),4);
 }
 B68a697:{NFSU2_TR(0x68a697);
 u8 U[32];
-__builtin_memmove((U+0),gp(u32(r4(R+0))),16);
+__builtin_memmove((U+0),gp(u32(r4(G+0))),16);
 __builtin_memmove((U+16),(U+0),16);
 __builtin_memmove((R+4736),(U+16),4);
 __builtin_memmove((R+4740),(U+20),4);
@@ -8288,7 +7387,7 @@ w4(R+4684,u32(0x0ull));
 }
 B68a69f:{NFSU2_TR(0x68a69f);
 u8 U[32];
-__builtin_memmove((U+0),gp(u32(r4(R+4))),16);
+__builtin_memmove((U+0),gp(u32(r4(G+4))),16);
 __builtin_memmove((U+16),(U+0),16);
 __builtin_memmove((R+4800),(U+16),4);
 __builtin_memmove((R+4804),(U+20),4);
@@ -8370,7 +7469,7 @@ B68a6a6:{NFSU2_TR(0x68a6a6);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x14ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68a6a9:{NFSU2_TR(0x68a6a9);
 w4(R+4800,b32(f32(r4(R+4800))-f32(r4(R+4736))));
@@ -8380,7 +7479,7 @@ w4(R+4812,b32(f32(r4(R+4812))-f32(r4(R+4748))));
 }
 B68a6ac:{NFSU2_TR(0x68a6ac);
 u8 U[32];
-__builtin_memmove((U+0),gp(u32(r4(R+0))),16);
+__builtin_memmove((U+0),gp(u32(r4(G+0))),16);
 __builtin_memmove((U+16),(U+0),16);
 __builtin_memmove((R+4864),(U+16),4);
 __builtin_memmove((R+4868),(U+20),4);
@@ -8403,7 +7502,7 @@ B68a6b5:{NFSU2_TR(0x68a6b5);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68a6b8:{NFSU2_TR(0x68a6b8);
 w4(R+4800,b32(f32(r4(R+4800))+f32(r4(R+4736))));
@@ -8426,37 +7525,55 @@ w4(R+4812,b32(f32(r4(R+4812))+f32(r4(R+4876))));
 B68a6c1:{NFSU2_TR(0x68a6c1);
 u8 U[16];
 __builtin_memmove((U+0),(R+4800),16);
-__builtin_memmove(gp(u32(r4(R+0))),(U+0),16);
+__builtin_memmove(gp(u32(r4(G+0))),(U+0),16);
 }
 B68a6c4:{NFSU2_TR(0x68a6c4);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68a6c7:{NFSU2_TR(0x68a6c7);
 u8 U[4];
-__builtin_memmove((U+0),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
 __builtin_memmove((R+20),(U+0),4);
 }
 B68a6c8:{NFSU2_TR(0x68a6c8);
-__builtin_memmove((R+644),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x18ull))));
+__builtin_memmove((R+644),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x18ull))));
 {u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
 }
-B68a6cb:L68a6cb:{c.instructions+=27;NFSU2_TR(0x68a6cb);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68a6cb(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68a6cb:L68a6cb:{bud-=27;NFSU2_TR(0x68a6cb);
 __builtin_memmove((R+28),(R+28),4);
 }
 B68a6cd:{NFSU2_TR(0x68a6cd);
 u8 U[4];
 __builtin_memmove((U+0),(R+20),4);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x4ull))));
-s4(u32(r4(R+16)),r4(U+0));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
 }
 B68a6ce:{NFSU2_TR(0x68a6ce);
-__builtin_memmove((R+20),(R+16),4);
+__builtin_memmove((R+20),(G+16),4);
 }
 B68a6d0:{NFSU2_TR(0x68a6d0);
 w4(R+4736,u32(u32(r4(R+4736))^u32(r4(R+4736))));
@@ -8477,7 +7594,7 @@ B68a6d8:{NFSU2_TR(0x68a6d8);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0xcull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68a6db:{NFSU2_TR(0x68a6db);
 u8 U[76];
@@ -8560,11 +7677,11 @@ B68a6e2:{NFSU2_TR(0x68a6e2);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x10ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+4),(U+4),4);
+__builtin_memmove((G+4),(U+4),4);
 }
 B68a6e5:{NFSU2_TR(0x68a6e5);
 u8 U[8];
-__builtin_memmove((U+0),gp(u32(r4(R+0))),8);
+__builtin_memmove((U+0),gp(u32(r4(G+0))),8);
 __builtin_memmove((R+4744),(U+0),8);
 }
 B68a6e8:{NFSU2_TR(0x68a6e8);
@@ -8578,7 +7695,7 @@ w4(R+4684,u32(0x0ull));
 }
 B68a6ed:{NFSU2_TR(0x68a6ed);
 u8 U[8];
-__builtin_memmove((U+0),gp(u32(r4(R+4))),8);
+__builtin_memmove((U+0),gp(u32(r4(G+4))),8);
 __builtin_memmove((R+4808),(U+0),8);
 }
 B68a6f0:{NFSU2_TR(0x68a6f0);
@@ -8662,7 +7779,7 @@ B68a6f7:{NFSU2_TR(0x68a6f7);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x14ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68a6fa:{NFSU2_TR(0x68a6fa);
 w4(R+4800,b32(f32(r4(R+4800))-f32(r4(R+4736))));
@@ -8672,7 +7789,7 @@ w4(R+4812,b32(f32(r4(R+4812))-f32(r4(R+4748))));
 }
 B68a6fd:{NFSU2_TR(0x68a6fd);
 u8 U[8];
-__builtin_memmove((U+0),gp(u32(r4(R+0))),8);
+__builtin_memmove((U+0),gp(u32(r4(G+0))),8);
 __builtin_memmove((R+4872),(U+0),8);
 }
 B68a700:{NFSU2_TR(0x68a700);
@@ -8691,7 +7808,7 @@ B68a706:{NFSU2_TR(0x68a706);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68a709:{NFSU2_TR(0x68a709);
 w4(R+4800,b32(f32(r4(R+4800))+f32(r4(R+4736))));
@@ -8714,59 +7831,77 @@ w4(R+4812,b32(f32(r4(R+4812))+f32(r4(R+4876))));
 B68a712:{NFSU2_TR(0x68a712);
 u8 U[8];
 __builtin_memmove((U+0),(R+4808),8);
-s8_(u32(r4(R+0)),r8(U+0));
+s8_(u32(r4(G+0)),r8(U+0));
 }
 B68a715:{NFSU2_TR(0x68a715);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68a718:{NFSU2_TR(0x68a718);
 u8 U[4];
-__builtin_memmove((U+0),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
 __builtin_memmove((R+20),(U+0),4);
 }
 B68a719:{NFSU2_TR(0x68a719);
-__builtin_memmove((R+644),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x18ull))));
+__builtin_memmove((R+644),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x18ull))));
 {u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
 }
-B68a71c:L68a71c:{c.instructions+=32;NFSU2_TR(0x68a71c);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68a71c(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+516,F+4,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68a71c:L68a71c:{bud-=32;NFSU2_TR(0x68a71c);
 __builtin_memmove((R+28),(R+28),4);
 }
 B68a71e:{NFSU2_TR(0x68a71e);
 u8 U[4];
 __builtin_memmove((U+0),(R+20),4);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x4ull))));
-s4(u32(r4(R+16)),r4(U+0));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
 }
 B68a71f:{NFSU2_TR(0x68a71f);
-__builtin_memmove((R+20),(R+16),4);
+__builtin_memmove((R+20),(G+16),4);
 }
 B68a721:{NFSU2_TR(0x68a721);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68a724:{NFSU2_TR(0x68a724);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x8ull))));
-__builtin_memmove((U+4),(R+0),4);
+__builtin_memmove((U+4),(G+0),4);
 s4(u32(r4(U+0)),r4(U+4));
 }
 B68a727:{NFSU2_TR(0x68a727);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0xcull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68a72a:{NFSU2_TR(0x68a72a);
 u8 U[32];
-__builtin_memmove((U+0),gp(u32(r4(R+0))),16);
+__builtin_memmove((U+0),gp(u32(r4(G+0))),16);
 __builtin_memmove((U+16),(U+0),16);
 __builtin_memmove((R+4608),(U+16),4);
 __builtin_memmove((R+4612),(U+20),4);
@@ -8777,11 +7912,11 @@ B68a72d:{NFSU2_TR(0x68a72d);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x10ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+4),(U+4),4);
+__builtin_memmove((G+4),(U+4),4);
 }
 B68a730:{NFSU2_TR(0x68a730);
 u8 U[8];
-w4(U+0,u32(u32(r4(R+4))+u32(u32(0x8ull))));
+w4(U+0,u32(u32(r4(G+4))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
 __builtin_memmove((R+4672),(U+4),4);
 w4(R+4676,u32(0x0ull));
@@ -8796,7 +7931,7 @@ __builtin_memmove((R+8),(U+4),4);
 }
 B68a738:{NFSU2_TR(0x68a738);
 u8 U[8];
-__builtin_memmove((U+0),gp(u32(r4(R+4))),8);
+__builtin_memmove((U+0),gp(u32(r4(G+4))),8);
 __builtin_memmove((R+4680),(U+0),8);
 }
 B68a73b:{NFSU2_TR(0x68a73b);
@@ -9158,19 +8293,19 @@ B68a77f:{NFSU2_TR(0x68a77f);
 u8 U[4];
 w1(U+0,u8(std::isnan(f32(r4(R+4928)))));
 w1(U+1,u8(std::isnan(f32(m4(0x8a68e4)))));
-w1(R+514,u8((r1(U+0))||(r1(U+1))));
+w1(F+2,u8((r1(U+0))||(r1(U+1))));
 w1(U+2,u8(f32(r4(R+4928))==f32(m4(0x8a68e4))));
-w1(R+518,u8(u32(r1(R+514))|u32(r1(U+2))));
+w1(F+6,u8(u32(r1(F+2))|u32(r1(U+2))));
 w1(U+3,u8(f32(r4(R+4928))<f32(m4(0x8a68e4))));
-w1(R+512,u8(u32(r1(R+514))|u32(r1(U+3))));
-w1(R+523,u8(0x0ull));
-w1(R+516,u8(0x0ull));
-w1(R+519,u8(0x0ull));
+w1(F+0,u8(u32(r1(F+2))|u32(r1(U+3))));
+w1(F+11,u8(0x0ull));
+w1(F+4,u8(0x0ull));
+w1(F+7,u8(0x0ull));
 }
 B68a786:{NFSU2_TR(0x68a786);
-if(r1(R+518)){{goto L68a7be;}}
+if(r1(F+6)){{__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+516,F+4,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);[[clang::musttail]] return blk_68a7be(ARGS);}}
 }
-B68a788:L68a788:{c.instructions+=15;NFSU2_TR(0x68a788);
+B68a788:L68a788:{bud-=15;NFSU2_TR(0x68a788);
 {wv<16>((R+4608),uo::rcpss<16>(rv<16>((R+4608)),rv<16>((R+4928))));}
 }
 B68a78c:{NFSU2_TR(0x68a78c);
@@ -9278,7 +8413,7 @@ B68a7ae:{NFSU2_TR(0x68a7ae);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68a7b1:{NFSU2_TR(0x68a7b1);
 w4(R+4672,b32(f32(r4(R+4672))+f32(r4(R+4800))));
@@ -9289,73 +8424,128 @@ w4(R+4684,b32(f32(r4(R+4684))+f32(r4(R+4812))));
 B68a7b4:{NFSU2_TR(0x68a7b4);
 u8 U[8];
 __builtin_memmove((U+0),(R+4680),8);
-s8_(u32(r4(R+0)),r8(U+0));
+s8_(u32(r4(G+0)),r8(U+0));
 }
 B68a7b7:{NFSU2_TR(0x68a7b7);
 u8 U[8];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x8ull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),(R+4672),4);
 s4(u32(r4(U+0)),r4(U+4));
 }
 B68a7bc:{NFSU2_TR(0x68a7bc);
-{goto L68a7c5;}
+{__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+516,F+4,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);[[clang::musttail]] return blk_68a7c5(ARGS);}
 }
-B68a7be:L68a7be:{c.instructions+=1;NFSU2_TR(0x68a7be);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68a7be(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68a7be:L68a7be:{bud-=1;NFSU2_TR(0x68a7be);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x8ull))));
 w4(U+4,u32(0x0ull));
 s4(u32(r4(U+0)),r4(U+4));
+{[[clang::musttail]] return blk_68a7c5(ARGS);}
 }
-B68a7c5:L68a7c5:{c.instructions+=3;NFSU2_TR(0x68a7c5);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68a7c5(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68a7c5:L68a7c5:{bud-=3;NFSU2_TR(0x68a7c5);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68a7c8:{NFSU2_TR(0x68a7c8);
 u8 U[4];
-__builtin_memmove((U+0),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
 __builtin_memmove((R+20),(U+0),4);
 }
 B68a7c9:{NFSU2_TR(0x68a7c9);
-__builtin_memmove((R+644),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x10ull))));
+__builtin_memmove((R+644),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x10ull))));
 {u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
 }
-B68a7cc:L68a7cc:{c.instructions+=15;NFSU2_TR(0x68a7cc);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68a7cc(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68a7cc:L68a7cc:{bud-=15;NFSU2_TR(0x68a7cc);
 __builtin_memmove((R+28),(R+28),4);
 }
 B68a7ce:{NFSU2_TR(0x68a7ce);
 u8 U[4];
 __builtin_memmove((U+0),(R+12),4);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x4ull))));
-s4(u32(r4(R+16)),r4(U+0));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
 }
 B68a7cf:{NFSU2_TR(0x68a7cf);
-__builtin_memmove((R+12),(R+16),4);
+__builtin_memmove((R+12),(G+16),4);
 }
 B68a7d1:{NFSU2_TR(0x68a7d1);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x8ull))));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x8ull))));
 }
 B68a7d4:{NFSU2_TR(0x68a7d4);
-w4(R+16,u32(u32(r4(R+16))&u32(u32(0xfffffff0ull))));
+w4(G+16,u32(u32(r4(G+16))&u32(u32(0xfffffff0ull))));
 }
 B68a7d7:{NFSU2_TR(0x68a7d7);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x8ull))));
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x8ull))));
 }
 B68a7da:{NFSU2_TR(0x68a7da);
 u8 U[4];
 __builtin_memmove((U+0),(R+20),4);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x4ull))));
-s4(u32(r4(R+16)),r4(U+0));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
 }
 B68a7db:{NFSU2_TR(0x68a7db);
 u8 U[4];
 __builtin_memmove((U+0),(R+20),4);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x4ull))));
-s4(u32(r4(R+16)),r4(U+0));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
 }
 B68a7dc:{NFSU2_TR(0x68a7dc);
 u8 U[8];
@@ -9365,42 +8555,42 @@ __builtin_memmove((R+20),(U+4),4);
 }
 B68a7df:{NFSU2_TR(0x68a7df);
 u8 U[8];
-w4(U+0,u32(u32(u32(0x4ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x4ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),(R+20),4);
 s4(u32(r4(U+0)),r4(U+4));
 }
 B68a7e3:{NFSU2_TR(0x68a7e3);
-__builtin_memmove((R+20),(R+16),4);
+__builtin_memmove((R+20),(G+16),4);
 }
 B68a7e5:{NFSU2_TR(0x68a7e5);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x30ull))));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x30ull))));
 }
 B68a7e8:{NFSU2_TR(0x68a7e8);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+12))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68a7eb:{NFSU2_TR(0x68a7eb);
 u8 U[4];
-w1(R+512,u8(0x0ull));
-w1(R+523,u8(0x0ull));
-w1(U+3,u8(u32(r1(R+0))&u32(u8(0xfull))));
-w1(R+519,u8(s8(r1(U+3))<s8(u8(0x0ull))));
-w1(R+518,u8((r1(U+3))==(u8(0x0ull))));
+w1(F+0,u8(0x0ull));
+w1(F+11,u8(0x0ull));
+w1(U+3,u8(u32(r1(G+0))&u32(u8(0xfull))));
+w1(F+7,u8(s8(r1(U+3))<s8(u8(0x0ull))));
+w1(F+6,u8((r1(U+3))==(u8(0x0ull))));
 w1(U+0,u8(u32(r1(U+3))&u32(u8(0xffull))));
 w1(U+1,u8(__builtin_popcountll(u64(r1(U+0)))));
 w1(U+2,u8(u32(r1(U+1))&u32(u8(0x1ull))));
-w1(R+514,u8((r1(U+2))==(u8(0x0ull))));
+w1(F+2,u8((r1(U+2))==(u8(0x0ull))));
 }
 B68a7ed:{NFSU2_TR(0x68a7ed);
 u8 U[1];
-w1(U+0,u8(!(r1(R+518))));
-if(r1(U+0)){{goto L68a800;}}
+w1(U+0,u8(!(r1(F+6))));
+if(r1(U+0)){{__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);[[clang::musttail]] return blk_68a800(ARGS);}}
 }
-B68a7ef:L68a7ef:{c.instructions+=5;NFSU2_TR(0x68a7ef);
+B68a7ef:L68a7ef:{bud-=5;NFSU2_TR(0x68a7ef);
 u8 U[32];
-__builtin_memmove((U+0),gp(u32(r4(R+0))),16);
+__builtin_memmove((U+0),gp(u32(r4(G+0))),16);
 __builtin_memmove((U+16),(U+0),16);
 __builtin_memmove((R+5056),(U+16),4);
 __builtin_memmove((R+5060),(U+20),4);
@@ -9409,7 +8599,7 @@ __builtin_memmove((R+5068),(U+28),4);
 }
 B68a7f2:{NFSU2_TR(0x68a7f2);
 u8 U[36];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x10ull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x10ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),16);
 __builtin_memmove((U+20),(U+4),16);
 __builtin_memmove((R+4672),(U+20),4);
@@ -9419,7 +8609,7 @@ __builtin_memmove((R+4684),(U+32),4);
 }
 B68a7f6:{NFSU2_TR(0x68a7f6);
 u8 U[36];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x20ull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x20ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),16);
 __builtin_memmove((U+20),(U+4),16);
 __builtin_memmove((R+4736),(U+20),4);
@@ -9429,7 +8619,7 @@ __builtin_memmove((R+4748),(U+32),4);
 }
 B68a7fa:{NFSU2_TR(0x68a7fa);
 u8 U[36];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x30ull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x30ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),16);
 __builtin_memmove((U+20),(U+4),16);
 __builtin_memmove((R+4608),(U+20),4);
@@ -9438,56 +8628,93 @@ __builtin_memmove((R+4616),(U+28),4);
 __builtin_memmove((R+4620),(U+32),4);
 }
 B68a7fe:{NFSU2_TR(0x68a7fe);
-{goto L68a81f;}
+{__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);[[clang::musttail]] return blk_68a81f(ARGS);}
 }
-B68a800:L68a800:{c.instructions+=8;NFSU2_TR(0x68a800);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68a800(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68a800:L68a800:{bud-=8;NFSU2_TR(0x68a800);
 u8 U[12];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x10ull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x10ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),8);
 __builtin_memmove((R+4672),(U+4),8);
 }
 B68a804:{NFSU2_TR(0x68a804);
 u8 U[8];
-__builtin_memmove((U+0),gp(u32(r4(R+0))),8);
+__builtin_memmove((U+0),gp(u32(r4(G+0))),8);
 __builtin_memmove((R+5056),(U+0),8);
 }
 B68a807:{NFSU2_TR(0x68a807);
 u8 U[12];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x18ull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x18ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),8);
 __builtin_memmove((R+4680),(U+4),8);
 }
 B68a80b:{NFSU2_TR(0x68a80b);
 u8 U[12];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x8ull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),8);
 __builtin_memmove((R+5064),(U+4),8);
 }
 B68a80f:{NFSU2_TR(0x68a80f);
 u8 U[12];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x20ull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x20ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),8);
 __builtin_memmove((R+4736),(U+4),8);
 }
 B68a813:{NFSU2_TR(0x68a813);
 u8 U[12];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x30ull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x30ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),8);
 __builtin_memmove((R+4608),(U+4),8);
 }
 B68a817:{NFSU2_TR(0x68a817);
 u8 U[12];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x28ull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x28ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),8);
 __builtin_memmove((R+4744),(U+4),8);
 }
 B68a81b:{NFSU2_TR(0x68a81b);
 u8 U[12];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x38ull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x38ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),8);
 __builtin_memmove((R+4616),(U+4),8);
+{[[clang::musttail]] return blk_68a81f(ARGS);}
 }
-B68a81f:L68a81f:{c.instructions+=41;NFSU2_TR(0x68a81f);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68a81f(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68a81f:L68a81f:{bud-=35;NFSU2_TR(0x68a81f);
 u8 U[76];
 __builtin_memmove((U+44),(R+4736),4);
 __builtin_memmove((U+48),(R+4740),4);
@@ -10405,66 +9632,103 @@ u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0xffffffe0ull))));
 __builtin_memmove((U+4),(R+4608),4);
 s4(u32(r4(U+0)),r4(U+4));
+{[[clang::musttail]] return blk_68a896(ARGS);}
 }
-B68a896:{NFSU2_TR(0x68a896);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68a896(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68a896:L68a896:{bud-=6;NFSU2_TR(0x68a896);
 {u32 ea_=u32(r4(R+20)+u32(4294967264u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
 }
 B68a899:{NFSU2_TR(0x68a899);
-__builtin_memmove((R+16),(R+20),4);
+__builtin_memmove((G+16),(R+20),4);
 }
 B68a89b:{NFSU2_TR(0x68a89b);
 u8 U[4];
-__builtin_memmove((U+0),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
 __builtin_memmove((R+20),(U+0),4);
 }
 B68a89c:{NFSU2_TR(0x68a89c);
-__builtin_memmove((R+16),(R+12),4);
+__builtin_memmove((G+16),(R+12),4);
 }
 B68a89e:{NFSU2_TR(0x68a89e);
 u8 U[4];
-__builtin_memmove((U+0),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
 __builtin_memmove((R+12),(U+0),4);
 }
 B68a89f:{NFSU2_TR(0x68a89f);
-__builtin_memmove((R+644),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
+__builtin_memmove((R+644),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
 {u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
 }
-B68a8a4:L68a8a4:{c.instructions+=70;NFSU2_TR(0x68a8a4);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68a8a4(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68a8a4:L68a8a4:{bud-=70;NFSU2_TR(0x68a8a4);
 __builtin_memmove((R+28),(R+28),4);
 }
 B68a8a6:{NFSU2_TR(0x68a8a6);
 u8 U[4];
 __builtin_memmove((U+0),(R+12),4);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x4ull))));
-s4(u32(r4(R+16)),r4(U+0));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
 }
 B68a8a7:{NFSU2_TR(0x68a8a7);
-__builtin_memmove((R+12),(R+16),4);
+__builtin_memmove((R+12),(G+16),4);
 }
 B68a8a9:{NFSU2_TR(0x68a8a9);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x8ull))));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x8ull))));
 }
 B68a8ac:{NFSU2_TR(0x68a8ac);
-w4(R+16,u32(u32(r4(R+16))&u32(u32(0xfffffff0ull))));
+w4(G+16,u32(u32(r4(G+16))&u32(u32(0xfffffff0ull))));
 }
 B68a8af:{NFSU2_TR(0x68a8af);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x8ull))));
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x8ull))));
 }
 B68a8b2:{NFSU2_TR(0x68a8b2);
 u8 U[4];
 __builtin_memmove((U+0),(R+20),4);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x4ull))));
-s4(u32(r4(R+16)),r4(U+0));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
 }
 B68a8b3:{NFSU2_TR(0x68a8b3);
 u8 U[4];
 __builtin_memmove((U+0),(R+20),4);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x4ull))));
-s4(u32(r4(R+16)),r4(U+0));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
 }
 B68a8b4:{NFSU2_TR(0x68a8b4);
 u8 U[8];
@@ -10474,24 +9738,24 @@ __builtin_memmove((R+20),(U+4),4);
 }
 B68a8b7:{NFSU2_TR(0x68a8b7);
 u8 U[8];
-w4(U+0,u32(u32(u32(0x4ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x4ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),(R+20),4);
 s4(u32(r4(U+0)),r4(U+4));
 }
 B68a8bb:{NFSU2_TR(0x68a8bb);
-__builtin_memmove((R+20),(R+16),4);
+__builtin_memmove((R+20),(G+16),4);
 }
 B68a8bd:{NFSU2_TR(0x68a8bd);
 u8 U[6];
-w1(R+512,u8((r4(R+16))<(u32(0x10ull))));
-w1(R+523,sborrow<u32>(r4(R+16),u32(0x10ull)));
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x10ull))));
-w1(R+519,u8(s32(r4(R+16))<s32(u32(0x0ull))));
-w1(R+518,u8((r4(R+16))==(u32(0x0ull))));
-w4(U+0,u32(u32(r4(R+16))&u32(u32(0xffull))));
+w1(F+0,u8((r4(G+16))<(u32(0x10ull))));
+w1(F+11,sborrow<u32>(r4(G+16),u32(0x10ull)));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x10ull))));
+w1(F+7,u8(s32(r4(G+16))<s32(u32(0x0ull))));
+w1(F+6,u8((r4(G+16))==(u32(0x0ull))));
+w4(U+0,u32(u32(r4(G+16))&u32(u32(0xffull))));
 w1(U+4,u8(__builtin_popcountll(u64(r4(U+0)))));
 w1(U+5,u8(u32(r1(U+4))&u32(u8(0x1ull))));
-w1(R+514,u8((r1(U+5))==(u8(0x0ull))));
+w1(F+2,u8((r1(U+5))==(u8(0x0ull))));
 }
 B68a8c0:{NFSU2_TR(0x68a8c0);
 u8 U[8];
@@ -10503,7 +9767,7 @@ B68a8c3:{NFSU2_TR(0x68a8c3);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+12))+u32(u32(0x14ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+4),(U+4),4);
+__builtin_memmove((G+4),(U+4),4);
 }
 B68a8c6:{NFSU2_TR(0x68a8c6);
 u8 U[8];
@@ -10516,7 +9780,7 @@ w4(R+4620,u32(0x0ull));
 }
 B68a8cb:{NFSU2_TR(0x68a8cb);
 u8 U[8];
-w4(U+0,u32(u32(r4(R+4))+u32(u32(0x8ull))));
+w4(U+0,u32(u32(r4(G+4))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
 __builtin_memmove((R+4672),(U+4),4);
 w4(R+4676,u32(0x0ull));
@@ -10530,7 +9794,7 @@ __builtin_memmove((R+4616),(U+0),8);
 }
 B68a8d3:{NFSU2_TR(0x68a8d3);
 u8 U[8];
-__builtin_memmove((U+0),gp(u32(r4(R+4))),8);
+__builtin_memmove((U+0),gp(u32(r4(G+4))),8);
 __builtin_memmove((R+4680),(U+0),8);
 }
 B68a8d6:{NFSU2_TR(0x68a8d6);
@@ -10543,7 +9807,7 @@ B68a8d9:{NFSU2_TR(0x68a8d9);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+12))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68a8dc:{NFSU2_TR(0x68a8dc);
 u8 U[8];
@@ -11207,7 +10471,7 @@ w4(R+4876,b32(f32(r4(R+4876))*f32(r4(R+4812))));
 B68a963:{NFSU2_TR(0x68a963);
 u8 U[16];
 __builtin_memmove((U+0),(R+4800),16);
-__builtin_memmove(gp(u32(r4(R+0))),(U+0),16);
+__builtin_memmove(gp(u32(r4(G+0))),(U+0),16);
 }
 B68a966:{NFSU2_TR(0x68a966);
 __builtin_memmove((R+4992),(R+4872),8);
@@ -11305,61 +10569,79 @@ w4(R+4620,u32(u32(r4(R+4620))^u32(r4(U+12))));
 }
 B68a97f:{NFSU2_TR(0x68a97f);
 u8 U[8];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0xcull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0xcull))));
 __builtin_memmove((U+4),(R+4608),4);
 s4(u32(r4(U+0)),r4(U+4));
 }
 B68a984:{NFSU2_TR(0x68a984);
-__builtin_memmove((R+16),(R+20),4);
+__builtin_memmove((G+16),(R+20),4);
 }
 B68a986:{NFSU2_TR(0x68a986);
 u8 U[4];
-__builtin_memmove((U+0),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
 __builtin_memmove((R+20),(U+0),4);
 }
 B68a987:{NFSU2_TR(0x68a987);
-__builtin_memmove((R+16),(R+12),4);
+__builtin_memmove((G+16),(R+12),4);
 }
 B68a989:{NFSU2_TR(0x68a989);
 u8 U[4];
-__builtin_memmove((U+0),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
 __builtin_memmove((R+12),(U+0),4);
 }
 B68a98a:{NFSU2_TR(0x68a98a);
-__builtin_memmove((R+644),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x10ull))));
+__builtin_memmove((R+644),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x10ull))));
 {u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
 }
-B68a990:L68a990:{c.instructions+=18;NFSU2_TR(0x68a990);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68a990(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+516,F+4,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68a990:L68a990:{bud-=18;NFSU2_TR(0x68a990);
 __builtin_memmove((R+28),(R+28),4);
 }
 B68a992:{NFSU2_TR(0x68a992);
 u8 U[4];
 __builtin_memmove((U+0),(R+20),4);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x4ull))));
-s4(u32(r4(R+16)),r4(U+0));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
 }
 B68a993:{NFSU2_TR(0x68a993);
-__builtin_memmove((R+20),(R+16),4);
+__builtin_memmove((R+20),(G+16),4);
 }
 B68a995:{NFSU2_TR(0x68a995);
 u8 U[4];
 __builtin_memmove((U+0),(R+12),4);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x4ull))));
-s4(u32(r4(R+16)),r4(U+0));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
 }
 B68a996:{NFSU2_TR(0x68a996);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x10ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68a999:{NFSU2_TR(0x68a999);
 u8 U[32];
-__builtin_memmove((U+0),gp(u32(r4(R+0))),16);
+__builtin_memmove((U+0),gp(u32(r4(G+0))),16);
 __builtin_memmove((U+16),(U+0),16);
 __builtin_memmove((R+4672),(U+16),4);
 __builtin_memmove((R+4676),(U+20),4);
@@ -11490,19 +10772,19 @@ B68a9c0:{NFSU2_TR(0x68a9c0);
 u8 U[4];
 w1(U+0,u8(std::isnan(f32(r4(R+4736)))));
 w1(U+1,u8(std::isnan(f32(r4(R+4608)))));
-w1(R+514,u8((r1(U+0))||(r1(U+1))));
+w1(F+2,u8((r1(U+0))||(r1(U+1))));
 w1(U+2,u8(f32(r4(R+4736))==f32(r4(R+4608))));
-w1(R+518,u8(u32(r1(R+514))|u32(r1(U+2))));
+w1(F+6,u8(u32(r1(F+2))|u32(r1(U+2))));
 w1(U+3,u8(f32(r4(R+4736))<f32(r4(R+4608))));
-w1(R+512,u8(u32(r1(R+514))|u32(r1(U+3))));
-w1(R+523,u8(0x0ull));
-w1(R+516,u8(0x0ull));
-w1(R+519,u8(0x0ull));
+w1(F+0,u8(u32(r1(F+2))|u32(r1(U+3))));
+w1(F+11,u8(0x0ull));
+w1(F+4,u8(0x0ull));
+w1(F+7,u8(0x0ull));
 }
 B68a9c3:{NFSU2_TR(0x68a9c3);
-if(r1(R+518)){{goto L68a9f6;}}
+if(r1(F+6)){{__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+516,F+4,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);[[clang::musttail]] return blk_68a9f6(ARGS);}}
 }
-B68a9c5:L68a9c5:{c.instructions+=11;NFSU2_TR(0x68a9c5);
+B68a9c5:L68a9c5:{bud-=11;NFSU2_TR(0x68a9c5);
 __builtin_memmove((R+4992),(R+4736),4);
 __builtin_memmove((R+4996),(R+4740),4);
 __builtin_memmove((R+5000),(R+4744),4);
@@ -11614,16 +10896,35 @@ w4(R+4736,b32(f32(r4(R+4736))*f32(r4(R+4672))));
 w4(R+4740,b32(f32(r4(R+4740))*f32(r4(R+4676))));
 w4(R+4744,b32(f32(r4(R+4744))*f32(r4(R+4680))));
 w4(R+4748,b32(f32(r4(R+4748))*f32(r4(R+4684))));
+{__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+516,F+4,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);[[clang::musttail]] return blk_68a9f6(ARGS);}
 }
-B68a9f6:L68a9f6:{c.instructions+=44;NFSU2_TR(0x68a9f6);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68a9f6(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68a9f6:L68a9f6:{bud-=44;NFSU2_TR(0x68a9f6);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0xcull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+4),(U+4),4);
+__builtin_memmove((G+4),(U+4),4);
 }
 B68a9f9:{NFSU2_TR(0x68a9f9);
 u8 U[32];
-__builtin_memmove((U+0),gp(u32(r4(R+4))),16);
+__builtin_memmove((U+0),gp(u32(r4(G+4))),16);
 __builtin_memmove((U+16),(U+0),16);
 __builtin_memmove((R+4864),(U+16),4);
 __builtin_memmove((R+4868),(U+20),4);
@@ -12257,49 +11558,67 @@ B68aa80:{NFSU2_TR(0x68aa80);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68aa83:{NFSU2_TR(0x68aa83);
 u8 U[4];
-__builtin_memmove((U+0),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
 __builtin_memmove((R+12),(U+0),4);
 }
 B68aa84:{NFSU2_TR(0x68aa84);
 u8 U[4];
-__builtin_memmove((U+0),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
 __builtin_memmove((R+20),(U+0),4);
 }
 B68aa85:{NFSU2_TR(0x68aa85);
-__builtin_memmove((R+644),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0xcull))));
+__builtin_memmove((R+644),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0xcull))));
 {u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
 }
-B68aa88:L68aa88:{c.instructions+=59;NFSU2_TR(0x68aa88);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68aa88(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68aa88:L68aa88:{bud-=59;NFSU2_TR(0x68aa88);
 __builtin_memmove((R+28),(R+28),4);
 }
 B68aa8a:{NFSU2_TR(0x68aa8a);
 u8 U[4];
 __builtin_memmove((U+0),(R+12),4);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x4ull))));
-s4(u32(r4(R+16)),r4(U+0));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
 }
 B68aa8b:{NFSU2_TR(0x68aa8b);
-__builtin_memmove((R+12),(R+16),4);
+__builtin_memmove((R+12),(G+16),4);
 }
 B68aa8d:{NFSU2_TR(0x68aa8d);
 u8 U[4];
 __builtin_memmove((U+0),(R+20),4);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x4ull))));
-s4(u32(r4(R+16)),r4(U+0));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
 }
 B68aa8e:{NFSU2_TR(0x68aa8e);
 u8 U[4];
 __builtin_memmove((U+0),(R+20),4);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x4ull))));
-s4(u32(r4(R+16)),r4(U+0));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
 }
 B68aa8f:{NFSU2_TR(0x68aa8f);
 u8 U[8];
@@ -12309,24 +11628,24 @@ __builtin_memmove((R+20),(U+4),4);
 }
 B68aa92:{NFSU2_TR(0x68aa92);
 u8 U[8];
-w4(U+0,u32(u32(u32(0x4ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x4ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),(R+20),4);
 s4(u32(r4(U+0)),r4(U+4));
 }
 B68aa96:{NFSU2_TR(0x68aa96);
-__builtin_memmove((R+20),(R+16),4);
+__builtin_memmove((R+20),(G+16),4);
 }
 B68aa98:{NFSU2_TR(0x68aa98);
 u8 U[6];
-w1(R+512,u8((r4(R+16))<(u32(0x10ull))));
-w1(R+523,sborrow<u32>(r4(R+16),u32(0x10ull)));
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x10ull))));
-w1(R+519,u8(s32(r4(R+16))<s32(u32(0x0ull))));
-w1(R+518,u8((r4(R+16))==(u32(0x0ull))));
-w4(U+0,u32(u32(r4(R+16))&u32(u32(0xffull))));
+w1(F+0,u8((r4(G+16))<(u32(0x10ull))));
+w1(F+11,sborrow<u32>(r4(G+16),u32(0x10ull)));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x10ull))));
+w1(F+7,u8(s32(r4(G+16))<s32(u32(0x0ull))));
+w1(F+6,u8((r4(G+16))==(u32(0x0ull))));
+w4(U+0,u32(u32(r4(G+16))&u32(u32(0xffull))));
 w1(U+4,u8(__builtin_popcountll(u64(r4(U+0)))));
 w1(U+5,u8(u32(r1(U+4))&u32(u8(0x1ull))));
-w1(R+514,u8((r1(U+5))==(u8(0x0ull))));
+w1(F+2,u8((r1(U+5))==(u8(0x0ull))));
 }
 B68aa9b:{NFSU2_TR(0x68aa9b);
 u8 U[8];
@@ -12338,7 +11657,7 @@ B68aa9e:{NFSU2_TR(0x68aa9e);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+12))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68aaa1:{NFSU2_TR(0x68aaa1);
 u8 U[12];
@@ -12954,82 +12273,100 @@ w4(R+4876,b32(f32(r4(R+4876))+f32(r4(U+12))));
 B68ab46:{NFSU2_TR(0x68ab46);
 u8 U[16];
 __builtin_memmove((U+0),(R+4608),16);
-__builtin_memmove(gp(u32(r4(R+0))),(U+0),16);
+__builtin_memmove(gp(u32(r4(G+0))),(U+0),16);
 }
 B68ab49:{NFSU2_TR(0x68ab49);
 u8 U[20];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x10ull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x10ull))));
 __builtin_memmove((U+4),(R+4864),16);
 __builtin_memmove(gp(u32(r4(U+0))),(U+4),16);
 }
 B68ab4d:{NFSU2_TR(0x68ab4d);
 u8 U[20];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x20ull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x20ull))));
 __builtin_memmove((U+4),(R+4736),16);
 __builtin_memmove(gp(u32(r4(U+0))),(U+4),16);
 }
 B68ab51:{NFSU2_TR(0x68ab51);
 u8 U[20];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x30ull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x30ull))));
 __builtin_memmove((U+4),(R+4672),16);
 __builtin_memmove(gp(u32(r4(U+0))),(U+4),16);
 }
 B68ab55:{NFSU2_TR(0x68ab55);
-__builtin_memmove((R+16),(R+20),4);
+__builtin_memmove((G+16),(R+20),4);
 }
 B68ab57:{NFSU2_TR(0x68ab57);
 u8 U[4];
-__builtin_memmove((U+0),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
 __builtin_memmove((R+20),(U+0),4);
 }
 B68ab58:{NFSU2_TR(0x68ab58);
-__builtin_memmove((R+16),(R+12),4);
+__builtin_memmove((G+16),(R+12),4);
 }
 B68ab5a:{NFSU2_TR(0x68ab5a);
 u8 U[4];
-__builtin_memmove((U+0),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
 __builtin_memmove((R+12),(U+0),4);
 }
 B68ab5b:{NFSU2_TR(0x68ab5b);
-__builtin_memmove((R+644),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x8ull))));
+__builtin_memmove((R+644),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x8ull))));
 {u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
 }
-B68ab60:L68ab60:{c.instructions+=184;NFSU2_TR(0x68ab60);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68ab60(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68ab60:L68ab60:{bud-=184;NFSU2_TR(0x68ab60);
 __builtin_memmove((R+28),(R+28),4);
 }
 B68ab62:{NFSU2_TR(0x68ab62);
 u8 U[4];
 __builtin_memmove((U+0),(R+12),4);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x4ull))));
-s4(u32(r4(R+16)),r4(U+0));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
 }
 B68ab63:{NFSU2_TR(0x68ab63);
-__builtin_memmove((R+12),(R+16),4);
+__builtin_memmove((R+12),(G+16),4);
 }
 B68ab65:{NFSU2_TR(0x68ab65);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x8ull))));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x8ull))));
 }
 B68ab68:{NFSU2_TR(0x68ab68);
-w4(R+16,u32(u32(r4(R+16))&u32(u32(0xfffffff0ull))));
+w4(G+16,u32(u32(r4(G+16))&u32(u32(0xfffffff0ull))));
 }
 B68ab6b:{NFSU2_TR(0x68ab6b);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x8ull))));
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x8ull))));
 }
 B68ab6e:{NFSU2_TR(0x68ab6e);
 u8 U[4];
 __builtin_memmove((U+0),(R+20),4);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x4ull))));
-s4(u32(r4(R+16)),r4(U+0));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
 }
 B68ab6f:{NFSU2_TR(0x68ab6f);
 u8 U[4];
 __builtin_memmove((U+0),(R+20),4);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x4ull))));
-s4(u32(r4(R+16)),r4(U+0));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
 }
 B68ab70:{NFSU2_TR(0x68ab70);
 u8 U[8];
@@ -13039,25 +12376,25 @@ __builtin_memmove((R+20),(U+4),4);
 }
 B68ab73:{NFSU2_TR(0x68ab73);
 u8 U[8];
-w4(U+0,u32(u32(u32(0x4ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x4ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),(R+20),4);
 s4(u32(r4(U+0)),r4(U+4));
 }
 B68ab77:{NFSU2_TR(0x68ab77);
-__builtin_memmove((R+20),(R+16),4);
+__builtin_memmove((R+20),(G+16),4);
 }
 B68ab79:{NFSU2_TR(0x68ab79);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x2d0ull))));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x2d0ull))));
 }
 B68ab7f:{NFSU2_TR(0x68ab7f);
 u8 U[8];
-w4(U+0,u32(u32(u32(0x8ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x8ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),(R+28),4);
 s4(u32(r4(U+0)),r4(U+4));
 }
 B68ab83:{NFSU2_TR(0x68ab83);
 u8 U[8];
-w4(U+0,u32(u32(u32(0x4ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x4ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),(R+24),4);
 s4(u32(r4(U+0)),r4(U+4));
 }
@@ -13065,7 +12402,7 @@ B68ab87:{NFSU2_TR(0x68ab87);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+12))+u32(u32(0x18ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68ab8a:{NFSU2_TR(0x68ab8a);
 u8 U[8];
@@ -13075,7 +12412,7 @@ __builtin_memmove((R+28),(U+4),4);
 }
 B68ab8d:{NFSU2_TR(0x68ab8d);
 u8 U[8];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x8ull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
 __builtin_memmove((R+4608),(U+4),4);
 w4(R+4612,u32(0x0ull));
@@ -13085,7 +12422,7 @@ w4(R+4620,u32(0x0ull));
 B68ab92:{NFSU2_TR(0x68ab92);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0xffffff5cull))));
-__builtin_memmove((U+4),(R+0),4);
+__builtin_memmove((U+4),(G+0),4);
 s4(u32(r4(U+0)),r4(U+4));
 }
 B68ab98:{NFSU2_TR(0x68ab98);
@@ -13102,20 +12439,20 @@ __builtin_memmove(gp(u32(r4(U+0))),(U+4),16);
 }
 B68aba2:{NFSU2_TR(0x68aba2);
 u8 U[8];
-__builtin_memmove((U+0),gp(u32(r4(R+0))),8);
+__builtin_memmove((U+0),gp(u32(r4(G+0))),8);
 __builtin_memmove((R+4616),(U+0),8);
 }
 B68aba5:{NFSU2_TR(0x68aba5);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+12))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68aba8:{NFSU2_TR(0x68aba8);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+12))+u32(u32(0x24ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+4),(U+4),4);
+__builtin_memmove((G+4),(U+4),4);
 }
 B68abab:{NFSU2_TR(0x68abab);
 __builtin_memmove((R+4672),(R+4608),4);
@@ -13126,14 +12463,14 @@ __builtin_memmove((R+4684),(R+4620),4);
 B68abae:{NFSU2_TR(0x68abae);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0xffffff58ull))));
-__builtin_memmove((U+4),(R+4),4);
+__builtin_memmove((U+4),(G+4),4);
 s4(u32(r4(U+0)),r4(U+4));
 }
 B68abb4:{NFSU2_TR(0x68abb4);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+12))+u32(u32(0x14ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+4),(U+4),4);
+__builtin_memmove((G+4),(U+4),4);
 }
 B68abb7:{NFSU2_TR(0x68abb7);
 u8 U[76];
@@ -13209,14 +12546,14 @@ w4(R+4684,u32(u32(r4(U+31))+u32(r4(U+40))));
 B68abbb:{NFSU2_TR(0x68abbb);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0xffffff70ull))));
-__builtin_memmove((U+4),(R+4),4);
+__builtin_memmove((U+4),(G+4),4);
 s4(u32(r4(U+0)),r4(U+4));
 }
 B68abc1:{NFSU2_TR(0x68abc1);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+12))+u32(u32(0xcull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+4),(U+4),4);
+__builtin_memmove((G+4),(U+4),4);
 }
 B68abc4:{NFSU2_TR(0x68abc4);
 u8 U[20];
@@ -13227,7 +12564,7 @@ __builtin_memmove(gp(u32(r4(U+0))),(U+4),16);
 B68abcb:{NFSU2_TR(0x68abcb);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0xffffff74ull))));
-__builtin_memmove((U+4),(R+4),4);
+__builtin_memmove((U+4),(G+4),4);
 s4(u32(r4(U+0)),r4(U+4));
 }
 B68abd1:{NFSU2_TR(0x68abd1);
@@ -13432,7 +12769,7 @@ __builtin_memmove(gp(u32(r4(U+0))),(U+4),16);
 }
 B68ac08:{NFSU2_TR(0x68ac08);
 u8 U[8];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x8ull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
 __builtin_memmove((R+4608),(U+4),4);
 w4(R+4612,u32(0x0ull));
@@ -13447,7 +12784,7 @@ __builtin_memmove(gp(u32(r4(U+0))),(U+4),16);
 }
 B68ac14:{NFSU2_TR(0x68ac14);
 u8 U[8];
-__builtin_memmove((U+0),gp(u32(r4(R+0))),8);
+__builtin_memmove((U+0),gp(u32(r4(G+0))),8);
 __builtin_memmove((R+4616),(U+0),8);
 }
 B68ac17:{NFSU2_TR(0x68ac17);
@@ -13535,7 +12872,7 @@ __builtin_memmove(gp(u32(r4(U+0))),(U+4),16);
 }
 B68ac25:{NFSU2_TR(0x68ac25);
 u8 U[8];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x14ull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x14ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
 __builtin_memmove((R+4608),(U+4),4);
 w4(R+4612,u32(0x0ull));
@@ -13560,7 +12897,7 @@ __builtin_memmove(gp(u32(r4(U+0))),(U+4),16);
 }
 B68ac38:{NFSU2_TR(0x68ac38);
 u8 U[12];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0xcull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0xcull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),8);
 __builtin_memmove((R+4616),(U+4),8);
 }
@@ -13643,7 +12980,7 @@ __builtin_memmove(gp(u32(r4(U+0))),(U+4),16);
 }
 B68ac47:{NFSU2_TR(0x68ac47);
 u8 U[8];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x20ull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x20ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
 __builtin_memmove((R+4672),(U+4),4);
 w4(R+4676,u32(0x0ull));
@@ -13664,7 +13001,7 @@ __builtin_memmove(gp(u32(r4(U+0))),(U+4),16);
 }
 B68ac56:{NFSU2_TR(0x68ac56);
 u8 U[12];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x18ull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x18ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),8);
 __builtin_memmove((R+4680),(U+4),8);
 }
@@ -15180,26 +14517,26 @@ __builtin_memmove(gp(u32(r4(U+0))),(U+4),16);
 }
 B68ae8c:{NFSU2_TR(0x68ae8c);
 u8 U[10];
-w1(R+512,u8(0x0ull));
-w1(R+523,u8(0x0ull));
+w1(F+0,u8(0x0ull));
+w1(F+11,u8(0x0ull));
 w4(U+6,u32(u32(r4(R+8))&u32(r4(R+8))));
-w1(R+519,u8(s32(r4(U+6))<s32(u32(0x0ull))));
-w1(R+518,u8((r4(U+6))==(u32(0x0ull))));
+w1(F+7,u8(s32(r4(U+6))<s32(u32(0x0ull))));
+w1(F+6,u8((r4(U+6))==(u32(0x0ull))));
 w4(U+0,u32(u32(r4(U+6))&u32(u32(0xffull))));
 w1(U+4,u8(__builtin_popcountll(u64(r4(U+0)))));
 w1(U+5,u8(u32(r1(U+4))&u32(u8(0x1ull))));
-w1(R+514,u8((r1(U+5))==(u8(0x0ull))));
+w1(F+2,u8((r1(U+5))==(u8(0x0ull))));
 }
 B68ae8e:{NFSU2_TR(0x68ae8e);
 u8 U[1];
-w1(U+0,u8((r1(R+512))||(r1(R+518))));
-if(r1(U+0)){TAIL_STATIC(0x68b0c6u,68b);}
+w1(U+0,u8((r1(F+0))||(r1(F+6))));
+if(r1(U+0)){{__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);[[clang::musttail]] return blk_68b0c6(ARGS);}}
 }
-B68ae94:L68ae94:{c.instructions+=80;NFSU2_TR(0x68ae94);
+B68ae94:L68ae94:{bud-=8;NFSU2_TR(0x68ae94);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0xffffff58ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68ae9a:{NFSU2_TR(0x68ae9a);
 u8 U[8];
@@ -15208,10 +14545,10 @@ __builtin_memmove((U+4),(R+24),4);
 s4(u32(r4(U+0)),r4(U+4));
 }
 B68aea0:{NFSU2_TR(0x68aea0);
-w4(R+0,u32(u32(r4(R+0))+u32(r4(R+0))));
+w4(G+0,u32(u32(r4(G+0))+u32(r4(G+0))));
 }
 B68aea2:{NFSU2_TR(0x68aea2);
-w4(R+0,u32(u32(r4(R+0))+u32(r4(R+0))));
+w4(G+0,u32(u32(r4(G+0))+u32(r4(G+0))));
 }
 B68aea4:{NFSU2_TR(0x68aea4);
 u8 U[8];
@@ -15222,30 +14559,49 @@ s4(u32(r4(U+0)),r4(U+4));
 B68aeaa:{NFSU2_TR(0x68aeaa);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+8))*u32(u32(0x8ull))));
-w4(U+4,u32(u32(r4(R+4))+u32(r4(U+0))));
-__builtin_memmove((R+4),(U+4),4);
+w4(U+4,u32(u32(r4(G+4))+u32(r4(U+0))));
+__builtin_memmove((G+4),(U+4),4);
 }
 B68aead:{NFSU2_TR(0x68aead);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0xffffff64ull))));
-__builtin_memmove((U+4),(R+0),4);
+__builtin_memmove((U+4),(G+0),4);
 s4(u32(r4(U+0)),r4(U+4));
 }
 B68aeb3:{NFSU2_TR(0x68aeb3);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0xffffff60ull))));
-__builtin_memmove((U+4),(R+4),4);
+__builtin_memmove((U+4),(G+4),4);
 s4(u32(r4(U+0)),r4(U+4));
+{[[clang::musttail]] return blk_68aeb9(ARGS);}
 }
-B68aeb9:{NFSU2_TR(0x68aeb9);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68aeb9(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68aeb9:L68aeb9:{bud-=72;NFSU2_TR(0x68aeb9);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0xffffff74ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68aebf:{NFSU2_TR(0x68aebf);
 u8 U[4];
-__builtin_memmove((U+0),gp(u32(r4(R+0))),4);
+__builtin_memmove((U+0),gp(u32(r4(G+0))),4);
 __builtin_memmove((R+8),(U+0),4);
 }
 B68aec1:{NFSU2_TR(0x68aec1);
@@ -15256,14 +14612,14 @@ s4(u32(r4(U+0)),r4(U+4));
 }
 B68aec7:{NFSU2_TR(0x68aec7);
 u8 U[8];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x4ull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x4ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68aeca:{NFSU2_TR(0x68aeca);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0xffffff54ull))));
-__builtin_memmove((U+4),(R+0),4);
+__builtin_memmove((U+4),(G+0),4);
 s4(u32(r4(U+0)),r4(U+4));
 }
 B68aed0:{NFSU2_TR(0x68aed0);
@@ -16476,14 +15832,44 @@ u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0xffffff58ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
 __builtin_memmove((R+8),(U+4),4);
-TAIL_STATIC(0x68b000u,68b);
+{[[clang::musttail]] return blk_68b000(ARGS);}
 }
-XIT:NFSU2_TR_EXIT(0x68a,nx);return nx;
-FLT:fast_fault(c,fm,fpc);
-#undef SPILL
-#undef EXIT
-#undef NFSU2_FAULT
-#undef TAIL_STATIC
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
 }
+PN u32 ent_68a(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){switch(c.pc){
+case 0x68a002:[[clang::musttail]] return blk_68a002(c,a4,a0,a1,bud);
+case 0x68a10f:[[clang::musttail]] return blk_68a10f(c,a4,a0,a1,bud);
+case 0x68a1d0:[[clang::musttail]] return blk_68a1d0(c,a4,a0,a1,bud);
+case 0x68a26c:[[clang::musttail]] return blk_68a26c(c,a4,a0,a1,bud);
+case 0x68a320:[[clang::musttail]] return blk_68a320(c,a4,a0,a1,bud);
+case 0x68a3a7:[[clang::musttail]] return blk_68a3a7(c,a4,a0,a1,bud);
+case 0x68a44e:[[clang::musttail]] return blk_68a44e(c,a4,a0,a1,bud);
+case 0x68a503:[[clang::musttail]] return blk_68a503(c,a4,a0,a1,bud);
+case 0x68a59f:[[clang::musttail]] return blk_68a59f(c,a4,a0,a1,bud);
+case 0x68a627:[[clang::musttail]] return blk_68a627(c,a4,a0,a1,bud);
+case 0x68a683:[[clang::musttail]] return blk_68a683(c,a4,a0,a1,bud);
+case 0x68a6cb:[[clang::musttail]] return blk_68a6cb(c,a4,a0,a1,bud);
+case 0x68a71c:[[clang::musttail]] return blk_68a71c(c,a4,a0,a1,bud);
+case 0x68a7be:[[clang::musttail]] return blk_68a7be(c,a4,a0,a1,bud);
+case 0x68a7c5:[[clang::musttail]] return blk_68a7c5(c,a4,a0,a1,bud);
+case 0x68a7cc:[[clang::musttail]] return blk_68a7cc(c,a4,a0,a1,bud);
+case 0x68a800:[[clang::musttail]] return blk_68a800(c,a4,a0,a1,bud);
+case 0x68a81f:[[clang::musttail]] return blk_68a81f(c,a4,a0,a1,bud);
+case 0x68a896:[[clang::musttail]] return blk_68a896(c,a4,a0,a1,bud);
+case 0x68a8a4:[[clang::musttail]] return blk_68a8a4(c,a4,a0,a1,bud);
+case 0x68a990:[[clang::musttail]] return blk_68a990(c,a4,a0,a1,bud);
+case 0x68a9f6:[[clang::musttail]] return blk_68a9f6(c,a4,a0,a1,bud);
+case 0x68aa88:[[clang::musttail]] return blk_68aa88(c,a4,a0,a1,bud);
+case 0x68ab60:[[clang::musttail]] return blk_68ab60(c,a4,a0,a1,bud);
+case 0x68aeb9:[[clang::musttail]] return blk_68aeb9(c,a4,a0,a1,bud);
+default:missing_instruction(c.pc);}}
+u32 page_68a(Cpu& c){u8* R=c.regs.data();return ent_68a(c,r4(R+16),r4(R+0),r4(R+4),REG_BUDGET);}
+#undef EXIT
 }

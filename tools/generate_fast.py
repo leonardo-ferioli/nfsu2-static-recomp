@@ -821,7 +821,9 @@ def main():
     parser.add_argument("--mods", action="append", help="mod patch specification (default: mods/*_spec.json)")
     parser.add_argument("--no-mods", dest="use_mods", action="store_false", help="generate the unmodified game")
     parser.add_argument("--reg-params", nargs="?", const="x64", metavar="TARGET",
-                        help="guest registers as function arguments: x64 (all eight, clang preserve_none) or x86:K (K hottest, regcall); see tools/gen_regs.py")
+                        help="code shape: guest registers as function arguments. Default x86:3 (the three hottest, regcall; the shape of the product). "
+                             "x64 (all eight, clang preserve_none) is for the benchmark harness; 'off' gives one function per 4 KiB page (reference "
+                             "shape of the differential trace build). See tools/gen_regs.py and docs/REGISTER_PARAMS.md")
     parser.add_argument("--no-tail-calls", dest="tail_calls", action="store_false",
                         help="return to the dispatch loop on every page transfer")
     parser.add_argument("--no-x87-passthrough", dest="x87_passthrough", action="store_false",
@@ -829,6 +831,10 @@ def main():
     parser.add_argument("--no-liveness", dest="liveness", action="store_false",
                         help="keep every flag computation (full-fidelity register hashes)")
     args = parser.parse_args()
+    if args.reg_params is None:
+        # The product shape unless an option that only exists in the page shape was asked for.
+        page_only = args.local_regs or args.track_pc or not args.liveness or not args.tail_calls or args.pages
+        args.reg_params = "off" if page_only else "x86:3"
     global MEMORY_REGS, TRACK_PC
     MEMORY_REGS = not args.local_regs
     TRACK_PC = args.track_pc
@@ -849,7 +855,7 @@ def main():
     X87_PASSTHROUGH = args.x87_passthrough
     TAIL_CALLS = args.tail_calls and MEMORY_REGS
     regs = None
-    if args.reg_params:
+    if args.reg_params != "off":
         if not args.liveness:
             raise ValueError("--reg-params needs the flag liveness analysis")
         import gen_regs
