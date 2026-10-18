@@ -498,18 +498,23 @@ cache and `d3d_shadow.hpp`; the vsync rewrite of the present interval; the light
 - Not touched: DirectInput, DirectSound, file access, threads, timers (their current Windows code stays).
 
 **Phase 2 — complete.**
-- **2a Recorder and reference captures** (needs the bridge, so it comes first). In the dispatcher, decode each Direct3D 9 call by vtable slot into
-  Level A records; capture the data it needs (vertex/index/texture contents at `Unlock`, shader bytecode and declarations at creation, `UP` vertices,
-  constants), de-duplicated by content hash into a blob store; at chosen frames read the back buffer through the real device
-  (`GetBackBuffer` + `GetRenderTargetData` into a system-memory surface) and write a lossless image next to the trace. A trace analyser prints
-  the shader census (S1.1). Flags (provisional names, **not implemented yet**; the user will be told when the build exists):
+- **2a Recorder and reference captures — implemented** (`d3d9_recorder.cpp`, `platform/d3d9_trace.*`; test `fast_recorder`: a real Direct3D 9 device on a hidden
+  window, recorded and replayed on the null device). In the bridge's dispatcher every Direct3D 9 call of the game's main thread is decoded from the guest stack
+  (about 40 device methods, resource methods by object class; anything else is kept as `op_unknown_call` so the first replay says what it lacks). **Resource
+  traffic is recorded from the start of the run** (creation, destruction, the data of every buffer and texture lock, shader bytecode, declarations; equal data is stored once
+  in `blobs.bin`, capped by `--record-max-mb`); **state and draw calls only inside a recording window**, opened with **F9** (or `--record-start-frame N`) and lasting
+  `--record-frames` frames (default 120). At the start of a window the whole device state is read back from the real device and written as `set_*` records, so a window replays on its own.
+  Reference images of the real back buffer are saved every `--record-capture-every` frames of a window (`frame_NNNNNN.bmp` and `op_reference_image`). The recorder
+  switches the state cache off (the trace holds every call) and costs one atomic load per native call when not in use. Disk: blobs.bin holds the textures and buffers of the run
+  (up to the cap, default 3 GB); a window itself is small (a few MB). Traces contain game data and stay out of git.
+  To capture (from this worktree's build; `package_launcher.py` needs the game-data folder next to the repository, so `dist\NFSU2-static` is not rebuilt):
 
   ```
-  & "C:\Users\Leonardo\Projects\NFSU2 REINGENIER\raw_recomp\dist\NFSU2-static\nfsu2_launcher.exe" --game-dir "C:\Users\Leonardo\Projects\NFSU2 REINGENIER\data game (pc)" --record-d3d9 "C:\Users\Leonardo\Projects\NFSU2 REINGENIER\captures\menu" --record-frames 240 --capture-every 30
+  & "C:\Users\Leonardo\Projects\NFSU2 REINGENIER\raw_recomp\.claude\worktrees\platform-api-5da14e\build32\nfsu2_launcher.exe" --game-dir "C:\Users\Leonardo\Projects\NFSU2 REINGENIER\data game (pc)" --record-d3d9 "C:\Users\Leonardo\Projects\NFSU2 REINGENIER\captures\menu" --record-frames 120 --record-capture-every 20
   ```
 
-  one run per scene: front-end menu, a loading screen, and a race (about 120 recorded frames each after the scene is stable, one reference image
-  every 30 frames). Traces contain game data and stay out of git.
+  One run per scene (folder names `menu`, `loading`, `race`): start the game, go to the scene, press **F9** once (a window of 120 frames is recorded; F9 again opens another
+  window in the same run), then quit the game normally (the trace is closed on exit; `recorder.log` in the folder gives frames, windows, records, data size and unknown calls).
 - **2b** the D3D9 layer on the null Gpu, and the **replay tool** (headless; deterministic Gpu call sequence for a given trace).
 - **2c Spike S1** (3.4): shader IR/decoder/SPIR-V/cross-compile, validated on the console (parallel to 2b; starts with the census).
 - **2d bgfx adapter + out-of-game spike** (textured quad, tens of thousands of draws, DXT upload and conversion, static/transient buffer policy of 3.5)
