@@ -25,7 +25,7 @@ def name(rva):
     if i < 0:
         return "?"
     sym = symbols[i][1]
-    m = re.match(r"\?(body_[0-9a-f]+|page_[0-9a-f]+)@", sym)
+    m = re.match(r"\?(body_[0-9a-f]+|page_[0-9a-f]+|blk_[0-9a-f]+|ent_[0-9a-f]+)@", sym)
     return (m.group(1) if m else sym[:70]) + f" (+0x{rva - rvas[i]:x}) [{symbols[i][2][:40]}]"
 
 blocks = [l for l in log.read_text(errors="replace").splitlines() if "hottest 256-byte blocks of the launcher image" in l]

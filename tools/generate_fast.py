@@ -325,7 +325,7 @@ def x87_encoding(ins):
     return raw
 
 
-def x87_address(raw):
+def x87_address(raw, regptr=lambda off, size: f"R+{off}"):
     """(prefix, opcode, reg field, C++ effective-address expression, consumed length) of a memory-form x87 instruction."""
     prefix = raw[:1] if raw[:1] == bytes([0x9b]) else b""
     body = raw[len(prefix):]
@@ -335,7 +335,7 @@ def x87_address(raw):
         return None
     pos, terms, disp = 2, [], 0
     def register(n, scale=1):
-        base = f"r4(R+{GUEST_REG[n]})"
+        base = f"r4({regptr(GUEST_REG[n], 4)})"
         return base if scale == 1 else f"({base}*{scale}u)"
     if rm == 4:
         sib = body[pos]; pos += 1
@@ -375,10 +375,14 @@ class Emitter:
         self.block_info = {}   # address -> (starts a block, instructions from here to the end of its block)
 
     # ---- operand access -------------------------------------------------------
+    def reg(self, off, size):
+        """C++ pointer expression of `size` bytes of the guest register file at `off` (see gen_regs.RegEmitter)."""
+        return f"R+{off}"
+
     def ptr(self, v, um):
         space, off, size = v
         if space == "register":
-            return f"(R+{off})"
+            return f"({self.reg(off, size)})"
         if space == "unique":
             return f"(U+{ucmap(um, off)})"
         if space == "ram":
@@ -394,7 +398,7 @@ class Emitter:
         if space == "const":
             return literal(off, size)
         if space == "register":
-            return f"r{size}(R+{off})"
+            return f"r{size}({self.reg(off, size)})"
         if space == "unique":
             return f"r{size}(U+{ucmap(um, off)})"
         if space == "modvar":
@@ -406,7 +410,7 @@ class Emitter:
     def wr(self, v, expr, um):
         space, off, size = v
         if space == "register":
-            return f"w{size}(R+{off},{expr});"
+            return f"w{size}({self.reg(off, size)},{expr});"
         if space == "unique":
             return f"w{size}(U+{ucmap(um, off)},{expr});"
         if space == "ram":
@@ -461,7 +465,7 @@ class Emitter:
             hook_id, end, mode, pop = MOD_HOOKS[a]
             call = f"SPILL();c.pc=0x{a:x}u;mod_hook_table[{hook_id}](c);SPILL();"
             if mode == "function":
-                body = call + f"{{u32 sp_=r4(R+{GUEST_REG[4]});u32 ra_=m4(sp_);w4(R+{GUEST_REG[4]},sp_+{4 + pop}u);TAIL_DYNAMIC(ra_);}}"
+                body = call + f"{{u32 sp_=r4({self.reg(GUEST_REG[4], 4)});u32 ra_=m4(sp_);w4({self.reg(GUEST_REG[4], 4)},sp_+{4 + pop}u);TAIL_DYNAMIC(ra_);}}"
                 out.append(f"if(mod_hook_table[{hook_id}]&&!mod_bypass_take({hook_id})){{{body}}}")
             else:
                 body = call + f"if(c.pc!=0x{a:x}u){{TAIL_DYNAMIC(c.pc);}}"
@@ -518,7 +522,7 @@ class Emitter:
             # The reference engine keeps a shadow EIP at register 644 refreshed before each step.
             if not pc_written:
                 if any(x and x[0] == "register" and x[1] <= 644 < x[1] + x[2] for x in args):
-                    out.append(f"w4(R+644,0x{a:x}u);")
+                    out.append(f"w4({self.reg(644, 4)},0x{a:x}u);")
                 if dest and dest[0] == "register" and dest[1] <= 644 < dest[1] + dest[2]:
                     pc_written = True
             terminal = False
@@ -558,17 +562,17 @@ class Emitter:
             # Host FPU state follows the guest's x87 control word and MXCSR (see runtime.hpp).
             before, after = [], []
             if any(touches(x, FPU_CONTROL) for x in args):
-                before.append(f"w2(R+{FPU_CONTROL[0]},x87_store_control());")
+                before.append(f"w2({self.reg(FPU_CONTROL[0], 2)},x87_store_control());")
             if any(touches(x, MXCSR) for x in args):
-                before.append(f"w4(R+{MXCSR[0]},mxcsr_store());")
+                before.append(f"w4({self.reg(MXCSR[0], 4)},mxcsr_store());")
             if touches(dest, FPU_CONTROL):
                 if (dest[1], dest[2]) != FPU_CONTROL:
                     raise ValueError(f"partial write of the x87 control word at {ins.addr:x}")
-                after.append(f"x87_load_control(r2(R+{FPU_CONTROL[0]}));")
+                after.append(f"x87_load_control(r2({self.reg(FPU_CONTROL[0], 2)}));")
             if touches(dest, MXCSR):
                 if (dest[1], dest[2]) != MXCSR:
                     raise ValueError(f"partial write of MXCSR at {ins.addr:x}")
-                after.append(f"mxcsr_load(r4(R+{MXCSR[0]}));")
+                after.append(f"mxcsr_load(r4({self.reg(MXCSR[0], 4)}));")
             out[mark:mark] = before
             out.extend(after)
         if len(ops) in labels:
@@ -585,7 +589,7 @@ class Emitter:
         a = ins.addr
         out = [self.head(a)]
         out.extend(self.mod_prologue(a, ins.length))
-        memory = x87_address(raw)
+        memory = x87_address(raw, self.reg)
         if memory is not None:
             prefix, opcode, reg, expression = memory
             if ins.mod_addresses:   # the absolute operand of this instruction is read through a mod pointer
@@ -595,7 +599,7 @@ class Emitter:
         else:
             encoded = ",".join(f"0x{x:02x}" for x in raw)
             if raw[-2:] == bytes([0xdf,0xe0]):          # FNSTSW AX: the status word goes to the guest's AX
-                out.append(f'{{u32 ax_;__asm__ volatile(".byte {encoded}":"=a"(ax_)::"memory");w2(R+0,u16(ax_));}}')
+                out.append(f'{{u32 ax_;__asm__ volatile(".byte {encoded}":"=a"(ax_)::"memory");w2({self.reg(0, 2)},u16(ax_));}}')
             else:
                 out.append(f'__asm__ volatile(".byte {encoded}":::"memory");')
         nxt = a + ins.length
@@ -613,9 +617,9 @@ class Emitter:
             call = f"uo::{PURE_USEROPS[name]}<{dest[2]}>({self.rdv(args[1], um)},{b})"
             return "{" + self.wrv(dest, call, um) + "}"
         if name == "FastExitMediaState":
-            return f"w2(R+{FPU_TAG_WORD},0xffffu);"  # FEMMS has the same effect as EMMS in SLEIGH
+            return f"w2({self.reg(FPU_TAG_WORD, 2)},0xffffu);"  # FEMMS has the same effect as EMMS in SLEIGH
         if name == "ffree" and dest:
-            return "{" + self.wrv(dest, f"V(r2(R+{FPU_TAG_WORD}))", um) + "}"  # tags are not modelled beyond FPUTagWord
+            return "{" + self.wrv(dest, f"V(r2({self.reg(FPU_TAG_WORD, 2)}))", um) + "}"  # tags are not modelled beyond FPUTagWord
         encoded = args[0][1] | ((dest[2] if dest else 0) << 16)
         vals = ",".join(self.rdv(x, um) for x in args[1:])
         call = f"{{SPILL();c.pc=0x{ins.addr:x}u;{'V r_=' if dest else ''}user_op(c,{encoded},{{{vals}}});SPILL();"
@@ -816,6 +820,8 @@ def main():
     parser.add_argument("--track-pc", action="store_true", help="store the guest PC before every instruction so faults report it exactly")
     parser.add_argument("--mods", action="append", help="mod patch specification (default: mods/*_spec.json)")
     parser.add_argument("--no-mods", dest="use_mods", action="store_false", help="generate the unmodified game")
+    parser.add_argument("--reg-params", nargs="?", const="x64", metavar="TARGET",
+                        help="guest registers as function arguments: x64 (all eight, clang preserve_none) or x86:K (K hottest, regcall); see tools/gen_regs.py")
     parser.add_argument("--no-tail-calls", dest="tail_calls", action="store_false",
                         help="return to the dispatch loop on every page transfer")
     parser.add_argument("--no-x87-passthrough", dest="x87_passthrough", action="store_false",
@@ -842,6 +848,15 @@ def main():
     TEXT = (export / "memory_401000.bin").read_bytes()
     X87_PASSTHROUGH = args.x87_passthrough
     TAIL_CALLS = args.tail_calls and MEMORY_REGS
+    regs = None
+    if args.reg_params:
+        if not args.liveness:
+            raise ValueError("--reg-params needs the flag liveness analysis")
+        import gen_regs
+        regs = gen_regs
+        gen_regs.set_target(args.reg_params)
+        TAIL_CALLS = True
+        program = gen_regs.Program()
     if args.use_mods:
         specs = args.mods or sorted(str(f) for f in (ROOT / "mods").glob("*_spec.json"))
         if specs:
@@ -860,15 +875,23 @@ def main():
             for line in source:
                 raw = json.loads(line)
                 info[raw["a"]] = flaglive.analyze(raw)
+                if regs:
+                    program.note(raw)
         live_out, rounds = flaglive.solve(info)
         print(f"Flag liveness solved over {len(info)} instructions in {rounds} rounds", flush=True)
+        if regs:
+            tables = json.loads((ROOT / "tools/static_jump_tables.json").read_text())
+            program.finish(manifest, tables, info, live_out, ALL_PAGES, export)
+            program.live_out, program.hook_addrs = live_out, set(MOD_HOOKS)
+            reg_emitter = regs.make(sys.modules[__name__])
+            print(f"Register-parameter lowering: {len(program.leaders)} leaders, {len(program.blocks)} block functions", flush=True)
     stats = {"ops": 0, "kept": 0}
 
     def flush():
         nonlocal batch
         if current is not None and (only is None or current in only):
             stats["ops"] += sum(len(i.ops) for i in batch)
-            text = emit_page(current, batch, live_out)
+            text = regs.emit_page_regs(sys.modules[__name__], reg_emitter, program, current, batch, live_out) if regs else emit_page(current, batch, live_out)
             stats["kept"] += sum(len(i.ops) for i in batch)
             write_if_changed(out / f"page_{current:05x}.cpp", text)
             pages.append(current)
@@ -893,10 +916,17 @@ def main():
                 print(f"Lowered {count} instructions", flush=True)
     flush()
     with (out / "dispatch.cpp").open("w", encoding="utf-8", newline="\n") as f:
-        f.write('#include "fast.hpp"\nnamespace nfsu2raw {\n')
+        f.write('#include "fast_regs.hpp"\nnamespace nfsu2raw {\n' if regs else '#include "fast.hpp"\nnamespace nfsu2raw {\n')
         for p in sorted(pages):
             f.write(f"u32 page_{p:x}(Cpu&);\n")
-        if TAIL_CALLS:
+        if regs:
+            for p in sorted(pages):
+                f.write(f"PN u32 ent_{p:x}({regs.declare_args()});\n")
+            f.write(f"PN u32 ent_dispatch({regs.declare_args()}){{switch(c.pc>>12){{\n")
+            for p in sorted(pages):
+                f.write(f"case 0x{p:x}:[[clang::musttail]] return ent_{p:x}({regs.arg_names()});\n")
+            f.write("default:missing_instruction(c.pc);}}\n")
+        elif TAIL_CALLS:
             for p in sorted(pages):
                 f.write(f"u32 body_{p:x}(u8* __restrict R,Cpu& c);\n")
             f.write("u32 body_dispatch(u8* __restrict R,Cpu& c){switch(c.pc>>12){\n")

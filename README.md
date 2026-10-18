@@ -103,6 +103,10 @@ shaders, vertex declaration, streams, indices and shader constants (`d3d_shadow.
 efficiency-core/timer-resolution throttling and asks hybrid-graphics laptops for the fast GPU; `--profile` reports the time spent in each
 Direct3D call per frame so that the next step (e.g. a render thread) is chosen from numbers.
 
+Experimental: `python tools/generate_fast.py --reg-params x86:3` (or `build.ps1 -RegParams`) emits the code as guest superblocks that pass
+the hottest guest registers as function arguments; the translated-code benchmarks run 1.8x (JDLZ) to 3.5x (hash routine) faster and
+the applicable differential tests pass. Numbers, limits and how to try it: [`docs/REGISTER_PARAMS.md`](docs/REGISTER_PARAMS.md).
+
 ## Repository layout
 
 | Path | Contents |
