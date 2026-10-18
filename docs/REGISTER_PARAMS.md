@@ -1,6 +1,8 @@
-# Guest registers in host registers (`generate_fast.py --reg-params`)
+# Guest registers in host registers (the code shape of the fast backend)
 
-Experimental option of the fast backend. Default output is unchanged; this is a second code shape for the same translation.
+This is the code shape `tools/generate_fast.py` produces by default (`--reg-params x86:3`). The older shape, one function per 4 KiB
+page, stays available as `--reg-params off` (the differential trace build and a few diagnostic options use it); the numbers below
+compare the two.
 
 ## Why
 
@@ -62,12 +64,12 @@ becomes 2-3x faster on average the frame time drops accordingly, but D3D/driver 
 ## Use
 
 ```powershell
-.\build.ps1 -RegParams -Package      # generated_fast_regs/, build32r/, dist\regs (default dist is untouched)
+.\build.ps1 -Package      # generated_fast/ (this shape), build32/, ctest, dist\NFSU2-static
 ```
-or by hand: `python tools/generate_fast.py --reg-params x86:3 --out generated_fast_regs3`, then
-`cmake -S . -B build32r -G Ninja -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_BUILD_TYPE=Release "-DCMAKE_CXX_FLAGS=-m32 -msse2" -DFAST_DIR=generated_fast_regs3`
-and `cmake --build build32r`. All `ctest` differential tests that apply (`fast_dynamic`, `fast_dynamic_boot`, `fast_resources`,
-`fast_platform`, `fast_seh`, `fast_widescreen*`, `x87_host_fpu`, `launcher_cli`) pass on this build.
+or by hand: `python tools/generate_fast.py`, then
+`cmake -S . -B build32 -G Ninja -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_BUILD_TYPE=Release "-DCMAKE_CXX_FLAGS=-m32 -msse2"`
+and `cmake --build build32`. All `ctest` differential tests that apply (`fast_dynamic`, `fast_dynamic_boot`, `fast_resources`,
+`fast_platform`, `fast_seh`, `fast_widescreen*`, `x87_host_fpu`, `launcher_cli`, `reg_entries`) pass on this build.
 
-Not covered: `nfsu2_fast_trace` (difftrace) is not implemented for this shape; `--reg-params x64` generates code but the platform
+Not covered: `nfsu2_fast_trace` (difftrace) is not implemented for this shape (generate with `--reg-params off` for it); `--reg-params x64` generates code but the platform
 layer (`native32.cpp`) is 32-bit only, so only the benchmark harness in `tools/spike/` runs it.

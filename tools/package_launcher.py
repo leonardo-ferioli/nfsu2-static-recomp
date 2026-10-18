@@ -16,7 +16,7 @@ import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
 
-INI = """; NFSU2 static launcher configuration. Every line is optional; lines starting with ';' are ignored.
+INI = """; NFS Underground 2 - NUE - launcher configuration. Every line is optional; lines starting with ';' are ignored.
 ; Relative paths are relative to this file.
 [launcher]
 ; Folder that contains SPEED2.EXE and the game's data folders (GLOBAL, FRONTEND, CARS, TRACKS, SOUND, ...).
@@ -113,7 +113,7 @@ INI = """; NFSU2 static launcher configuration. Every line is optional; lines st
 ;Language =                          ; "English US", "English UK", "French", "German", "Italian", "Spanish", "Swedish", "Danish", "Dutch", "Korean", ...
 """
 
-README = """NFSU2 static launcher (experimental)
+README = """NFS Underground 2 - NUE (experimental)
 ====================================
 
 What it is

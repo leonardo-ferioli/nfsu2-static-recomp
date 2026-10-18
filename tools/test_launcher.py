@@ -31,7 +31,7 @@ class LauncherTests(unittest.TestCase):
         self.addCleanup(shutil.rmtree, self.temp, True)
 
     def test_identity_commands(self):
-        self.assertIn("NFSU2 static launcher", run(["--version"]).stdout)
+        self.assertIn("NFS Underground 2 - NUE launcher", run(["--version"]).stdout)
         info = run(["--info"])
         self.assertEqual(info.returncode, 0)
         self.assertIn("f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7", info.stdout)
