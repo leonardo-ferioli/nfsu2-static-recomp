@@ -109,6 +109,13 @@ class LauncherTests(unittest.TestCase):
             ini.write_text(bad)
             self.assertEqual(run(["--config", ini, "--game-dir", GAME, "--log-dir", self.temp / "logs", "--verify-only"]).returncode, 2, bad)
 
+    def test_windowed_option_selects_a_window_mode_and_size(self):
+        base = ["--game-dir", GAME, "--log-dir", self.temp / "logs", "--verify-only"]
+        self.assertEqual(run(base + ["--windowed"]).returncode, 0)
+        log = (self.temp / "logs" / "nfsu2_launcher.log").read_text(errors="replace")
+        self.assertIn("windowed mode 2", log)
+        self.assertEqual(run(base + ["--windowed", "--width", "1600", "--height", "900"]).returncode, 0)
+
     def test_log_rotation_keeps_a_bounded_history(self):
         logs = self.temp / "logs"
         logs.mkdir()
