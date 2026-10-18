@@ -1142,7 +1142,8 @@ void NativePlatform::run(uint64_t budget,const std::filesystem::path& log){
         HANDLE main_handle=OpenThread(THREAD_QUERY_LIMITED_INFORMATION,FALSE,main_thread_id);
         // Where the main thread's CPU really is: its instruction pointer, read 500 times a second (resolved to modules when the report is written).
         HANDLE context_handle=OpenThread(THREAD_SUSPEND_RESUME|THREAD_GET_CONTEXT|THREAD_QUERY_INFORMATION,FALSE,main_thread_id);
-        std::vector<uint32_t> eip_samples;eip_samples.reserve(16384);
+        struct EipSample{uint32_t eip,esp,words;uint32_t stack[48];};   // the top of the stack is kept to find out who called into a module
+        std::vector<EipSample> eip_samples;eip_samples.reserve(4096);
         const bool light=!profile_full();
         uint64_t window_start=profile_clock(),last_instructions=main_cpu.instructions,last_process=process_cpu_100ns(),last_thread=thread_cpu_100ns(main_handle),last_present=0;
         std::vector<uint64_t> last_counts(light_slots,0);
@@ -1152,7 +1153,16 @@ void NativePlatform::run(uint64_t budget,const std::filesystem::path& log){
             if(context_handle && eip_samples.size()<eip_samples.capacity()){
                 // Nothing that can block or allocate may run while the thread is suspended.
                 CONTEXT context;context.ContextFlags=CONTEXT_CONTROL;
-                if(SuspendThread(context_handle)!=DWORD(-1)){const BOOL got=GetThreadContext(context_handle,&context);ResumeThread(context_handle);if(got)eip_samples.push_back(uint32_t(context.Eip));}
+                if(SuspendThread(context_handle)!=DWORD(-1)){
+                    const BOOL got=GetThreadContext(context_handle,&context);
+                    EipSample sample{};
+                    if(got){
+                        sample.eip=uint32_t(context.Eip);sample.esp=uint32_t(context.Esp);SIZE_T read=0;
+                        if(ReadProcessMemory(GetCurrentProcess(),reinterpret_cast<const void*>(uintptr_t(sample.esp)),sample.stack,sizeof(sample.stack),&read))sample.words=uint32_t(read/4);
+                    }
+                    ResumeThread(context_handle);
+                    if(got)eip_samples.push_back(sample);
+                }
             }
             const uint32_t pc=main_cpu.pc;
             {
@@ -1234,7 +1244,44 @@ void NativePlatform::run(uint64_t budget,const std::filesystem::path& log){
                 // Main-thread instruction pointer samples by module, and the hottest 256-byte blocks of the launcher image itself (resolved with nfsu2_launcher.map).
                 std::map<std::string,uint64_t> modules;std::unordered_map<uint32_t,uint64_t> exe_blocks;std::unordered_map<uint32_t,std::string> region_names;
                 const uint32_t exe_base=uint32_t(uintptr_t(GetModuleHandleA(nullptr)));
-                for(const uint32_t eip:eip_samples){
+                // The module of an address (cached per 64 KiB).
+                auto module_of=[&](uint32_t address)->const std::string&{
+                    auto found=region_names.find(address>>16);
+                    if(found==region_names.end()){
+                        std::string name="(outside any module)";HMODULE module=nullptr;
+                        if(GetModuleHandleExA(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS|GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,reinterpret_cast<LPCSTR>(uintptr_t(address)),&module)){
+                            char file[MAX_PATH]="?";GetModuleFileNameA(module,file,MAX_PATH);const char* slash=std::strrchr(file,'\\');name=slash?slash+1:file;
+                        }
+                        found=region_names.emplace(address>>16,name).first;
+                    }
+                    return found->second;
+                };
+                // Does this stack word look like the return address of a CALL (E8 rel32, or FF /2 in its short and long forms)?
+                auto after_call=[&](uint32_t word)->bool{
+                    const uint8_t* p=reinterpret_cast<const uint8_t*>(uintptr_t(word));
+                    return p[-5]==0xE8 || (p[-2]==0xFF && (p[-1]&0x38)==0x10) || (p[-3]==0xFF && (p[-2]&0x38)==0x10) || (p[-6]==0xFF && (p[-5]&0x38)==0x10);
+                };
+                std::map<std::string,uint64_t> callers;   // "module <- caller" for samples outside the launcher's own code
+                std::map<std::string,uint64_t> module_offsets;   // "module+offset" (16-byte buckets) for the same samples
+                for(const auto& sample:eip_samples){
+                    const uint32_t eip=sample.eip;
+                    if(!(module_of(eip).find(".exe")!=std::string::npos)){
+                        {
+                            HMODULE module=nullptr;
+                            if(GetModuleHandleExA(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS|GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,reinterpret_cast<LPCSTR>(uintptr_t(eip)),&module)){
+                                char text_[96];std::snprintf(text_,sizeof(text_),"%s+0x%x",module_of(eip).c_str(),unsigned((eip-uint32_t(uintptr_t(module)))&~0xfu));++module_offsets[text_];
+                            }
+                        }
+                        for(uint32_t i=0;i<sample.words;++i){
+                            const uint32_t word=sample.stack[i];
+                            if(word>=image_base+8 && word<image_base+image_size && after_call(word)){
+                                char text_[64];std::snprintf(text_,sizeof(text_),"%s <- game code, call site 0x%x",module_of(eip).c_str(),word);++callers[text_];break;
+                            }
+                            if(word>exe_base+0x1000 && module_of(word).find(".exe")!=std::string::npos && after_call(word)){
+                                char text_[64];std::snprintf(text_,sizeof(text_),"%s <- launcher code, RVA 0x%x",module_of(eip).c_str(),word-exe_base);++callers[text_];break;
+                            }
+                        }
+                    }
                     auto found=region_names.find(eip>>16);
                     if(found==region_names.end()){
                         std::string name="(outside any module)";HMODULE module=nullptr;
@@ -1253,6 +1300,12 @@ void NativePlatform::run(uint64_t budget,const std::filesystem::path& log){
                 std::vector<std::pair<uint64_t,uint32_t>> ranked_blocks;for(const auto& b:exe_blocks)ranked_blocks.push_back({b.second,b.first});std::sort(ranked_blocks.rbegin(),ranked_blocks.rend());
                 text<<"\nPROFILE   hottest 256-byte blocks of the launcher image (RVA):";
                 for(size_t i=0;i<ranked_blocks.size()&&i<30;++i)text<<" 0x"<<std::hex<<(ranked_blocks[i].second<<8)<<std::dec<<"="<<std::setprecision(1)<<100.0*double(ranked_blocks[i].first)/total_eip<<"%";
+                std::vector<std::pair<uint64_t,std::string>> ranked_callers;for(const auto& k:callers)ranked_callers.push_back({k.second,k.first});std::sort(ranked_callers.rbegin(),ranked_callers.rend());
+                std::vector<std::pair<uint64_t,std::string>> ranked_offsets;for(const auto& k:module_offsets)ranked_offsets.push_back({k.second,k.first});std::sort(ranked_offsets.rbegin(),ranked_offsets.rend());
+                text<<"\nPROFILE   hottest places outside the launcher's own code:";
+                for(size_t i=0;i<ranked_offsets.size()&&i<14;++i)text<<" "<<ranked_offsets[i].second<<"="<<std::setprecision(1)<<100.0*double(ranked_offsets[i].first)/total_eip<<"%";
+                text<<"\nPROFILE   time outside the launcher's own code, by who called (module <- caller):";
+                for(size_t i=0;i<ranked_callers.size()&&i<24;++i)text<<"\nPROFILE     "<<std::setprecision(1)<<100.0*double(ranked_callers[i].first)/total_eip<<"% "<<ranked_callers[i].second;
                 eip_samples.clear();
             }
             text<<"\nPROFILE   state cache: hits="<<state_cache_hits.load()<<" misses="<<state_cache_misses.load()<<(state_cache_disabled.load()?" (disabled: state blocks in use)":"");

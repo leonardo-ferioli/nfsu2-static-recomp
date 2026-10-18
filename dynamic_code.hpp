@@ -9,6 +9,7 @@
 // executable's .text is never decoded or interpreted: calls from interpreted code back into SPEED2.EXE addresses
 // and into Windows imports return to the statically translated program.
 #include "runtime.hpp"
+#include <atomic>
 #include <filesystem>
 #include <functional>
 #include <memory>
@@ -102,6 +103,7 @@ private:
     std::unique_ptr<Impl> impl_;
     mutable std::mutex mutex_;
     std::vector<std::pair<uint32_t, uint32_t>> regions_;  // [base, end)
+    std::atomic<uint32_t> lowest_{0xffffffffu}, highest_{0};  // bounds of all regions: lets contains() reject most addresses without the lock
     uint64_t decoded_ = 0;
 };
 }
