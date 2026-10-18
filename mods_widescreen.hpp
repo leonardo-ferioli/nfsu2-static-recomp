@@ -24,6 +24,7 @@ struct WidescreenSettings {
     float fe_scale = 1.0f, fmv_scale = 1.0f;
     bool auto_fit_fe = false, auto_fit_fmv = true;
     bool fe_anchor = true;                   // FEScaleAnchor: elements keep their screen zone (corner/edge/centre) when the interface is scaled
+    bool fe_stretch_backdrops = true;        // FEStretchBackdrops: full-height 4:3 backdrops (title, loading) are widened to the whole screen
     float fe_anchor_zone = 0.30f;            // FEScaleAnchorZone: share of the screen, from each edge, that counts as an edge zone
     // [MISC]
     bool skip_intro = true;

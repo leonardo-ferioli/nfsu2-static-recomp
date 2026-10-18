@@ -196,6 +196,7 @@ void apply_widescreen_setting(Config& config, const std::string& section, const 
         else if (key == "autofitfmv") w.auto_fit_fmv = flag();
         else if (key == "fescaleanchor") w.fe_anchor = flag();
         else if (key == "fescaleanchorzone") w.fe_anchor_zone = real();
+        else if (key == "festretchbackdrops") w.fe_stretch_backdrops = flag();
         else throw std::runtime_error(origin + ": unknown key " + key);
     } else if (section == "misc") {
         if (key == "skipintro") w.skip_intro = flag();
