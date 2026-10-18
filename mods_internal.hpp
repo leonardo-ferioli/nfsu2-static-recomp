@@ -57,6 +57,7 @@ void install_core(const WidescreenSettings&);        // main loop, delta time, d
 void install_resolution(const WidescreenSettings&);  // resolution list, options entry, label, saved value, window placement
 void install_rendering(const WidescreenSettings&);   // HUD, FOV, rain, video quad, cutscene bars, radar, mirrors
 void install_frontend_scale(const WidescreenSettings&);
+void install_interface_anchoring(const WidescreenSettings&);   // keeps corner elements in their corners when the interface is scaled
 void install_system(const WidescreenSettings&);      // frame-time constants, skip intro, affinity, drive check, sound step, windowed modes
 void install_input(const WidescreenSettings&);       // camera, gamepad, mouse/keyboard state
 void install_nos_trail(const WidescreenSettings&);

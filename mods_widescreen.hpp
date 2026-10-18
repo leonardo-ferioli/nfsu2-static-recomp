@@ -22,6 +22,8 @@ struct WidescreenSettings {
     int fmv_mode = 1;                        // FMVWidescreenMode: 0 untouched, 1 cropped to 16:9, 2 stretched
     float fe_scale = 1.0f, fmv_scale = 1.0f;
     bool auto_fit_fe = false, auto_fit_fmv = true;
+    bool fe_anchor = true;                   // FEScaleAnchor: elements keep their screen zone (corner/edge/centre) when the interface is scaled
+    float fe_anchor_zone = 0.30f;            // FEScaleAnchorZone: share of the screen, from each edge, that counts as an edge zone
     // [MISC]
     bool skip_intro = true;
     int windowed_mode = 0;                   // 0 off, 1 borderless, 2 border, 3 resizable border, 4 borderless fullscreen, 5 borderless stretched

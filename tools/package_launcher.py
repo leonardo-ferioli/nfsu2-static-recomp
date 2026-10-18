@@ -65,6 +65,8 @@ INI = """; NFSU2 static launcher configuration. Every line is optional; lines st
 ;FMVScale = 1.00                     ; Size of FMVs.
 ;AutoFitFE = 0                       ; Automatically fits 16:9 UI content to smaller aspect ratios.
 ;AutoFitFMV = 1                      ; Automatically scales the FMVs to fully fit the width of the screen (black bars below 16:9).
+;FEScaleAnchor = 1                  ; When the interface is scaled (FEScale), elements keep their screen zone: corner elements stay in their corners. (Not in the original mod.)
+;FEScaleAnchorZone = 0.30            ; Share of the screen from each edge that counts as an edge zone.
 
 [MISC]
 ;SkipIntro = 1                       ; Skips the FMVs that play when you launch the game.

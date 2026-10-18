@@ -7112,6 +7112,7 @@ w4(U+4,u32(0x3f000000ull));
 s4(u32(r4(U+0)),r4(U+4));
 }
 B50dd2a:{NFSU2_TR(0x50dd2a);
+if(mod_hook_table[37]){SPILL();c.pc=0x50dd2au;mod_hook_table[37](c);SPILL();if(c.pc!=0x50dd2au){TAIL_DYNAMIC(c.pc);}goto B50dd2c;}
 {u32 ea_=u32(r4(R+12));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
 }
 B50dd2c:{NFSU2_TR(0x50dd2c);
@@ -7160,6 +7161,7 @@ B50dd62:{NFSU2_TR(0x50dd62);
 {u32 ea_=u32(r4(R+16)+u32(24u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
 }
 B50dd66:{NFSU2_TR(0x50dd66);
+if(mod_hook_table[38]){SPILL();c.pc=0x50dd66u;mod_hook_table[38](c);SPILL();if(c.pc!=0x50dd66u){TAIL_DYNAMIC(c.pc);}goto B50dd69;}
 {u32 ea_=u32(r4(R+12)+u32(4u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
 }
 B50dd69:{NFSU2_TR(0x50dd69);
@@ -7178,6 +7180,7 @@ B50dd7b:{NFSU2_TR(0x50dd7b);
 {u32 ea_=u32(r4(R+16)+u32(32u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
 }
 B50dd7f:{NFSU2_TR(0x50dd7f);
+if(mod_hook_table[39]){SPILL();c.pc=0x50dd7fu;mod_hook_table[39](c);SPILL();if(c.pc!=0x50dd7fu){TAIL_DYNAMIC(c.pc);}goto B50dd82;}
 {u32 ea_=u32(r4(R+20));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
 }
 B50dd82:{NFSU2_TR(0x50dd82);
@@ -7196,6 +7199,7 @@ B50dd94:{NFSU2_TR(0x50dd94);
 __asm__ volatile(".byte 0xdd,0xd8":::"memory");
 }
 B50dd96:{NFSU2_TR(0x50dd96);
+if(mod_hook_table[40]){SPILL();c.pc=0x50dd96u;mod_hook_table[40](c);SPILL();if(c.pc!=0x50dd96u){TAIL_DYNAMIC(c.pc);}goto B50dd99;}
 {u32 ea_=u32(r4(R+20)+u32(4u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
 }
 B50dd99:{NFSU2_TR(0x50dd99);

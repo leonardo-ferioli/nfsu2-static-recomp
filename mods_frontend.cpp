@@ -45,6 +45,9 @@ void movie_crash_fix(Cpu& c) {
 }
 }  // namespace
 
+float current_fe_scale() { return g_calc_fe_scale; }
+bool fe_movie_active() { return g_movie; }
+
 void install_frontend_scale(const WidescreenSettings& settings) {
     g_fe_scale = g_calc_fe_scale = settings.fe_scale;
     g_fmv_scale = g_calc_fmv_scale = settings.fmv_scale;

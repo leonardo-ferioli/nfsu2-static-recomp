@@ -231,6 +231,23 @@ def frontend_scale(s):
     s.named_address("movie_crash_resume", crash + 14)
 
 
+def interface_anchoring(s):
+    """The loads of the screen positions of every interface quad (0x5c5020: four corners) and of the line/arc routine (0x50dcd0: two
+    end points), the only two places where the game turns interface coordinates into screen coordinates (the factors 0x79ac10 and
+    0x79ac14). A handler can move each element by an amount that depends on where it is (tools/mods: interface anchoring)."""
+    quad = P.get("55 8B EC 83 E4 F0 81 EC D4 00 00 00 A1 ? ? ? ? 8B 4D 0C 53 32 DB", count=1)
+    loads = {
+        "fe_quad_x0": 0x5c5073, "fe_quad_y0": 0x5c508a, "fe_quad_x1": 0x5c50b2, "fe_quad_y1": 0x5c50de,
+        "fe_quad_x2": 0x5c512b, "fe_quad_y2": 0x5c5157, "fe_quad_x3": 0x5c51a4, "fe_quad_y3": 0x5c51d3,
+        "fe_line_ax": 0x50dd2a, "fe_line_ay": 0x50dd66, "fe_line_bx": 0x50dd7f, "fe_line_by": 0x50dd96,
+    }
+    if quad != 0x5c5020:
+        raise ValueError("the interface quad routine moved")
+    for name, address in loads.items():
+        s.hook(name, address, address + s.lengths[address])
+    s.data_pointer("fe_scale_y", 0x5c508d + 2)   # FMUL float ptr [0x79ac14]: the vertical factor, next to the horizontal one
+
+
 def build():
     s = Spec()
 
@@ -239,6 +256,7 @@ def build():
     system(s)
     input_and_camera(s)
     frontend_scale(s)
+    interface_anchoring(s)
 
     # ---- FOV --------------------------------------------------------------------------------------------------------------------
     fov = P.get("DB 40 18 C7 44 24 20 00 00 80 3F DA 70 14", count=1)
