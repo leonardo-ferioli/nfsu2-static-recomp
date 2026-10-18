@@ -87,7 +87,8 @@ Useful variations:
 nfsu2_launcher.exe --game-dir "C:\path\to\game" --windowed              # 1280x720 window
 nfsu2_launcher.exe --game-dir "C:\path\to\game" --width 2560 --height 1440
 nfsu2_launcher.exe --game-dir "C:\path\to\game" --fps-limit 30 --vsync
-nfsu2_launcher.exe --game-dir "C:\path\to\game" --profile               # performance report in logs\
+nfsu2_launcher.exe --game-dir "C:\path\to\game" --fps-log               # frame rate every 5 s in logs\
+nfsu2_launcher.exe --game-dir "C:\path\to\game" --profile               # full performance report in logs\
 nfsu2_launcher.exe --verify-only --game-dir "C:\path\to\game"           # check, don't start
 ```
 
@@ -110,6 +111,7 @@ The widescreen options keep the section and key names of the original fix: `[MAI
 | `--no-state-cache` | Send every Direct3D state call, even repeated ones |
 | `--no-widescreen` | Turn the widescreen fix off (original 640x480) |
 | `--profile` | Write the performance report to `logs\native_trace.log` |
+| `--fps-log` | Only the frame rate and frame-time percentiles every 5 s, with almost no cost |
 | `--verify-only` | Check the installation and exit |
 | `--log-dir DIR`, `--no-trace`, `--no-dialog`, `--watchdog S` | Logging and diagnostics |
 
