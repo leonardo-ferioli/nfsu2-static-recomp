@@ -25,6 +25,7 @@
 #include <vector>
 #include "native32.hpp"
 #include "mods_widescreen.hpp"
+#include "platform/services.hpp"
 
 // The guest image blocks held in the program (image_data.cpp, made by tools/embed_image.py): SPEED2.EXE is not read.
 extern const nfsu2raw::EmbeddedImageBlock embedded_image_blocks[];
@@ -564,7 +565,7 @@ static int launcher_main(int argc, char** argv) {
 
 int main(int argc, char** argv) {
     // Without this, Windows scales the game's window on high-DPI displays and the 1024x768 picture fills only part of it.
-    SetProcessDPIAware();
+    nfsu2::platform::services().display->set_dpi_aware();
     attach_console();
     return launcher_main(argc, argv);
 }

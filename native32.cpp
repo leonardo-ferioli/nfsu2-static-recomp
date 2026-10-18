@@ -10,6 +10,7 @@
 #include <cstddef>
 #include "native32.hpp"
 #include "d3d_shadow.hpp"
+#include "platform/services.hpp"
 #include <algorithm>
 #include <iomanip>
 #include <sstream>
@@ -367,7 +368,8 @@ NativePlatform::~NativePlatform(){
         for(auto t:workers){auto h=reinterpret_cast<HANDLE>(t);if(WaitForSingleObject(h,3000)!=WAIT_OBJECT_0){record("STOP guest worker failed to stop; terminating this process");ExitProcess(1);}CloseHandle(h);}
         std::lock_guard lock(state_mutex);if(timers.empty() && threads.empty())break;
     }
-    ClipCursor(nullptr);
+    if(auto* window=nfsu2::platform::services().window)window->release_cursor_clip();
+    for(auto& method:method_tokens)delete method.exchange(nullptr);
     if(exception_guard)RemoveVectoredExceptionHandler(exception_guard);current_platform=nullptr;
 }
 void NativePlatform::prepare(Cpu& c){
@@ -510,6 +512,12 @@ bool NativePlatform::dispatch(Cpu& c){
         return true;
     }
     if(c.pc>=0xf0ffff00 && c.pc<0xf0ffff30)return exception_return(c);
+    if(const uint32_t slot=(c.pc-method_token_base)>>4;c.pc>=method_token_base && slot<method_token_slots && (c.pc&15)==0){
+        if(const ImportOverride* method=method_tokens[slot].load(std::memory_order_acquire)){
+            const uint32_t value=method->handler(c);
+            returned(c,value,method->argument_count);return true;
+        }
+    }
     if(const uint32_t slot=(c.pc-0xf0000000u)>>4;slot<import_override_slots && import_overrides[slot] && (c.pc&15)==0){
         const ImportOverride& override_=*import_overrides[slot];
         const uint32_t value=override_.handler(c);
@@ -893,6 +901,12 @@ void NativePlatform::override_import(const char* name,unsigned argument_count,Na
         return;
     }
     throw Fault(std::string("the game does not import ")+name);
+}
+uint32_t NativePlatform::add_method_token(unsigned argument_count,NativeHook hook){
+    const unsigned index=method_token_count.fetch_add(1);
+    if(index>=method_token_slots){method_token_count=method_token_slots;throw Fault("more method tokens than slots");}
+    method_tokens[index].store(new ImportOverride{argument_count,std::move(hook)},std::memory_order_release);
+    return method_token_base+(index<<4);
 }
 uint32_t NativePlatform::call_guest(uint32_t address,uint32_t ecx,uint32_t edx,std::initializer_list<uint32_t> args){
     struct Error{DWORD value=GetLastError();~Error(){SetLastError(value);}}error;

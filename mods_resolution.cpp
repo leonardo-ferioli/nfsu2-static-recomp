@@ -1,5 +1,7 @@
 // Resolution list, options-menu entry, label, saved value and window placement (the mod's Resolution module).
 #include "mods_internal.hpp"
+#include "platform/services.hpp"
+namespace platform = nfsu2::platform;
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
 #include <windows.h>
@@ -24,17 +26,9 @@ std::string g_label;
 // stands in when the system reports none.
 std::vector<Resolution> resolutions_list() {
     std::vector<std::tuple<int, int, int>> list;
-    DISPLAY_DEVICEA device{};
-    device.cb = sizeof(device);
-    for (DWORD d = 0; EnumDisplayDevicesA(nullptr, d, &device, 0); ++d) {
-        DISPLAY_DEVICEA monitor{};
-        monitor.cb = sizeof(monitor);
-        for (DWORD m = 0; EnumDisplayDevicesA(device.DeviceName, m, &monitor, 0); ++m) {
-            DEVMODEA mode{};
-            mode.dmSize = sizeof(mode);
-            for (DWORD i = 0; EnumDisplaySettingsA(nullptr, i, &mode); ++i) list.emplace_back(int(mode.dmPelsWidth), int(mode.dmPelsHeight), int(mode.dmDisplayFrequency));
-        }
-    }
+    const auto displays = platform::services().display->list();
+    if (const platform::DisplayInfo* primary = platform::primary_display(displays))
+        for (const auto& mode : primary->modes) list.emplace_back(int(mode.width), int(mode.height), int(mode.refresh_millihertz / 1000u));
     if (list.empty()) {
         static const int builtin[][2] = {{160, 120}, {240, 160}, {320, 240}, {400, 240}, {480, 320}, {640, 360}, {640, 480}, {768, 480}, {800, 600}, {854, 480}, {960, 540}, {960, 640}, {1024, 576}, {1024, 768},
                                          {1152, 864}, {1280, 720}, {1280, 800}, {1280, 1024}, {1280, 1080}, {1360, 768}, {1366, 768}, {1400, 1050}, {1440, 900}, {1600, 900}, {1600, 1200}, {1680, 1050},

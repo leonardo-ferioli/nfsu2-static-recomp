@@ -41,6 +41,12 @@ public:
     // Replaces an imported Windows function by a native one (mods). The handler reads its stdcall arguments from the guest stack
     // and returns EAX; it runs on the calling thread instead of the real function. Install before run().
     void override_import(const char* name,unsigned argument_count,NativeHook hook);
+    // Method tokens: the vtable slots of guest-visible objects served by the shim instead of by Windows (docs/PLATFORM_API.md, section 4).
+    // A guest `call [vtable+slot]` reaches the token; the handler reads its stdcall arguments (`this` first) and returns EAX, and
+    // `argument_count` words (this included) are removed from the guest stack. Returns the token to store in the vtable.
+    static constexpr uint32_t method_token_base=0xf1000000u;
+    static constexpr unsigned method_token_slots=8192;
+    uint32_t add_method_token(unsigned argument_count,NativeHook hook);
     // Threads the game creates (and the one that runs the game) are restricted to this affinity mask (0 = unrestricted).
     void set_game_thread_affinity(uintptr_t mask){thread_affinity=mask;}
     const std::filesystem::path& game_directory() const{return assets;}
@@ -107,6 +113,8 @@ private:
     struct ImportOverride{unsigned argument_count;NativeHook handler;};
     static constexpr unsigned import_override_slots=512;
     std::unique_ptr<ImportOverride> import_overrides[import_override_slots];   // by import token: (token-0xf0000000)>>4
+    std::atomic<ImportOverride*> method_tokens[method_token_slots]={};   // by (token-method_token_base)>>4; entries live until the platform is destroyed
+    std::atomic<unsigned> method_token_count{0};
     std::atomic<uintptr_t> thread_affinity{0};
     std::string callback_fault;
     std::atomic<bool> callback_fault_set{false};

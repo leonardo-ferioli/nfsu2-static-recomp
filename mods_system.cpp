@@ -2,6 +2,8 @@
 // (the mod's Misc and Windowed modules). The windowed modes act on the game's window calls, which this program implements
 // natively (NativePlatform::override_import) instead of patching an import table.
 #include "mods_internal.hpp"
+#include "platform/services.hpp"
+namespace platform = nfsu2::platform;
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
 #include <windows.h>
@@ -13,19 +15,18 @@ namespace nfsu2raw::mods {
 namespace {
 // ---- display ----------------------------------------------------------------------------------------------------------------------------------------
 std::tuple<int, int> monitor_size() {
-    HMONITOR monitor = MonitorFromWindow(GetDesktopWindow(), MONITOR_DEFAULTTONEAREST);
-    MONITORINFOEXA info{};
-    info.cbSize = sizeof(info);
-    GetMonitorInfoA(monitor, &info);
-    DEVMODEA mode{};
-    mode.dmSize = sizeof(mode);
-    if (EnumDisplaySettingsA(info.szDevice, ENUM_CURRENT_SETTINGS, &mode)) return {int(mode.dmPelsWidth), int(mode.dmPelsHeight)};
-    return {int(info.rcMonitor.right - info.rcMonitor.left), int(info.rcMonitor.bottom - info.rcMonitor.top)};
+    const auto displays = platform::services().display->list(false);
+    const platform::DisplayInfo* primary = platform::primary_display(displays);
+    return primary ? std::tuple<int, int>{int(primary->current.width), int(primary->current.height)} : std::tuple<int, int>{0, 0};
 }
+
+platform::Window& game_window() { return *platform::services().window; }
+// The game's window as the Windows API wants it (for the pass-through of the guest's own window calls).
+HWND game_hwnd() { return static_cast<HWND>(game_window().native_surface().a); }
+void remember_game_window(HWND window) { game_window().adopt({platform::NativeSurface::Kind::win32_hwnd, window, nullptr}); }
 
 // ---- windowed modes (WindowedModeWrapper) --------------------------------------------------------------------------------------------------
 bool g_borderless = true, g_resizable = false, g_scale_window = false, g_stretch_window = false, g_cursor_on_frame = false;
-HWND g_game_window = nullptr;
 int g_desired_width = 0, g_desired_height = 0;
 // A windowed mode is in effect when the configuration asks for one, or while a resolution the monitor does not offer is selected
 // in the game's options (the game then draws at that size into a borderless window scaled to the screen, aspect ratio kept).
@@ -66,29 +67,17 @@ std::tuple<int, int, int, int> before_create_window(int width, int height) {
     }
     const int x = int((float(desktop_w) / 2.0f) - (float(new_w) / 2.0f));
     const int y = int((float(desktop_h) / 2.0f) - (float(new_h) / 2.0f));
-    SetProcessDPIAware();
+    platform::services().display->set_dpi_aware();
     return {x, y, new_w, new_h};
 }
 
 void after_create_window() {
-    LONG style = GetWindowLongA(g_game_window, GWL_STYLE);
-    style &= ~(WS_HSCROLL | WS_VSCROLL);
-    if (g_borderless) {
-        style &= ~(WS_CAPTION | WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SYSMENU);
-    } else {
-        style |= (WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU);
-        if (g_resizable) style |= (WS_MAXIMIZEBOX | WS_THICKFRAME);
-    }
-    SetWindowLongA(g_game_window, GWL_STYLE, style);
+    game_window().set_frame({g_borderless, g_resizable});
     if (!g_borderless && g_desired_width > 0 && g_desired_height > 0) {
-        RECT rect = {0, 0, g_desired_width, g_desired_height};   // outer size such that the client area is the desired size
-        const LONG ex_style = GetWindowLongA(g_game_window, GWL_EXSTYLE);
-        AdjustWindowRectEx(&rect, style, FALSE, ex_style);
         const auto [desktop_w, desktop_h] = monitor_size();
-        const int x = (desktop_w - g_desired_width) / 2 + rect.left, y = (desktop_h - g_desired_height) / 2 + rect.top;
-        SetWindowPos(g_game_window, nullptr, x, y, rect.right - rect.left, rect.bottom - rect.top, SWP_NOZORDER | SWP_FRAMECHANGED);
+        game_window().place_client_centered(g_desired_width, g_desired_height, desktop_w, desktop_h, false);
     } else {
-        SetWindowPos(g_game_window, nullptr, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOZORDER | SWP_FRAMECHANGED);
+        game_window().refresh_frame();
     }
 }
 
@@ -104,7 +93,7 @@ void center_window_position(int width, int height) {
         new_h = desktop_h;
         new_w = desktop_w;
     }
-    SetWindowPos(g_game_window, nullptr, int((float(desktop_w) / 2.0f) - (float(new_w) / 2.0f)), int((float(desktop_h) / 2.0f) - (float(new_h) / 2.0f)), new_w, new_h, SWP_NOZORDER | SWP_FRAMECHANGED);
+    game_window().place_outer(int((float(desktop_w) / 2.0f) - (float(new_w) / 2.0f)), int((float(desktop_h) / 2.0f) - (float(new_h) / 2.0f)), new_w, new_h);
 }
 
 uint32_t create_window_ex_a(Cpu& c) {
@@ -120,13 +109,15 @@ uint32_t create_window_ex_a(Cpu& c) {
     if (parent && parent != GetDesktopWindow())
         return uint32_t(uintptr_t(CreateWindowExA(ex_style, class_name, window_name, style, x, y, width, height, parent, menu, instance, parameter)));
     if (!windowed_active()) {   // not in a windowed mode (yet): the game's own window, remembered for later
-        g_game_window = CreateWindowExA(ex_style, class_name, window_name, style, x, y, width, height, parent, menu, instance, parameter);
-        return uint32_t(uintptr_t(g_game_window));
+        HWND created = CreateWindowExA(ex_style, class_name, window_name, style, x, y, width, height, parent, menu, instance, parameter);
+        remember_game_window(created);
+        return uint32_t(uintptr_t(created));
     }
     std::tie(x, y, width, height) = before_create_window(width, height);
-    g_game_window = CreateWindowExA(ex_style, class_name, window_name, style, x, y, width, height, parent, menu, instance, parameter);
+    HWND created = CreateWindowExA(ex_style, class_name, window_name, style, x, y, width, height, parent, menu, instance, parameter);
+    remember_game_window(created);
     after_create_window();
-    return uint32_t(uintptr_t(g_game_window));
+    return uint32_t(uintptr_t(created));
 }
 
 uint32_t set_window_long_a(Cpu& c) {
@@ -156,14 +147,15 @@ uint32_t adjust_window_rect(Cpu& c) {
         return uint32_t(AdjustWindowRect(rect, WS_CAPTION, menu));
     }
     after_create_window();
-    return uint32_t(AdjustWindowRect(rect, GetWindowLongA(g_game_window, GWL_STYLE), menu));
+    return uint32_t(AdjustWindowRect(rect, GetWindowLongA(game_hwnd(), GWL_STYLE), menu));
 }
 
 // ---- frame time and friends -------------------------------------------------------------------------------------------------------------------------
 unsigned refresh_rate() {
-    DEVMODEA mode{};
-    mode.dmSize = sizeof(mode);
-    return EnumDisplaySettingsA(nullptr, ENUM_CURRENT_SETTINGS, &mode) && mode.dmDisplayFrequency > 1 ? mode.dmDisplayFrequency : 60;
+    const auto displays = platform::services().display->list(false);
+    const platform::DisplayInfo* primary = platform::primary_display(displays);
+    const unsigned hertz = primary ? primary->current.refresh_millihertz / 1000u : 0u;
+    return hertz > 1 ? hertz : 60;
 }
 
 // The audio step is never shorter than a 60 Hz frame: at higher frame rates it would be too small to keep the audio engine in step.
@@ -174,33 +166,26 @@ void sound_update(Cpu& c) {
 }  // namespace
 
 std::pair<int, int> desktop_resolution() {
-    HMONITOR monitor = MonitorFromWindow(GetDesktopWindow(), MONITOR_DEFAULTTONEAREST);
-    MONITORINFO info{};
-    info.cbSize = sizeof(info);
-    GetMonitorInfo(monitor, &info);
-    return {int(info.rcMonitor.right - info.rcMonitor.left), int(info.rcMonitor.bottom - info.rcMonitor.top)};
+    const auto displays = platform::services().display->list(false);
+    const platform::DisplayInfo* primary = platform::primary_display(displays);
+    return primary ? std::pair<int, int>{int(primary->desktop_width), int(primary->desktop_height)} : std::pair<int, int>{0, 0};
 }
 
 // The cursor stays visible over the window frame of the windowed modes (called where the game hides it).
 void windowed_cursor_hook(bool show) {
     if (!windowed_active()) return;   // the game hides the cursor itself
-    if (!g_borderless && g_game_window && !show) {
-        POINT point;
-        GetCursorPos(&point);
-        RECT client;
-        GetClientRect(g_game_window, &client);
-        MapWindowPoints(g_game_window, nullptr, reinterpret_cast<POINT*>(&client), 2);
-        if (!PtInRect(&client, point)) {
+    platform::Window& window = game_window();
+    if (!g_borderless && window.adopted() && !show) {
+        if (!window.cursor_inside_client()) {
             if (!g_cursor_on_frame) {
                 g_cursor_on_frame = true;
-                int count;
-                do { count = ShowCursor(TRUE); } while (count < 0);
+                window.show_cursor_forced();
             }
             return;
         }
         g_cursor_on_frame = false;
     }
-    ShowCursor(show);
+    window.show_cursor(show);
 }
 
 unsigned resolved_fps_limit(const WidescreenSettings& settings) {
@@ -210,7 +195,7 @@ unsigned resolved_fps_limit(const WidescreenSettings& settings) {
 }
 
 void install_system(const WidescreenSettings& settings) {
-    SetProcessDPIAware();   // real pixel sizes for the desktop and the window, as the windowed modes need
+    platform::services().display->set_dpi_aware();   // real pixel sizes for the desktop and the window, as the windowed modes need
     auto* platform = NativePlatform::current();
 
     if (settings.skip_intro) {
@@ -273,7 +258,7 @@ void place_game_window(int width, int height) {
     if (!windowed_active()) return;
     HWND window = reinterpret_cast<HWND>(uintptr_t(u32_at(address_of("hwnd"))));
     if (!window) return;
-    g_game_window = window;
+    remember_game_window(window);
     if (g_borderless) {
         g_desired_width = width;
         g_desired_height = height;
@@ -281,12 +266,10 @@ void place_game_window(int width, int height) {
         center_window_position(width, height);
     } else {
         const auto [desktop_w, desktop_h] = monitor_size();
-        const LONG style = GetWindowLongA(window, GWL_STYLE), ex_style = GetWindowLongA(window, GWL_EXSTYLE);
-        RECT adjust = {0, 0, width, height};
-        AdjustWindowRectEx(&adjust, style, FALSE, ex_style);   // outer size such that the client area is width x height, centred by the client area
-        SetWindowPos(window, HWND_NOTOPMOST, (desktop_w - width) / 2 + adjust.left, (desktop_h - height) / 2 + adjust.top, adjust.right - adjust.left, adjust.bottom - adjust.top, SWP_SHOWWINDOW);
+        game_window().place_client_centered(width, height, desktop_w, desktop_h, true);   // centred by the client area, shown, not topmost
     }
+    const platform::Rect outer = game_window().outer_rect();
     RECT* rect = reinterpret_cast<RECT*>(uintptr_t(address_of("window_rect")));
-    GetWindowRect(window, rect);   // the game keeps its own copy of the window rectangle
+    *rect = RECT{outer.left, outer.top, outer.right, outer.bottom};   // the game keeps its own copy of the window rectangle
 }
 }  // namespace nfsu2raw::mods
