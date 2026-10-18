@@ -2,12 +2,12 @@
 // (docs/PLATFORM_API.md, 3.4): one uniform block per stage (set 0, binding 0 = vertex, 1 = pixel) holding a fixup vec4 and the float
 // constants, textures at binding 2 + stage, samplers at binding 18 + stage, vertex inputs at the location of their bgfx attribute.
 #pragma once
-#include "platform/shader/d3d9_shader.hpp"
+#include "shader/d3d9_shader.hpp"
 #include <cstdint>
 #include <string>
 #include <vector>
 
-namespace nfsu2::platform::shader {
+namespace nue::shader {
 
 struct TranslateOptions {
     // Texture type bound to each sampler/stage when the shader itself does not say (pixel shaders 1.x): 1 = 2D, 2 = 3D, 3 = cube.
@@ -41,4 +41,4 @@ const char* bgfx_attribute_name(uint32_t attribute);
 
 bool translate_to_spirv(const Program& program, const TranslateOptions& options, TranslateResult& out);
 
-}  // namespace nfsu2::platform::shader
+}  // namespace nue::shader

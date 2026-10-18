@@ -7,7 +7,7 @@
 #include <string>
 #include <vector>
 
-namespace nfsu2::platform::shader {
+namespace nue::shader {
 
 namespace spv {
 enum Op : uint16_t {
@@ -178,4 +178,4 @@ private:
     std::vector<uint32_t> imports_, names_, annotations_, types_, globals_, locals_, body_;
 };
 
-}  // namespace nfsu2::platform::shader
+}  // namespace nue::shader

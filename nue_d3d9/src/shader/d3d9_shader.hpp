@@ -8,7 +8,7 @@
 #include <string>
 #include <vector>
 
-namespace nfsu2::platform::shader {
+namespace nue::shader {
 
 enum class Stage : uint8_t { vertex, pixel };
 
@@ -80,4 +80,4 @@ std::string disassemble(const Program&);
 
 const char* opcode_name(uint16_t opcode);
 
-}  // namespace nfsu2::platform::shader
+}  // namespace nue::shader

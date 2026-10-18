@@ -1,9 +1,9 @@
-#include "platform/shader/d3d9_shader.hpp"
+#include "shader/d3d9_shader.hpp"
 #include <algorithm>
 #include <cstdio>
 #include <cstring>
 
-namespace nfsu2::platform::shader {
+namespace nue::shader {
 namespace {
 
 struct OpInfo { const char* name; int8_t dst; int8_t src; };   // operand counts for models below 2.0 (src < 0: depends on version)
@@ -280,4 +280,4 @@ std::string disassemble(const Program& p) {
     return text;
 }
 
-}  // namespace nfsu2::platform::shader
+}  // namespace nue::shader

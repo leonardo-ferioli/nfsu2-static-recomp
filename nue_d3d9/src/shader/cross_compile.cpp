@@ -1,10 +1,10 @@
-#include "platform/shader/cross_compile.hpp"
+#include "shader/cross_compile.hpp"
 #include "spirv_glsl.hpp"
 #include "spirv_hlsl.hpp"
 #include "spirv_msl.hpp"
 #include <exception>
 
-namespace nfsu2::platform::shader {
+namespace nue::shader {
 
 const char* target_name(Target t) {
     switch (t) {
@@ -82,4 +82,4 @@ bool cross_compile(const std::vector<uint32_t>& spirv, Stage stage, Target targe
     return false;
 }
 
-}  // namespace nfsu2::platform::shader
+}  // namespace nue::shader

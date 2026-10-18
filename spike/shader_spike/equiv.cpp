@@ -10,9 +10,9 @@
 #include <d3d9.h>
 #include <d3d11.h>
 #include <d3dcompiler.h>
-#include "platform/shader/cross_compile.hpp"
-#include "platform/shader/d3d9_shader.hpp"
-#include "platform/shader/d3d9_to_spirv.hpp"
+#include "shader/cross_compile.hpp"
+#include "shader/d3d9_shader.hpp"
+#include "shader/d3d9_to_spirv.hpp"
 #include <algorithm>
 #include <cmath>
 #include <cstdio>
@@ -23,7 +23,7 @@
 #include <string>
 #include <vector>
 
-using namespace nfsu2::platform::shader;
+using namespace nue::shader;
 namespace fs = std::filesystem;
 
 namespace {

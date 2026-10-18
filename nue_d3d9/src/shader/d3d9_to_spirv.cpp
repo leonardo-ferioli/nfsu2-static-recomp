@@ -1,11 +1,11 @@
-#include "platform/shader/d3d9_to_spirv.hpp"
-#include "platform/shader/spirv_builder.hpp"
+#include "shader/d3d9_to_spirv.hpp"
+#include "shader/spirv_builder.hpp"
 #include <algorithm>
 #include <array>
 #include <map>
 #include <set>
 
-namespace nfsu2::platform::shader {
+namespace nue::shader {
 
 // bgfx::Attrib::Enum (vendored bgfx, include/bgfx/defines.h order): Position 0, Normal 1, Tangent 2, Bitangent 3, Color0..3 = 4..7, Indices 8,
 // Weight 9, TexCoord0..13 = 10..23. The point-size usage has no attribute of its own and travels as the last texture coordinate.
@@ -481,4 +481,4 @@ bool translate_to_spirv(const Program& program, const TranslateOptions& options,
     return ok;
 }
 
-}  // namespace nfsu2::platform::shader
+}  // namespace nue::shader
