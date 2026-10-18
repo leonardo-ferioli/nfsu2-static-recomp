@@ -45,3 +45,5 @@ coverage.json
 
 # Local tool paths
 tools/export_java.args
+build32r/
+generated_fast_regs*/
