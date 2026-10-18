@@ -18,6 +18,11 @@ void update_scales() {
     if (g_calc_fmv_scale > g_fmv_scale) g_calc_fmv_scale = g_fmv_scale;
 }
 
+// The interface scale applies to the in-race HUD only: menus, dialogs and loading screens are laid out as the game does and are not
+// scaled (they are built from pieces that only fit together unscaled).
+bool in_race() { return i32_at(address_of("game_state")) == 3 && !game_paused(); }
+float fe_scale_in_use() { return in_race() ? g_calc_fe_scale : 1.0f; }
+
 // Draw something with the front-end projection so the new transform takes effect (as the mod does).
 void refresh_projection() { call_function("fn_set_render_target", 0, 0, {0}); }
 
@@ -33,8 +38,9 @@ void set_transform(Cpu& c) {
         matrix[0] = g_calc_fmv_scale;    // _11
         matrix[5] = g_calc_fmv_scale;    // _22
     } else {
-        matrix[0] *= g_calc_fe_scale;
-        matrix[5] *= g_calc_fe_scale;
+        const float scale = fe_scale_in_use();
+        matrix[0] *= scale;
+        matrix[5] *= scale;
     }
     set_reg(c, EAX, call_function("fn_set_transform", 0, 0, {uint32_t(uintptr_t(matrix)), u32_at(esp + 4)}));
 }
@@ -45,7 +51,8 @@ void movie_crash_fix(Cpu& c) {
 }
 }  // namespace
 
-float current_fe_scale() { return g_calc_fe_scale; }
+float current_fe_scale() { return fe_scale_in_use(); }
+bool fe_in_race() { return in_race(); }
 bool fe_movie_active() { return g_movie; }
 
 void install_frontend_scale(const WidescreenSettings& settings) {

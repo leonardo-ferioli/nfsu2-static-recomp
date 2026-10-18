@@ -61,12 +61,13 @@ INI = """; NFSU2 static launcher configuration. Every line is optional; lines st
 ;Scaling = 0                         ; Adjusts FOV aspect ratio to be mathematically correct. Requires FixFOV.
 ;HudAspectRatioConstraint = Auto     ; Constrains the HUD to an aspect ratio. Use Auto, 16:9, 21:9, 1920x1080, or a pixel offset.
 ;FMVWidescreenMode = 1               ; FMVs fill a 16:9 screen. (0 = Original | 1 = Cropped | 2 = Stretched)
-;FEScale = 1.00                      ; Size of UI elements. (Default = 1.00, Xbox = 0.92)
+;FEScale = 1.00                      ; Size of the in-race HUD (menus and dialogs are never scaled here). (Default = 1.00, Xbox = 0.92)
 ;FMVScale = 1.00                     ; Size of FMVs.
 ;AutoFitFE = 0                       ; Automatically fits 16:9 UI content to smaller aspect ratios.
 ;AutoFitFMV = 1                      ; Automatically scales the FMVs to fully fit the width of the screen (black bars below 16:9).
 ;FEScaleAnchor = 1                  ; When the interface is scaled (FEScale), elements keep their screen zone: corner elements stay in their corners. (Not in the original mod.)
 ;FEScaleAnchorZone = 0.30            ; Share of the screen from each edge that counts as an edge zone.
+;FEStretchBackdrops = 1             ; Title, loading and other full-height 4:3 backdrops are widened to the whole screen (no black bars at the sides). 0 = keep them 4:3.
 
 [MISC]
 ;SkipIntro = 1                       ; Skips the FMVs that play when you launch the game.

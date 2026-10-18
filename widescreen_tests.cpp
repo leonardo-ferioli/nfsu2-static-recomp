@@ -141,39 +141,50 @@ int main(int argc, char** argv) {
         call_hook(c, "hud");
         close_to(*reinterpret_cast<float*>(frame + 0x60), 1234.0, "unlisted HUD element stays");
 
-        // Interface anchoring at FEScale 0.8: a rigid move per element by (pivot - centre) * (1/s - 1) according to its zone; elements that
-        // fill the screen keep filling it. The space is hud-width x height virtual units, from the factors the game multiplies with.
+        // Interface layout at FEScale 0.8 in a race: a rigid move per element by (pivot - centre) * (1/s - 1) according to its zone; elements
+        // that fill the screen keep filling it; touching pieces move as a group. The space is hud-width x height virtual units.
         {
             const double width = 2.0 / f32_at(address_of("hud_scale_x")), height = 2.0 / f32_at(address_of("fe_scale_y"));
             const double k = 1.0 / 0.8 - 1.0, cx = width / 2.0, cy = height / 2.0;
             alignas(16) float quad[16];
-            auto load = [&](const char* hook, float x_lo, float x_hi, float y_lo, float y_hi, int corner, bool y) {
+            // Loads one coordinate the way the game does: the first coordinate (x of corner 0) always comes first and decides.
+            auto load = [&](const char* hook, float x_lo, float x_hi, float y_lo, float y_hi) {
                 const float xs[4] = {x_lo, x_hi, x_lo, x_hi}, ys[4] = {y_lo, y_lo, y_hi, y_hi};
                 for (int i = 0; i < 4; ++i) { quad[4 * i] = xs[i]; quad[4 * i + 1] = ys[i]; }
                 wr<4>(c, 24, uint32_t(uintptr_t(quad)));
                 asm volatile("fninit");
+                call_hook(c, "fe_quad_x0");
+                double first = pop_x87();
+                if (std::strcmp(hook, "fe_quad_x0") == 0) return first;
                 call_hook(c, hook);
-                (void)corner; (void)y;
                 return double(pop_x87());
             };
-            // right and bottom zone: x 700..760, y 400..450
-            close_to(load("fe_quad_x0", 700, 760, 400, 450, 0, false), 700 + (width - cx) * k, "right-zone element moves outwards (x, corner 0)");
-            close_to(load("fe_quad_x1", 700, 760, 400, 450, 1, false), 760 + (width - cx) * k, "right-zone element moves rigidly (x, corner 1)");
-            close_to(load("fe_quad_y0", 700, 760, 400, 450, 0, true), 400 + (height - cy) * k, "bottom-zone element moves outwards (y)");
-            // left zone
-            close_to(load("fe_quad_x0", 20, 80, 20, 60, 0, false), 20 + (0 - cx) * k, "left-zone element moves outwards");
-            close_to(load("fe_quad_y0", 20, 80, 20, 60, 0, true), 20 + (0 - cy) * k, "top-zone element moves outwards");
-            // centre: unchanged
-            close_to(load("fe_quad_x0", 380, 470, 200, 280, 0, false), 380, "centre element stays");
-            // an element that fills the width keeps filling it
-            close_to(load("fe_quad_x0", 0, float(width), 0, 100, 0, false), cx + (0 - cx) / 0.8, "full-width element keeps filling the screen");
+            i32_at(address_of("game_state")) = 3;   // in a race
+            close_to(load("fe_quad_x0", 700, 760, 400, 450), 700 + (width - cx) * k, "right-zone element moves outwards (x, corner 0)");
+            close_to(load("fe_quad_x1", 700, 760, 400, 450), 760 + (width - cx) * k, "right-zone element moves rigidly (x, corner 1)");
+            close_to(load("fe_quad_y0", 700, 760, 400, 450), 400 + (height - cy) * k, "bottom-zone element moves outwards (y)");
+            close_to(load("fe_quad_x0", 20, 80, 20, 60), 20 + (0 - cx) * k, "left-zone element moves outwards");
+            close_to(load("fe_quad_y0", 20, 80, 20, 60), 20 + (0 - cy) * k, "top-zone element moves outwards");
+            close_to(load("fe_quad_x0", 380, 470, 200, 280), 380, "centre element stays");
+            close_to(load("fe_quad_x0", 0, float(width), 0, 100), cx + (0 - cx) / 0.8, "full-width element keeps filling the screen");
+            // two touching pieces (the letters of a text) move together, by the zone of the first one
+            close_to(load("fe_quad_x0", 190, 238, 20, 40), 190 + (0 - cx) * k, "first piece of a group");
+            close_to(load("fe_quad_x0", 240, 290, 20, 40), 240 + (0 - cx) * k, "a touching piece moves with its group although its own zone is the middle");
+            close_to(load("fe_quad_x0", 600, 650, 20, 40), 600 + (width - cx) * k, "a piece that does not touch starts its own group");
             // line segments: end points at EBX / EBP, translation only
             float a[2] = {700, 400}, b[2] = {760, 450};
             wr<4>(c, 12, uint32_t(uintptr_t(a)));
             wr<4>(c, 20, uint32_t(uintptr_t(b)));
             asm volatile("fninit");
+            call_hook(c, "fe_line_ax");
+            pop_x87();
+            asm volatile("fninit");
             call_hook(c, "fe_line_bx");
             close_to(pop_x87(), 760 + (width - cx) * k, "line end point moves with its zone");
+            // outside a race nothing is scaled; a full-height 4:3 backdrop is widened to the whole screen
+            i32_at(address_of("game_state")) = 0;
+            close_to(load("fe_quad_x0", float(cx - 320), float(cx + 320), 0, float(height)), cx + (-320) * (width / 640.0), "backdrop is widened to the full width");
+            close_to(load("fe_quad_x0", 700, 760, 400, 450), 700, "menu elements are not moved");
         }
 
         // The resolution loaded with the settings: a saved size is replaced by the forced one.
