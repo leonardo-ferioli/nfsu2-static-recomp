@@ -20,7 +20,8 @@ void update_scales() {
 
 // The interface scale applies to the in-race HUD only: menus, dialogs and loading screens are laid out as the game does and are not
 // scaled (they are built from pieces that only fit together unscaled).
-bool in_race() { return i32_at(address_of("game_state")) == 3 && !game_paused(); }
+// The game's flow state: 3 is the front end (menus), 6 is racing (the others load or unload something).
+bool in_race() { return i32_at(address_of("game_state")) == 6 && !game_paused(); }
 float fe_scale_in_use() { return in_race() ? g_calc_fe_scale : 1.0f; }
 
 // Draw something with the front-end projection so the new transform takes effect (as the mod does).
