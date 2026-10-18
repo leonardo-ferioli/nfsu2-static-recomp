@@ -1004,12 +1004,18 @@ DynamicCode::~DynamicCode() = default;
 void DynamicCode::add_region(uint32_t base, uint32_t size) {
     std::lock_guard lock(mutex_);
     const uint32_t end = uint32_t(std::min<uint64_t>(uint64_t(base) + size, 0x100000000ull - 1));
+    bool merged = false;
     for (auto& r : regions_)
-        if (base <= r.second && r.first <= end) { r.first = std::min(r.first, base); r.second = std::max(r.second, end); return; }
-    regions_.push_back({base, end});
+        if (base <= r.second && r.first <= end) { r.first = std::min(r.first, base); r.second = std::max(r.second, end); merged = true; break; }
+    if (!merged) regions_.push_back({base, end});
+    uint32_t low = 0xffffffffu, high = 0;
+    for (const auto& r : regions_) { low = std::min(low, r.first); high = std::max(high, r.second); }
+    lowest_.store(low, std::memory_order_relaxed);
+    highest_.store(high, std::memory_order_relaxed);
 }
 
 bool DynamicCode::contains(uint32_t address) const {
+    if (address < lowest_.load(std::memory_order_relaxed) || address >= highest_.load(std::memory_order_relaxed)) return false;
     std::lock_guard lock(mutex_);
     for (const auto& r : regions_)
         if (address >= r.first && address < r.second) return true;
