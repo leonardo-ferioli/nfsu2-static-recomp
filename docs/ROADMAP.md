@@ -19,6 +19,9 @@ Group everything the game uses from the OS by subsystem (about 230 imports plus 
 interfaces) using real data (imports, profiler call counts), define small interfaces without Windows types, and move the current
 Windows implementation behind them with no behavior change. The existing tests verify the move.
 
+Phase 0 (inventory and the proposed interfaces) is written: [`PLATFORM_API.md`](PLATFORM_API.md); the inventory is reproducible with
+`tools/platform_inventory.py`.
+
 ## 2. Graphics backends behind a Direct3D 9-level interface
 
 - Keep the real Direct3D 9 backend (Windows) as the reference.

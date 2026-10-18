@@ -117,7 +117,7 @@ the applicable differential tests pass. Numbers, limits and how to try it: [`doc
 | `mods*.{hpp,cpp,inc}` | The native widescreen fix and its patch-point runtime |
 | `third_party/` | SLEIGH engine and `x86.sla` (Apache-2.0), widescreen fix notices |
 | `generated/`, `generated_fast/`, `export/` | Translation output, the instruction export and section dumps — **derived from / copies of parts of the proprietary executable** (see below) |
-| `docs/` | Roadmap and the (Spanish) development log |
+| `docs/` | Roadmap, the platform API proposal (`PLATFORM_API.md`), the graphics backend decision and the (Spanish) development log |
 
 ## Building and running
 
