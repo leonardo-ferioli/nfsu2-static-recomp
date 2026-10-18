@@ -339,6 +339,10 @@ NativePlatform::NativePlatform(Cpu& c,const std::filesystem::path& exports,const
 NativePlatform::NativePlatform(Cpu& c,const std::filesystem::path& game,FromExecutable)
   :NativePlatform(c,game,BlockSource([image=std::make_shared<PeImage>(std::filesystem::absolute(game)/"SPEED2.EXE")](uint32_t base,uint32_t size,const char*){
       return image->block(base,size);})){}
+NativePlatform::NativePlatform(Cpu& c,const std::filesystem::path& game,FromEmbedded embedded)
+  :NativePlatform(c,game,BlockSource([embedded](uint32_t base,uint32_t size,const char* file){
+      for(unsigned i=0;i<embedded.count;++i)if(embedded.blocks[i].base==base && embedded.blocks[i].size==size)return std::vector<uint8_t>(embedded.blocks[i].data,embedded.blocks[i].data+size);
+      throw Fault(std::string("the program holds no data for guest block ")+file);})){}
 NativePlatform::NativePlatform(Cpu& c,const std::filesystem::path& game,const BlockSource& source):main_cpu(c),assets(std::filesystem::absolute(game)){
     if(uintptr_t(raw_guest_reservation)!=0x00401000)throw Fault("native32 guest reservation is not at the required VA");
     if(current_platform)throw Fault("native32 supports one active game image per process");

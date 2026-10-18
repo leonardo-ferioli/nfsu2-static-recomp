@@ -60,7 +60,16 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 4 AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${FAST_DI
     # Product launcher: reads the user's SPEED2.EXE at run time (no game bytes inside the program).
     add_executable(dynamic_decode_dump EXCLUDE_FROM_ALL dynamic_decode_dump.cpp)
     target_link_libraries(dynamic_decode_dump PRIVATE nfsu2_fast)
-    add_executable(nfsu2_launcher WIN32 launcher.cpp)
+    # The guest image blocks as data inside the launcher: it does not need SPEED2.EXE at run time.
+    find_package(Python3 COMPONENTS Interpreter)
+    set(IMAGE_DATA_CPP "${CMAKE_BINARY_DIR}/image_data.cpp")
+    file(GLOB IMAGE_BLOCK_FILES "${CMAKE_CURRENT_SOURCE_DIR}/export/memory_*.bin")
+    add_custom_command(OUTPUT "${IMAGE_DATA_CPP}"
+        COMMAND ${Python3_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/tools/embed_image.py" "${CMAKE_CURRENT_SOURCE_DIR}/generated/platform_image.inc" "${CMAKE_CURRENT_SOURCE_DIR}/export" "${IMAGE_DATA_CPP}"
+        DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/tools/embed_image.py" "${CMAKE_CURRENT_SOURCE_DIR}/generated/platform_image.inc" ${IMAGE_BLOCK_FILES} VERBATIM)
+    add_executable(nfsu2_launcher WIN32 launcher.cpp "${IMAGE_DATA_CPP}")
+    target_include_directories(nfsu2_launcher PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
+    set_source_files_properties("${IMAGE_DATA_CPP}" PROPERTIES COMPILE_OPTIONS "-Wno-c23-extensions;-Wno-c++-extensions")
     target_link_libraries(nfsu2_launcher PRIVATE nfsu2_fast)
     # Symbol map of the launcher: the performance report names code by address, this resolves it to the translated page it belongs to.
     target_link_options(nfsu2_launcher PRIVATE "-Wl,/MAP:$<TARGET_FILE_DIR:nfsu2_launcher>/nfsu2_launcher.map")

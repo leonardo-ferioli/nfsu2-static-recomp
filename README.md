@@ -73,8 +73,9 @@ is the oracle for differential tests.
 | `fast_widescreen` | Every patch point exists, written values, hook handlers, a function hook inside translated code |
 | `launcher_cli` | Launcher: SHA-256 check, configuration, deterministic bounded run equal to the diagnostic runner |
 
-The launcher refuses to start unless the user's `SPEED2.EXE` matches the supported SHA-256
-(`f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7`). Graphical results (menus, races) are observations by
+The launcher holds the image of the supported `SPEED2.EXE` build (SHA-256
+`f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7`) as data inside the program (`tools/embed_image.py`, always, no build switch), so the
+user's `SPEED2.EXE` is not read; every block is still checked against its hash. Graphical results (menus, races) are observations by
 the author, not automated tests.
 
 ## The widescreen fix is native
@@ -114,15 +115,15 @@ Direct3D call per frame so that the next step (e.g. a render thread) is chosen f
 
 ## Building and running
 
-You need your own copy of the game; nothing from it is distributed. Requirements: a 32-bit capable clang, CMake, Ninja,
+You need your own copy of the game's data (cars, tracks, sound...); none of it is distributed. The launcher itself contains the image of `SPEED2.EXE` as data. Requirements: a 32-bit capable clang, CMake, Ninja,
 Python 3, and a Ghidra installation to export your own `SPEED2.EXE`. The export step currently depends on the author's local
 Ghidra setup (`tools/export.ps1`); making it self-contained is on the roadmap. After export: `python tools/generate_fast.py`,
 then build with CMake (`build.ps1` shows the exact configuration), then run
-`nfsu2_launcher.exe --game-dir <folder with SPEED2.EXE>`. `launcher.ini` documents every option, including `--no-widescreen`.
+`nfsu2_launcher.exe --game-dir <the game folder (GLOBAL, CARS, TRACKS...)>`. `launcher.ini` documents every option, including `--no-widescreen`.
 
 ## Legal
 
-This project is not affiliated with or endorsed by Electronic Arts. It contains no game assets and no game executable.
+This project is not affiliated with or endorsed by Electronic Arts. It contains no game assets; the built launcher holds the image of `SPEED2.EXE` (about 5.4 MB, never executed) as data.
 The generated C++ and the instruction export in this repository are **mechanical translations derived from the proprietary
 `SPEED2.EXE`**, and `export/memory_*.bin` are **verbatim dumps of its sections**; this repository is a private working backup,
 and those files and directories must be removed (they can be regenerated from your own copy) before any public release. A license for the original code in this repository has not been chosen yet.

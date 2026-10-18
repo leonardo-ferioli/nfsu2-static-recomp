@@ -47,32 +47,32 @@ class LauncherTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn("coincide bloque a bloque", result.stdout)
         log = (self.temp / "logs" / "nfsu2_launcher.log").read_text()
-        self.assertIn("SPEED2.EXE SHA-256 verified", log)
+        self.assertIn("SPEED2.EXE is not read", log)
+        self.assertIn("every block verified", log)
+
+    def test_the_image_held_in_the_launcher_needs_no_speed2_exe(self):
+        # A game folder without SPEED2.EXE (only its data folders, here empty) is enough: the guest image is data inside the launcher.
+        folder = self.temp / "no_exe"
+        for name in ("GLOBAL", "FRONTEND", "CARS", "TRACKS", "SOUND", "LANGUAGES"):
+            (folder / name).mkdir(parents=True)
+        result = run(["--verify-only", "--game-dir", folder, "--log-dir", self.temp / "logs"])
+        self.assertEqual(result.returncode, 0, result.stderr)
+        log = (self.temp / "logs" / "nfsu2_launcher.log").read_text()
+        self.assertIn("SPEED2.EXE is not read", log)
+        self.assertNotIn("SHA-256 verified", log)
         self.assertIn("every block verified", log)
 
     def test_missing_game_directory(self):
         result = run(["--game-dir", self.temp / "nowhere", "--log-dir", self.temp / "logs"])
         self.assertEqual(result.returncode, 3)
-        self.assertIn("No se encuentra SPEED2.EXE", result.stderr)
-
-    def test_a_different_executable_is_refused(self):
-        tampered = self.temp / "tampered"
-        tampered.mkdir()
-        data = bytearray((GAME / "SPEED2.EXE").read_bytes())
-        data[0x2000] ^= 1
-        (tampered / "SPEED2.EXE").write_bytes(bytes(data))
-        result = run(["--game-dir", tampered, "--log-dir", self.temp / "logs"])
-        self.assertEqual(result.returncode, 4)
-        self.assertIn("no es la version compatible", result.stderr)
-        self.assertIn("esperado", result.stderr)
+        self.assertIn("No se encuentra la carpeta del juego", result.stderr)
 
     def test_missing_data_folders_are_listed(self):
         bare = self.temp / "bare"
-        bare.mkdir()
-        shutil.copyfile(GAME / "SPEED2.EXE", bare / "SPEED2.EXE")
+        (bare / "GLOBAL").mkdir(parents=True)
         result = run(["--game-dir", bare, "--log-dir", self.temp / "logs"])
         self.assertEqual(result.returncode, 3)
-        for folder in ("GLOBAL", "FRONTEND", "CARS", "TRACKS", "SOUND", "LANGUAGES"):
+        for folder in ("FRONTEND", "CARS", "TRACKS", "SOUND", "LANGUAGES"):
             self.assertIn(folder, result.stderr)
 
     def test_configuration_file_and_command_line_precedence(self):
@@ -142,6 +142,25 @@ class LauncherTests(unittest.TestCase):
         runner_count = int(re.search(r"STOP diagnostic stop before CreateThread instructions=(\d+)", trace).group(1))
         self.assertEqual(launcher_count, runner_count)
         self.assertTrue((self.temp / "logs" / "native_trace.log").exists())
+
+    def test_a_game_folder_without_speed2_exe_runs_the_same_start_up(self):
+        # The image is inside the launcher, so a folder without SPEED2.EXE (the data folders linked into it) reaches the same diagnostic stop.
+        # (Its instruction count differs a little: the game parses the path of its own executable, and this path is shorter.)
+        folder = self.temp / "linked"
+        folder.mkdir()
+        for name in sorted(p.name for p in GAME.iterdir() if p.is_dir()):   # every sub-folder, so the game finds what it probes for
+            made = subprocess.run(["cmd", "/c", "mklink", "/J", str(folder / name), str(GAME / name)], capture_output=True, text=True)
+            self.assertEqual(made.returncode, 0, made.stdout + made.stderr)
+            self.addCleanup(os.rmdir, folder / name)   # removes the junction only, never the game's data (runs before the folder is deleted)
+        env = {"NFSU2_DETERMINISTIC_MAP": "1", "NFSU2_DETERMINISTIC_TIME": "1", "NFSU2_STOP_AT_IMPORT": "CreateThread"}
+        counts = {}
+        for label, game, extra in (("with exe", GAME, []), ("no exe", folder, [])):
+            launched = run(["--game-dir", game, "--log-dir", self.temp / ("logs_" + label.replace(" ", "_")), "--watchdog", "120", "--no-widescreen", *extra], env=env)
+            self.assertEqual(launched.returncode, 5, label + ": " + launched.stderr)
+            self.assertIn("diagnostic stop before CreateThread", launched.stderr)
+            counts[label] = int(re.search(r"instrucciones=(\d+)", launched.stderr).group(1))
+        self.assertLess(abs(counts["no exe"] - counts["with exe"]), 2000)
+        self.assertFalse((folder / "SPEED2.EXE").exists())
 
     def test_widescreen_fix_starts_the_game_up_to_the_same_point(self):
         # With the widescreen fix on (settings in a temporary folder, not the registry) the translated start-up reaches its first

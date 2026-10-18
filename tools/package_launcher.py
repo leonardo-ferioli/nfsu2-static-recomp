@@ -118,14 +118,16 @@ README = """NFSU2 static launcher (experimental)
 
 What it is
   A Windows program that runs a static recompilation of Need for Speed: Underground 2's SPEED2.EXE: the game's code
-  was translated to C++ and compiled into nfsu2_launcher.exe. The original machine code is not executed and no game
-  data is included. You need your own copy of the game.
+  was translated to C++ and compiled into nfsu2_launcher.exe. The original machine code is not executed. The program
+  also holds, as data, the image of that executable build (its sections: initial data, tables, resources), so SPEED2.EXE
+  itself is not read. The cars, tracks, sound and other data files are not included: you need your own copy of the game.
 
 What you need
   * 32-bit or 64-bit Windows with the usual system DirectX 9 components.
-  * The game folder of the PC release whose SPEED2.EXE has this SHA-256:
+  * The game folder of the PC release (the one with GLOBAL, FRONTEND, CARS, TRACKS, SOUND and LANGUAGES). The release is the one
+    whose SPEED2.EXE has this SHA-256, which is the image the launcher holds:
       f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7
-    (the launcher refuses to start with any other build).
+    SPEED2.EXE does not have to be in that folder.
 
 How to run
   1. Put nfsu2_launcher.exe anywhere. Either copy launcher.ini next to it and set game_dir=, or run it from the game
@@ -166,8 +168,9 @@ Status
   menu or race has NOT been validated yet; failures are reported explicitly in the log rather than hidden.
 
 Legal
-  nfsu2_launcher.exe contains code derived from the game's executable. Do not redistribute it unless you have the
-  right to do so; the package deliberately contains no game files.
+  nfsu2_launcher.exe contains code derived from the game's executable and the executable's image as data (about 5.4 MB,
+  including its original code bytes, which are never executed). Do not redistribute it unless you have the right to do
+  so. The package contains no other game files (no cars, tracks, sound or videos).
 """
 
 
@@ -194,8 +197,7 @@ def sha256(path):
 def audit(exe):
     original_text = (ROOT.parent / "data/text.bin").read_bytes()
     with exe.open("rb") as f, mmap.mmap(f.fileno(), 0, access=mmap.ACCESS_READ) as mm:
-        if mm.find(original_text) != -1:
-            raise SystemExit(f"{exe.name} embeds the original .text bytes")
+        embeds_text = mm.find(original_text) != -1   # the guest image is held as data (never executed); see tools/embed_image.py
         pe = struct.unpack_from("<I", mm, 0x3c)[0]
         if mm[:2] != b"MZ" or struct.unpack_from("<H", mm, pe + 4)[0] != 0x14c:
             raise SystemExit(f"{exe.name} is not a 32-bit PE image")
@@ -210,7 +212,7 @@ def audit(exe):
         if not reservation or reservation["executable"]:
             raise SystemExit(f"{exe.name} lacks the non-executable guest reservation")
         subsystem = struct.unpack_from("<H", mm, pe + 24 + 68)[0]
-    return reservation, subsystem
+    return reservation, subsystem, embeds_text
 
 
 def main():
@@ -221,7 +223,7 @@ def main():
     exe = args.build_dir.resolve() / "nfsu2_launcher.exe"
     if not exe.exists():
         raise SystemExit(f"{exe} not found; build the nfsu2_launcher target first")
-    reservation, subsystem = audit(exe)
+    reservation, subsystem, embeds_text = audit(exe)
     package = args.out.resolve() / "NFSU2-static"
     package.mkdir(parents=True, exist_ok=True)
     (package / "nfsu2_launcher.exe").write_bytes(exe.read_bytes())
@@ -255,10 +257,12 @@ def main():
         "translated_instructions": manifest["instruction_count"],
         "guest_reservation": reservation,
         "windows_subsystem": subsystem,
-        "contains_original_text_blob": False,
+        "embedded_guest_image_data": True,
+        "contains_original_text_blob": embeds_text,
+        "original_code_executed": False,
         "runtime_interpreter": {"engine": "Ghidra SLEIGH (Apache-2.0)", "scope": "memory made executable at run time outside the SPEED2.EXE image",
                                 "specification_sha256": sha256(sleigh / "x86.sla")},
-        "contains_game_files": False,
+        "contains_game_data_files": False,
         "status": "experimental: menu, race, cars and audio not yet validated",
     }
     (package / "VERSION.json").write_text(json.dumps(info, indent=2) + "\n", encoding="utf-8")
