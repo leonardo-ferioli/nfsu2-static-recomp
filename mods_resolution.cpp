@@ -156,7 +156,8 @@ void saved_value_hook(Cpu& c) {
 void loaded_value_hook(Cpu&) {
     const uint32_t value = u32_at(address_of("racing_resolution"));
     int index = -1;
-    if (value & 0x80000000u) {
+    const bool forced = g_settings.force_resolution && g_settings.width > 0 && g_settings.height > 0;
+    if (!forced && (value & 0x80000000u)) {
         const int width = int((value & 0x7FFF0000u) >> 16), height = int(value & 0xFFFFu);
         for (size_t i = 0; i < g_list.size(); ++i)
             if (g_list[i].width == width && g_list[i].height == height) { index = int(i); break; }
@@ -204,6 +205,15 @@ void install_resolution(const WidescreenSettings& settings) {
     g_settings = settings;
     g_list = resolutions_list();
     if (settings.extra_resolutions) add_common_resolutions(g_list);
+    // A size asked for explicitly (command line, configuration) is always offered, even if neither the monitor nor the presets have it.
+    if (settings.width > 0 && settings.height > 0) {
+        bool known = false;
+        for (const auto& r : g_list) known = known || (r.width == settings.width && r.height == settings.height);
+        if (!known) {
+            g_list.push_back({settings.width, settings.height, 60, true});
+            std::sort(g_list.begin(), g_list.end(), [](const Resolution& a, const Resolution& b) { return a.width != b.width ? a.width < b.width : a.height < b.height; });
+        }
+    }
     g_text.clear();
     g_supported.assign(g_list.size(), 1);
     for (const auto& r : g_list) g_text.push_back(std::to_string(r.width) + "x" + std::to_string(r.height) + (r.is_virtual ? " (scaled)" : ""));

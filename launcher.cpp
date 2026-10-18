@@ -181,6 +181,8 @@ void apply_widescreen_setting(Config& config, const std::string& section, const 
         else if (key == "width") w.width = int(integer(0, 16384));
         else if (key == "height") w.height = int(integer(0, 16384));
         else if (key == "extra_resolutions") w.extra_resolutions = flag();
+        else if (key == "force_resolution") w.force_resolution = flag();
+        else if (key == "windowed") w.windowed_mode = int(integer(0, 5));
         else throw std::runtime_error(origin + ": unknown key " + key);
     } else if (section == "main") {
         if (key == "fixhud") w.fix_hud = flag();
@@ -312,7 +314,8 @@ const char* usage_text =
     "  --no-state-cache     no omite las llamadas de estado de Direct3D que repiten el valor actual\n"
     "  --vsync              fuerza la sincronizacion vertical (evita el desgarro de imagen)\n"
     "  --no-widescreen      desactiva el parche de pantalla ancha (resolucion original 640x480)\n"
-    "  --width N --height N resolucion de pantalla ancha (0 = la del escritorio)\n"
+    "  --width N --height N resolucion de pantalla ancha; con estas opciones se usa siempre, aunque haya otra guardada\n"
+    "  --windowed           abre el juego en una ventana con borde (1280x720 salvo que se indique otra con --width/--height): para capturas\n"
     "  --no-trace           no escribe native_trace.log\n"
     "  --no-dialog          no muestra cuadros de dialogo; solo consola y registro\n"
     "  --version, --help\n"
@@ -323,6 +326,7 @@ Config parse_arguments(int argc, char** argv) {
     fs::path ini_override;
     std::map<std::string, std::string> overrides;
     std::vector<std::pair<std::string, std::string>> widescreen_overrides;   // key, value in [widescreen]
+    bool windowed_requested = false, given_size = false;
     for (int i = 1; i < argc; ++i) {
         const std::string arg = argv[i];
         auto value = [&]() -> std::string {
@@ -344,9 +348,18 @@ Config parse_arguments(int argc, char** argv) {
         else if (arg == "--no-state-cache") overrides["state_cache"] = "off";
         else if (arg == "--vsync") overrides["vsync"] = "on";
         else if (arg == "--no-widescreen") widescreen_overrides.emplace_back("enabled", "off");
-        else if (arg == "--width") widescreen_overrides.emplace_back("width", value());
-        else if (arg == "--height") widescreen_overrides.emplace_back("height", value());
+        else if (arg == "--width") { widescreen_overrides.emplace_back("width", value()); widescreen_overrides.emplace_back("force_resolution", "on"); given_size = true; }
+        else if (arg == "--height") { widescreen_overrides.emplace_back("height", value()); widescreen_overrides.emplace_back("force_resolution", "on"); given_size = true; }
+        else if (arg == "--windowed") windowed_requested = true;
         else throw std::runtime_error("opcion desconocida: " + arg);
+    }
+    if (windowed_requested) {
+        widescreen_overrides.emplace_back("windowed", "2");
+        if (!given_size) {
+            widescreen_overrides.emplace_back("width", "1280");
+            widescreen_overrides.emplace_back("height", "720");
+            widescreen_overrides.emplace_back("force_resolution", "on");
+        }
     }
     if (!ini_override.empty()) load_ini(ini_override, config, true);
     else load_ini(exe_directory() / "launcher.ini", config, false);

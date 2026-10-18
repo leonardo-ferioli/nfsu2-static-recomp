@@ -56,6 +56,9 @@ int main(int argc, char** argv) {
         s.fmv_mode = 1;
         s.language = "";
         s.console_gamma = true;
+        s.width = 1280;      // a size asked for on the command line wins over the saved one
+        s.height = 720;
+        s.force_resolution = true;
         s.fe_scale = 0.8f;   // the interface is drawn at 80%: elements keep their zones (anchoring)
         // The settings folder is documents\NFS Underground 2; only the file's presence matters, so use a custom folder.
         s.custom_user_directory = "nfsu2_widescreen_test_files";
@@ -171,6 +174,14 @@ int main(int argc, char** argv) {
             asm volatile("fninit");
             call_hook(c, "fe_line_bx");
             close_to(pop_x87(), 760 + (width - cx) * k, "line end point moves with its zone");
+        }
+
+        // The resolution loaded with the settings: a saved size is replaced by the forced one.
+        u32_at(address_of("racing_resolution")) = (1024u << 16) | 768u | 0x80000000u;
+        call_hook(c, "res_get");
+        {
+            const auto forced = resolution_size(size_t(i32_at(address_of("racing_resolution"))));
+            check(forced.first == 1280 && forced.second == 720, "a forced resolution replaces the saved one: " + std::to_string(forced.first) + "x" + std::to_string(forced.second));
         }
 
         // Menu texts follow the last input device: with a gamepad ("Xbox" texts) a known string is replaced, an unknown one is not.
