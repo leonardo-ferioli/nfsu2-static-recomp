@@ -225,6 +225,11 @@ def main():
     package = args.out.resolve() / "NFSU2-static"
     package.mkdir(parents=True, exist_ok=True)
     (package / "nfsu2_launcher.exe").write_bytes(exe.read_bytes())
+    # The linker map of this exact build (outside the package folder): resolves the addresses of the performance report to translated pages.
+    symbol_map = exe.with_suffix(".map")
+    if symbol_map.exists():
+        (args.out.resolve() / "maps").mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(symbol_map, args.out.resolve() / "maps" / f"nfsu2_launcher-{sha256(exe)[:12]}.map")
     # Declared dependency of the run-time P-code interpreter (dynamic_code.hpp): specification, provenance, licenses.
     sleigh = package / "sleigh"
     sleigh.mkdir(exist_ok=True)

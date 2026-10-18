@@ -62,6 +62,8 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 4 AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${FAST_DI
     target_link_libraries(dynamic_decode_dump PRIVATE nfsu2_fast)
     add_executable(nfsu2_launcher WIN32 launcher.cpp)
     target_link_libraries(nfsu2_launcher PRIVATE nfsu2_fast)
+    # Symbol map of the launcher: the performance report names code by address, this resolves it to the translated page it belongs to.
+    target_link_options(nfsu2_launcher PRIVATE "-Wl,/MAP:$<TARGET_FILE_DIR:nfsu2_launcher>/nfsu2_launcher.map")
     # Declared dependency: the SLEIGH specification the runtime P-code interpreter reads (dynamic_code.hpp).
     add_custom_command(TARGET nfsu2_launcher POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_SOURCE_DIR}/third_party/sleigh_spec/x86.sla" "$<TARGET_FILE_DIR:nfsu2_launcher>/sleigh/x86.sla")
