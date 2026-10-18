@@ -27,6 +27,8 @@ public:
     uint32_t callback(uint32_t address,std::initializer_list<uint32_t> arguments);
     // The platform running in this process (null before one is built); mods use it to call back into translated code.
     static NativePlatform* current();
+    // Names the mod-originated call this thread is inside (nullptr: none); a crash report says so.
+    static void note_mod_call(const char* name);
     // Calls a function of the translated program from native code, on a pooled processor with its own guest stack: ECX and EDX are
     // set (this-call / fast-call), `arguments` are pushed as stack words (the callee pops its own or the caller ignores them, as the
     // function's convention says; the pooled stack is rebuilt for every call). Returns EAX.

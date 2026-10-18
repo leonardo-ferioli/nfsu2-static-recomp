@@ -54,11 +54,39 @@ BOOL CALLBACK translated_input_semantic_enum(LPCDIDEVICEINSTANCEA item,LPDIRECTI
 void CALLBACK translated_timer_start(UINT id,UINT message,DWORD_PTR user,DWORD_PTR one,DWORD_PTR two){
     auto state=reinterpret_cast<TimerState*>(user);state->platform->timer_entry(uintptr_t(state),id,message,uint32_t(one),uint32_t(two));
 }
+// Where the crash report goes besides standard error (set when the game starts running), and the mod-originated call the thread is in.
+std::string crash_report_path;
+thread_local const char* mod_call_name=nullptr;
 LONG CALLBACK native_fault_guard(EXCEPTION_POINTERS* e){
     DWORD code=e->ExceptionRecord->ExceptionCode;
     if(code!=EXCEPTION_ACCESS_VIOLATION && code!=EXCEPTION_ILLEGAL_INSTRUCTION && code!=EXCEPTION_STACK_OVERFLOW)return EXCEPTION_CONTINUE_SEARCH;
-    char text[256];int n=std::snprintf(text,sizeof(text),"native32 CPU fault code=0x%08lx native-PC=0x%08lx guest-PC=0x%08x address=0x%08lx\r\n",code,e->ContextRecord->Eip,active_guest_cpu?active_guest_cpu->pc:0,code==EXCEPTION_ACCESS_VIOLATION?DWORD(e->ExceptionRecord->ExceptionInformation[1]):0);
+    static char text[4096];
+    const Cpu* guest=active_guest_cpu;
+    int n=std::snprintf(text,sizeof(text),"native32 CPU fault code=0x%08lx native-PC=0x%08lx guest-PC=0x%08x address=0x%08lx\r\n",code,e->ContextRecord->Eip,guest?guest->pc:0,code==EXCEPTION_ACCESS_VIOLATION?DWORD(e->ExceptionRecord->ExceptionInformation[1]):0);
+    n+=std::snprintf(text+n,sizeof(text)-n,"  thread=%lu inside-mod-call=%s\r\n",GetCurrentThreadId(),mod_call_name?mod_call_name:"no");
+    if(guest){
+        // The guest registers as last stored in the register file (the compiler may hold a few newer values in host registers).
+        auto reg=[&](unsigned o){uint32_t v;std::memcpy(&v,guest->regs.data()+o,4);return v;};
+        n+=std::snprintf(text+n,sizeof(text)-n,"  guest eax=%08x ecx=%08x edx=%08x ebx=%08x esp=%08x ebp=%08x esi=%08x edi=%08x\r\n",reg(0),reg(4),reg(8),reg(12),reg(16),reg(20),reg(24),reg(28));
+        // Return addresses on the guest stack: words that point just after a CALL instruction of the translated program.
+        uint32_t words[256];SIZE_T got=0;
+        if(ReadProcessMemory(GetCurrentProcess(),reinterpret_cast<const void*>(uintptr_t(reg(16))),words,sizeof(words),&got) && got>=4){
+            n+=std::snprintf(text+n,sizeof(text)-n,"  guest stack return addresses:");
+            int shown=0;
+            for(SIZE_T i=0;i<got/4 && shown<24 && n<int(sizeof(text))-24;++i){
+                const uint32_t a=words[i];
+                if(a<image_base+5 || a>=image_base+image_size)continue;
+                uint8_t before[5];SIZE_T read=0;
+                if(ReadProcessMemory(GetCurrentProcess(),reinterpret_cast<const void*>(uintptr_t(a-5)),before,5,&read) && read==5 && before[0]==0xE8){n+=std::snprintf(text+n,sizeof(text)-n," %x",a);++shown;}
+            }
+            n+=std::snprintf(text+n,sizeof(text)-n,"\r\n");
+        }
+    }
     DWORD written;WriteFile(GetStdHandle(STD_ERROR_HANDLE),text,DWORD(std::max(n,0)),&written,nullptr);
+    if(!crash_report_path.empty()){
+        HANDLE file=CreateFileA(crash_report_path.c_str(),FILE_APPEND_DATA,FILE_SHARE_READ,nullptr,OPEN_ALWAYS,FILE_ATTRIBUTE_NORMAL,nullptr);
+        if(file!=INVALID_HANDLE_VALUE){WriteFile(file,text,DWORD(std::max(n,0)),&written,nullptr);CloseHandle(file);}
+    }
     ClipCursor(nullptr);
     ExitProcess(1);
 }
@@ -818,6 +846,7 @@ uint32_t NativePlatform::execute(Cpu& c,uint32_t stop,uint64_t budget){
     throw Fault("native32 translated instruction budget exhausted");
 }
 NativePlatform* NativePlatform::current(){return current_platform;}
+void NativePlatform::note_mod_call(const char* name){mod_call_name=name;}
 uint32_t NativePlatform::callback(uint32_t address,std::initializer_list<uint32_t> args){return call_guest(address,0,0,args);}
 void NativePlatform::override_import(const char* name,unsigned argument_count,NativeHook hook){
     for(const auto& i:imports){
@@ -1073,6 +1102,7 @@ uint32_t NativePlatform::input_semantic_callback(uint32_t address,uint32_t refer
 }
 void NativePlatform::run(uint64_t budget,const std::filesystem::path& log){
     trace.open(log);if(!trace)throw Fault("cannot open native32 trace");
+    crash_report_path=(log.parent_path()/"crash_report.txt").string();
     const uint32_t main_thread_id=GetCurrentThreadId();
     ProfileThreadScope main_profile_scope(&main_cpu,0);
     if(profile_enabled())profile_sampler=std::thread([this,main_thread_id]{

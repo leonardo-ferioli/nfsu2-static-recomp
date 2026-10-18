@@ -34,7 +34,10 @@ void install_hook(const char* name, void (*handler)(Cpu&)) {
 uint32_t call_function(const char* name, uint32_t ecx, uint32_t edx, std::initializer_list<uint32_t> arguments) {
     auto* platform = NativePlatform::current();
     if (!platform) throw std::runtime_error("no platform to run translated code");
-    return platform->call_guest(address_of(name), ecx, edx, arguments);
+    NativePlatform::note_mod_call(name);
+    const uint32_t result = platform->call_guest(address_of(name), ecx, edx, arguments);
+    NativePlatform::note_mod_call(nullptr);
+    return result;
 }
 uint32_t call_original(const char* hook, uint32_t ecx, uint32_t edx, std::initializer_list<uint32_t> arguments) {
     const int index = mod_hook_index(hook);
@@ -42,7 +45,9 @@ uint32_t call_original(const char* hook, uint32_t ecx, uint32_t edx, std::initia
     auto* platform = NativePlatform::current();
     if (!platform) throw std::runtime_error("no platform to run translated code");
     g_mod_bypass[index] = 1;
+    NativePlatform::note_mod_call(hook);
     const uint32_t result = platform->call_guest(address_of((std::string("fn_") + hook).c_str()), ecx, edx, arguments);
+    NativePlatform::note_mod_call(nullptr);
     g_mod_bypass[index] = 0;
     return result;
 }
