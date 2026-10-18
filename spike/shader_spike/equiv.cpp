@@ -10,9 +10,9 @@
 #include <d3d9.h>
 #include <d3d11.h>
 #include <d3dcompiler.h>
-#include "shader/cross_compile.hpp"
-#include "shader/d3d9_shader.hpp"
-#include "shader/d3d9_to_spirv.hpp"
+#include "nue/shader/cross_compile.hpp"
+#include "nue/shader/d3d9_shader.hpp"
+#include "nue/shader/d3d9_to_spirv.hpp"
 #include <algorithm>
 #include <cmath>
 #include <cstdio>

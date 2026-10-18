@@ -10,7 +10,7 @@ EXTRA = ["device_created", "get_back_buffer", "frame_marker", "reference_image",
 
 
 def method_names():
-    text = open(os.path.join(HERE, "..", "platform", "null", "null_platform.cpp"), encoding="utf-8").read()
+    text = open(os.path.join(HERE, "..", "nue_d3d9", "src", "null_gpu.cpp"), encoding="utf-8").read()
     block = text[text.index("static const char* const names[]"):]
     block = block[:block.index("};")]
     return re.findall(r'"([a-z0-9_]+)"', block)

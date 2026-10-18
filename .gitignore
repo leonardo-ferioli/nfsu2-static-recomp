@@ -49,3 +49,5 @@ build32r/
 generated_fast_regs*/
 !assets/nue-logo-light.png
 !assets/nue-logo-dark.png
+build_nue/
+build_spike/

@@ -4,9 +4,9 @@
 //   shader_spike translate <file-or-folder...> [--dump <folder>]
 //        decode, lower to SPIR-V, cross-compile to GLSL ES 3.0 / GLSL 3.30 / MSL / HLSL 5.0, compile the HLSL with D3DCompile, time everything
 // Shader blobs are game data: they live outside the repository (tools/scan_d3d9_shaders.py --out <folder>).
-#include "shader/cross_compile.hpp"
-#include "shader/d3d9_shader.hpp"
-#include "shader/d3d9_to_spirv.hpp"
+#include "nue/shader/cross_compile.hpp"
+#include "nue/shader/d3d9_shader.hpp"
+#include "nue/shader/d3d9_to_spirv.hpp"
 #include <algorithm>
 #include <chrono>
 #include <cstdio>
