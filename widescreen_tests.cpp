@@ -38,7 +38,8 @@ static void original_caller(Cpu& c) {   // a function-hook handler that runs the
 
 int main(int argc, char** argv) {
     try {
-        if (argc != 3) throw Fault("requires the export directory and the game directory (use ctest)");
+        if (argc != 3 && argc != 4) throw Fault("requires the export directory, the game directory and optionally scaled (use ctest)");
+        const bool scaled_mode = argc == 4 && std::string(argv[3]) == "scaled";
         Cpu c;
         NativePlatform p(c, argv[1], argv[2]);
 
@@ -56,6 +57,7 @@ int main(int argc, char** argv) {
         s.fmv_mode = 1;
         s.language = "";
         s.console_gamma = true;
+        s.scale_all_resolutions = scaled_mode;   // the default run keeps monitor modes next to scaled ones; the scaled run makes every size scaled
         s.width = 1280;      // a size asked for on the command line wins over the saved one
         s.height = 720;
         s.force_resolution = true;
@@ -64,6 +66,17 @@ int main(int argc, char** argv) {
         s.custom_user_directory = "nfsu2_widescreen_test_files";
         const std::string description = install_widescreen(s);
         std::cout << description << "\n";
+        if (scaled_mode) {
+            // Every resolution is drawn at its size in the scaled window, the monitor's own sizes included.
+            check(resolution_count() > 4, "the list is not empty");
+            for (size_t i = 0; i < resolution_count(); ++i) check(resolution_is_virtual(i), "every listed resolution is scaled: entry " + std::to_string(i));
+            i32_at(address_of("racing_resolution")) = 0;
+            int w = 0, h = 0;
+            p.call_guest(0x5bf610, 0, 0, {uint32_t(uintptr_t(&w)), uint32_t(uintptr_t(&h))});
+            check(virtual_mode_active() && u32_at(address_of("windowed_mode")) == 1, "the first entry already uses the scaled window");
+            std::cout << "widescreen scaled-list test passed\n";
+            return 0;
+        }
 
         for (const char* name : {"main_loop", "delta_time", "before_reset", "before_end_scene", "get_racing_resolution", "inc_screen_res", "locg_racing_resolution", "res_set", "res_get", "window_placement",
                                  "wndproc", "fov", "rain_x", "rain_y", "hud", "blips", "hud2", "stop_sign", "movie_start", "set_transform", "movie_crash_fix", "joy_state", "mouse_state",

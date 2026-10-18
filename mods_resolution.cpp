@@ -58,7 +58,7 @@ std::vector<Resolution> resolutions_list() {
 // Common sizes the monitor does not list (and that fit on it) are added, marked virtual: choosing one draws the game at that size in a
 // borderless window scaled to the screen, keeping the aspect ratio. The widescreen fix adapts to it like to any other size.
 void add_common_resolutions(std::vector<Resolution>& list) {
-    static const int common[][2] = {{1024, 768}, {1280, 720}, {1280, 800}, {1280, 960}, {1366, 768}, {1400, 1050}, {1440, 900}, {1600, 900}, {1600, 1200},
+    static const int common[][2] = {{640, 480}, {800, 600}, {960, 540}, {1024, 576}, {1024, 768}, {1280, 720}, {1280, 800}, {1280, 960}, {1366, 768}, {1400, 1050}, {1440, 900}, {1600, 900}, {1600, 1200},
                                     {1680, 1050}, {1920, 1080}, {1920, 1200}, {2560, 1440}, {2560, 1600}, {3840, 2160}};
     const auto [desktop_w, desktop_h] = desktop_resolution();
     for (const auto& size : common) {
@@ -214,6 +214,9 @@ void install_resolution(const WidescreenSettings& settings) {
             std::sort(g_list.begin(), g_list.end(), [](const Resolution& a, const Resolution& b) { return a.width != b.width ? a.width < b.width : a.height < b.height; });
         }
     }
+    // Every size is rendered at its own size and scaled to the screen (the monitor's own modes included), so all behave the same.
+    if (settings.scale_all_resolutions)
+        for (auto& r : g_list) r.is_virtual = true;
     g_text.clear();
     g_supported.assign(g_list.size(), 1);
     for (const auto& r : g_list) g_text.push_back(std::to_string(r.width) + "x" + std::to_string(r.height) + (r.is_virtual ? " (scaled)" : ""));

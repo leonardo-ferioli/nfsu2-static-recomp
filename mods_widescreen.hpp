@@ -13,6 +13,7 @@ struct WidescreenSettings {
     bool enabled = true;
     bool dry_run = false;                    // install without side effects outside the process (no registry or file writes)
     int width = 0, height = 0;               // initial resolution when none is saved (0: the desktop's)
+    bool scale_all_resolutions = true;       // every listed resolution is drawn at its size in a borderless window scaled to the screen (none is a monitor mode)
     bool force_resolution = false;           // use width x height even when another resolution was saved (the command line asked for it)
     bool extra_resolutions = true;           // the options menu also lists common resolutions the monitor lacks (shown scaled, in a borderless window)
     // [MAIN]
