@@ -14,7 +14,8 @@ struct TranslateOptions {
     uint8_t sampler_dim[16] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
     // D3DTTFF_PROJECTED per stage: 0 = not projected, 3 = divide by the third coordinate, 4 = divide by the fourth.
     uint8_t projected[16] = {};
-    // Vertex shaders: move clip-space xy by (-1/width, +1/height) * w, the Direct3D 9 pixel-centre offset (the amount is in the fixup vec4).
+    // Vertex shaders: move clip-space xy by u_fix.xy * w, the Direct3D 9 pixel-centre offset. The layer sets u_fix = (+1/width, -1/height):
+    // measured against the real Direct3D 9 device (the opposite sign, and no shift, both differ from it by up to 7/255).
     bool half_pixel_fixup = true;
     // Pixel shaders below 2.0 clamp constant registers to [-1, 1] when they are read.
     bool clamp_ps1_constants = true;

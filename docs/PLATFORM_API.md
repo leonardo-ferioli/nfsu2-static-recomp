@@ -348,6 +348,19 @@ MIT (not checked): reference. SPIRV-Cross: Apache-2.0 (checked). SPIRV-Headers/T
 3. Validate the SPIR-V (Khronos validator, development-time only), cross-compile to GLSL ES/GLSL/MSL/HLSL, compile the HLSL with `D3DCompile`
    on this PC (console), record translation time per shader.
 4. Build the bgfx container and prove each renderer accepts it in the out-of-game bgfx spike (3.7, step 2d); then images (step 2e).
+**S1 results so far (console, this PC, `spike/`).** The game's own `SPEED2.EXE` embeds **45 distinct D3D9 shaders** (18 vs_1_1, 22 ps_1_1, 3 ps_1_4,
+2 ps_2_0; median 10 instructions, maximum 73; no loops or branches; instruction mix: mov, dp4, mul, mad, tex, add, max/min, dp3, def, exp/log/rsq,
+lrp, cmp, frc, two m4x4, `texreg2ar`/`texreg2gb`); the game's data files hold none (`tools/scan_d3d9_shaders.py`, which also reads JDLZ bundles). The decoder's
+disassembly is **identical to Microsoft's (d3dcompiler_47) on all 45**. All 45 lower to SPIR-V and cross-compile to GLSL ES 3.0, GLSL 3.30, MSL and
+HLSL 5.0 (about 1 ms per shader and target; lowering 0.15 ms; `D3DCompile` of the HLSL, Windows only, about 9 ms); all HLSL compiles. **Equivalence against the
+real Direct3D 9 device** (`shader_equiv`: the same quad with random textures, constants and vertex data on D3D9 HAL and on the translated shaders on D3D11):
+**all 27 pixel shaders match on 3 random scenes each** (max difference 1/255 in the cases printed), and 16 of the 18 vertex shaders match; the other two lack
+`dcl` and are rejected by D3D9 with a vertex declaration (they need `SetFVF`: to test), and one relative-addressing shader differs in 138 of 4096 channels
+(max 30) on one scene (open). Facts the test found and the code now follows: (1) Direct3D links stages by **register**, not by name: both stages declare the whole fixed varying
+interface (oD0, oD1, oT0..7, fog); (2) the half-pixel fixup is `u_fix = (+1/W, -1/H)` (the sign I first derived on paper was wrong); (3) an unwritten `oD0` is
+white; (4) bgfx's attribute enum (Tangent/Bitangent before the colours, texcoords from 10) is what the vertex input locations use. Still open: SPIR-V validation
+with the Khronos validator, the bgfx container writer, fixed-function generation (no states recorded yet), mobile compile times.
+
 Acceptance: every program of the first trace translates and validates; translation time per shader is measured; the cache hit path costs
 less than 1 ms per program. Not verified until it runs on a GPU: image equality and mobile compile times.
 

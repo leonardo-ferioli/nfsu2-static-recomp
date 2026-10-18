@@ -389,7 +389,13 @@ struct Lowering {
             if (ps() && (in.opcode == op_tex || in.opcode == op_texcoord) && p.minor != 4) used_tex.insert(in.dst.index);
         }
         for (uint32_t r : used_temps) b.store(temp(uint16_t(r)), b.const_vec4(0, 0, 0, 0));
-        for (auto& [type, index] : used_outputs) b.store(output(type, index), b.const_vec4(0, 0, 0, 0));
+        if (!ps()) {   // fixed interface: oD0, oD1, oT0..oT7 and oFog always exist, so a pixel shader's inputs line up register for register
+            for (uint16_t i = 0; i < 2; ++i) used_outputs.insert({RegType::attr_out, i});
+            for (uint16_t i = 0; i < 8; ++i) used_outputs.insert({RegType::texcoord_out, i});
+            used_outputs.insert({RegType::rast_out, 1});
+        }
+        // Unwritten vertex outputs: the diffuse colour defaults to white (measured on the real Direct3D 9 device), everything else to zero.
+        for (auto& [type, index] : used_outputs) b.store(output(type, index), type == RegType::attr_out && index == 0 && !ps() ? b.const_vec4(1, 1, 1, 1) : b.const_vec4(0, 0, 0, 0));
         if (!ps()) for (const Instruction& in : p.code) if (in.has_dst && in.opcode != op_dcl && in.dst.type == RegType::addr_texture) { if (!addr_var) { addr_var = b.local_variable(vec4, "a0"); b.store(addr_var, b.const_vec4(0, 0, 0, 0)); } }
         for (uint32_t t : used_tex) {   // texture registers start as the interpolated coordinates
             if (ps()) b.store(texreg(uint16_t(t)), b.load(vec4, interpolant(RegType::addr_texture, uint16_t(t))));
@@ -400,6 +406,15 @@ struct Lowering {
             if (!ok) return false;
         }
 
+        if (ps()) {
+            const uint32_t sink = b.local_variable(vec4, "interface_sink");
+            for (uint16_t i = 0; i < 2; ++i) b.store(sink, b.load(vec4, interpolant(RegType::input, i)));
+            for (uint16_t i = 0; i < 8; ++i) b.store(sink, b.load(vec4, interpolant(RegType::addr_texture, i)));
+            const uint32_t fog = b.global_variable(f32, Input, "vary10");
+            b.decorate(fog, Location, {10});
+            interface_ids.push_back(fog);
+            b.store(sink, b.emit(CompositeConstruct, vec4, {b.load(f32, fog), b.const_float(0.0f), b.const_float(0.0f), b.const_float(0.0f)}));
+        }
         // ---- epilogue
         uint32_t color_out = 0, pos_out = 0;
         if (ps()) {

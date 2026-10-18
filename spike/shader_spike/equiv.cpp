@@ -16,6 +16,7 @@
 #include <algorithm>
 #include <cmath>
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 #include <filesystem>
 #include <fstream>
@@ -64,14 +65,13 @@ std::vector<uint32_t> passthrough_vs() {   // vs_1_1: position, two colours, fou
     return t;
 }
 
-std::vector<uint32_t> passthrough_ps(int what) {   // ps_2_0: oC0 = v0 (what 0), t0 (1), t1 (2)
-    std::vector<uint32_t> t = {0xFFFF0200};
-    auto dcl = [&](unsigned usage, unsigned usage_index, uint32_t dst) { t.push_back(0x0200001F); t.push_back(0x80000000u | usage | (usage_index << 16)); t.push_back(dst); };
-    dcl(10, 0, dst_token(T_INPUT, 0));
-    dcl(5, 0, dst_token(T_TEX, 0));
-    dcl(5, 1, dst_token(T_TEX, 1));
-    t.push_back(0x02000001); t.push_back(dst_token(T_COLOROUT, 0));
-    t.push_back(what == 0 ? src_token(T_INPUT, 0) : src_token(T_TEX, what - 1));
+std::vector<uint32_t> passthrough_ps(int what) {   // ps_1_1: r0 = v0 (what 0), or the coordinates t0 / t1 as a colour (clamped by the texcoord instruction)
+    std::vector<uint32_t> t = {0xFFFF0101};
+    if (what == 0) { t.push_back(0x01); t.push_back(dst_token(T_TEMP, 0)); t.push_back(src_token(T_INPUT, 0)); }
+    else {
+        t.push_back(0x40); t.push_back(dst_token(T_TEX, what - 1));
+        t.push_back(0x01); t.push_back(dst_token(T_TEMP, 0)); t.push_back(src_token(T_TEX, what - 1));
+    }
     t.push_back(0x0000FFFF);
     return t;
 }
@@ -86,7 +86,8 @@ struct Scene {
 
 void make_scene(Scene& s, uint32_t seed) {
     Rng rng(seed);
-    static const float corners[4][2] = {{-1, 1}, {1, 1}, {-1, -1}, {1, -1}};
+    const char* q = std::getenv("EQUIV_QUAD"); const float qs = q ? float(std::atof(q)) : 1.25f;
+    const float corners[4][2] = {{-qs, qs}, {qs, qs}, {-qs, -qs}, {qs, -qs}};
     for (int v = 0; v < 4; ++v) {
         float* f = s.vertices[v];
         f[0] = corners[v][0]; f[1] = corners[v][1]; f[2] = 0.5f; f[3] = 1.0f;
@@ -96,6 +97,11 @@ void make_scene(Scene& s, uint32_t seed) {
     for (int i = 0; i < 4; ++i) for (int j = 0; j < 4; ++j) s.vs_constants[i * 4 + j] = i == j ? 1.0f : 0.0f;   // c0..c3 = identity (the usual world-view-projection)
     for (int i = 0; i < 32 * 4; ++i) s.ps_constants[i] = rng.range(-1.5f, 1.5f);
     for (auto& tex : s.textures) for (auto& texel : tex) texel = rng.next() | (rng.next() << 24);
+    if (std::getenv("EQUIV_CONST")) { for (int v = 0; v < 4; ++v) { s.vertices[v][12] = 0.25f; s.vertices[v][13] = 0.75f; s.vertices[v][14] = 0.0f; s.vertices[v][15] = 1.0f; } }
+    if (std::getenv("EQUIV_SIMPLE")) {   // controlled data: texcoord0 = (0..1, 0..1) across the quad, texel (x, y) = (x*32, y*32, 0, 255)
+        for (int v = 0; v < 4; ++v) { s.vertices[v][12] = corners[v][0] > 0 ? 1.0f : 0.0f; s.vertices[v][13] = corners[v][1] > 0 ? 0.0f : 1.0f; s.vertices[v][14] = 0; s.vertices[v][15] = 1; for (int k = 0; k < 4; ++k) s.vertices[v][4 + k] = s.vertices[v][12 + k]; }
+        for (auto& tex : s.textures) for (int y = 0; y < 8; ++y) for (int x = 0; x < 8; ++x) tex[y * 8 + x] = 0xFF000000u | (uint32_t(x * 32) << 16) | (uint32_t(y * 32) << 8);
+    }
 }
 
 struct Image { std::vector<uint8_t> bgra = std::vector<uint8_t>(W * H * 4); };
@@ -124,7 +130,7 @@ struct D9 {
                 const Scene& scene, unsigned vs_consts, unsigned ps_consts, Image& out, std::string& error) {
         Com<IDirect3DVertexShader9> vshader; Com<IDirect3DPixelShader9> pshader; Com<IDirect3DVertexDeclaration9> decl;
         if (FAILED(dev->CreateVertexShader(reinterpret_cast<const DWORD*>(vs.data()), &vshader))) { error = "D3D9 CreateVertexShader failed"; return false; }
-        if (FAILED(dev->CreatePixelShader(reinterpret_cast<const DWORD*>(ps.data()), &pshader))) { error = "D3D9 CreatePixelShader failed"; return false; }
+        { const HRESULT hr = dev->CreatePixelShader(reinterpret_cast<const DWORD*>(ps.data()), &pshader); if (FAILED(hr)) { D3DCAPS9 caps{}; dev->GetDeviceCaps(&caps); char text[160]; std::snprintf(text, sizeof text, "D3D9 CreatePixelShader failed hr=%08x (device ps %04x vs %04x)", unsigned(hr), unsigned(caps.PixelShaderVersion & 0xFFFF), unsigned(caps.VertexShaderVersion & 0xFFFF)); error = text; return false; } }
         // declaration: one float4 element per shader input, at the offset of the scene's vertex layout (position 0, colour 1, 2, texcoord 3..6)
         std::vector<D3DVERTEXELEMENT9> elements;
         for (auto [reg, packed] : vs_inputs) {
@@ -180,7 +186,7 @@ struct D11 {
     bool init() {
         D3D_FEATURE_LEVEL level;
         const D3D_FEATURE_LEVEL wanted[] = {D3D_FEATURE_LEVEL_11_0};
-        if (FAILED(D3D11CreateDevice(nullptr, D3D_DRIVER_TYPE_WARP, nullptr, 0, wanted, 1, D3D11_SDK_VERSION, &dev, &level, &ctx))) return false;
+        if (FAILED(D3D11CreateDevice(nullptr, std::getenv("EQUIV_HW") ? D3D_DRIVER_TYPE_HARDWARE : D3D_DRIVER_TYPE_WARP, nullptr, 0, wanted, 1, D3D11_SDK_VERSION, &dev, &level, &ctx))) return false;
         D3D11_TEXTURE2D_DESC d{};
         d.Width = W; d.Height = H; d.MipLevels = 1; d.ArraySize = 1; d.Format = DXGI_FORMAT_B8G8R8A8_UNORM; d.SampleDesc.Count = 1;
         d.Usage = D3D11_USAGE_DEFAULT; d.BindFlags = D3D11_BIND_RENDER_TARGET;
@@ -209,6 +215,7 @@ struct D11 {
         Com<ID3DBlob> vs_code, ps_code;
         if (!compile(vs, Stage::vertex, vs_hlsl, vs_code, error)) { error = "vs: " + error; return false; }
         if (!compile(ps, Stage::pixel, ps_hlsl, ps_code, error)) { error = "ps: " + error; return false; }
+        if (std::getenv("EQUIV_HLSL")) { std::printf("---- VS\n%s\n---- PS\n%s\n", vs_hlsl.c_str(), ps_hlsl.c_str()); }
         Com<ID3D11VertexShader> vsh; Com<ID3D11PixelShader> psh;
         if (FAILED(dev->CreateVertexShader(vs_code->GetBufferPointer(), vs_code->GetBufferSize(), nullptr, &vsh))) { error = "CreateVertexShader"; return false; }
         if (FAILED(dev->CreatePixelShader(ps_code->GetBufferPointer(), ps_code->GetBufferSize(), nullptr, &psh))) { error = "CreatePixelShader"; return false; }
@@ -218,6 +225,7 @@ struct D11 {
             e.SemanticName = "TEXCOORD"; e.SemanticIndex = in.attribute; e.Format = DXGI_FORMAT_R32G32B32A32_FLOAT; e.AlignedByteOffset = in.reg * 16;
             e.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
             layout.push_back(e);
+            if (std::getenv("EQUIV_HLSL")) std::printf("input reg %u attribute %u offset %u\n", unsigned(in.reg), unsigned(in.attribute), unsigned(e.AlignedByteOffset));
         }
         Com<ID3D11InputLayout> il;
         if (FAILED(dev->CreateInputLayout(layout.data(), UINT(layout.size()), vs_code->GetBufferPointer(), vs_code->GetBufferSize(), &il))) { error = "CreateInputLayout"; return false; }
@@ -230,7 +238,8 @@ struct D11 {
             D3D11_SUBRESOURCE_DATA init{data.data(), 0, 0};
             return SUCCEEDED(dev->CreateBuffer(&bd, &init, &buffer));
         };
-        const float fix[4] = {-1.0f / W, 1.0f / H, 0.0f, 0.0f}, zero[4] = {};
+        const char* fx = std::getenv("EQUIV_FIX"); const float fs = fx ? float(std::atof(fx)) : -1.0f;
+        const float fix[4] = {-fs / W, fs / H, 0.0f, 0.0f}, zero[4] = {};
         Com<ID3D11Buffer> vs_cb, ps_cb;
         if (!make_buffer(scene.vs_constants, vs.constant_registers, fix, vs_cb) || !make_buffer(scene.ps_constants, ps.constant_registers, zero, ps_cb)) { error = "CreateBuffer"; return false; }
         D3D11_BUFFER_DESC vbd{}; vbd.ByteWidth = sizeof(scene.vertices); vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER; vbd.Usage = D3D11_USAGE_IMMUTABLE;
