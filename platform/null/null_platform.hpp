@@ -124,6 +124,7 @@ public:
     void set_sampler_state(uint32_t, uint32_t, uint32_t) override { count(d3d9::Method::set_sampler_state); }
     void set_texture_stage_state(uint32_t, uint32_t, uint32_t) override { count(d3d9::Method::set_texture_stage_state); }
     void set_transform(uint32_t, const float*) override { count(d3d9::Method::set_transform); }
+    void light_enable(uint32_t, bool) override { count(d3d9::Method::light_enable); }
     void set_viewport(const uint32_t*, float, float) override { count(d3d9::Method::set_viewport); }
     void set_texture(uint32_t, d3d9::TextureId) override { count(d3d9::Method::set_texture); }
     void set_render_target(uint32_t, d3d9::SurfaceId) override { count(d3d9::Method::set_render_target); }

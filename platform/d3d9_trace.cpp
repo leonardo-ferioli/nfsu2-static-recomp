@@ -11,7 +11,7 @@
 //   texture_surface      [surface, texture, level, face]                   op_get_back_buffer [surface, swap_chain, index]
 //   stretch_rect         [src, has_rect, l, t, r, b, dst, has_rect, l, t, r, b, filter]
 //   set_render_state [state, value]  set_sampler_state [sampler, type, value]  set_texture_stage_state [stage, type, value]
-//   set_transform [type, 16 floats]  set_viewport [x, y, w, h, min_z, max_z]   set_texture [sampler, obj]  set_render_target [index, obj]
+//   light_enable [index, enable]  set_transform [type, 16 floats]  set_viewport [x, y, w, h, min_z, max_z]   set_texture [sampler, obj]  set_render_target [index, obj]
 //   set_depth_stencil [obj]  set_vertex_declaration [obj]  set_fvf [fvf]  set_vertex_shader [obj]  set_pixel_shader [obj]
 //   set_vertex_shader_constants_f / set_pixel_shader_constants_f [start, count, count*4 floats]
 //   set_stream_source [stream, obj, offset, stride]  set_indices [obj]  end_state_block [obj]  apply_state_block [obj]
@@ -48,7 +48,7 @@ bool TraceWriter::open(const std::filesystem::path& directory, uint64_t max_blob
     if (!trace_ || !blobs_) { error = "cannot create the trace files in " + directory.string(); close(); return false; }
     max_blob_bytes_ = max_blob_bytes;
     std::fwrite("NFD9TRC1", 1, 8, trace_);
-    const uint32_t version = 1;
+    const uint32_t version = 2;
     std::fwrite(&version, 4, 1, trace_);
     return true;
 }
@@ -92,7 +92,7 @@ bool TraceReader::open(const std::filesystem::path& directory, std::string& erro
     trace_ = std::fopen((directory / "trace.d3d9").string().c_str(), "rb");
     blobs_ = std::fopen((directory / "blobs.bin").string().c_str(), "rb");
     char magic[8]; uint32_t version = 0;
-    if (!trace_ || std::fread(magic, 1, 8, trace_) != 8 || std::memcmp(magic, "NFD9TRC1", 8) != 0 || std::fread(&version, 4, 1, trace_) != 1 || version != 1) {
+    if (!trace_ || std::fread(magic, 1, 8, trace_) != 8 || std::memcmp(magic, "NFD9TRC1", 8) != 0 || std::fread(&version, 4, 1, trace_) != 1 || version != 2) {
         error = "not a Direct3D 9 trace: " + directory.string();
         close();
         return false;
@@ -200,6 +200,7 @@ struct Replayer {
         case uint8_t(Method::set_sampler_state): if (!need(3)) return false; device.set_sampler_state(w[0], w[1], w[2]); break;
         case uint8_t(Method::set_texture_stage_state): if (!need(3)) return false; device.set_texture_stage_state(w[0], w[1], w[2]); break;
         case uint8_t(Method::set_transform): if (!need(17)) return false; { float m[16]; for (int i = 0; i < 16; ++i) m[i] = as_float(w[1 + i]); device.set_transform(w[0], m); } break;
+        case uint8_t(Method::light_enable): if (!need(2)) return false; device.light_enable(w[0], w[1] != 0); break;
         case uint8_t(Method::set_viewport): if (!need(6)) return false; { const uint32_t r[4] = {w[0], w[1], w[2], w[3]}; device.set_viewport(r, as_float(w[4]), as_float(w[5])); } break;
         case uint8_t(Method::set_texture): if (!need(2)) return false; device.set_texture(w[0], find<TextureId>(w[1], Kind::texture)); break;
         case uint8_t(Method::set_render_target): if (!need(2)) return false; device.set_render_target(w[0], find<SurfaceId>(w[1], Kind::surface)); break;

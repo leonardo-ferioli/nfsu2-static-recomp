@@ -70,6 +70,7 @@ public:
     virtual void set_sampler_state(uint32_t sampler, uint32_t type, uint32_t value) = 0;
     virtual void set_texture_stage_state(uint32_t stage, uint32_t type, uint32_t value) = 0;
     virtual void set_transform(uint32_t type, const float* matrix16) = 0;
+    virtual void light_enable(uint32_t index, bool enable) = 0;
     virtual void set_viewport(const uint32_t* x_y_w_h, float min_z, float max_z) = 0;
     virtual void set_texture(uint32_t sampler, TextureId) = 0;
     virtual void set_render_target(uint32_t index, SurfaceId) = 0;
@@ -104,7 +105,7 @@ enum class Method : uint8_t {
     set_render_state, set_sampler_state, set_texture_stage_state, set_transform, set_viewport, set_texture, set_render_target, set_depth_stencil,
     set_vertex_declaration, set_fvf, set_vertex_shader, set_pixel_shader, set_vertex_shader_constants_f, set_pixel_shader_constants_f,
     set_stream_source, set_indices, begin_state_block, end_state_block, apply_state_block,
-    begin_scene, end_scene, clear, draw_indexed, draw_up,
+    begin_scene, end_scene, clear, draw_indexed, draw_up, light_enable,
     count
 };
 const char* method_name(Method);

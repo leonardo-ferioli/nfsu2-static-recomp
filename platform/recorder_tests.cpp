@@ -37,7 +37,7 @@ int main() try {
     const auto dir = std::filesystem::temp_directory_path() / "nfsu2_recorder_test";
     std::filesystem::remove_all(dir);
     RecorderOptions options;
-    options.directory = dir; options.window_frames = 2; options.capture_every = 1; options.start_frame = 0; options.hotkey = false;   // the window is opened by the START file, polled by the recorder's own thread
+    options.directory = dir; options.window_frames = 2; options.capture_every = 1; options.start_frame = 0; options.hotkey = false; options.quiet_ms = 0;   // the window is opened by the START file, polled by the recorder's own thread
     D3d9Recorder rec(options);
     CHECK(rec.ok());
 
@@ -99,6 +99,8 @@ int main() try {
         const float verts[3][4] = {{0, 0, 0.5f, 1}, {16, 0, 0.5f, 1}, {0, 16, 0.5f, 1}};
         dev->lpVtbl->SetFVF(dev, D3DFVF_XYZRHW);
         { Frame f{u32(dev), D3DFVF_XYZRHW}; rec.after(vtable_entry(dev, SLOT(DV, SetFVF)), f.sp(), 0, 335); }
+        dev->lpVtbl->LightEnable(dev, 0, FALSE);
+        { Frame f{u32(dev), 0, 0}; rec.after(vtable_entry(dev, SLOT(DV, LightEnable)), f.sp(), 0, 338); }
         dev->lpVtbl->BeginScene(dev);
         { Frame f{u32(dev)}; rec.after(vtable_entry(dev, SLOT(DV, BeginScene)), f.sp(), 0, 340); }
         dev->lpVtbl->DrawPrimitiveUP(dev, D3DPT_TRIANGLELIST, 1, verts, 16);
@@ -127,6 +129,14 @@ int main() try {
     CHECK(stats.by_op[d9::op_reference_image] >= 2);                 // a reference image per frame of the window
     CHECK(stats.by_op[uint8_t(d9::Method::set_render_state)] > 100); // the state snapshot at the start of the window
     CHECK(std::filesystem::exists(dir / "recorder.log"));
+    CHECK(device.calls[size_t(d9::Method::light_enable)] == 2 && stats.unsupported == 0);
+    {
+        std::ifstream log(dir / "recorder.log");
+        const std::string text((std::istreambuf_iterator<char>(log)), {});
+        CHECK(text.find("reference image saved: frame_") != std::string::npos);
+        CHECK(text.find("WINDOW 0 OPENED") != std::string::npos && text.find("WINDOW 0 CLOSED") != std::string::npos && text.find("2 draws") != std::string::npos);
+        CHECK(text.find("2 reference images [frame_") != std::string::npos);
+    }
     int bmps = 0;
     for (auto& e : std::filesystem::directory_iterator(dir)) if (e.path().extension() == ".bmp") ++bmps;
     CHECK(bmps >= 2);

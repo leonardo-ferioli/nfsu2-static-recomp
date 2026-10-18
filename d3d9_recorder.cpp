@@ -59,6 +59,10 @@ struct D3d9Recorder::Impl {
     uint64_t frame = 0, instructions = 0, window_index = 0, window_start = 0;
     bool active = false, in_state_block = false;
     std::atomic<bool> window_on{false};
+    uint64_t window_draws = 0, window_images = 0;
+    uint32_t window_viewport_w = 0, window_viewport_h = 0;
+    std::string window_image_names;
+    unsigned image_failures = 0;
     unsigned window_frames_left = 0;
     uint64_t calls = 0, unknown_calls = 0;
     std::FILE* log = nullptr;
@@ -76,6 +80,8 @@ struct D3d9Recorder::Impl {
     void poll_loop() {
         static const int keys[] = {VK_F9, VK_F10, VK_F8, VK_INSERT, VK_PAUSE, VK_SCROLL, VK_HOME, VK_END, VK_XBUTTON1, VK_XBUTTON2};
         bool was_down = false;
+        for (int k : keys) if (GetAsyncKeyState(k) & 0x8000) was_down = true;   // keys already held when the game starts do not count
+        const ULONGLONG quiet_until = GetTickCount64() + options.quiet_ms;                 // nor does anything in the first seconds
         ULONGLONG last_file_check = 0;
         const std::string start_file = (options.directory / "START").string();
         while (!stop_poller.load()) {
@@ -89,6 +95,7 @@ struct D3d9Recorder::Impl {
                 last_file_check = now;
                 if (GetFileAttributesA(start_file.c_str()) != INVALID_FILE_ATTRIBUTES) { DeleteFileA(start_file.c_str()); trigger = true; }
             }
+            if (now < quiet_until) trigger = false;
             if (trigger && !window_on.load() && !open_pending.load()) {
                 open_pending.store(true);
                 note("trigger seen (key or START file): the recording window opens at the next frame");
@@ -124,11 +131,18 @@ struct D3d9Recorder::Impl {
         default: return false;
         }
     }
+    void count_window(uint8_t op, const std::vector<uint32_t>& words) {
+        if (!active) return;
+        if (op == uint8_t(Method::draw_indexed) || op == uint8_t(Method::draw_up)) ++window_draws;
+        if (op == uint8_t(Method::set_viewport) && words.size() >= 4) { window_viewport_w = words[2]; window_viewport_h = words[3]; }
+    }
     void emit(uint8_t op, const std::vector<uint32_t>& words) {
+        count_window(op, words);
         if (active || in_state_block || resource_op_always(op)) writer.record(op, words);
     }
     static std::vector<uint32_t> blob_words(const Blob& b) { return {uint32_t(b.offset), uint32_t(b.offset >> 32), b.size}; }
     void emit_with_blob(uint8_t op, std::vector<uint32_t> head, const void* data, uint32_t size) {
+        count_window(op, head);
         if (!(active || in_state_block || resource_op_always(op))) return;
         const auto b = blob_words(writer.blob(data, size));
         head.insert(head.end(), b.begin(), b.end());
@@ -157,6 +171,9 @@ struct D3d9Recorder::Impl {
         active = true;
         window_frames_left = options.window_frames;
         window_start = frame;
+        window_draws = window_images = 0;
+        window_viewport_w = window_viewport_h = 0;
+        window_image_names.clear();
         writer.record(op_window_begin, {uint32_t(window_index), uint32_t(frame)});
         snapshot_state();
         char text[160]; std::snprintf(text, sizeof text, "WINDOW %llu OPENED at frame %llu (%u frames will be recorded)", (unsigned long long)window_index, (unsigned long long)frame, window_frames_left);
@@ -166,8 +183,11 @@ struct D3d9Recorder::Impl {
     }
     void close_window() {
         if (!active) return;
-        writer.record(op_window_end, {uint32_t(window_index), uint32_t(frame)});
-        char text[160]; std::snprintf(text, sizeof text, "WINDOW %llu CLOSED at frame %llu", (unsigned long long)window_index, (unsigned long long)frame);
+        writer.record(op_window_end, {uint32_t(window_index), uint32_t(frame), uint32_t(window_draws), uint32_t(window_images)});
+        char text[600];
+        const uint64_t frames_in_window = frame > window_start ? frame - window_start : 1;
+        std::snprintf(text, sizeof text, "WINDOW %llu CLOSED at frame %llu: frames %llu..%llu, %llu draws (%.0f per frame), last viewport %ux%u, %llu reference images [%s]", (unsigned long long)window_index, (unsigned long long)frame,
+                      (unsigned long long)window_start, (unsigned long long)frame, (unsigned long long)window_draws, double(window_draws) / double(frames_in_window), window_viewport_w, window_viewport_h, (unsigned long long)window_images, window_image_names.c_str());
         note(text);
         writer.flush();
         Beep(600, 120);
@@ -211,34 +231,61 @@ struct D3d9Recorder::Impl {
         { IDirect3DSurface9* s = nullptr; if (SUCCEEDED(d->lpVtbl->GetDepthStencilSurface(d, &s)) && s) { ensure_surface(s); writer.record(uint8_t(Method::set_depth_stencil), {uint32_t(uintptr_t(s))}); release(s); } }
     }
 
+    void image_note(const char* what, HRESULT hr) {
+        if (++image_failures > 12) return;
+        char text[200]; std::snprintf(text, sizeof text, "reference image FAILED at frame %llu: %s (hr=0x%08x)", (unsigned long long)frame, what, unsigned(hr));
+        note(text);
+    }
     void capture_reference_image() {
         if (!device) return;
-        IDirect3DSurface9* back = nullptr; IDirect3DSurface9* sys = nullptr;
-        if (FAILED(device->lpVtbl->GetBackBuffer(device, 0, 0, D3DBACKBUFFER_TYPE_MONO, &back)) || !back) return;
+        IDirect3DSurface9* back = nullptr; IDirect3DSurface9* sys = nullptr; IDirect3DSurface9* resolved = nullptr;
+        HRESULT hr = device->lpVtbl->GetBackBuffer(device, 0, 0, D3DBACKBUFFER_TYPE_MONO, &back);
+        if (FAILED(hr) || !back) { image_note("GetBackBuffer", hr); return; }
         D3DSURFACE_DESC desc;
         back->lpVtbl->GetDesc(back, &desc);
-        if ((desc.Format == D3DFMT_X8R8G8B8 || desc.Format == D3DFMT_A8R8G8B8) &&
-            SUCCEEDED(device->lpVtbl->CreateOffscreenPlainSurface(device, desc.Width, desc.Height, desc.Format, D3DPOOL_SYSTEMMEM, &sys, nullptr)) && sys) {
-            if (SUCCEEDED(device->lpVtbl->GetRenderTargetData(device, back, sys))) {
-                D3DLOCKED_RECT lr;
-                if (SUCCEEDED(sys->lpVtbl->LockRect(sys, &lr, nullptr, D3DLOCK_READONLY))) {
-                    std::vector<uint8_t> pixels(size_t(desc.Width) * desc.Height * 4);
-                    for (UINT y = 0; y < desc.Height; ++y) std::memcpy(&pixels[size_t(y) * desc.Width * 4], static_cast<uint8_t*>(lr.pBits) + size_t(y) * lr.Pitch, size_t(desc.Width) * 4);
-                    sys->lpVtbl->UnlockRect(sys);
-                    for (size_t i = 3; i < pixels.size(); i += 4) pixels[i] = 255;   // X8R8G8B8 leaves the alpha byte undefined
-                    emit(op_reference_image, {uint32_t(frame), desc.Width, desc.Height, uint32_t(desc.Format), 0, 0, 0});
-                    char name[64]; std::snprintf(name, sizeof name, "frame_%06u.bmp", unsigned(frame));
-                    std::ofstream f(options.directory / name, std::ios::binary);
-                    const uint32_t file_size = 54 + uint32_t(pixels.size());
-                    uint8_t header[54] = {'B', 'M'};
-                    std::memcpy(header + 2, &file_size, 4); header[10] = 54; header[14] = 40;
-                    const int32_t w = int32_t(desc.Width), h = -int32_t(desc.Height);
-                    std::memcpy(header + 18, &w, 4); std::memcpy(header + 22, &h, 4); header[26] = 1; header[28] = 32;
-                    f.write(reinterpret_cast<const char*>(header), 54);
-                    f.write(reinterpret_cast<const char*>(pixels.data()), std::streamsize(pixels.size()));
-                }
+        if (desc.Format != D3DFMT_X8R8G8B8 && desc.Format != D3DFMT_A8R8G8B8) {
+            char what[80]; std::snprintf(what, sizeof what, "back buffer format %u is not a 32-bit RGB format", unsigned(desc.Format));
+            image_note(what, 0); release(back); return;
+        }
+        hr = device->lpVtbl->CreateOffscreenPlainSurface(device, desc.Width, desc.Height, desc.Format, D3DPOOL_SYSTEMMEM, &sys, nullptr);
+        if (FAILED(hr) || !sys) { image_note("CreateOffscreenPlainSurface", hr); release(back); return; }
+        IDirect3DSurface9* source = back;
+        if (desc.MultiSampleType != D3DMULTISAMPLE_NONE) {   // a multisampled back buffer cannot be read directly: resolve it into a plain render target first
+            hr = device->lpVtbl->CreateRenderTarget(device, desc.Width, desc.Height, desc.Format, D3DMULTISAMPLE_NONE, 0, FALSE, &resolved, nullptr);
+            if (SUCCEEDED(hr) && resolved) hr = device->lpVtbl->StretchRect(device, back, nullptr, resolved, nullptr, D3DTEXF_NONE);
+            if (FAILED(hr) || !resolved) { image_note("resolve of the multisampled back buffer (StretchRect)", hr); release(resolved); release(sys); release(back); return; }
+            source = resolved;
+        }
+        hr = device->lpVtbl->GetRenderTargetData(device, source, sys);
+        if (FAILED(hr)) { image_note("GetRenderTargetData", hr); }
+        else {
+            D3DLOCKED_RECT lr;
+            hr = sys->lpVtbl->LockRect(sys, &lr, nullptr, D3DLOCK_READONLY);
+            if (FAILED(hr)) image_note("LockRect of the copy", hr);
+            else {
+                std::vector<uint8_t> pixels(size_t(desc.Width) * desc.Height * 4);
+                for (UINT y = 0; y < desc.Height; ++y) std::memcpy(&pixels[size_t(y) * desc.Width * 4], static_cast<uint8_t*>(lr.pBits) + size_t(y) * lr.Pitch, size_t(desc.Width) * 4);
+                sys->lpVtbl->UnlockRect(sys);
+                for (size_t i = 3; i < pixels.size(); i += 4) pixels[i] = 255;   // X8R8G8B8 leaves the alpha byte undefined
+                emit(op_reference_image, {uint32_t(frame), desc.Width, desc.Height, uint32_t(desc.Format), 0, 0, 0});
+                char name[64]; std::snprintf(name, sizeof name, "frame_%06u.bmp", unsigned(frame));
+                std::ofstream f(options.directory / name, std::ios::binary);
+                const uint32_t file_size = 54 + uint32_t(pixels.size());
+                uint8_t header[54] = {'B', 'M'};
+                std::memcpy(header + 2, &file_size, 4); header[10] = 54; header[14] = 40;
+                const int32_t w = int32_t(desc.Width), h = -int32_t(desc.Height);
+                std::memcpy(header + 18, &w, 4); std::memcpy(header + 22, &h, 4); header[26] = 1; header[28] = 32;
+                f.write(reinterpret_cast<const char*>(header), 54);
+                f.write(reinterpret_cast<const char*>(pixels.data()), std::streamsize(pixels.size()));
+                f.close();
+                ++window_images;
+                if (!window_image_names.empty()) window_image_names += ", ";
+                window_image_names += name;
+                char text[160]; std::snprintf(text, sizeof text, "reference image saved: %s (%ux%u, format %u%s)", name, desc.Width, desc.Height, unsigned(desc.Format), resolved ? ", multisampled back buffer resolved" : "");
+                note(text);
             }
         }
+        release(resolved);
         release(sys);
         release(back);
     }
@@ -247,6 +294,7 @@ struct D3d9Recorder::Impl {
 D3d9Recorder::D3d9Recorder(const RecorderOptions& options) : impl_(new Impl) {
     impl_->options = options;
     ok_ = impl_->writer.open(options.directory, options.max_blob_mb * 1048576ull, error_);
+    if (ok_) DeleteFileA((options.directory / "START").string().c_str());   // a START file left from an earlier run must not trigger this one
     if (ok_) impl_->poller = std::thread([this] { impl_->poll_loop(); });
     if (ok_) {
         impl_->log = std::fopen((options.directory / "recorder.log").string().c_str(), "w");
@@ -386,6 +434,7 @@ void D3d9Recorder::after(uint32_t target, uint32_t sp, uint32_t eax, uint64_t in
         else if (s == SLOT(V, BeginScene)) r.emit(uint8_t(Method::begin_scene), {});
         else if (s == SLOT(V, EndScene)) r.emit(uint8_t(Method::end_scene), {});
         else if (s == SLOT(V, Clear)) { std::vector<uint32_t> w{a[1], a[3], a[4], a[5], a[6]}; for (uint32_t i = 0; i < a[1] && a[2]; ++i) for (int k = 0; k < 4; ++k) w.push_back(u32_at(a[2] + i * 16 + k * 4)); r.emit(uint8_t(Method::clear), w); }
+        else if (s == SLOT(V, LightEnable)) r.emit(uint8_t(Method::light_enable), {a[1], a[2]});
         else if (s == SLOT(V, SetTransform)) { std::vector<uint32_t> w{a[1]}; for (int i = 0; i < 16; ++i) w.push_back(u32_at(a[2] + i * 4)); r.emit(uint8_t(Method::set_transform), w); }
         else if (s == SLOT(V, SetViewport)) { const uint32_t p = a[1]; r.emit(uint8_t(Method::set_viewport), {u32_at(p), u32_at(p + 4), u32_at(p + 8), u32_at(p + 12), u32_at(p + 16), u32_at(p + 20)}); }
         else if (s == SLOT(V, SetRenderState)) r.emit(uint8_t(Method::set_render_state), {a[1], a[2]});

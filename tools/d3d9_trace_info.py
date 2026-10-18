@@ -6,7 +6,7 @@
 import os, re, struct, sys, collections
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-EXTRA = ["device_created", "get_back_buffer", "frame_marker", "reference_image", "unknown_call", "truncated", "window_begin", "window_end", "end"]
+EXTRA = ["device_created", "get_back_buffer", "frame_marker", "reference_image", "unknown_call", "truncated", "window_begin", "window_end", "end"]   # ops 128 and up
 
 
 def method_names():
@@ -17,7 +17,7 @@ def method_names():
 
 
 def main():
-    names = method_names() + EXTRA
+    names = method_names() + ["?"] * (128 - len(method_names())) + EXTRA
     for folder in sys.argv[1:]:
         trace = os.path.join(folder, "trace.d3d9")
         blobs = os.path.join(folder, "blobs.bin")
@@ -37,15 +37,15 @@ def main():
             words = struct.unpack_from("<%dI" % (size // 4), data, pos + 5)
             name = names[op] if op < len(names) else f"op{op}"
             ops[name] += 1; size_by_op[name] += size
-            if name == "window_begin": in_window = True; frames_in_window = 0; windows.append([words[0], words[1], None, 0])
-            elif name == "window_end" and windows: windows[-1][2] = words[1]; in_window = False
+            if name == "window_begin": in_window = True; frames_in_window = 0; windows.append([words[0], words[1], None, 0, 0, 0])
+            elif name == "window_end" and windows: windows[-1][2] = words[1]; in_window = False; windows[-1][4:6] = [words[2] if len(words) > 2 else 0, words[3] if len(words) > 3 else 0]
             elif name == "present" and in_window: windows[-1][3] += 1
             elif name == "unknown_call": unknown_slots[words[0]] += 1
             pos += 5 + size
         log = os.path.join(folder, "recorder.log")
         bmps = [f for f in os.listdir(folder) if f.lower().endswith(".bmp")]
         print(f"   trace.d3d9 {len(data)/1048576:.1f} MiB, blobs.bin {os.path.getsize(blobs)/1048576:.1f} MiB, recorder.log {'yes' if os.path.exists(log) else 'NO'}, reference images {len(bmps)}")
-        print(f"   frames presented while recording the window(s): {sum(w[3] for w in windows)}; windows: {len(windows)} {[(w[0], 'frames', w[1], '..', w[2]) for w in windows]}")
+        print(f"   frames presented while recording the window(s): {sum(w[3] for w in windows)}; windows: {len(windows)} {[(w[0], 'frames', w[1], '..', w[2], 'draws', w[4], 'images', w[5]) for w in windows]}")
         print(f"   end of trace: {'closed normally (end record)' if ops['end'] else 'NOT closed (the game was killed or crashed before the recorder finished)'}"
               + ("; last record cut short" if truncated_tail else ""))
         resources = {k: ops[k] for k in ("create_texture", "create_cube_texture", "create_vertex_buffer", "create_index_buffer", "create_render_target", "create_depth_stencil",

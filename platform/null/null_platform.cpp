@@ -12,7 +12,7 @@ const char* method_name(Method m) {
         "set_render_state", "set_sampler_state", "set_texture_stage_state", "set_transform", "set_viewport", "set_texture", "set_render_target", "set_depth_stencil",
         "set_vertex_declaration", "set_fvf", "set_vertex_shader", "set_pixel_shader", "set_vertex_shader_constants_f", "set_pixel_shader_constants_f",
         "set_stream_source", "set_indices", "begin_state_block", "end_state_block", "apply_state_block",
-        "begin_scene", "end_scene", "clear", "draw_indexed", "draw_up"};
+        "begin_scene", "end_scene", "clear", "draw_indexed", "draw_up", "light_enable"};
     static_assert(sizeof(names) / sizeof(names[0]) == static_cast<size_t>(Method::count), "method_name table out of step with Method");
     return static_cast<size_t>(m) < static_cast<size_t>(Method::count) ? names[static_cast<size_t>(m)] : "?";
 }

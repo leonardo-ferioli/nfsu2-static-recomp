@@ -22,7 +22,8 @@ struct RecorderOptions {
     unsigned window_frames = 120;     // frames per recording window
     unsigned capture_every = 30;      // a reference image every N frames of a window (0 = none)
     unsigned start_frame = 0;         // open the first window at this frame of the run (0 = only with F9)
-    bool hotkey = true;               // F9 opens a window
+    unsigned quiet_ms = 5000;         // triggers are ignored this long after the start (a key held while launching, a stale START file)
+    bool hotkey = true;               // F9 (and other keys) open a window
 };
 
 class D3d9Recorder {
