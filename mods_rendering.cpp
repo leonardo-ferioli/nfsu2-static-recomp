@@ -82,10 +82,13 @@ void resolution_changed(int width, int height) {
         set_var("mirror_right_x2", mirror_right);
         const float borders = g_settings.cutscene_borders ? float(width) : 0.0f;
         for (const char* name : {"cutscene_border_1", "cutscene_border_2", "cutscene_border_3", "cutscene_border_4"}) set_var(name, borders);
-        set_var("radar_width_1", float(width) * 2.0f);
-        set_var("radar_width_2", float(width) * 2.0f);
-        set_var("radar_height_1", float(height) * 2.0f);
-        set_var("radar_height_2", float(height) * 2.0f);
+        // The map's mask: the original mod uses twice the screen size; very large screens get a smaller multiple (see RadarMaskLimit).
+        const float radar_w = std::min(float(width) * g_settings.radar_mask_scale, g_settings.radar_mask_limit);
+        const float radar_h = std::min(float(height) * g_settings.radar_mask_scale, g_settings.radar_mask_limit);
+        set_var("radar_width_1", radar_w);
+        set_var("radar_width_2", radar_w);
+        set_var("radar_height_1", radar_h);
+        set_var("radar_height_2", radar_h);
         const float hud_offset = ((480.0f * (float(width) / float(height))) - 640.0f) / 2.0f;
         const uint32_t dyno = address_of("dyno_offset");
         f32_at(dyno) = 79.0f + hud_offset;
