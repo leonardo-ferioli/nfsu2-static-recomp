@@ -476,7 +476,7 @@ cache and `d3d_shadow.hpp`; the vsync rewrite of the present interval; the light
 
 ## 6. Plan
 
-**Phase 1 — limited to graphics.**
+**Phase 1 — limited to graphics. Done** (`platform/`, tests `platform_api` and `fast_facade`; all 18 ctest tests pass; the game's translated code is untouched, so instruction counts are unchanged). Written as planned, with these notes: `Display::list(include_modes)` was added so that callers needing only the current size skip the mode enumeration; the guest's own `CreateWindowExA`/`SetWindowLongA`/`AdjustWindowRect` pass-through handlers stay in `mods_system.cpp` (they are guest-ABI code), while the placement, frame, cursor and display-query policy behind them uses `Display`/`Window`; `ClipCursor` inside the crash handler stays a direct call. Tests need `-DGAME_DIR=<game data folder>` in a git worktree and an existing `logs/` folder.
 - `platform/`: common types, `Display`, `Window`, Level A `d3d9::Device` and Level B `gpu::Gpu` headers, plus `null` implementations and tests.
 - `platform/win32/`: `Display` and `Window` (adopting the guest's HWND) implemented with today's Windows calls; the mods' display enumeration,
   window placement, cursor and DPI code, and the launcher's equivalents, go through them with no behaviour change.
