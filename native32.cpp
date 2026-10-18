@@ -433,7 +433,9 @@ void NativePlatform::limit_frame_rate(unsigned frames_per_second){
     thread_local uint64_t next=0;
     const uint64_t interval=frequency/frames_per_second;
     uint64_t now=profile_clock();
-    if(!next || now>next+4*interval)next=now;
+    // A frame that is a whole interval late (or the first one) is shown at once and the schedule restarts from here; waiting after it
+    // would only make a slow game slower.
+    if(!next || now>next+interval){next=now;return;}
     next+=interval;
     while(now<next){
         const uint64_t remaining=next-now;
@@ -1299,7 +1301,7 @@ void NativePlatform::run(uint64_t budget,const std::filesystem::path& log){
                 for(size_t i=0;i<ranked_modules.size()&&i<8;++i)text<<" "<<ranked_modules[i].second<<"="<<std::fixed<<std::setprecision(1)<<100.0*double(ranked_modules[i].first)/total_eip<<"%";
                 std::vector<std::pair<uint64_t,uint32_t>> ranked_blocks;for(const auto& b:exe_blocks)ranked_blocks.push_back({b.second,b.first});std::sort(ranked_blocks.rbegin(),ranked_blocks.rend());
                 text<<"\nPROFILE   hottest 256-byte blocks of the launcher image (RVA):";
-                for(size_t i=0;i<ranked_blocks.size()&&i<30;++i)text<<" 0x"<<std::hex<<(ranked_blocks[i].second<<8)<<std::dec<<"="<<std::setprecision(1)<<100.0*double(ranked_blocks[i].first)/total_eip<<"%";
+                for(size_t i=0;i<ranked_blocks.size()&&i<250;++i)text<<" 0x"<<std::hex<<(ranked_blocks[i].second<<8)<<std::dec<<"="<<std::setprecision(1)<<100.0*double(ranked_blocks[i].first)/total_eip<<"%";
                 std::vector<std::pair<uint64_t,std::string>> ranked_callers;for(const auto& k:callers)ranked_callers.push_back({k.second,k.first});std::sort(ranked_callers.rbegin(),ranked_callers.rend());
                 std::vector<std::pair<uint64_t,std::string>> ranked_offsets;for(const auto& k:module_offsets)ranked_offsets.push_back({k.second,k.first});std::sort(ranked_offsets.rbegin(),ranked_offsets.rend());
                 text<<"\nPROFILE   hottest places outside the launcher's own code:";
