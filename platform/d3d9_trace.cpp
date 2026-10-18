@@ -24,11 +24,18 @@
 
 namespace nfsu2::platform::d3d9 {
 namespace {
+// 64-bit hash of a data block, eight bytes at a time (the recorder hashes every lock of the run: it must stay cheap). Equal hash and size mean
+// equal data for this purpose (a collision would need two different blocks of the same size with the same 64-bit hash).
 uint64_t hash64(const void* data, size_t size) {
     const uint8_t* p = static_cast<const uint8_t*>(data);
-    uint64_t h = 1469598103934665603ull;
-    for (size_t i = 0; i < size; ++i) { h ^= p[i]; h *= 1099511628211ull; }
-    return h ^ size;
+    uint64_t h = 0x9E3779B97F4A7C15ull ^ (uint64_t(size) * 0xFF51AFD7ED558CCDull);
+    size_t i = 0;
+    for (; i + 8 <= size; i += 8) { uint64_t w; std::memcpy(&w, p + i, 8); h = (h ^ w) * 0x9E3779B97F4A7C15ull; h ^= h >> 29; }
+    uint64_t tail = 0;
+    for (size_t k = 0; i + k < size; ++k) tail |= uint64_t(p[i + k]) << (8 * k);
+    h = (h ^ tail) * 0x9E3779B97F4A7C15ull;
+    h ^= h >> 32;
+    return h;
 }
 float as_float(uint32_t bits) { float f; std::memcpy(&f, &bits, 4); return f; }
 }  // namespace
@@ -63,25 +70,22 @@ void TraceWriter::record(uint8_t op, const std::vector<uint32_t>& payload) {
 Blob TraceWriter::blob(const void* data, uint32_t size) {
     if (!blobs_ || !size) return {};
     const uint64_t h = hash64(data, size);
-    auto& candidates = index_[h];
-    for (const Blob& c : candidates) {
-        if (c.size != size) continue;
-        std::vector<uint8_t> existing(size);
-        std::fflush(blobs_);
-        _fseeki64(blobs_, static_cast<long long>(c.offset), SEEK_SET);
-        if (std::fread(existing.data(), 1, size, blobs_) == size && std::memcmp(existing.data(), data, size) == 0) { _fseeki64(blobs_, 0, SEEK_END); return c; }
-        _fseeki64(blobs_, 0, SEEK_END);
-    }
+    auto found = index_.find(h);
+    if (found != index_.end() && found->second.size == size) return found->second;
     if (max_blob_bytes_ && blob_end_ + size > max_blob_bytes_) {
         if (!truncated_) { truncated_ = true; record(op_truncated, {}); }
         return {};
     }
-    _fseeki64(blobs_, 0, SEEK_END);
     std::fwrite(data, 1, size, blobs_);
     Blob b{blob_end_, size};
     blob_end_ += size;
-    candidates.push_back(b);
+    index_[h] = b;
     return b;
+}
+
+void TraceWriter::flush() {
+    if (trace_) std::fflush(trace_);
+    if (blobs_) std::fflush(blobs_);
 }
 
 bool TraceReader::open(const std::filesystem::path& directory, std::string& error) {

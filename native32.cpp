@@ -776,7 +776,7 @@ bool NativePlatform::dispatch(Cpu& c){
     const uint64_t light_started=(profiling && !profiling_full && route.id)?profile_clock():0;
     D3d9Recorder* const recorder=d3d9_recorder_ptr.load(std::memory_order_relaxed);
     const bool recording=recorder && &c==&main_cpu;
-    if(recording)recorder->before(uint32_t(target),original_sp);
+    if(recording){if(!std::strcmp(resolved_name,"ExitProcess") || !std::strcmp(resolved_name,"TerminateProcess"))recorder->finish();else recorder->before(uint32_t(target),original_sp);}
     invoke_native32(&frame);const DWORD guest_error=__readfsdword(0x34);
     if(recording){if(route.d3d_create && frame.eax)recorder->created_d3d9(frame.eax);recorder->after(uint32_t(target),original_sp,frame.eax,c.instructions);}invalidate_native_memory();s4(teb+0x34,guest_error);
     if(light_started)light_ticks[route.id].fetch_add(profile_clock()-light_started,std::memory_order_relaxed);

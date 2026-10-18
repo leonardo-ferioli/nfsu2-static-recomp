@@ -514,7 +514,7 @@ cache and `d3d_shadow.hpp`; the vsync rewrite of the present interval; the light
   ```
 
   One run per scene (folder names `menu`, `loading`, `race`): start the game, go to the scene, press **F9** once (a window of 120 frames is recorded; F9 again opens another
-  window in the same run), then quit the game normally (the trace is closed on exit; `recorder.log` in the folder gives frames, windows, records, data size and unknown calls).
+  window in the same run; creating an empty file named `START` in the folder does the same), then quit the game normally. **Feedback:** a high beep when F9/START is seen, another when the window opens and a low one when it closes; `recorder.log` is written from the first moment (a heartbeat line every 5 s with presents, calls, windows, records and data size, and a line at each window opening and closing) and is flushed as it goes, so a killed game keeps it; the trace is also closed when the game calls `ExitProcess`. Tool: `python tools/d3d9_trace_info.py <folder>` says what a capture contains and whether it is usable.
 - **2b** the D3D9 layer on the null Gpu, and the **replay tool** (headless; deterministic Gpu call sequence for a given trace).
 - **2c Spike S1** (3.4): shader IR/decoder/SPIR-V/cross-compile, validated on the console (parallel to 2b; starts with the census).
 - **2d bgfx adapter + out-of-game spike** (textured quad, tens of thousands of draws, DXT upload and conversion, static/transient buffer policy of 3.5)

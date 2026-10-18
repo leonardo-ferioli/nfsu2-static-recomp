@@ -40,6 +40,7 @@ public:
     // Creates `directory` (if needed) with trace.d3d9 and blobs.bin. `max_blob_bytes` bounds blobs.bin (0 = unlimited).
     bool open(const std::filesystem::path& directory, uint64_t max_blob_bytes, std::string& error);
     void close();
+    void flush();   // everything written so far reaches the disk (a killed process keeps it)
     bool is_open() const { return trace_ != nullptr; }
     void record(uint8_t op, const std::vector<uint32_t>& payload);
     // Stores a data block (once per distinct content) and returns its reference; size 0 or a full disk gives {0, 0}.
@@ -53,7 +54,7 @@ private:
     std::FILE* blobs_ = nullptr;
     uint64_t blob_end_ = 0, max_blob_bytes_ = 0, records_ = 0;
     bool truncated_ = false;
-    std::unordered_map<uint64_t, std::vector<Blob>> index_;   // content hash -> candidates (checked byte by byte against the file)
+    std::unordered_map<uint64_t, Blob> index_;   // content hash (size mixed in) -> where the block is
 };
 
 struct Record { uint8_t op = 0; std::vector<uint32_t> words; };
