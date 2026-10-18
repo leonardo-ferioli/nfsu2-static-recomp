@@ -11,6 +11,7 @@
 #include <cstdio>
 #include <cstring>
 #include <filesystem>
+#include <fstream>
 #include <iostream>
 #include <stdexcept>
 #include <string>
@@ -36,7 +37,7 @@ int main() try {
     const auto dir = std::filesystem::temp_directory_path() / "nfsu2_recorder_test";
     std::filesystem::remove_all(dir);
     RecorderOptions options;
-    options.directory = dir; options.window_frames = 2; options.capture_every = 1; options.start_frame = 1; options.hotkey = false;
+    options.directory = dir; options.window_frames = 2; options.capture_every = 1; options.start_frame = 0; options.hotkey = false;   // the window is opened by the START file, polled by the recorder's own thread
     D3d9Recorder rec(options);
     CHECK(rec.ok());
 
@@ -52,6 +53,7 @@ int main() try {
     CHECK(SUCCEEDED(d3d->lpVtbl->CreateDevice(d3d, 0, D3DDEVTYPE_HAL, hwnd, D3DCREATE_HARDWARE_VERTEXPROCESSING, &pp, &dev)));
     { Frame f{u32(d3d), 0, D3DDEVTYPE_HAL, u32(hwnd), D3DCREATE_HARDWARE_VERTEXPROCESSING, u32(&pp), u32(&dev)}; rec.after(vtable_entry(d3d, SLOT(IDirect3D9Vtbl, CreateDevice)), f.sp(), 0, 100); }
 
+    { std::ofstream(dir / "START") << "go"; Sleep(600); CHECK(!std::filesystem::exists(dir / "START")); }   // seen and consumed by the poller thread
     using DV = IDirect3DDevice9Vtbl;
     // texture with data
     IDirect3DTexture9* tex = nullptr;

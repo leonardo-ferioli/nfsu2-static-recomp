@@ -8,7 +8,10 @@
 #include <cstdio>
 #include <cstring>
 #include <fstream>
+#include <atomic>
 #include <map>
+#include <mutex>
+#include <thread>
 #include <tuple>
 
 namespace nfsu2raw {
@@ -54,15 +57,61 @@ struct D3d9Recorder::Impl {
     struct TextureLock { uint32_t bits, pitch, bytes; };
     std::map<std::tuple<uint32_t, uint32_t, uint32_t>, TextureLock> texture_locks;
     uint64_t frame = 0, instructions = 0, window_index = 0, window_start = 0;
-    bool active = false, in_state_block = false, hotkey_down = false;
+    bool active = false, in_state_block = false;
+    std::atomic<bool> window_on{false};
     unsigned window_frames_left = 0;
     uint64_t calls = 0, unknown_calls = 0;
     std::FILE* log = nullptr;
     ULONGLONG started = 0, last_beat = 0;
-    bool open_pending = false, finished = false;
-    void note(const char* text) { if (!log) return; std::fprintf(log, "[%6.1f s] %s\n", double(GetTickCount64() - started) / 1000.0, text); std::fflush(log); }
+    std::atomic<bool> open_pending{false}, stop_poller{false};
+    bool finished = false;
+    std::thread poller;
+    std::mutex log_mutex;
+    HWND game_window = nullptr;
+    char original_title[256] = {};
+    void note(const char* text) { std::lock_guard<std::mutex> lock(log_mutex); if (!log) return; std::fprintf(log, "[%6.1f s] %s\n", double(GetTickCount64() - started) / 1000.0, text); std::fflush(log); }
     std::map<unsigned, uint64_t> unknown_slots;
 
+    // ---- trigger: a thread of the recorder polls the keyboard (several keys: F9, F10, F8, Insert, Pause, Scroll Lock, Home, End, the extra mouse buttons) and the START file
+    void poll_loop() {
+        static const int keys[] = {VK_F9, VK_F10, VK_F8, VK_INSERT, VK_PAUSE, VK_SCROLL, VK_HOME, VK_END, VK_XBUTTON1, VK_XBUTTON2};
+        bool was_down = false;
+        ULONGLONG last_file_check = 0;
+        const std::string start_file = (options.directory / "START").string();
+        while (!stop_poller.load()) {
+            Sleep(15);
+            bool down = false;
+            for (int k : keys) if (options.hotkey && (GetAsyncKeyState(k) & 0x8000)) down = true;
+            bool trigger = down && !was_down;
+            was_down = down;
+            const ULONGLONG now = GetTickCount64();
+            if (now - last_file_check >= 200) {
+                last_file_check = now;
+                if (GetFileAttributesA(start_file.c_str()) != INVALID_FILE_ATTRIBUTES) { DeleteFileA(start_file.c_str()); trigger = true; }
+            }
+            if (trigger && !window_on.load() && !open_pending.load()) {
+                open_pending.store(true);
+                note("trigger seen (key or START file): the recording window opens at the next frame");
+                Beep(900, 60);
+            }
+        }
+    }
+    // ---- visible confirmation: the title of the game's window and a coloured square in the corner of the frame (drawn after the reference image of that frame was taken)
+    void set_title(const char* tag) {
+        if (!game_window) return;
+        char title[320];
+        std::snprintf(title, sizeof title, "%s%s", tag, original_title);
+        SetWindowTextA(game_window, title);
+    }
+    void draw_indicator(uint32_t colour) {
+        if (!device) return;
+        IDirect3DSurface9* back = nullptr;
+        if (SUCCEEDED(device->lpVtbl->GetBackBuffer(device, 0, 0, D3DBACKBUFFER_TYPE_MONO, &back)) && back) {
+            RECT square = {8, 8, 72, 72};
+            device->lpVtbl->ColorFill(device, back, &square, colour);
+            back->lpVtbl->Release(back);
+        }
+    }
     // ---- helpers
     bool resource_op_always(uint8_t op) const {
         switch (op) {
@@ -102,7 +151,9 @@ struct D3d9Recorder::Impl {
     // ---- window of full recording
     void open_window() {
         if (active) return;
-        open_pending = false;
+        open_pending.store(false);
+        window_on.store(true);
+        set_title("[RECORDING] ");
         active = true;
         window_frames_left = options.window_frames;
         window_start = frame;
@@ -120,6 +171,8 @@ struct D3d9Recorder::Impl {
         note(text);
         writer.flush();
         Beep(600, 120);
+        window_on.store(false);
+        set_title("");
         ++window_index;
         active = false;
     }
@@ -173,7 +226,7 @@ struct D3d9Recorder::Impl {
                     for (UINT y = 0; y < desc.Height; ++y) std::memcpy(&pixels[size_t(y) * desc.Width * 4], static_cast<uint8_t*>(lr.pBits) + size_t(y) * lr.Pitch, size_t(desc.Width) * 4);
                     sys->lpVtbl->UnlockRect(sys);
                     for (size_t i = 3; i < pixels.size(); i += 4) pixels[i] = 255;   // X8R8G8B8 leaves the alpha byte undefined
-                    emit_with_blob(op_reference_image, {uint32_t(frame), desc.Width, desc.Height, uint32_t(desc.Format)}, pixels.data(), uint32_t(pixels.size()));
+                    emit(op_reference_image, {uint32_t(frame), desc.Width, desc.Height, uint32_t(desc.Format), 0, 0, 0});
                     char name[64]; std::snprintf(name, sizeof name, "frame_%06u.bmp", unsigned(frame));
                     std::ofstream f(options.directory / name, std::ios::binary);
                     const uint32_t file_size = 54 + uint32_t(pixels.size());
@@ -194,6 +247,7 @@ struct D3d9Recorder::Impl {
 D3d9Recorder::D3d9Recorder(const RecorderOptions& options) : impl_(new Impl) {
     impl_->options = options;
     ok_ = impl_->writer.open(options.directory, options.max_blob_mb * 1048576ull, error_);
+    if (ok_) impl_->poller = std::thread([this] { impl_->poll_loop(); });
     if (ok_) {
         impl_->log = std::fopen((options.directory / "recorder.log").string().c_str(), "w");
         impl_->started = impl_->last_beat = GetTickCount64();
@@ -201,7 +255,7 @@ D3d9Recorder::D3d9Recorder(const RecorderOptions& options) : impl_(new Impl) {
     }
 }
 
-D3d9Recorder::~D3d9Recorder() { finish(); }
+D3d9Recorder::~D3d9Recorder() { finish(); if (impl_ && impl_->poller.joinable()) { impl_->stop_poller.store(true); impl_->poller.join(); } }
 
 void D3d9Recorder::created_d3d9(uint32_t object) { impl_->d3d9_object = object; }
 
@@ -216,6 +270,10 @@ void D3d9Recorder::before(uint32_t target, uint32_t sp) {
     case Kind::device:
         if (uint32_t(r.slot_of(a[0], target, 119)) == SLOT(IDirect3DDevice9Vtbl, Present) && r.active && r.options.capture_every && (r.frame - r.window_start) % r.options.capture_every == 0)
             r.capture_reference_image();
+        if (uint32_t(r.slot_of(a[0], target, 119)) == SLOT(IDirect3DDevice9Vtbl, Present)) {
+            if (r.active) r.draw_indicator(0xFFFF0000);            // red square: recording
+            else if (r.open_pending.load()) r.draw_indicator(0xFFFFFF00);   // yellow: the window opens next frame
+        }
         break;
     case Kind::vertex_buffer: case Kind::index_buffer: {
         const unsigned unlock = SLOT(IDirect3DVertexBuffer9Vtbl, Unlock);
@@ -248,13 +306,6 @@ void D3d9Recorder::after(uint32_t target, uint32_t sp, uint32_t eax, uint64_t in
     r.instructions = instructions;
     ++r.calls;
     if ((r.calls & 2047) == 0) {   // a few times per frame: the hotkey, the START file and the heartbeat of the log
-        if (!r.active && !r.open_pending) {
-            bool trigger = false;
-            if (r.options.hotkey) { const bool down = (GetAsyncKeyState(VK_F9) & 0x8000) != 0; trigger = down && !r.hotkey_down; r.hotkey_down = down; }
-            const auto start_file = r.options.directory / "START";
-            if (GetFileAttributesA(start_file.string().c_str()) != INVALID_FILE_ATTRIBUTES) { trigger = true; DeleteFileA(start_file.string().c_str()); }
-            if (trigger) { r.open_pending = true; r.note("F9/START seen: the window opens at the next frame"); Beep(900, 60); }
-        }
         const ULONGLONG now = GetTickCount64();
         if (now - r.last_beat >= 5000) {
             r.last_beat = now;
@@ -269,6 +320,8 @@ void D3d9Recorder::after(uint32_t target, uint32_t sp, uint32_t eax, uint64_t in
         if (uint32_t(Impl::slot_of(a[0], target, 17)) == SLOT(IDirect3D9Vtbl, CreateDevice) && eax == 0) {
             const uint32_t device = u32_at(a[6]);
             r.device = reinterpret_cast<IDirect3DDevice9*>(uintptr_t(device));
+            r.game_window = u32_at(a[5] + 28) ? reinterpret_cast<HWND>(uintptr_t(u32_at(a[5] + 28))) : reinterpret_cast<HWND>(uintptr_t(a[3]));
+            if (r.game_window) GetWindowTextA(r.game_window, r.original_title, sizeof r.original_title);
             const uint32_t params = a[5];
             r.writer.record(op_device_created, {a[1], a[4], u32_at(params), u32_at(params + 4), u32_at(params + 8), u32_at(params + 40), u32_at(params + 16), u32_at(params + 12), u32_at(params + 32), u32_at(params + 52)});
         }
@@ -301,8 +354,7 @@ void D3d9Recorder::after(uint32_t target, uint32_t sp, uint32_t eax, uint64_t in
             ++r.frame;
             if (r.active && --r.window_frames_left == 0) r.close_window();
             if (!r.active) {
-                bool open = (r.options.start_frame && r.frame == r.options.start_frame) || r.open_pending;
-                if (r.options.hotkey && !open) { const bool down = (GetAsyncKeyState(VK_F9) & 0x8000) != 0; open = down && !r.hotkey_down; r.hotkey_down = down; }
+                const bool open = (r.options.start_frame && r.frame == r.options.start_frame) || r.open_pending.load();
                 if (open) r.open_window();
             }
         }
@@ -427,6 +479,8 @@ void D3d9Recorder::finish() {
     if (!impl_ || !impl_->writer.is_open() || impl_->finished) return;
     Impl& r = *impl_;
     r.finished = true;
+    r.stop_poller.store(true);
+    if (r.poller.joinable() && r.poller.get_id() != std::this_thread::get_id()) r.poller.join();
     r.close_window();
     r.writer.record(op_end, {uint32_t(r.frame)});
     std::ofstream log(r.options.directory / "recorder_summary.log");

@@ -25,7 +25,7 @@ enum Op : uint8_t {
     op_device_created = uint8_t(Method::count),   // adapter, behaviour flags, then the presentation parameters (8 words as in Method::reset)
     op_get_back_buffer,                           // surface object, swap chain, index
     op_frame_marker,                              // frame number, instructions of the main thread (low), (high)
-    op_reference_image,                           // frame number, width, height, format, blob reference to the raw pixels (rows of 4*width bytes, top down)
+    op_reference_image,                           // frame number, width, height, format, (no data: the image is frame_NNNNNN.bmp next to the trace)
     op_unknown_call,                              // vtable slot, argument words (up to 8)
     op_truncated,                                 // the size limit was reached: later data blobs are missing
     op_window_begin,                              // window index, frame: state and draw calls are recorded from here (a state snapshot follows)
