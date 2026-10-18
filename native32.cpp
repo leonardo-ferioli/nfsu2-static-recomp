@@ -1140,12 +1140,20 @@ void NativePlatform::run(uint64_t budget,const std::filesystem::path& log){
         // profile this thread also writes the report every 5 s.
         static const uint64_t frequency=[]{LARGE_INTEGER f;QueryPerformanceFrequency(&f);return uint64_t(f.QuadPart);}();
         HANDLE main_handle=OpenThread(THREAD_QUERY_LIMITED_INFORMATION,FALSE,main_thread_id);
+        // Where the main thread's CPU really is: its instruction pointer, read 500 times a second (resolved to modules when the report is written).
+        HANDLE context_handle=OpenThread(THREAD_SUSPEND_RESUME|THREAD_GET_CONTEXT|THREAD_QUERY_INFORMATION,FALSE,main_thread_id);
+        std::vector<uint32_t> eip_samples;eip_samples.reserve(16384);
         const bool light=!profile_full();
         uint64_t window_start=profile_clock(),last_instructions=main_cpu.instructions,last_process=process_cpu_100ns(),last_thread=thread_cpu_100ns(main_handle),last_present=0;
         std::vector<uint64_t> last_counts(light_slots,0);
         std::vector<uint64_t> last_ticks(light_slots,0);
         while(!stopping){
             std::this_thread::sleep_for(std::chrono::milliseconds(2));
+            if(context_handle && eip_samples.size()<eip_samples.capacity()){
+                // Nothing that can block or allocate may run while the thread is suspended.
+                CONTEXT context;context.ContextFlags=CONTEXT_CONTROL;
+                if(SuspendThread(context_handle)!=DWORD(-1)){const BOOL got=GetThreadContext(context_handle,&context);ResumeThread(context_handle);if(got)eip_samples.push_back(uint32_t(context.Eip));}
+            }
             const uint32_t pc=main_cpu.pc;
             {
                 std::lock_guard lock(profile_mutex);
@@ -1222,12 +1230,38 @@ void NativePlatform::run(uint64_t budget,const std::filesystem::path& log){
                 }
                 profile_threads.erase(std::remove_if(profile_threads.begin(),profile_threads.end(),[](const std::unique_ptr<ThreadProfile>& t){return !t->alive && !t->samples;}),profile_threads.end());
             }
+            {
+                // Main-thread instruction pointer samples by module, and the hottest 256-byte blocks of the launcher image itself (resolved with nfsu2_launcher.map).
+                std::map<std::string,uint64_t> modules;std::unordered_map<uint32_t,uint64_t> exe_blocks;std::unordered_map<uint32_t,std::string> region_names;
+                const uint32_t exe_base=uint32_t(uintptr_t(GetModuleHandleA(nullptr)));
+                for(const uint32_t eip:eip_samples){
+                    auto found=region_names.find(eip>>16);
+                    if(found==region_names.end()){
+                        std::string name="(outside any module)";HMODULE module=nullptr;
+                        if(GetModuleHandleExA(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS|GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,reinterpret_cast<LPCSTR>(uintptr_t(eip)),&module)){
+                            char file[MAX_PATH]="?";GetModuleFileNameA(module,file,MAX_PATH);const char* slash=std::strrchr(file,'\\');name=slash?slash+1:file;
+                        }
+                        found=region_names.emplace(eip>>16,name).first;
+                    }
+                    ++modules[found->second];
+                    if(uint32_t(eip-exe_base)<0x4000000u && found->second.find(".exe")!=std::string::npos)++exe_blocks[(eip-exe_base)>>8];
+                }
+                std::vector<std::pair<uint64_t,std::string>> ranked_modules;for(const auto& m:modules)ranked_modules.push_back({m.second,m.first});std::sort(ranked_modules.rbegin(),ranked_modules.rend());
+                const double total_eip=double(std::max<size_t>(eip_samples.size(),1));
+                text<<"\nPROFILE   main-thread instruction pointer, "<<eip_samples.size()<<" samples, by module:";
+                for(size_t i=0;i<ranked_modules.size()&&i<8;++i)text<<" "<<ranked_modules[i].second<<"="<<std::fixed<<std::setprecision(1)<<100.0*double(ranked_modules[i].first)/total_eip<<"%";
+                std::vector<std::pair<uint64_t,uint32_t>> ranked_blocks;for(const auto& b:exe_blocks)ranked_blocks.push_back({b.second,b.first});std::sort(ranked_blocks.rbegin(),ranked_blocks.rend());
+                text<<"\nPROFILE   hottest 256-byte blocks of the launcher image (RVA):";
+                for(size_t i=0;i<ranked_blocks.size()&&i<30;++i)text<<" 0x"<<std::hex<<(ranked_blocks[i].second<<8)<<std::dec<<"="<<std::setprecision(1)<<100.0*double(ranked_blocks[i].first)/total_eip<<"%";
+                eip_samples.clear();
+            }
             text<<"\nPROFILE   state cache: hits="<<state_cache_hits.load()<<" misses="<<state_cache_misses.load()<<(state_cache_disabled.load()?" (disabled: state blocks in use)":"");
             record(text.str());
             { char mode[16]; if(GetEnvironmentVariableA("NFSU2_PROFILE",mode,sizeof(mode)) && !std::strcmp(mode,"stderr")){const std::string line=text.str()+"\n";std::fputs(line.c_str(),stderr);} }
             window_start=now;last_instructions=instructions;last_process=process_cpu;last_thread=thread_cpu;last_present=present_calls;
         }
         if(main_handle)CloseHandle(main_handle);
+        if(context_handle)CloseHandle(context_handle);
     });
     std::filesystem::current_path(assets);record("native32 static translation; original image mapped PAGE_READWRITE, never executable");
     record("TRACE MODE: first call/result per native target and guest return site; ordinary output capped at 4 MiB");
