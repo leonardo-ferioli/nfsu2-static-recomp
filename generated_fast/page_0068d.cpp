@@ -1,1101 +1,119 @@
-#include "fast.hpp"
+#include "fast_regs.hpp"
 namespace nfsu2raw {
 #define EXIT(T) do{nx=u32(T);goto XIT;}while(0)
-u32 body_68e(u8* __restrict R,Cpu& c);
-u32 body_694(u8* __restrict R,Cpu& c);
-u32 body_6d3(u8* __restrict R,Cpu& c);
-u32 body_dispatch(u8* __restrict R,Cpu& c);
-#define TAIL_STATIC(T,PG) do{if(__builtin_expect(++c.chain<2048,1)){c.pc=u32(T);NFSU2_TR_EXIT(0x68d,u32(T));[[clang::musttail]] return body_##PG(R,c);}c.chain=0;EXIT(T);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);if(__builtin_expect(u32((t__>>12)-0x401u)<=0x41bu && ++c.chain<2048,1)){c.pc=t__;NFSU2_TR_EXIT(0x68d,t__);[[clang::musttail]] return body_dispatch(R,c);}c.chain=0;EXIT(t__);}while(0)
+PN u32 ent_dispatch(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d03f(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d096(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d0e1(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d0f7(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d2fb(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d4c1(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d511(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d58b(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d5e0(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d6ef(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d6f2(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d6f4(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d6f7(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d704(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d70d(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d70f(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d717(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d71a(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d720(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d723(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d726(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d728(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d72a(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d72d(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d730(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d732(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d735(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d738(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d73b(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d73d(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d745(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d748(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d74a(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d752(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d755(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d768(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d76f(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d77f(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d78a(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d793(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d7a3(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d7af(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d7b7(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d7b9(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d7c1(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d7c4(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d7ca(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d7cd(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d7de(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d7e2(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d7e7(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d7ea(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d7f5(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d7f7(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d7fc(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d800(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d805(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d807(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d80a(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d87a(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d8c0(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d93a(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d980(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68da00(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68da39(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68dafd(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68dbd1(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68dbf9(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68dc60(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68dc99(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68dd5d(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68de17(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68de3f(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68dec0(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68def9(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68df79(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68dfe8(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68e005(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68e010(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_69477b(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_6947d2(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_69480d(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_6d3b4b(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d002(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d046(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d0e8(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d1a9(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d295(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d38d(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d465(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d531(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d625(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d683(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d6e4(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d840(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d900(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d9c0(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68da19(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68dc20(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68dc79(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68de80(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68ded9(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_68d002(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
-#define SPILL() NFSU2_BARRIER(R)
-u32 body_68d(u8* __restrict R,Cpu& c);
-u32 page_68d(Cpu& c){return body_68d(c.regs.data(),c);}
-__attribute__((noinline)) u32 body_68d(u8* __restrict R,Cpu& c){
-u32 nx=0,fpc=0;const char* fm=nullptr;
-switch(c.pc){
-case 0x68d002:goto L68d002;
-case 0x68d005:c.instructions+=15;goto B68d005;
-case 0x68d009:c.instructions+=14;goto B68d009;
-case 0x68d00d:c.instructions+=13;goto B68d00d;
-case 0x68d015:c.instructions+=12;goto B68d015;
-case 0x68d01d:c.instructions+=11;goto B68d01d;
-case 0x68d021:c.instructions+=10;goto B68d021;
-case 0x68d025:c.instructions+=9;goto B68d025;
-case 0x68d029:c.instructions+=8;goto B68d029;
-case 0x68d02d:c.instructions+=7;goto B68d02d;
-case 0x68d031:c.instructions+=6;goto B68d031;
-case 0x68d035:c.instructions+=5;goto B68d035;
-case 0x68d03a:c.instructions+=4;goto B68d03a;
-case 0x68d03f:c.instructions+=3;goto B68d03f;
-case 0x68d042:c.instructions+=2;goto B68d042;
-case 0x68d043:c.instructions+=1;goto B68d043;
-case 0x68d046:goto L68d046;
-case 0x68d048:c.instructions+=17;goto B68d048;
-case 0x68d049:c.instructions+=16;goto B68d049;
-case 0x68d04b:c.instructions+=15;goto B68d04b;
-case 0x68d04e:c.instructions+=14;goto B68d04e;
-case 0x68d052:c.instructions+=13;goto B68d052;
-case 0x68d057:c.instructions+=12;goto B68d057;
-case 0x68d05c:c.instructions+=11;goto B68d05c;
-case 0x68d05f:c.instructions+=10;goto B68d05f;
-case 0x68d062:c.instructions+=9;goto B68d062;
-case 0x68d065:c.instructions+=8;goto B68d065;
-case 0x68d069:c.instructions+=7;goto B68d069;
-case 0x68d06d:c.instructions+=6;goto B68d06d;
-case 0x68d071:c.instructions+=5;goto B68d071;
-case 0x68d075:c.instructions+=4;goto B68d075;
-case 0x68d079:c.instructions+=3;goto B68d079;
-case 0x68d07c:c.instructions+=2;goto B68d07c;
-case 0x68d083:c.instructions+=1;goto B68d083;
-case 0x68d085:goto L68d085;
-case 0x68d087:c.instructions+=5;goto B68d087;
-case 0x68d089:c.instructions+=4;goto B68d089;
-case 0x68d08c:c.instructions+=3;goto B68d08c;
-case 0x68d08f:c.instructions+=2;goto B68d08f;
-case 0x68d092:c.instructions+=1;goto B68d092;
-case 0x68d096:goto L68d096;
-case 0x68d09a:c.instructions+=15;goto B68d09a;
-case 0x68d09d:c.instructions+=14;goto B68d09d;
-case 0x68d0a1:c.instructions+=13;goto B68d0a1;
-case 0x68d0a5:c.instructions+=12;goto B68d0a5;
-case 0x68d0ad:c.instructions+=11;goto B68d0ad;
-case 0x68d0b5:c.instructions+=10;goto B68d0b5;
-case 0x68d0b9:c.instructions+=9;goto B68d0b9;
-case 0x68d0bd:c.instructions+=8;goto B68d0bd;
-case 0x68d0c1:c.instructions+=7;goto B68d0c1;
-case 0x68d0c5:c.instructions+=6;goto B68d0c5;
-case 0x68d0c9:c.instructions+=5;goto B68d0c9;
-case 0x68d0ce:c.instructions+=4;goto B68d0ce;
-case 0x68d0d2:c.instructions+=3;goto B68d0d2;
-case 0x68d0d7:c.instructions+=2;goto B68d0d7;
-case 0x68d0dc:c.instructions+=1;goto B68d0dc;
-case 0x68d0e1:goto L68d0e1;
-case 0x68d0e4:c.instructions+=2;goto B68d0e4;
-case 0x68d0e5:c.instructions+=1;goto B68d0e5;
-case 0x68d0e8:goto L68d0e8;
-case 0x68d0ea:c.instructions+=61;goto B68d0ea;
-case 0x68d0eb:c.instructions+=60;goto B68d0eb;
-case 0x68d0ed:c.instructions+=59;goto B68d0ed;
-case 0x68d0ee:c.instructions+=58;goto B68d0ee;
-case 0x68d0f1:c.instructions+=57;goto B68d0f1;
-case 0x68d0f4:c.instructions+=56;goto B68d0f4;
-case 0x68d0f5:c.instructions+=55;goto B68d0f5;
-case 0x68d0f7:c.instructions+=54;goto B68d0f7;
-case 0x68d0fa:c.instructions+=53;goto B68d0fa;
-case 0x68d0fd:c.instructions+=52;goto B68d0fd;
-case 0x68d101:c.instructions+=51;goto B68d101;
-case 0x68d104:c.instructions+=50;goto B68d104;
-case 0x68d108:c.instructions+=49;goto B68d108;
-case 0x68d10b:c.instructions+=48;goto B68d10b;
-case 0x68d10f:c.instructions+=47;goto B68d10f;
-case 0x68d112:c.instructions+=46;goto B68d112;
-case 0x68d116:c.instructions+=45;goto B68d116;
-case 0x68d119:c.instructions+=44;goto B68d119;
-case 0x68d11d:c.instructions+=43;goto B68d11d;
-case 0x68d120:c.instructions+=42;goto B68d120;
-case 0x68d124:c.instructions+=41;goto B68d124;
-case 0x68d127:c.instructions+=40;goto B68d127;
-case 0x68d12b:c.instructions+=39;goto B68d12b;
-case 0x68d12e:c.instructions+=38;goto B68d12e;
-case 0x68d131:c.instructions+=37;goto B68d131;
-case 0x68d134:c.instructions+=36;goto B68d134;
-case 0x68d138:c.instructions+=35;goto B68d138;
-case 0x68d13b:c.instructions+=34;goto B68d13b;
-case 0x68d13f:c.instructions+=33;goto B68d13f;
-case 0x68d142:c.instructions+=32;goto B68d142;
-case 0x68d145:c.instructions+=31;goto B68d145;
-case 0x68d149:c.instructions+=30;goto B68d149;
-case 0x68d14c:c.instructions+=29;goto B68d14c;
-case 0x68d150:c.instructions+=28;goto B68d150;
-case 0x68d154:c.instructions+=27;goto B68d154;
-case 0x68d157:c.instructions+=26;goto B68d157;
-case 0x68d15a:c.instructions+=25;goto B68d15a;
-case 0x68d15e:c.instructions+=24;goto B68d15e;
-case 0x68d162:c.instructions+=23;goto B68d162;
-case 0x68d165:c.instructions+=22;goto B68d165;
-case 0x68d169:c.instructions+=21;goto B68d169;
-case 0x68d16c:c.instructions+=20;goto B68d16c;
-case 0x68d170:c.instructions+=19;goto B68d170;
-case 0x68d177:c.instructions+=18;goto B68d177;
-case 0x68d17a:c.instructions+=17;goto B68d17a;
-case 0x68d17e:c.instructions+=16;goto B68d17e;
-case 0x68d181:c.instructions+=15;goto B68d181;
-case 0x68d184:c.instructions+=14;goto B68d184;
-case 0x68d188:c.instructions+=13;goto B68d188;
-case 0x68d18b:c.instructions+=12;goto B68d18b;
-case 0x68d18e:c.instructions+=11;goto B68d18e;
-case 0x68d191:c.instructions+=10;goto B68d191;
-case 0x68d194:c.instructions+=9;goto B68d194;
-case 0x68d197:c.instructions+=8;goto B68d197;
-case 0x68d19a:c.instructions+=7;goto B68d19a;
-case 0x68d19d:c.instructions+=6;goto B68d19d;
-case 0x68d1a0:c.instructions+=5;goto B68d1a0;
-case 0x68d1a2:c.instructions+=4;goto B68d1a2;
-case 0x68d1a3:c.instructions+=3;goto B68d1a3;
-case 0x68d1a5:c.instructions+=2;goto B68d1a5;
-case 0x68d1a6:c.instructions+=1;goto B68d1a6;
-case 0x68d1a9:goto L68d1a9;
-case 0x68d1ab:c.instructions+=69;goto B68d1ab;
-case 0x68d1ac:c.instructions+=68;goto B68d1ac;
-case 0x68d1ae:c.instructions+=67;goto B68d1ae;
-case 0x68d1b1:c.instructions+=66;goto B68d1b1;
-case 0x68d1b4:c.instructions+=65;goto B68d1b4;
-case 0x68d1b7:c.instructions+=64;goto B68d1b7;
-case 0x68d1b8:c.instructions+=63;goto B68d1b8;
-case 0x68d1b9:c.instructions+=62;goto B68d1b9;
-case 0x68d1bc:c.instructions+=61;goto B68d1bc;
-case 0x68d1c0:c.instructions+=60;goto B68d1c0;
-case 0x68d1c2:c.instructions+=59;goto B68d1c2;
-case 0x68d1c5:c.instructions+=58;goto B68d1c5;
-case 0x68d1c8:c.instructions+=57;goto B68d1c8;
-case 0x68d1cb:c.instructions+=56;goto B68d1cb;
-case 0x68d1d0:c.instructions+=55;goto B68d1d0;
-case 0x68d1d5:c.instructions+=54;goto B68d1d5;
-case 0x68d1d8:c.instructions+=53;goto B68d1d8;
-case 0x68d1db:c.instructions+=52;goto B68d1db;
-case 0x68d1de:c.instructions+=51;goto B68d1de;
-case 0x68d1e1:c.instructions+=50;goto B68d1e1;
-case 0x68d1e6:c.instructions+=49;goto B68d1e6;
-case 0x68d1e9:c.instructions+=48;goto B68d1e9;
-case 0x68d1ec:c.instructions+=47;goto B68d1ec;
-case 0x68d1ef:c.instructions+=46;goto B68d1ef;
-case 0x68d1f2:c.instructions+=45;goto B68d1f2;
-case 0x68d1f6:c.instructions+=44;goto B68d1f6;
-case 0x68d1fa:c.instructions+=43;goto B68d1fa;
-case 0x68d1fd:c.instructions+=42;goto B68d1fd;
-case 0x68d200:c.instructions+=41;goto B68d200;
-case 0x68d207:c.instructions+=40;goto B68d207;
-case 0x68d20a:c.instructions+=39;goto B68d20a;
-case 0x68d20e:c.instructions+=38;goto B68d20e;
-case 0x68d212:c.instructions+=37;goto B68d212;
-case 0x68d215:c.instructions+=36;goto B68d215;
-case 0x68d218:c.instructions+=35;goto B68d218;
-case 0x68d21f:c.instructions+=34;goto B68d21f;
-case 0x68d222:c.instructions+=33;goto B68d222;
-case 0x68d226:c.instructions+=32;goto B68d226;
-case 0x68d229:c.instructions+=31;goto B68d229;
-case 0x68d22c:c.instructions+=30;goto B68d22c;
-case 0x68d22f:c.instructions+=29;goto B68d22f;
-case 0x68d232:c.instructions+=28;goto B68d232;
-case 0x68d235:c.instructions+=27;goto B68d235;
-case 0x68d238:c.instructions+=26;goto B68d238;
-case 0x68d23c:c.instructions+=25;goto B68d23c;
-case 0x68d240:c.instructions+=24;goto B68d240;
-case 0x68d243:c.instructions+=23;goto B68d243;
-case 0x68d247:c.instructions+=22;goto B68d247;
-case 0x68d24b:c.instructions+=21;goto B68d24b;
-case 0x68d24e:c.instructions+=20;goto B68d24e;
-case 0x68d252:c.instructions+=19;goto B68d252;
-case 0x68d256:c.instructions+=18;goto B68d256;
-case 0x68d25a:c.instructions+=17;goto B68d25a;
-case 0x68d25e:c.instructions+=16;goto B68d25e;
-case 0x68d262:c.instructions+=15;goto B68d262;
-case 0x68d265:c.instructions+=14;goto B68d265;
-case 0x68d268:c.instructions+=13;goto B68d268;
-case 0x68d26b:c.instructions+=12;goto B68d26b;
-case 0x68d26e:c.instructions+=11;goto B68d26e;
-case 0x68d271:c.instructions+=10;goto B68d271;
-case 0x68d275:c.instructions+=9;goto B68d275;
-case 0x68d279:c.instructions+=8;goto B68d279;
-case 0x68d27d:c.instructions+=7;goto B68d27d;
-case 0x68d284:c.instructions+=6;goto B68d284;
-case 0x68d289:c.instructions+=5;goto B68d289;
-case 0x68d28b:c.instructions+=4;goto B68d28b;
-case 0x68d28c:c.instructions+=3;goto B68d28c;
-case 0x68d28e:c.instructions+=2;goto B68d28e;
-case 0x68d28f:c.instructions+=1;goto B68d28f;
-case 0x68d295:goto L68d295;
-case 0x68d297:c.instructions+=17;goto B68d297;
-case 0x68d298:c.instructions+=16;goto B68d298;
-case 0x68d29a:c.instructions+=15;goto B68d29a;
-case 0x68d29b:c.instructions+=14;goto B68d29b;
-case 0x68d29e:c.instructions+=13;goto B68d29e;
-case 0x68d2a1:c.instructions+=12;goto B68d2a1;
-case 0x68d2a4:c.instructions+=11;goto B68d2a4;
-case 0x68d2aa:c.instructions+=10;goto B68d2aa;
-case 0x68d2ae:c.instructions+=9;goto B68d2ae;
-case 0x68d2b1:c.instructions+=8;goto B68d2b1;
-case 0x68d2b4:c.instructions+=7;goto B68d2b4;
-case 0x68d2b7:c.instructions+=6;goto B68d2b7;
-case 0x68d2ba:c.instructions+=5;goto B68d2ba;
-case 0x68d2be:c.instructions+=4;goto B68d2be;
-case 0x68d2c2:c.instructions+=3;goto B68d2c2;
-case 0x68d2c5:c.instructions+=2;goto B68d2c5;
-case 0x68d2c8:c.instructions+=1;goto B68d2c8;
-case 0x68d2ca:goto L68d2ca;
-case 0x68d2cd:c.instructions+=10;goto B68d2cd;
-case 0x68d2d1:c.instructions+=9;goto B68d2d1;
-case 0x68d2d4:c.instructions+=8;goto B68d2d4;
-case 0x68d2d8:c.instructions+=7;goto B68d2d8;
-case 0x68d2dc:c.instructions+=6;goto B68d2dc;
-case 0x68d2e4:c.instructions+=5;goto B68d2e4;
-case 0x68d2ec:c.instructions+=4;goto B68d2ec;
-case 0x68d2f0:c.instructions+=3;goto B68d2f0;
-case 0x68d2f4:c.instructions+=2;goto B68d2f4;
-case 0x68d2f8:c.instructions+=1;goto B68d2f8;
-case 0x68d2fb:goto L68d2fb;
-case 0x68d2fe:c.instructions+=43;goto B68d2fe;
-case 0x68d301:c.instructions+=42;goto B68d301;
-case 0x68d304:c.instructions+=41;goto B68d304;
-case 0x68d307:c.instructions+=40;goto B68d307;
-case 0x68d30a:c.instructions+=39;goto B68d30a;
-case 0x68d30d:c.instructions+=38;goto B68d30d;
-case 0x68d310:c.instructions+=37;goto B68d310;
-case 0x68d314:c.instructions+=36;goto B68d314;
-case 0x68d318:c.instructions+=35;goto B68d318;
-case 0x68d31c:c.instructions+=34;goto B68d31c;
-case 0x68d31f:c.instructions+=33;goto B68d31f;
-case 0x68d322:c.instructions+=32;goto B68d322;
-case 0x68d325:c.instructions+=31;goto B68d325;
-case 0x68d328:c.instructions+=30;goto B68d328;
-case 0x68d32c:c.instructions+=29;goto B68d32c;
-case 0x68d330:c.instructions+=28;goto B68d330;
-case 0x68d334:c.instructions+=27;goto B68d334;
-case 0x68d338:c.instructions+=26;goto B68d338;
-case 0x68d33b:c.instructions+=25;goto B68d33b;
-case 0x68d33e:c.instructions+=24;goto B68d33e;
-case 0x68d341:c.instructions+=23;goto B68d341;
-case 0x68d344:c.instructions+=22;goto B68d344;
-case 0x68d348:c.instructions+=21;goto B68d348;
-case 0x68d34b:c.instructions+=20;goto B68d34b;
-case 0x68d34e:c.instructions+=19;goto B68d34e;
-case 0x68d352:c.instructions+=18;goto B68d352;
-case 0x68d356:c.instructions+=17;goto B68d356;
-case 0x68d35a:c.instructions+=16;goto B68d35a;
-case 0x68d35d:c.instructions+=15;goto B68d35d;
-case 0x68d360:c.instructions+=14;goto B68d360;
-case 0x68d363:c.instructions+=13;goto B68d363;
-case 0x68d366:c.instructions+=12;goto B68d366;
-case 0x68d369:c.instructions+=11;goto B68d369;
-case 0x68d36d:c.instructions+=10;goto B68d36d;
-case 0x68d371:c.instructions+=9;goto B68d371;
-case 0x68d375:c.instructions+=8;goto B68d375;
-case 0x68d379:c.instructions+=7;goto B68d379;
-case 0x68d37d:c.instructions+=6;goto B68d37d;
-case 0x68d381:c.instructions+=5;goto B68d381;
-case 0x68d385:c.instructions+=4;goto B68d385;
-case 0x68d388:c.instructions+=3;goto B68d388;
-case 0x68d389:c.instructions+=2;goto B68d389;
-case 0x68d38a:c.instructions+=1;goto B68d38a;
-case 0x68d38d:goto L68d38d;
-case 0x68d38f:c.instructions+=58;goto B68d38f;
-case 0x68d390:c.instructions+=57;goto B68d390;
-case 0x68d392:c.instructions+=56;goto B68d392;
-case 0x68d393:c.instructions+=55;goto B68d393;
-case 0x68d394:c.instructions+=54;goto B68d394;
-case 0x68d397:c.instructions+=53;goto B68d397;
-case 0x68d39b:c.instructions+=52;goto B68d39b;
-case 0x68d39d:c.instructions+=51;goto B68d39d;
-case 0x68d3a0:c.instructions+=50;goto B68d3a0;
-case 0x68d3a3:c.instructions+=49;goto B68d3a3;
-case 0x68d3a6:c.instructions+=48;goto B68d3a6;
-case 0x68d3aa:c.instructions+=47;goto B68d3aa;
-case 0x68d3ad:c.instructions+=46;goto B68d3ad;
-case 0x68d3b4:c.instructions+=45;goto B68d3b4;
-case 0x68d3b7:c.instructions+=44;goto B68d3b7;
-case 0x68d3ba:c.instructions+=43;goto B68d3ba;
-case 0x68d3c2:c.instructions+=42;goto B68d3c2;
-case 0x68d3ca:c.instructions+=41;goto B68d3ca;
-case 0x68d3cd:c.instructions+=40;goto B68d3cd;
-case 0x68d3d0:c.instructions+=39;goto B68d3d0;
-case 0x68d3d3:c.instructions+=38;goto B68d3d3;
-case 0x68d3d6:c.instructions+=37;goto B68d3d6;
-case 0x68d3da:c.instructions+=36;goto B68d3da;
-case 0x68d3de:c.instructions+=35;goto B68d3de;
-case 0x68d3e5:c.instructions+=34;goto B68d3e5;
-case 0x68d3e8:c.instructions+=33;goto B68d3e8;
-case 0x68d3ec:c.instructions+=32;goto B68d3ec;
-case 0x68d3f0:c.instructions+=31;goto B68d3f0;
-case 0x68d3f4:c.instructions+=30;goto B68d3f4;
-case 0x68d3f8:c.instructions+=29;goto B68d3f8;
-case 0x68d3fc:c.instructions+=28;goto B68d3fc;
-case 0x68d400:c.instructions+=27;goto B68d400;
-case 0x68d404:c.instructions+=26;goto B68d404;
-case 0x68d407:c.instructions+=25;goto B68d407;
-case 0x68d40a:c.instructions+=24;goto B68d40a;
-case 0x68d40d:c.instructions+=23;goto B68d40d;
-case 0x68d411:c.instructions+=22;goto B68d411;
-case 0x68d414:c.instructions+=21;goto B68d414;
-case 0x68d41b:c.instructions+=20;goto B68d41b;
-case 0x68d41e:c.instructions+=19;goto B68d41e;
-case 0x68d422:c.instructions+=18;goto B68d422;
-case 0x68d425:c.instructions+=17;goto B68d425;
-case 0x68d42c:c.instructions+=16;goto B68d42c;
-case 0x68d42f:c.instructions+=15;goto B68d42f;
-case 0x68d433:c.instructions+=14;goto B68d433;
-case 0x68d436:c.instructions+=13;goto B68d436;
-case 0x68d43d:c.instructions+=12;goto B68d43d;
-case 0x68d441:c.instructions+=11;goto B68d441;
-case 0x68d444:c.instructions+=10;goto B68d444;
-case 0x68d44b:c.instructions+=9;goto B68d44b;
-case 0x68d44e:c.instructions+=8;goto B68d44e;
-case 0x68d452:c.instructions+=7;goto B68d452;
-case 0x68d456:c.instructions+=6;goto B68d456;
-case 0x68d45a:c.instructions+=5;goto B68d45a;
-case 0x68d45c:c.instructions+=4;goto B68d45c;
-case 0x68d45d:c.instructions+=3;goto B68d45d;
-case 0x68d45f:c.instructions+=2;goto B68d45f;
-case 0x68d460:c.instructions+=1;goto B68d460;
-case 0x68d465:goto L68d465;
-case 0x68d467:c.instructions+=12;goto B68d467;
-case 0x68d468:c.instructions+=11;goto B68d468;
-case 0x68d46a:c.instructions+=10;goto B68d46a;
-case 0x68d46b:c.instructions+=9;goto B68d46b;
-case 0x68d46e:c.instructions+=8;goto B68d46e;
-case 0x68d471:c.instructions+=7;goto B68d471;
-case 0x68d472:c.instructions+=6;goto B68d472;
-case 0x68d474:c.instructions+=5;goto B68d474;
-case 0x68d477:c.instructions+=4;goto B68d477;
-case 0x68d47a:c.instructions+=3;goto B68d47a;
-case 0x68d47d:c.instructions+=2;goto B68d47d;
-case 0x68d47f:c.instructions+=1;goto B68d47f;
-case 0x68d481:goto L68d481;
-case 0x68d485:c.instructions+=18;goto B68d485;
-case 0x68d488:c.instructions+=17;goto B68d488;
-case 0x68d48b:c.instructions+=16;goto B68d48b;
-case 0x68d48f:c.instructions+=15;goto B68d48f;
-case 0x68d492:c.instructions+=14;goto B68d492;
-case 0x68d497:c.instructions+=13;goto B68d497;
-case 0x68d49b:c.instructions+=12;goto B68d49b;
-case 0x68d49e:c.instructions+=11;goto B68d49e;
-case 0x68d4a1:c.instructions+=10;goto B68d4a1;
-case 0x68d4a5:c.instructions+=9;goto B68d4a5;
-case 0x68d4a8:c.instructions+=8;goto B68d4a8;
-case 0x68d4ac:c.instructions+=7;goto B68d4ac;
-case 0x68d4af:c.instructions+=6;goto B68d4af;
-case 0x68d4b2:c.instructions+=5;goto B68d4b2;
-case 0x68d4b5:c.instructions+=4;goto B68d4b5;
-case 0x68d4b9:c.instructions+=3;goto B68d4b9;
-case 0x68d4bc:c.instructions+=2;goto B68d4bc;
-case 0x68d4bf:c.instructions+=1;goto B68d4bf;
-case 0x68d4c1:goto L68d4c1;
-case 0x68d4c5:c.instructions+=21;goto B68d4c5;
-case 0x68d4c8:c.instructions+=20;goto B68d4c8;
-case 0x68d4cb:c.instructions+=19;goto B68d4cb;
-case 0x68d4cf:c.instructions+=18;goto B68d4cf;
-case 0x68d4d3:c.instructions+=17;goto B68d4d3;
-case 0x68d4d7:c.instructions+=16;goto B68d4d7;
-case 0x68d4db:c.instructions+=15;goto B68d4db;
-case 0x68d4df:c.instructions+=14;goto B68d4df;
-case 0x68d4e3:c.instructions+=13;goto B68d4e3;
-case 0x68d4e6:c.instructions+=12;goto B68d4e6;
-case 0x68d4eb:c.instructions+=11;goto B68d4eb;
-case 0x68d4ef:c.instructions+=10;goto B68d4ef;
-case 0x68d4f2:c.instructions+=9;goto B68d4f2;
-case 0x68d4f5:c.instructions+=8;goto B68d4f5;
-case 0x68d4f9:c.instructions+=7;goto B68d4f9;
-case 0x68d4fc:c.instructions+=6;goto B68d4fc;
-case 0x68d4ff:c.instructions+=5;goto B68d4ff;
-case 0x68d503:c.instructions+=4;goto B68d503;
-case 0x68d507:c.instructions+=3;goto B68d507;
-case 0x68d50a:c.instructions+=2;goto B68d50a;
-case 0x68d50e:c.instructions+=1;goto B68d50e;
-case 0x68d511:goto L68d511;
-case 0x68d514:c.instructions+=11;goto B68d514;
-case 0x68d517:c.instructions+=10;goto B68d517;
-case 0x68d51a:c.instructions+=9;goto B68d51a;
-case 0x68d51d:c.instructions+=8;goto B68d51d;
-case 0x68d520:c.instructions+=7;goto B68d520;
-case 0x68d523:c.instructions+=6;goto B68d523;
-case 0x68d528:c.instructions+=5;goto B68d528;
-case 0x68d52a:c.instructions+=4;goto B68d52a;
-case 0x68d52b:c.instructions+=3;goto B68d52b;
-case 0x68d52d:c.instructions+=2;goto B68d52d;
-case 0x68d52e:c.instructions+=1;goto B68d52e;
-case 0x68d531:goto L68d531;
-case 0x68d533:c.instructions+=15;goto B68d533;
-case 0x68d534:c.instructions+=14;goto B68d534;
-case 0x68d536:c.instructions+=13;goto B68d536;
-case 0x68d537:c.instructions+=12;goto B68d537;
-case 0x68d53a:c.instructions+=11;goto B68d53a;
-case 0x68d53d:c.instructions+=10;goto B68d53d;
-case 0x68d53e:c.instructions+=9;goto B68d53e;
-case 0x68d540:c.instructions+=8;goto B68d540;
-case 0x68d543:c.instructions+=7;goto B68d543;
-case 0x68d546:c.instructions+=6;goto B68d546;
-case 0x68d54a:c.instructions+=5;goto B68d54a;
-case 0x68d54d:c.instructions+=4;goto B68d54d;
-case 0x68d550:c.instructions+=3;goto B68d550;
-case 0x68d553:c.instructions+=2;goto B68d553;
-case 0x68d555:c.instructions+=1;goto B68d555;
-case 0x68d557:goto L68d557;
-case 0x68d55b:c.instructions+=14;goto B68d55b;
-case 0x68d55f:c.instructions+=13;goto B68d55f;
-case 0x68d562:c.instructions+=12;goto B68d562;
-case 0x68d567:c.instructions+=11;goto B68d567;
-case 0x68d56b:c.instructions+=10;goto B68d56b;
-case 0x68d56e:c.instructions+=9;goto B68d56e;
-case 0x68d571:c.instructions+=8;goto B68d571;
-case 0x68d575:c.instructions+=7;goto B68d575;
-case 0x68d578:c.instructions+=6;goto B68d578;
-case 0x68d57c:c.instructions+=5;goto B68d57c;
-case 0x68d57f:c.instructions+=4;goto B68d57f;
-case 0x68d582:c.instructions+=3;goto B68d582;
-case 0x68d586:c.instructions+=2;goto B68d586;
-case 0x68d589:c.instructions+=1;goto B68d589;
-case 0x68d58b:goto L68d58b;
-case 0x68d58f:c.instructions+=22;goto B68d58f;
-case 0x68d593:c.instructions+=21;goto B68d593;
-case 0x68d597:c.instructions+=20;goto B68d597;
-case 0x68d59b:c.instructions+=19;goto B68d59b;
-case 0x68d59f:c.instructions+=18;goto B68d59f;
-case 0x68d5a3:c.instructions+=17;goto B68d5a3;
-case 0x68d5a6:c.instructions+=16;goto B68d5a6;
-case 0x68d5a9:c.instructions+=15;goto B68d5a9;
-case 0x68d5ae:c.instructions+=14;goto B68d5ae;
-case 0x68d5b2:c.instructions+=13;goto B68d5b2;
-case 0x68d5b5:c.instructions+=12;goto B68d5b5;
-case 0x68d5b8:c.instructions+=11;goto B68d5b8;
-case 0x68d5bc:c.instructions+=10;goto B68d5bc;
-case 0x68d5c0:c.instructions+=9;goto B68d5c0;
-case 0x68d5c4:c.instructions+=8;goto B68d5c4;
-case 0x68d5c7:c.instructions+=7;goto B68d5c7;
-case 0x68d5cb:c.instructions+=6;goto B68d5cb;
-case 0x68d5ce:c.instructions+=5;goto B68d5ce;
-case 0x68d5d1:c.instructions+=4;goto B68d5d1;
-case 0x68d5d5:c.instructions+=3;goto B68d5d5;
-case 0x68d5d9:c.instructions+=2;goto B68d5d9;
-case 0x68d5dc:c.instructions+=1;goto B68d5dc;
-case 0x68d5e0:goto L68d5e0;
-case 0x68d5e3:c.instructions+=23;goto B68d5e3;
-case 0x68d5e6:c.instructions+=22;goto B68d5e6;
-case 0x68d5e9:c.instructions+=21;goto B68d5e9;
-case 0x68d5ec:c.instructions+=20;goto B68d5ec;
-case 0x68d5ef:c.instructions+=19;goto B68d5ef;
-case 0x68d5f2:c.instructions+=18;goto B68d5f2;
-case 0x68d5f5:c.instructions+=17;goto B68d5f5;
-case 0x68d5f8:c.instructions+=16;goto B68d5f8;
-case 0x68d5fb:c.instructions+=15;goto B68d5fb;
-case 0x68d5fe:c.instructions+=14;goto B68d5fe;
-case 0x68d601:c.instructions+=13;goto B68d601;
-case 0x68d604:c.instructions+=12;goto B68d604;
-case 0x68d607:c.instructions+=11;goto B68d607;
-case 0x68d60b:c.instructions+=10;goto B68d60b;
-case 0x68d60e:c.instructions+=9;goto B68d60e;
-case 0x68d611:c.instructions+=8;goto B68d611;
-case 0x68d614:c.instructions+=7;goto B68d614;
-case 0x68d617:c.instructions+=6;goto B68d617;
-case 0x68d61c:c.instructions+=5;goto B68d61c;
-case 0x68d61e:c.instructions+=4;goto B68d61e;
-case 0x68d61f:c.instructions+=3;goto B68d61f;
-case 0x68d621:c.instructions+=2;goto B68d621;
-case 0x68d622:c.instructions+=1;goto B68d622;
-case 0x68d625:goto L68d625;
-case 0x68d627:c.instructions+=27;goto B68d627;
-case 0x68d628:c.instructions+=26;goto B68d628;
-case 0x68d62a:c.instructions+=25;goto B68d62a;
-case 0x68d62b:c.instructions+=24;goto B68d62b;
-case 0x68d62e:c.instructions+=23;goto B68d62e;
-case 0x68d631:c.instructions+=22;goto B68d631;
-case 0x68d632:c.instructions+=21;goto B68d632;
-case 0x68d634:c.instructions+=20;goto B68d634;
-case 0x68d637:c.instructions+=19;goto B68d637;
-case 0x68d63c:c.instructions+=18;goto B68d63c;
-case 0x68d641:c.instructions+=17;goto B68d641;
-case 0x68d646:c.instructions+=16;goto B68d646;
-case 0x68d64b:c.instructions+=15;goto B68d64b;
-case 0x68d64e:c.instructions+=14;goto B68d64e;
-case 0x68d653:c.instructions+=13;goto B68d653;
-case 0x68d658:c.instructions+=12;goto B68d658;
-case 0x68d65d:c.instructions+=11;goto B68d65d;
-case 0x68d665:c.instructions+=10;goto B68d665;
-case 0x68d668:c.instructions+=9;goto B68d668;
-case 0x68d669:c.instructions+=8;goto B68d669;
-case 0x68d66c:c.instructions+=7;goto B68d66c;
-case 0x68d671:c.instructions+=6;goto B68d671;
-case 0x68d675:c.instructions+=5;goto B68d675;
-case 0x68d676:c.instructions+=4;goto B68d676;
-case 0x68d679:c.instructions+=3;goto B68d679;
-case 0x68d67a:c.instructions+=2;goto B68d67a;
-case 0x68d67e:c.instructions+=1;goto B68d67e;
-case 0x68d683:goto L68d683;
-case 0x68d687:c.instructions+=29;goto B68d687;
-case 0x68d68a:c.instructions+=28;goto B68d68a;
-case 0x68d68f:c.instructions+=27;goto B68d68f;
-case 0x68d694:c.instructions+=26;goto B68d694;
-case 0x68d697:c.instructions+=25;goto B68d697;
-case 0x68d69b:c.instructions+=24;goto B68d69b;
-case 0x68d69e:c.instructions+=23;goto B68d69e;
-case 0x68d6a2:c.instructions+=22;goto B68d6a2;
-case 0x68d6a6:c.instructions+=21;goto B68d6a6;
-case 0x68d6a9:c.instructions+=20;goto B68d6a9;
-case 0x68d6ad:c.instructions+=19;goto B68d6ad;
-case 0x68d6b0:c.instructions+=18;goto B68d6b0;
-case 0x68d6b3:c.instructions+=17;goto B68d6b3;
-case 0x68d6b6:c.instructions+=16;goto B68d6b6;
-case 0x68d6ba:c.instructions+=15;goto B68d6ba;
-case 0x68d6bf:c.instructions+=14;goto B68d6bf;
-case 0x68d6c2:c.instructions+=13;goto B68d6c2;
-case 0x68d6c5:c.instructions+=12;goto B68d6c5;
-case 0x68d6c8:c.instructions+=11;goto B68d6c8;
-case 0x68d6cc:c.instructions+=10;goto B68d6cc;
-case 0x68d6cf:c.instructions+=9;goto B68d6cf;
-case 0x68d6d2:c.instructions+=8;goto B68d6d2;
-case 0x68d6d5:c.instructions+=7;goto B68d6d5;
-case 0x68d6d8:c.instructions+=6;goto B68d6d8;
-case 0x68d6db:c.instructions+=5;goto B68d6db;
-case 0x68d6dd:c.instructions+=4;goto B68d6dd;
-case 0x68d6de:c.instructions+=3;goto B68d6de;
-case 0x68d6e0:c.instructions+=2;goto B68d6e0;
-case 0x68d6e1:c.instructions+=1;goto B68d6e1;
-case 0x68d6e4:goto L68d6e4;
-case 0x68d6e6:c.instructions+=11;goto B68d6e6;
-case 0x68d6e7:c.instructions+=10;goto B68d6e7;
-case 0x68d6e9:c.instructions+=9;goto B68d6e9;
-case 0x68d6ec:c.instructions+=8;goto B68d6ec;
-case 0x68d6ef:c.instructions+=7;goto B68d6ef;
-case 0x68d6f2:c.instructions+=6;goto B68d6f2;
-case 0x68d6f4:c.instructions+=5;goto B68d6f4;
-case 0x68d6f7:c.instructions+=4;goto B68d6f7;
-case 0x68d6fd:c.instructions+=3;goto B68d6fd;
-case 0x68d6ff:c.instructions+=2;goto B68d6ff;
-case 0x68d702:c.instructions+=1;goto B68d702;
-case 0x68d704:goto L68d704;
-case 0x68d70a:c.instructions+=19;goto B68d70a;
-case 0x68d70d:c.instructions+=18;goto B68d70d;
-case 0x68d70f:c.instructions+=17;goto B68d70f;
-case 0x68d715:c.instructions+=16;goto B68d715;
-case 0x68d717:c.instructions+=15;goto B68d717;
-case 0x68d71a:c.instructions+=14;goto B68d71a;
-case 0x68d720:c.instructions+=13;goto B68d720;
-case 0x68d723:c.instructions+=12;goto B68d723;
-case 0x68d726:c.instructions+=11;goto B68d726;
-case 0x68d728:c.instructions+=10;goto B68d728;
-case 0x68d72a:c.instructions+=9;goto B68d72a;
-case 0x68d72d:c.instructions+=8;goto B68d72d;
-case 0x68d730:c.instructions+=7;goto B68d730;
-case 0x68d732:c.instructions+=6;goto B68d732;
-case 0x68d735:c.instructions+=5;goto B68d735;
-case 0x68d738:c.instructions+=4;goto B68d738;
-case 0x68d73b:c.instructions+=3;goto B68d73b;
-case 0x68d73d:c.instructions+=2;goto B68d73d;
-case 0x68d740:c.instructions+=1;goto B68d740;
-case 0x68d745:goto L68d745;
-case 0x68d748:c.instructions+=14;goto B68d748;
-case 0x68d74a:c.instructions+=13;goto B68d74a;
-case 0x68d74c:c.instructions+=12;goto B68d74c;
-case 0x68d74f:c.instructions+=11;goto B68d74f;
-case 0x68d752:c.instructions+=10;goto B68d752;
-case 0x68d755:c.instructions+=9;goto B68d755;
-case 0x68d758:c.instructions+=8;goto B68d758;
-case 0x68d759:c.instructions+=7;goto B68d759;
-case 0x68d75c:c.instructions+=6;goto B68d75c;
-case 0x68d75d:c.instructions+=5;goto B68d75d;
-case 0x68d75f:c.instructions+=4;goto B68d75f;
-case 0x68d761:c.instructions+=3;goto B68d761;
-case 0x68d762:c.instructions+=2;goto B68d762;
-case 0x68d765:c.instructions+=1;goto B68d765;
-case 0x68d767:goto L68d767;
-case 0x68d768:goto L68d768;
-case 0x68d76c:c.instructions+=5;goto B68d76c;
-case 0x68d76f:c.instructions+=4;goto B68d76f;
-case 0x68d772:c.instructions+=3;goto B68d772;
-case 0x68d774:c.instructions+=2;goto B68d774;
-case 0x68d777:c.instructions+=1;goto B68d777;
-case 0x68d779:goto L68d779;
-case 0x68d77b:c.instructions+=2;goto B68d77b;
-case 0x68d77c:c.instructions+=1;goto B68d77c;
-case 0x68d77f:goto L68d77f;
-case 0x68d781:c.instructions+=46;goto B68d781;
-case 0x68d784:c.instructions+=45;goto B68d784;
-case 0x68d78a:c.instructions+=44;goto B68d78a;
-case 0x68d78e:c.instructions+=43;goto B68d78e;
-case 0x68d790:c.instructions+=42;goto B68d790;
-case 0x68d793:c.instructions+=41;goto B68d793;
-case 0x68d797:c.instructions+=40;goto B68d797;
-case 0x68d79d:c.instructions+=39;goto B68d79d;
-case 0x68d7a0:c.instructions+=38;goto B68d7a0;
-case 0x68d7a3:c.instructions+=37;goto B68d7a3;
-case 0x68d7a7:c.instructions+=36;goto B68d7a7;
-case 0x68d7aa:c.instructions+=35;goto B68d7aa;
-case 0x68d7ac:c.instructions+=34;goto B68d7ac;
-case 0x68d7af:c.instructions+=33;goto B68d7af;
-case 0x68d7b5:c.instructions+=32;goto B68d7b5;
-case 0x68d7b7:c.instructions+=31;goto B68d7b7;
-case 0x68d7b9:c.instructions+=30;goto B68d7b9;
-case 0x68d7bf:c.instructions+=29;goto B68d7bf;
-case 0x68d7c1:c.instructions+=28;goto B68d7c1;
-case 0x68d7c4:c.instructions+=27;goto B68d7c4;
-case 0x68d7ca:c.instructions+=26;goto B68d7ca;
-case 0x68d7cd:c.instructions+=25;goto B68d7cd;
-case 0x68d7d0:c.instructions+=24;goto B68d7d0;
-case 0x68d7d3:c.instructions+=23;goto B68d7d3;
-case 0x68d7d6:c.instructions+=22;goto B68d7d6;
-case 0x68d7d9:c.instructions+=21;goto B68d7d9;
-case 0x68d7db:c.instructions+=20;goto B68d7db;
-case 0x68d7de:c.instructions+=19;goto B68d7de;
-case 0x68d7e0:c.instructions+=18;goto B68d7e0;
-case 0x68d7e2:c.instructions+=17;goto B68d7e2;
-case 0x68d7e5:c.instructions+=16;goto B68d7e5;
-case 0x68d7e7:c.instructions+=15;goto B68d7e7;
-case 0x68d7ea:c.instructions+=14;goto B68d7ea;
-case 0x68d7ed:c.instructions+=13;goto B68d7ed;
-case 0x68d7ef:c.instructions+=12;goto B68d7ef;
-case 0x68d7f2:c.instructions+=11;goto B68d7f2;
-case 0x68d7f5:c.instructions+=10;goto B68d7f5;
-case 0x68d7f7:c.instructions+=9;goto B68d7f7;
-case 0x68d7fa:c.instructions+=8;goto B68d7fa;
-case 0x68d7fc:c.instructions+=7;goto B68d7fc;
-case 0x68d7ff:c.instructions+=6;goto B68d7ff;
-case 0x68d800:c.instructions+=5;goto B68d800;
-case 0x68d803:c.instructions+=4;goto B68d803;
-case 0x68d804:c.instructions+=3;goto B68d804;
-case 0x68d805:c.instructions+=2;goto B68d805;
-case 0x68d807:c.instructions+=1;goto B68d807;
-case 0x68d80a:goto L68d80a;
-case 0x68d80c:c.instructions+=2;goto B68d80c;
-case 0x68d80d:c.instructions+=1;goto B68d80d;
-case 0x68d840:goto L68d840;
-case 0x68d843:c.instructions+=9;goto B68d843;
-case 0x68d847:c.instructions+=8;goto B68d847;
-case 0x68d84b:c.instructions+=7;goto B68d84b;
-case 0x68d84e:c.instructions+=6;goto B68d84e;
-case 0x68d852:c.instructions+=5;goto B68d852;
-case 0x68d856:c.instructions+=4;goto B68d856;
-case 0x68d85a:c.instructions+=3;goto B68d85a;
-case 0x68d85e:c.instructions+=2;goto B68d85e;
-case 0x68d861:c.instructions+=1;goto B68d861;
-case 0x68d863:goto L68d863;
-case 0x68d867:c.instructions+=5;goto B68d867;
-case 0x68d86b:c.instructions+=4;goto B68d86b;
-case 0x68d86e:c.instructions+=3;goto B68d86e;
-case 0x68d872:c.instructions+=2;goto B68d872;
-case 0x68d876:c.instructions+=1;goto B68d876;
-case 0x68d87a:goto L68d87a;
-case 0x68d87e:c.instructions+=19;goto B68d87e;
-case 0x68d882:c.instructions+=18;goto B68d882;
-case 0x68d887:c.instructions+=17;goto B68d887;
-case 0x68d88b:c.instructions+=16;goto B68d88b;
-case 0x68d890:c.instructions+=15;goto B68d890;
-case 0x68d894:c.instructions+=14;goto B68d894;
-case 0x68d899:c.instructions+=13;goto B68d899;
-case 0x68d89d:c.instructions+=12;goto B68d89d;
-case 0x68d8a0:c.instructions+=11;goto B68d8a0;
-case 0x68d8a3:c.instructions+=10;goto B68d8a3;
-case 0x68d8a6:c.instructions+=9;goto B68d8a6;
-case 0x68d8a9:c.instructions+=8;goto B68d8a9;
-case 0x68d8ac:c.instructions+=7;goto B68d8ac;
-case 0x68d8af:c.instructions+=6;goto B68d8af;
-case 0x68d8b2:c.instructions+=5;goto B68d8b2;
-case 0x68d8b5:c.instructions+=4;goto B68d8b5;
-case 0x68d8b8:c.instructions+=3;goto B68d8b8;
-case 0x68d8bb:c.instructions+=2;goto B68d8bb;
-case 0x68d8be:c.instructions+=1;goto B68d8be;
-case 0x68d8c0:goto L68d8c0;
-case 0x68d8c4:c.instructions+=5;goto B68d8c4;
-case 0x68d8c7:c.instructions+=4;goto B68d8c7;
-case 0x68d8cb:c.instructions+=3;goto B68d8cb;
-case 0x68d8cf:c.instructions+=2;goto B68d8cf;
-case 0x68d8d2:c.instructions+=1;goto B68d8d2;
-case 0x68d900:goto L68d900;
-case 0x68d903:c.instructions+=9;goto B68d903;
-case 0x68d907:c.instructions+=8;goto B68d907;
-case 0x68d90b:c.instructions+=7;goto B68d90b;
-case 0x68d90e:c.instructions+=6;goto B68d90e;
-case 0x68d912:c.instructions+=5;goto B68d912;
-case 0x68d916:c.instructions+=4;goto B68d916;
-case 0x68d91a:c.instructions+=3;goto B68d91a;
-case 0x68d91e:c.instructions+=2;goto B68d91e;
-case 0x68d921:c.instructions+=1;goto B68d921;
-case 0x68d923:goto L68d923;
-case 0x68d927:c.instructions+=5;goto B68d927;
-case 0x68d92b:c.instructions+=4;goto B68d92b;
-case 0x68d92e:c.instructions+=3;goto B68d92e;
-case 0x68d932:c.instructions+=2;goto B68d932;
-case 0x68d936:c.instructions+=1;goto B68d936;
-case 0x68d93a:goto L68d93a;
-case 0x68d93e:c.instructions+=19;goto B68d93e;
-case 0x68d942:c.instructions+=18;goto B68d942;
-case 0x68d947:c.instructions+=17;goto B68d947;
-case 0x68d94b:c.instructions+=16;goto B68d94b;
-case 0x68d950:c.instructions+=15;goto B68d950;
-case 0x68d954:c.instructions+=14;goto B68d954;
-case 0x68d959:c.instructions+=13;goto B68d959;
-case 0x68d95d:c.instructions+=12;goto B68d95d;
-case 0x68d960:c.instructions+=11;goto B68d960;
-case 0x68d963:c.instructions+=10;goto B68d963;
-case 0x68d966:c.instructions+=9;goto B68d966;
-case 0x68d969:c.instructions+=8;goto B68d969;
-case 0x68d96c:c.instructions+=7;goto B68d96c;
-case 0x68d96f:c.instructions+=6;goto B68d96f;
-case 0x68d972:c.instructions+=5;goto B68d972;
-case 0x68d975:c.instructions+=4;goto B68d975;
-case 0x68d978:c.instructions+=3;goto B68d978;
-case 0x68d97b:c.instructions+=2;goto B68d97b;
-case 0x68d97e:c.instructions+=1;goto B68d97e;
-case 0x68d980:goto L68d980;
-case 0x68d984:c.instructions+=5;goto B68d984;
-case 0x68d987:c.instructions+=4;goto B68d987;
-case 0x68d98b:c.instructions+=3;goto B68d98b;
-case 0x68d98f:c.instructions+=2;goto B68d98f;
-case 0x68d992:c.instructions+=1;goto B68d992;
-case 0x68d9c0:goto L68d9c0;
-case 0x68d9c6:c.instructions+=10;goto B68d9c6;
-case 0x68d9cd:c.instructions+=9;goto B68d9cd;
-case 0x68d9d4:c.instructions+=8;goto B68d9d4;
-case 0x68d9db:c.instructions+=7;goto B68d9db;
-case 0x68d9dd:c.instructions+=6;goto B68d9dd;
-case 0x68d9e0:c.instructions+=5;goto B68d9e0;
-case 0x68d9e6:c.instructions+=4;goto B68d9e6;
-case 0x68d9ec:c.instructions+=3;goto B68d9ec;
-case 0x68d9f2:c.instructions+=2;goto B68d9f2;
-case 0x68d9f5:c.instructions+=1;goto B68d9f5;
-case 0x68d9f7:goto L68d9f7;
-case 0x68d9fd:c.instructions+=1;goto B68d9fd;
-case 0x68da00:goto L68da00;
-case 0x68da06:goto L68da06;
-case 0x68da09:c.instructions+=4;goto B68da09;
-case 0x68da0c:c.instructions+=3;goto B68da0c;
-case 0x68da10:c.instructions+=2;goto B68da10;
-case 0x68da14:c.instructions+=1;goto B68da14;
-case 0x68da19:goto L68da19;
-case 0x68da1f:c.instructions+=5;goto B68da1f;
-case 0x68da25:c.instructions+=4;goto B68da25;
-case 0x68da2b:c.instructions+=3;goto B68da2b;
-case 0x68da31:c.instructions+=2;goto B68da31;
-case 0x68da37:c.instructions+=1;goto B68da37;
-case 0x68da39:goto L68da39;
-case 0x68da3d:c.instructions+=38;goto B68da3d;
-case 0x68da42:c.instructions+=37;goto B68da42;
-case 0x68da47:c.instructions+=36;goto B68da47;
-case 0x68da4c:c.instructions+=35;goto B68da4c;
-case 0x68da50:c.instructions+=34;goto B68da50;
-case 0x68da54:c.instructions+=33;goto B68da54;
-case 0x68da58:c.instructions+=32;goto B68da58;
-case 0x68da5c:c.instructions+=31;goto B68da5c;
-case 0x68da61:c.instructions+=30;goto B68da61;
-case 0x68da66:c.instructions+=29;goto B68da66;
-case 0x68da6b:c.instructions+=28;goto B68da6b;
-case 0x68da70:c.instructions+=27;goto B68da70;
-case 0x68da74:c.instructions+=26;goto B68da74;
-case 0x68da78:c.instructions+=25;goto B68da78;
-case 0x68da7c:c.instructions+=24;goto B68da7c;
-case 0x68da80:c.instructions+=23;goto B68da80;
-case 0x68da84:c.instructions+=22;goto B68da84;
-case 0x68da89:c.instructions+=21;goto B68da89;
-case 0x68da8e:c.instructions+=20;goto B68da8e;
-case 0x68da93:c.instructions+=19;goto B68da93;
-case 0x68da98:c.instructions+=18;goto B68da98;
-case 0x68da9d:c.instructions+=17;goto B68da9d;
-case 0x68daa2:c.instructions+=16;goto B68daa2;
-case 0x68daa7:c.instructions+=15;goto B68daa7;
-case 0x68daac:c.instructions+=14;goto B68daac;
-case 0x68dab1:c.instructions+=13;goto B68dab1;
-case 0x68dab6:c.instructions+=12;goto B68dab6;
-case 0x68dabb:c.instructions+=11;goto B68dabb;
-case 0x68dabf:c.instructions+=10;goto B68dabf;
-case 0x68dac3:c.instructions+=9;goto B68dac3;
-case 0x68dac7:c.instructions+=8;goto B68dac7;
-case 0x68dacb:c.instructions+=7;goto B68dacb;
-case 0x68dad3:c.instructions+=6;goto B68dad3;
-case 0x68dadb:c.instructions+=5;goto B68dadb;
-case 0x68dae3:c.instructions+=4;goto B68dae3;
-case 0x68daeb:c.instructions+=3;goto B68daeb;
-case 0x68daf1:c.instructions+=2;goto B68daf1;
-case 0x68daf7:c.instructions+=1;goto B68daf7;
-case 0x68dafd:goto L68dafd;
-case 0x68db00:c.instructions+=1;goto B68db00;
-case 0x68db06:goto L68db06;
-case 0x68db09:c.instructions+=53;goto B68db09;
-case 0x68db0d:c.instructions+=52;goto B68db0d;
-case 0x68db10:c.instructions+=51;goto B68db10;
-case 0x68db13:c.instructions+=50;goto B68db13;
-case 0x68db16:c.instructions+=49;goto B68db16;
-case 0x68db1a:c.instructions+=48;goto B68db1a;
-case 0x68db1d:c.instructions+=47;goto B68db1d;
-case 0x68db20:c.instructions+=46;goto B68db20;
-case 0x68db23:c.instructions+=45;goto B68db23;
-case 0x68db26:c.instructions+=44;goto B68db26;
-case 0x68db29:c.instructions+=43;goto B68db29;
-case 0x68db2c:c.instructions+=42;goto B68db2c;
-case 0x68db2f:c.instructions+=41;goto B68db2f;
-case 0x68db32:c.instructions+=40;goto B68db32;
-case 0x68db36:c.instructions+=39;goto B68db36;
-case 0x68db3b:c.instructions+=38;goto B68db3b;
-case 0x68db40:c.instructions+=37;goto B68db40;
-case 0x68db45:c.instructions+=36;goto B68db45;
-case 0x68db48:c.instructions+=35;goto B68db48;
-case 0x68db4b:c.instructions+=34;goto B68db4b;
-case 0x68db4e:c.instructions+=33;goto B68db4e;
-case 0x68db53:c.instructions+=32;goto B68db53;
-case 0x68db58:c.instructions+=31;goto B68db58;
-case 0x68db5d:c.instructions+=30;goto B68db5d;
-case 0x68db62:c.instructions+=29;goto B68db62;
-case 0x68db65:c.instructions+=28;goto B68db65;
-case 0x68db68:c.instructions+=27;goto B68db68;
-case 0x68db6b:c.instructions+=26;goto B68db6b;
-case 0x68db6e:c.instructions+=25;goto B68db6e;
-case 0x68db76:c.instructions+=24;goto B68db76;
-case 0x68db7e:c.instructions+=23;goto B68db7e;
-case 0x68db86:c.instructions+=22;goto B68db86;
-case 0x68db8e:c.instructions+=21;goto B68db8e;
-case 0x68db91:c.instructions+=20;goto B68db91;
-case 0x68db94:c.instructions+=19;goto B68db94;
-case 0x68db97:c.instructions+=18;goto B68db97;
-case 0x68db9a:c.instructions+=17;goto B68db9a;
-case 0x68db9d:c.instructions+=16;goto B68db9d;
-case 0x68dba0:c.instructions+=15;goto B68dba0;
-case 0x68dba3:c.instructions+=14;goto B68dba3;
-case 0x68dba6:c.instructions+=13;goto B68dba6;
-case 0x68dba9:c.instructions+=12;goto B68dba9;
-case 0x68dbac:c.instructions+=11;goto B68dbac;
-case 0x68dbaf:c.instructions+=10;goto B68dbaf;
-case 0x68dbb2:c.instructions+=9;goto B68dbb2;
-case 0x68dbb5:c.instructions+=8;goto B68dbb5;
-case 0x68dbb8:c.instructions+=7;goto B68dbb8;
-case 0x68dbbc:c.instructions+=6;goto B68dbbc;
-case 0x68dbbf:c.instructions+=5;goto B68dbbf;
-case 0x68dbc2:c.instructions+=4;goto B68dbc2;
-case 0x68dbc6:c.instructions+=3;goto B68dbc6;
-case 0x68dbc9:c.instructions+=2;goto B68dbc9;
-case 0x68dbcc:c.instructions+=1;goto B68dbcc;
-case 0x68dbd1:goto L68dbd1;
-case 0x68dbd4:c.instructions+=1;goto B68dbd4;
-case 0x68dbd6:goto L68dbd6;
-case 0x68dbd9:c.instructions+=8;goto B68dbd9;
-case 0x68dbdc:c.instructions+=7;goto B68dbdc;
-case 0x68dbdf:c.instructions+=6;goto B68dbdf;
-case 0x68dbe1:c.instructions+=5;goto B68dbe1;
-case 0x68dbe3:c.instructions+=4;goto B68dbe3;
-case 0x68dbe8:c.instructions+=3;goto B68dbe8;
-case 0x68dbee:c.instructions+=2;goto B68dbee;
-case 0x68dbf4:c.instructions+=1;goto B68dbf4;
-case 0x68dbf9:goto L68dbf9;
-case 0x68dbff:c.instructions+=6;goto B68dbff;
-case 0x68dc01:c.instructions+=5;goto B68dc01;
-case 0x68dc08:c.instructions+=4;goto B68dc08;
-case 0x68dc0f:c.instructions+=3;goto B68dc0f;
-case 0x68dc16:c.instructions+=2;goto B68dc16;
-case 0x68dc1c:c.instructions+=1;goto B68dc1c;
-case 0x68dc20:goto L68dc20;
-case 0x68dc26:c.instructions+=10;goto B68dc26;
-case 0x68dc2d:c.instructions+=9;goto B68dc2d;
-case 0x68dc34:c.instructions+=8;goto B68dc34;
-case 0x68dc3b:c.instructions+=7;goto B68dc3b;
-case 0x68dc3d:c.instructions+=6;goto B68dc3d;
-case 0x68dc40:c.instructions+=5;goto B68dc40;
-case 0x68dc46:c.instructions+=4;goto B68dc46;
-case 0x68dc4c:c.instructions+=3;goto B68dc4c;
-case 0x68dc52:c.instructions+=2;goto B68dc52;
-case 0x68dc55:c.instructions+=1;goto B68dc55;
-case 0x68dc57:goto L68dc57;
-case 0x68dc5d:c.instructions+=1;goto B68dc5d;
-case 0x68dc60:goto L68dc60;
-case 0x68dc66:goto L68dc66;
-case 0x68dc69:c.instructions+=4;goto B68dc69;
-case 0x68dc6c:c.instructions+=3;goto B68dc6c;
-case 0x68dc70:c.instructions+=2;goto B68dc70;
-case 0x68dc74:c.instructions+=1;goto B68dc74;
-case 0x68dc79:goto L68dc79;
-case 0x68dc7f:c.instructions+=5;goto B68dc7f;
-case 0x68dc85:c.instructions+=4;goto B68dc85;
-case 0x68dc8b:c.instructions+=3;goto B68dc8b;
-case 0x68dc91:c.instructions+=2;goto B68dc91;
-case 0x68dc97:c.instructions+=1;goto B68dc97;
-case 0x68dc99:goto L68dc99;
-case 0x68dc9d:c.instructions+=38;goto B68dc9d;
-case 0x68dca2:c.instructions+=37;goto B68dca2;
-case 0x68dca7:c.instructions+=36;goto B68dca7;
-case 0x68dcac:c.instructions+=35;goto B68dcac;
-case 0x68dcb0:c.instructions+=34;goto B68dcb0;
-case 0x68dcb4:c.instructions+=33;goto B68dcb4;
-case 0x68dcb8:c.instructions+=32;goto B68dcb8;
-case 0x68dcbc:c.instructions+=31;goto B68dcbc;
-case 0x68dcc1:c.instructions+=30;goto B68dcc1;
-case 0x68dcc6:c.instructions+=29;goto B68dcc6;
-case 0x68dccb:c.instructions+=28;goto B68dccb;
-case 0x68dcd0:c.instructions+=27;goto B68dcd0;
-case 0x68dcd4:c.instructions+=26;goto B68dcd4;
-case 0x68dcd8:c.instructions+=25;goto B68dcd8;
-case 0x68dcdc:c.instructions+=24;goto B68dcdc;
-case 0x68dce0:c.instructions+=23;goto B68dce0;
-case 0x68dce4:c.instructions+=22;goto B68dce4;
-case 0x68dce9:c.instructions+=21;goto B68dce9;
-case 0x68dcee:c.instructions+=20;goto B68dcee;
-case 0x68dcf3:c.instructions+=19;goto B68dcf3;
-case 0x68dcf8:c.instructions+=18;goto B68dcf8;
-case 0x68dcfd:c.instructions+=17;goto B68dcfd;
-case 0x68dd02:c.instructions+=16;goto B68dd02;
-case 0x68dd07:c.instructions+=15;goto B68dd07;
-case 0x68dd0c:c.instructions+=14;goto B68dd0c;
-case 0x68dd11:c.instructions+=13;goto B68dd11;
-case 0x68dd16:c.instructions+=12;goto B68dd16;
-case 0x68dd1b:c.instructions+=11;goto B68dd1b;
-case 0x68dd1f:c.instructions+=10;goto B68dd1f;
-case 0x68dd23:c.instructions+=9;goto B68dd23;
-case 0x68dd27:c.instructions+=8;goto B68dd27;
-case 0x68dd2b:c.instructions+=7;goto B68dd2b;
-case 0x68dd33:c.instructions+=6;goto B68dd33;
-case 0x68dd3b:c.instructions+=5;goto B68dd3b;
-case 0x68dd43:c.instructions+=4;goto B68dd43;
-case 0x68dd4b:c.instructions+=3;goto B68dd4b;
-case 0x68dd51:c.instructions+=2;goto B68dd51;
-case 0x68dd57:c.instructions+=1;goto B68dd57;
-case 0x68dd5d:goto L68dd5d;
-case 0x68dd60:c.instructions+=1;goto B68dd60;
-case 0x68dd66:goto L68dd66;
-case 0x68dd69:c.instructions+=46;goto B68dd69;
-case 0x68dd6d:c.instructions+=45;goto B68dd6d;
-case 0x68dd70:c.instructions+=44;goto B68dd70;
-case 0x68dd73:c.instructions+=43;goto B68dd73;
-case 0x68dd76:c.instructions+=42;goto B68dd76;
-case 0x68dd7a:c.instructions+=41;goto B68dd7a;
-case 0x68dd7d:c.instructions+=40;goto B68dd7d;
-case 0x68dd80:c.instructions+=39;goto B68dd80;
-case 0x68dd83:c.instructions+=38;goto B68dd83;
-case 0x68dd86:c.instructions+=37;goto B68dd86;
-case 0x68dd89:c.instructions+=36;goto B68dd89;
-case 0x68dd8c:c.instructions+=35;goto B68dd8c;
-case 0x68dd8f:c.instructions+=34;goto B68dd8f;
-case 0x68dd93:c.instructions+=33;goto B68dd93;
-case 0x68dd98:c.instructions+=32;goto B68dd98;
-case 0x68dd9d:c.instructions+=31;goto B68dd9d;
-case 0x68dda0:c.instructions+=30;goto B68dda0;
-case 0x68dda3:c.instructions+=29;goto B68dda3;
-case 0x68dda8:c.instructions+=28;goto B68dda8;
-case 0x68ddad:c.instructions+=27;goto B68ddad;
-case 0x68ddb2:c.instructions+=26;goto B68ddb2;
-case 0x68ddb5:c.instructions+=25;goto B68ddb5;
-case 0x68ddb8:c.instructions+=24;goto B68ddb8;
-case 0x68ddbb:c.instructions+=23;goto B68ddbb;
-case 0x68ddc2:c.instructions+=22;goto B68ddc2;
-case 0x68ddca:c.instructions+=21;goto B68ddca;
-case 0x68ddd2:c.instructions+=20;goto B68ddd2;
-case 0x68ddda:c.instructions+=19;goto B68ddda;
-case 0x68dddd:c.instructions+=18;goto B68dddd;
-case 0x68dde0:c.instructions+=17;goto B68dde0;
-case 0x68dde3:c.instructions+=16;goto B68dde3;
-case 0x68dde6:c.instructions+=15;goto B68dde6;
-case 0x68dde9:c.instructions+=14;goto B68dde9;
-case 0x68ddec:c.instructions+=13;goto B68ddec;
-case 0x68ddef:c.instructions+=12;goto B68ddef;
-case 0x68ddf2:c.instructions+=11;goto B68ddf2;
-case 0x68ddf5:c.instructions+=10;goto B68ddf5;
-case 0x68ddf8:c.instructions+=9;goto B68ddf8;
-case 0x68ddfb:c.instructions+=8;goto B68ddfb;
-case 0x68ddff:c.instructions+=7;goto B68ddff;
-case 0x68de02:c.instructions+=6;goto B68de02;
-case 0x68de05:c.instructions+=5;goto B68de05;
-case 0x68de08:c.instructions+=4;goto B68de08;
-case 0x68de0c:c.instructions+=3;goto B68de0c;
-case 0x68de0f:c.instructions+=2;goto B68de0f;
-case 0x68de12:c.instructions+=1;goto B68de12;
-case 0x68de17:goto L68de17;
-case 0x68de1a:c.instructions+=1;goto B68de1a;
-case 0x68de1c:goto L68de1c;
-case 0x68de1f:c.instructions+=8;goto B68de1f;
-case 0x68de22:c.instructions+=7;goto B68de22;
-case 0x68de25:c.instructions+=6;goto B68de25;
-case 0x68de27:c.instructions+=5;goto B68de27;
-case 0x68de29:c.instructions+=4;goto B68de29;
-case 0x68de2e:c.instructions+=3;goto B68de2e;
-case 0x68de34:c.instructions+=2;goto B68de34;
-case 0x68de3a:c.instructions+=1;goto B68de3a;
-case 0x68de3f:goto L68de3f;
-case 0x68de45:c.instructions+=6;goto B68de45;
-case 0x68de47:c.instructions+=5;goto B68de47;
-case 0x68de4e:c.instructions+=4;goto B68de4e;
-case 0x68de55:c.instructions+=3;goto B68de55;
-case 0x68de5c:c.instructions+=2;goto B68de5c;
-case 0x68de62:c.instructions+=1;goto B68de62;
-case 0x68de80:goto L68de80;
-case 0x68de86:c.instructions+=10;goto B68de86;
-case 0x68de8d:c.instructions+=9;goto B68de8d;
-case 0x68de94:c.instructions+=8;goto B68de94;
-case 0x68de9b:c.instructions+=7;goto B68de9b;
-case 0x68de9d:c.instructions+=6;goto B68de9d;
-case 0x68dea0:c.instructions+=5;goto B68dea0;
-case 0x68dea6:c.instructions+=4;goto B68dea6;
-case 0x68deac:c.instructions+=3;goto B68deac;
-case 0x68deb2:c.instructions+=2;goto B68deb2;
-case 0x68deb5:c.instructions+=1;goto B68deb5;
-case 0x68deb7:goto L68deb7;
-case 0x68debd:c.instructions+=1;goto B68debd;
-case 0x68dec0:goto L68dec0;
-case 0x68dec6:goto L68dec6;
-case 0x68dec9:c.instructions+=4;goto B68dec9;
-case 0x68decc:c.instructions+=3;goto B68decc;
-case 0x68ded0:c.instructions+=2;goto B68ded0;
-case 0x68ded4:c.instructions+=1;goto B68ded4;
-case 0x68ded9:goto L68ded9;
-case 0x68dedf:c.instructions+=5;goto B68dedf;
-case 0x68dee5:c.instructions+=4;goto B68dee5;
-case 0x68deeb:c.instructions+=3;goto B68deeb;
-case 0x68def1:c.instructions+=2;goto B68def1;
-case 0x68def7:c.instructions+=1;goto B68def7;
-case 0x68def9:goto L68def9;
-case 0x68defd:c.instructions+=26;goto B68defd;
-case 0x68df02:c.instructions+=25;goto B68df02;
-case 0x68df07:c.instructions+=24;goto B68df07;
-case 0x68df0c:c.instructions+=23;goto B68df0c;
-case 0x68df10:c.instructions+=22;goto B68df10;
-case 0x68df14:c.instructions+=21;goto B68df14;
-case 0x68df18:c.instructions+=20;goto B68df18;
-case 0x68df1c:c.instructions+=19;goto B68df1c;
-case 0x68df21:c.instructions+=18;goto B68df21;
-case 0x68df26:c.instructions+=17;goto B68df26;
-case 0x68df2b:c.instructions+=16;goto B68df2b;
-case 0x68df30:c.instructions+=15;goto B68df30;
-case 0x68df34:c.instructions+=14;goto B68df34;
-case 0x68df38:c.instructions+=13;goto B68df38;
-case 0x68df3c:c.instructions+=12;goto B68df3c;
-case 0x68df40:c.instructions+=11;goto B68df40;
-case 0x68df44:c.instructions+=10;goto B68df44;
-case 0x68df49:c.instructions+=9;goto B68df49;
-case 0x68df4e:c.instructions+=8;goto B68df4e;
-case 0x68df53:c.instructions+=7;goto B68df53;
-case 0x68df58:c.instructions+=6;goto B68df58;
-case 0x68df5d:c.instructions+=5;goto B68df5d;
-case 0x68df62:c.instructions+=4;goto B68df62;
-case 0x68df67:c.instructions+=3;goto B68df67;
-case 0x68df6d:c.instructions+=2;goto B68df6d;
-case 0x68df73:c.instructions+=1;goto B68df73;
-case 0x68df79:goto L68df79;
-case 0x68df7c:c.instructions+=1;goto B68df7c;
-case 0x68df7e:goto L68df7e;
-case 0x68df81:c.instructions+=31;goto B68df81;
-case 0x68df85:c.instructions+=30;goto B68df85;
-case 0x68df88:c.instructions+=29;goto B68df88;
-case 0x68df8b:c.instructions+=28;goto B68df8b;
-case 0x68df8e:c.instructions+=27;goto B68df8e;
-case 0x68df92:c.instructions+=26;goto B68df92;
-case 0x68df95:c.instructions+=25;goto B68df95;
-case 0x68df98:c.instructions+=24;goto B68df98;
-case 0x68df9b:c.instructions+=23;goto B68df9b;
-case 0x68df9e:c.instructions+=22;goto B68df9e;
-case 0x68dfa1:c.instructions+=21;goto B68dfa1;
-case 0x68dfa4:c.instructions+=20;goto B68dfa4;
-case 0x68dfa8:c.instructions+=19;goto B68dfa8;
-case 0x68dfad:c.instructions+=18;goto B68dfad;
-case 0x68dfb0:c.instructions+=17;goto B68dfb0;
-case 0x68dfb5:c.instructions+=16;goto B68dfb5;
-case 0x68dfba:c.instructions+=15;goto B68dfba;
-case 0x68dfbd:c.instructions+=14;goto B68dfbd;
-case 0x68dfc0:c.instructions+=13;goto B68dfc0;
-case 0x68dfc3:c.instructions+=12;goto B68dfc3;
-case 0x68dfc6:c.instructions+=11;goto B68dfc6;
-case 0x68dfc9:c.instructions+=10;goto B68dfc9;
-case 0x68dfcc:c.instructions+=9;goto B68dfcc;
-case 0x68dfcf:c.instructions+=8;goto B68dfcf;
-case 0x68dfd3:c.instructions+=7;goto B68dfd3;
-case 0x68dfd6:c.instructions+=6;goto B68dfd6;
-case 0x68dfd9:c.instructions+=5;goto B68dfd9;
-case 0x68dfdc:c.instructions+=4;goto B68dfdc;
-case 0x68dfe0:c.instructions+=3;goto B68dfe0;
-case 0x68dfe3:c.instructions+=2;goto B68dfe3;
-case 0x68dfe6:c.instructions+=1;goto B68dfe6;
-case 0x68dfe8:goto L68dfe8;
-case 0x68dfeb:c.instructions+=1;goto B68dfeb;
-case 0x68dfed:goto L68dfed;
-case 0x68dff0:c.instructions+=6;goto B68dff0;
-case 0x68dff3:c.instructions+=5;goto B68dff3;
-case 0x68dff6:c.instructions+=4;goto B68dff6;
-case 0x68dff8:c.instructions+=3;goto B68dff8;
-case 0x68dffa:c.instructions+=2;goto B68dffa;
-case 0x68dfff:c.instructions+=1;goto B68dfff;
-default:missing_instruction(c.pc);}
-B68d002:L68d002:{c.instructions+=16;NFSU2_TR(0x68d002);
+B68d002:L68d002:{bud-=13;NFSU2_TR(0x68d002);
 __builtin_memmove((R+5056),(R+4992),4);
 __builtin_memmove((R+5060),(R+4996),4);
 __builtin_memmove((R+5064),(R+5000),4);
@@ -1134,59 +152,96 @@ w4(R+4928,b32(f32(r4(R+4928))*f32(r4(R+4672))));
 B68d031:{NFSU2_TR(0x68d031);
 u8 U[4];
 __builtin_memmove((U+0),(R+4800),4);
-s4(u32(r4(R+4)),r4(U+0));
+s4(u32(r4(G+4)),r4(U+0));
 }
 B68d035:{NFSU2_TR(0x68d035);
 u8 U[8];
-w4(U+0,u32(u32(r4(R+4))+u32(u32(0x4ull))));
+w4(U+0,u32(u32(r4(G+4))+u32(u32(0x4ull))));
 __builtin_memmove((U+4),(R+4864),4);
 s4(u32(r4(U+0)),r4(U+4));
 }
 B68d03a:{NFSU2_TR(0x68d03a);
 u8 U[8];
-w4(U+0,u32(u32(r4(R+4))+u32(u32(0x8ull))));
+w4(U+0,u32(u32(r4(G+4))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),(R+4928),4);
 s4(u32(r4(U+0)),r4(U+4));
+{[[clang::musttail]] return blk_68d03f(ARGS);}
 }
-B68d03f:{NFSU2_TR(0x68d03f);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68d03f(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d03f:L68d03f:{bud-=3;NFSU2_TR(0x68d03f);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68d042:{NFSU2_TR(0x68d042);
 u8 U[4];
-__builtin_memmove((U+0),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
 __builtin_memmove((R+20),(U+0),4);
 }
 B68d043:{NFSU2_TR(0x68d043);
-__builtin_memmove((R+644),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x8ull))));
+__builtin_memmove((R+644),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x8ull))));
 {u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
 }
-B68d046:L68d046:{c.instructions+=18;NFSU2_TR(0x68d046);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68d046(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+516,F+4,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d046:L68d046:{bud-=18;NFSU2_TR(0x68d046);
 __builtin_memmove((R+28),(R+28),4);
 }
 B68d048:{NFSU2_TR(0x68d048);
 u8 U[4];
 __builtin_memmove((U+0),(R+20),4);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x4ull))));
-s4(u32(r4(R+16)),r4(U+0));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
 }
 B68d049:{NFSU2_TR(0x68d049);
-__builtin_memmove((R+20),(R+16),4);
+__builtin_memmove((R+20),(G+16),4);
 }
 B68d04b:{NFSU2_TR(0x68d04b);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0xcull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68d04e:{NFSU2_TR(0x68d04e);
 u8 U[4];
-__builtin_memmove((U+0),gp(u32(r4(R+0))),4);
+__builtin_memmove((U+0),gp(u32(r4(G+0))),4);
 __builtin_memmove((R+4608),(U+0),4);
 w4(R+4612,u32(0x0ull));
 w4(R+4616,u32(0x0ull));
@@ -1194,7 +249,7 @@ w4(R+4620,u32(0x0ull));
 }
 B68d052:{NFSU2_TR(0x68d052);
 u8 U[8];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x4ull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x4ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
 __builtin_memmove((R+4672),(U+4),4);
 w4(R+4676,u32(0x0ull));
@@ -1203,7 +258,7 @@ w4(R+4684,u32(0x0ull));
 }
 B68d057:{NFSU2_TR(0x68d057);
 u8 U[8];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x8ull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
 __builtin_memmove((R+4736),(U+4),4);
 w4(R+4740,u32(0x0ull));
@@ -1247,65 +302,83 @@ B68d079:{NFSU2_TR(0x68d079);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+4),(U+4),4);
+__builtin_memmove((G+4),(U+4),4);
 }
 B68d07c:{NFSU2_TR(0x68d07c);
 u8 U[4];
 w1(U+0,u8(std::isnan(f32(r4(R+4608)))));
 w1(U+1,u8(std::isnan(f32(m4(0x7bab10)))));
-w1(R+514,u8((r1(U+0))||(r1(U+1))));
+w1(F+2,u8((r1(U+0))||(r1(U+1))));
 w1(U+2,u8(f32(r4(R+4608))==f32(m4(0x7bab10))));
-w1(R+518,u8(u32(r1(R+514))|u32(r1(U+2))));
+w1(F+6,u8(u32(r1(F+2))|u32(r1(U+2))));
 w1(U+3,u8(f32(r4(R+4608))<f32(m4(0x7bab10))));
-w1(R+512,u8(u32(r1(R+514))|u32(r1(U+3))));
-w1(R+523,u8(0x0ull));
-w1(R+516,u8(0x0ull));
-w1(R+519,u8(0x0ull));
+w1(F+0,u8(u32(r1(F+2))|u32(r1(U+3))));
+w1(F+11,u8(0x0ull));
+w1(F+4,u8(0x0ull));
+w1(F+7,u8(0x0ull));
 }
 B68d083:{NFSU2_TR(0x68d083);
 u8 U[1];
-w1(U+0,u8(!(r1(R+512))));
-if(r1(U+0)){{goto L68d096;}}
+w1(U+0,u8(!(r1(F+0))));
+if(r1(U+0)){{__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+516,F+4,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);[[clang::musttail]] return blk_68d096(ARGS);}}
 }
-B68d085:L68d085:{c.instructions+=6;NFSU2_TR(0x68d085);
+B68d085:L68d085:{bud-=6;NFSU2_TR(0x68d085);
 u8 U[6];
-w1(R+512,u8(0x0ull));
-w1(R+523,u8(0x0ull));
-w4(R+0,u32(u32(r4(R+0))^u32(r4(R+0))));
-w1(R+519,u8(s32(r4(R+0))<s32(u32(0x0ull))));
-w1(R+518,u8((r4(R+0))==(u32(0x0ull))));
-w4(U+0,u32(u32(r4(R+0))&u32(u32(0xffull))));
+w1(F+0,u8(0x0ull));
+w1(F+11,u8(0x0ull));
+w4(G+0,u32(u32(r4(G+0))^u32(r4(G+0))));
+w1(F+7,u8(s32(r4(G+0))<s32(u32(0x0ull))));
+w1(F+6,u8((r4(G+0))==(u32(0x0ull))));
+w4(U+0,u32(u32(r4(G+0))&u32(u32(0xffull))));
 w1(U+4,u8(__builtin_popcountll(u64(r4(U+0)))));
 w1(U+5,u8(u32(r1(U+4))&u32(u8(0x1ull))));
-w1(R+514,u8((r1(U+5))==(u8(0x0ull))));
+w1(F+2,u8((r1(U+5))==(u8(0x0ull))));
 }
 B68d087:{NFSU2_TR(0x68d087);
 u8 U[4];
-__builtin_memmove((U+0),(R+0),4);
-s4(u32(r4(R+4)),r4(U+0));
+__builtin_memmove((U+0),(G+0),4);
+s4(u32(r4(G+4)),r4(U+0));
 }
 B68d089:{NFSU2_TR(0x68d089);
 u8 U[8];
-w4(U+0,u32(u32(r4(R+4))+u32(u32(0x4ull))));
-__builtin_memmove((U+4),(R+0),4);
+w4(U+0,u32(u32(r4(G+4))+u32(u32(0x4ull))));
+__builtin_memmove((U+4),(G+0),4);
 s4(u32(r4(U+0)),r4(U+4));
 }
 B68d08c:{NFSU2_TR(0x68d08c);
 u8 U[8];
-w4(U+0,u32(u32(r4(R+4))+u32(u32(0x8ull))));
-__builtin_memmove((U+4),(R+0),4);
+w4(U+0,u32(u32(r4(G+4))+u32(u32(0x8ull))));
+__builtin_memmove((U+4),(G+0),4);
 s4(u32(r4(U+0)),r4(U+4));
 }
 B68d08f:{NFSU2_TR(0x68d08f);
 u8 U[8];
-w4(U+0,u32(u32(r4(R+4))+u32(u32(0xcull))));
-__builtin_memmove((U+4),(R+0),4);
+w4(U+0,u32(u32(r4(G+4))+u32(u32(0xcull))));
+__builtin_memmove((U+4),(G+0),4);
 s4(u32(r4(U+0)),r4(U+4));
 }
 B68d092:{NFSU2_TR(0x68d092);
-{goto L68d0e1;}
+{__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+516,F+4,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);[[clang::musttail]] return blk_68d0e1(ARGS);}
 }
-B68d096:L68d096:{c.instructions+=16;NFSU2_TR(0x68d096);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68d096(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d096:L68d096:{bud-=16;NFSU2_TR(0x68d096);
 {wv<16>((R+4992),uo::rsqrtss<16>(rv<16>((R+4992)),rv<16>((R+4608))));}
 }
 B68d09a:{NFSU2_TR(0x68d09a);
@@ -1346,101 +419,157 @@ w4(R+4928,b32(f32(r4(R+4928))*f32(r4(R+4672))));
 }
 B68d0c9:{NFSU2_TR(0x68d0c9);
 u8 U[8];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0xcull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0xcull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
 w4(R+4672,b32(f32(r4(R+4672))*f32(r4(U+4))));
 }
 B68d0ce:{NFSU2_TR(0x68d0ce);
 u8 U[4];
 __builtin_memmove((U+0),(R+4800),4);
-s4(u32(r4(R+4)),r4(U+0));
+s4(u32(r4(G+4)),r4(U+0));
 }
 B68d0d2:{NFSU2_TR(0x68d0d2);
 u8 U[8];
-w4(U+0,u32(u32(r4(R+4))+u32(u32(0x4ull))));
+w4(U+0,u32(u32(r4(G+4))+u32(u32(0x4ull))));
 __builtin_memmove((U+4),(R+4864),4);
 s4(u32(r4(U+0)),r4(U+4));
 }
 B68d0d7:{NFSU2_TR(0x68d0d7);
 u8 U[8];
-w4(U+0,u32(u32(r4(R+4))+u32(u32(0x8ull))));
+w4(U+0,u32(u32(r4(G+4))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),(R+4928),4);
 s4(u32(r4(U+0)),r4(U+4));
 }
 B68d0dc:{NFSU2_TR(0x68d0dc);
 u8 U[8];
-w4(U+0,u32(u32(r4(R+4))+u32(u32(0xcull))));
+w4(U+0,u32(u32(r4(G+4))+u32(u32(0xcull))));
 __builtin_memmove((U+4),(R+4672),4);
 s4(u32(r4(U+0)),r4(U+4));
+{[[clang::musttail]] return blk_68d0e1(ARGS);}
 }
-B68d0e1:L68d0e1:{c.instructions+=3;NFSU2_TR(0x68d0e1);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68d0e1(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d0e1:L68d0e1:{bud-=3;NFSU2_TR(0x68d0e1);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68d0e4:{NFSU2_TR(0x68d0e4);
 u8 U[4];
-__builtin_memmove((U+0),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
 __builtin_memmove((R+20),(U+0),4);
 }
 B68d0e5:{NFSU2_TR(0x68d0e5);
-__builtin_memmove((R+644),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x8ull))));
+__builtin_memmove((R+644),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x8ull))));
 {u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
 }
-B68d0e8:L68d0e8:{c.instructions+=62;NFSU2_TR(0x68d0e8);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68d0e8(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d0e8:L68d0e8:{bud-=8;NFSU2_TR(0x68d0e8);
 __builtin_memmove((R+28),(R+28),4);
 }
 B68d0ea:{NFSU2_TR(0x68d0ea);
 u8 U[4];
 __builtin_memmove((U+0),(R+12),4);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x4ull))));
-s4(u32(r4(R+16)),r4(U+0));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
 }
 B68d0eb:{NFSU2_TR(0x68d0eb);
-__builtin_memmove((R+12),(R+16),4);
+__builtin_memmove((R+12),(G+16),4);
 }
 B68d0ed:{NFSU2_TR(0x68d0ed);
 u8 U[4];
-__builtin_memmove((U+0),(R+4),4);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x4ull))));
-s4(u32(r4(R+16)),r4(U+0));
+__builtin_memmove((U+0),(G+4),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
 }
 B68d0ee:{NFSU2_TR(0x68d0ee);
-w4(R+16,u32(u32(r4(R+16))&u32(u32(0xfffffff0ull))));
+w4(G+16,u32(u32(r4(G+16))&u32(u32(0xfffffff0ull))));
 }
 B68d0f1:{NFSU2_TR(0x68d0f1);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
 }
 B68d0f4:{NFSU2_TR(0x68d0f4);
 u8 U[4];
 __builtin_memmove((U+0),(R+20),4);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x4ull))));
-s4(u32(r4(R+16)),r4(U+0));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
 }
 B68d0f5:{NFSU2_TR(0x68d0f5);
-__builtin_memmove((R+20),(R+16),4);
+__builtin_memmove((R+20),(G+16),4);
+{[[clang::musttail]] return blk_68d0f7(ARGS);}
 }
-B68d0f7:{NFSU2_TR(0x68d0f7);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68d0f7(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d0f7:L68d0f7:{bud-=54;NFSU2_TR(0x68d0f7);
 u8 U[6];
-w1(R+512,u8((r4(R+16))<(u32(0x10ull))));
-w1(R+523,sborrow<u32>(r4(R+16),u32(0x10ull)));
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x10ull))));
-w1(R+519,u8(s32(r4(R+16))<s32(u32(0x0ull))));
-w1(R+518,u8((r4(R+16))==(u32(0x0ull))));
-w4(U+0,u32(u32(r4(R+16))&u32(u32(0xffull))));
+w1(F+0,u8((r4(G+16))<(u32(0x10ull))));
+w1(F+11,sborrow<u32>(r4(G+16),u32(0x10ull)));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x10ull))));
+w1(F+7,u8(s32(r4(G+16))<s32(u32(0x0ull))));
+w1(F+6,u8((r4(G+16))==(u32(0x0ull))));
+w4(U+0,u32(u32(r4(G+16))&u32(u32(0xffull))));
 w1(U+4,u8(__builtin_popcountll(u64(r4(U+0)))));
 w1(U+5,u8(u32(r1(U+4))&u32(u8(0x1ull))));
-w1(R+514,u8((r1(U+5))==(u8(0x0ull))));
+w1(F+2,u8((r1(U+5))==(u8(0x0ull))));
 }
 B68d0fa:{NFSU2_TR(0x68d0fa);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+12))+u32(u32(0xcull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68d0fd:{NFSU2_TR(0x68d0fd);
 u8 U[36];
@@ -1454,12 +583,12 @@ __builtin_memmove((R+4876),(U+32),4);
 }
 B68d101:{NFSU2_TR(0x68d101);
 u8 U[8];
-__builtin_memmove((U+0),gp(u32(r4(R+0))),8);
+__builtin_memmove((U+0),gp(u32(r4(G+0))),8);
 __builtin_memmove((R+4864),(U+0),8);
 }
 B68d104:{NFSU2_TR(0x68d104);
 u8 U[12];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x8ull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),8);
 __builtin_memmove((R+4872),(U+4),8);
 }
@@ -1467,7 +596,7 @@ B68d108:{NFSU2_TR(0x68d108);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+12))+u32(u32(0x10ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68d10b:{NFSU2_TR(0x68d10b);
 u8 U[36];
@@ -1481,12 +610,12 @@ __builtin_memmove((R+4620),(U+32),4);
 }
 B68d10f:{NFSU2_TR(0x68d10f);
 u8 U[8];
-__builtin_memmove((U+0),gp(u32(r4(R+0))),8);
+__builtin_memmove((U+0),gp(u32(r4(G+0))),8);
 __builtin_memmove((R+4608),(U+0),8);
 }
 B68d112:{NFSU2_TR(0x68d112);
 u8 U[12];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x8ull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),8);
 __builtin_memmove((R+4616),(U+4),8);
 }
@@ -1494,7 +623,7 @@ B68d116:{NFSU2_TR(0x68d116);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+12))+u32(u32(0x14ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68d119:{NFSU2_TR(0x68d119);
 u8 U[36];
@@ -1508,12 +637,12 @@ __builtin_memmove((R+4748),(U+32),4);
 }
 B68d11d:{NFSU2_TR(0x68d11d);
 u8 U[8];
-__builtin_memmove((U+0),gp(u32(r4(R+0))),8);
+__builtin_memmove((U+0),gp(u32(r4(G+0))),8);
 __builtin_memmove((R+4736),(U+0),8);
 }
 B68d120:{NFSU2_TR(0x68d120);
 u8 U[12];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x8ull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),8);
 __builtin_memmove((R+4744),(U+4),8);
 }
@@ -1521,7 +650,7 @@ B68d124:{NFSU2_TR(0x68d124);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+12))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68d127:{NFSU2_TR(0x68d127);
 u8 U[76];
@@ -2386,64 +1515,82 @@ w4(R+4620,u32(u32(r4(R+4620))^u32(r4(R+4876))));
 B68d19d:{NFSU2_TR(0x68d19d);
 u8 U[16];
 __builtin_memmove((U+0),(R+4608),16);
-__builtin_memmove(gp(u32(r4(R+0))),(U+0),16);
+__builtin_memmove(gp(u32(r4(G+0))),(U+0),16);
 }
 B68d1a0:{NFSU2_TR(0x68d1a0);
-__builtin_memmove((R+16),(R+20),4);
+__builtin_memmove((G+16),(R+20),4);
 }
 B68d1a2:{NFSU2_TR(0x68d1a2);
 u8 U[4];
-__builtin_memmove((U+0),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
 __builtin_memmove((R+20),(U+0),4);
 }
 B68d1a3:{NFSU2_TR(0x68d1a3);
-__builtin_memmove((R+16),(R+12),4);
+__builtin_memmove((G+16),(R+12),4);
 }
 B68d1a5:{NFSU2_TR(0x68d1a5);
 u8 U[4];
-__builtin_memmove((U+0),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
 __builtin_memmove((R+12),(U+0),4);
 }
 B68d1a6:{NFSU2_TR(0x68d1a6);
-__builtin_memmove((R+644),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x10ull))));
+__builtin_memmove((R+644),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x10ull))));
 {u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
 }
-B68d1a9:L68d1a9:{c.instructions+=70;NFSU2_TR(0x68d1a9);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68d1a9(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d1a9:L68d1a9:{bud-=70;NFSU2_TR(0x68d1a9);
 __builtin_memmove((R+28),(R+28),4);
 }
 B68d1ab:{NFSU2_TR(0x68d1ab);
 u8 U[4];
 __builtin_memmove((U+0),(R+12),4);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x4ull))));
-s4(u32(r4(R+16)),r4(U+0));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
 }
 B68d1ac:{NFSU2_TR(0x68d1ac);
-__builtin_memmove((R+12),(R+16),4);
+__builtin_memmove((R+12),(G+16),4);
 }
 B68d1ae:{NFSU2_TR(0x68d1ae);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x8ull))));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x8ull))));
 }
 B68d1b1:{NFSU2_TR(0x68d1b1);
-w4(R+16,u32(u32(r4(R+16))&u32(u32(0xfffffff0ull))));
+w4(G+16,u32(u32(r4(G+16))&u32(u32(0xfffffff0ull))));
 }
 B68d1b4:{NFSU2_TR(0x68d1b4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x8ull))));
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x8ull))));
 }
 B68d1b7:{NFSU2_TR(0x68d1b7);
 u8 U[4];
 __builtin_memmove((U+0),(R+20),4);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x4ull))));
-s4(u32(r4(R+16)),r4(U+0));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
 }
 B68d1b8:{NFSU2_TR(0x68d1b8);
 u8 U[4];
 __builtin_memmove((U+0),(R+20),4);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x4ull))));
-s4(u32(r4(R+16)),r4(U+0));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
 }
 B68d1b9:{NFSU2_TR(0x68d1b9);
 u8 U[8];
@@ -2453,24 +1600,24 @@ __builtin_memmove((R+20),(U+4),4);
 }
 B68d1bc:{NFSU2_TR(0x68d1bc);
 u8 U[8];
-w4(U+0,u32(u32(u32(0x4ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x4ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),(R+20),4);
 s4(u32(r4(U+0)),r4(U+4));
 }
 B68d1c0:{NFSU2_TR(0x68d1c0);
-__builtin_memmove((R+20),(R+16),4);
+__builtin_memmove((R+20),(G+16),4);
 }
 B68d1c2:{NFSU2_TR(0x68d1c2);
 u8 U[6];
-w1(R+512,u8((r4(R+16))<(u32(0x10ull))));
-w1(R+523,sborrow<u32>(r4(R+16),u32(0x10ull)));
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x10ull))));
-w1(R+519,u8(s32(r4(R+16))<s32(u32(0x0ull))));
-w1(R+518,u8((r4(R+16))==(u32(0x0ull))));
-w4(U+0,u32(u32(r4(R+16))&u32(u32(0xffull))));
+w1(F+0,u8((r4(G+16))<(u32(0x10ull))));
+w1(F+11,sborrow<u32>(r4(G+16),u32(0x10ull)));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x10ull))));
+w1(F+7,u8(s32(r4(G+16))<s32(u32(0x0ull))));
+w1(F+6,u8((r4(G+16))==(u32(0x0ull))));
+w4(U+0,u32(u32(r4(G+16))&u32(u32(0xffull))));
 w1(U+4,u8(__builtin_popcountll(u64(r4(U+0)))));
 w1(U+5,u8(u32(r1(U+4))&u32(u8(0x1ull))));
-w1(R+514,u8((r1(U+5))==(u8(0x0ull))));
+w1(F+2,u8((r1(U+5))==(u8(0x0ull))));
 }
 B68d1c5:{NFSU2_TR(0x68d1c5);
 u8 U[8];
@@ -2482,7 +1629,7 @@ B68d1c8:{NFSU2_TR(0x68d1c8);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+12))+u32(u32(0x14ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+4),(U+4),4);
+__builtin_memmove((G+4),(U+4),4);
 }
 B68d1cb:{NFSU2_TR(0x68d1cb);
 u8 U[8];
@@ -2495,7 +1642,7 @@ w4(R+4620,u32(0x0ull));
 }
 B68d1d0:{NFSU2_TR(0x68d1d0);
 u8 U[8];
-w4(U+0,u32(u32(r4(R+4))+u32(u32(0x8ull))));
+w4(U+0,u32(u32(r4(G+4))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
 __builtin_memmove((R+4672),(U+4),4);
 w4(R+4676,u32(0x0ull));
@@ -2509,7 +1656,7 @@ __builtin_memmove((R+4616),(U+0),8);
 }
 B68d1d8:{NFSU2_TR(0x68d1d8);
 u8 U[8];
-__builtin_memmove((U+0),gp(u32(r4(R+4))),8);
+__builtin_memmove((U+0),gp(u32(r4(G+4))),8);
 __builtin_memmove((R+4680),(U+0),8);
 }
 B68d1db:{NFSU2_TR(0x68d1db);
@@ -2522,7 +1669,7 @@ B68d1de:{NFSU2_TR(0x68d1de);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+12))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68d1e1:{NFSU2_TR(0x68d1e1);
 u8 U[8];
@@ -3186,7 +2333,7 @@ w4(R+4876,b32(f32(r4(R+4876))*f32(r4(R+4812))));
 B68d268:{NFSU2_TR(0x68d268);
 u8 U[16];
 __builtin_memmove((U+0),(R+4800),16);
-__builtin_memmove(gp(u32(r4(R+0))),(U+0),16);
+__builtin_memmove(gp(u32(r4(G+0))),(U+0),16);
 }
 B68d26b:{NFSU2_TR(0x68d26b);
 __builtin_memmove((R+4992),(R+4872),8);
@@ -3284,61 +2431,79 @@ w4(R+4620,u32(u32(r4(R+4620))^u32(r4(U+12))));
 }
 B68d284:{NFSU2_TR(0x68d284);
 u8 U[8];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0xcull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0xcull))));
 __builtin_memmove((U+4),(R+4608),4);
 s4(u32(r4(U+0)),r4(U+4));
 }
 B68d289:{NFSU2_TR(0x68d289);
-__builtin_memmove((R+16),(R+20),4);
+__builtin_memmove((G+16),(R+20),4);
 }
 B68d28b:{NFSU2_TR(0x68d28b);
 u8 U[4];
-__builtin_memmove((U+0),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
 __builtin_memmove((R+20),(U+0),4);
 }
 B68d28c:{NFSU2_TR(0x68d28c);
-__builtin_memmove((R+16),(R+12),4);
+__builtin_memmove((G+16),(R+12),4);
 }
 B68d28e:{NFSU2_TR(0x68d28e);
 u8 U[4];
-__builtin_memmove((U+0),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
 __builtin_memmove((R+12),(U+0),4);
 }
 B68d28f:{NFSU2_TR(0x68d28f);
-__builtin_memmove((R+644),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x10ull))));
+__builtin_memmove((R+644),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x10ull))));
 {u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
 }
-B68d295:L68d295:{c.instructions+=18;NFSU2_TR(0x68d295);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68d295(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+516,F+4,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d295:L68d295:{bud-=18;NFSU2_TR(0x68d295);
 __builtin_memmove((R+28),(R+28),4);
 }
 B68d297:{NFSU2_TR(0x68d297);
 u8 U[4];
 __builtin_memmove((U+0),(R+20),4);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x4ull))));
-s4(u32(r4(R+16)),r4(U+0));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
 }
 B68d298:{NFSU2_TR(0x68d298);
-__builtin_memmove((R+20),(R+16),4);
+__builtin_memmove((R+20),(G+16),4);
 }
 B68d29a:{NFSU2_TR(0x68d29a);
 u8 U[4];
 __builtin_memmove((U+0),(R+12),4);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x4ull))));
-s4(u32(r4(R+16)),r4(U+0));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
 }
 B68d29b:{NFSU2_TR(0x68d29b);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x10ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68d29e:{NFSU2_TR(0x68d29e);
 u8 U[32];
-__builtin_memmove((U+0),gp(u32(r4(R+0))),16);
+__builtin_memmove((U+0),gp(u32(r4(G+0))),16);
 __builtin_memmove((U+16),(U+0),16);
 __builtin_memmove((R+4672),(U+16),4);
 __builtin_memmove((R+4676),(U+20),4);
@@ -3469,19 +2634,19 @@ B68d2c5:{NFSU2_TR(0x68d2c5);
 u8 U[4];
 w1(U+0,u8(std::isnan(f32(r4(R+4736)))));
 w1(U+1,u8(std::isnan(f32(r4(R+4608)))));
-w1(R+514,u8((r1(U+0))||(r1(U+1))));
+w1(F+2,u8((r1(U+0))||(r1(U+1))));
 w1(U+2,u8(f32(r4(R+4736))==f32(r4(R+4608))));
-w1(R+518,u8(u32(r1(R+514))|u32(r1(U+2))));
+w1(F+6,u8(u32(r1(F+2))|u32(r1(U+2))));
 w1(U+3,u8(f32(r4(R+4736))<f32(r4(R+4608))));
-w1(R+512,u8(u32(r1(R+514))|u32(r1(U+3))));
-w1(R+523,u8(0x0ull));
-w1(R+516,u8(0x0ull));
-w1(R+519,u8(0x0ull));
+w1(F+0,u8(u32(r1(F+2))|u32(r1(U+3))));
+w1(F+11,u8(0x0ull));
+w1(F+4,u8(0x0ull));
+w1(F+7,u8(0x0ull));
 }
 B68d2c8:{NFSU2_TR(0x68d2c8);
-if(r1(R+518)){{goto L68d2fb;}}
+if(r1(F+6)){{__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+516,F+4,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);[[clang::musttail]] return blk_68d2fb(ARGS);}}
 }
-B68d2ca:L68d2ca:{c.instructions+=11;NFSU2_TR(0x68d2ca);
+B68d2ca:L68d2ca:{bud-=11;NFSU2_TR(0x68d2ca);
 __builtin_memmove((R+4992),(R+4736),4);
 __builtin_memmove((R+4996),(R+4740),4);
 __builtin_memmove((R+5000),(R+4744),4);
@@ -3593,16 +2758,35 @@ w4(R+4736,b32(f32(r4(R+4736))*f32(r4(R+4672))));
 w4(R+4740,b32(f32(r4(R+4740))*f32(r4(R+4676))));
 w4(R+4744,b32(f32(r4(R+4744))*f32(r4(R+4680))));
 w4(R+4748,b32(f32(r4(R+4748))*f32(r4(R+4684))));
+{__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+516,F+4,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);[[clang::musttail]] return blk_68d2fb(ARGS);}
 }
-B68d2fb:L68d2fb:{c.instructions+=44;NFSU2_TR(0x68d2fb);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68d2fb(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d2fb:L68d2fb:{bud-=44;NFSU2_TR(0x68d2fb);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0xcull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+4),(U+4),4);
+__builtin_memmove((G+4),(U+4),4);
 }
 B68d2fe:{NFSU2_TR(0x68d2fe);
 u8 U[32];
-__builtin_memmove((U+0),gp(u32(r4(R+4))),16);
+__builtin_memmove((U+0),gp(u32(r4(G+4))),16);
 __builtin_memmove((U+16),(U+0),16);
 __builtin_memmove((R+4864),(U+16),4);
 __builtin_memmove((R+4868),(U+20),4);
@@ -4236,49 +3420,67 @@ B68d385:{NFSU2_TR(0x68d385);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68d388:{NFSU2_TR(0x68d388);
 u8 U[4];
-__builtin_memmove((U+0),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
 __builtin_memmove((R+12),(U+0),4);
 }
 B68d389:{NFSU2_TR(0x68d389);
 u8 U[4];
-__builtin_memmove((U+0),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
 __builtin_memmove((R+20),(U+0),4);
 }
 B68d38a:{NFSU2_TR(0x68d38a);
-__builtin_memmove((R+644),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0xcull))));
+__builtin_memmove((R+644),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0xcull))));
 {u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
 }
-B68d38d:L68d38d:{c.instructions+=59;NFSU2_TR(0x68d38d);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68d38d(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d38d:L68d38d:{bud-=59;NFSU2_TR(0x68d38d);
 __builtin_memmove((R+28),(R+28),4);
 }
 B68d38f:{NFSU2_TR(0x68d38f);
 u8 U[4];
 __builtin_memmove((U+0),(R+12),4);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x4ull))));
-s4(u32(r4(R+16)),r4(U+0));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
 }
 B68d390:{NFSU2_TR(0x68d390);
-__builtin_memmove((R+12),(R+16),4);
+__builtin_memmove((R+12),(G+16),4);
 }
 B68d392:{NFSU2_TR(0x68d392);
 u8 U[4];
 __builtin_memmove((U+0),(R+20),4);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x4ull))));
-s4(u32(r4(R+16)),r4(U+0));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
 }
 B68d393:{NFSU2_TR(0x68d393);
 u8 U[4];
 __builtin_memmove((U+0),(R+20),4);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x4ull))));
-s4(u32(r4(R+16)),r4(U+0));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
 }
 B68d394:{NFSU2_TR(0x68d394);
 u8 U[8];
@@ -4288,24 +3490,24 @@ __builtin_memmove((R+20),(U+4),4);
 }
 B68d397:{NFSU2_TR(0x68d397);
 u8 U[8];
-w4(U+0,u32(u32(u32(0x4ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x4ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),(R+20),4);
 s4(u32(r4(U+0)),r4(U+4));
 }
 B68d39b:{NFSU2_TR(0x68d39b);
-__builtin_memmove((R+20),(R+16),4);
+__builtin_memmove((R+20),(G+16),4);
 }
 B68d39d:{NFSU2_TR(0x68d39d);
 u8 U[6];
-w1(R+512,u8((r4(R+16))<(u32(0x10ull))));
-w1(R+523,sborrow<u32>(r4(R+16),u32(0x10ull)));
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x10ull))));
-w1(R+519,u8(s32(r4(R+16))<s32(u32(0x0ull))));
-w1(R+518,u8((r4(R+16))==(u32(0x0ull))));
-w4(U+0,u32(u32(r4(R+16))&u32(u32(0xffull))));
+w1(F+0,u8((r4(G+16))<(u32(0x10ull))));
+w1(F+11,sborrow<u32>(r4(G+16),u32(0x10ull)));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x10ull))));
+w1(F+7,u8(s32(r4(G+16))<s32(u32(0x0ull))));
+w1(F+6,u8((r4(G+16))==(u32(0x0ull))));
+w4(U+0,u32(u32(r4(G+16))&u32(u32(0xffull))));
 w1(U+4,u8(__builtin_popcountll(u64(r4(U+0)))));
 w1(U+5,u8(u32(r1(U+4))&u32(u8(0x1ull))));
-w1(R+514,u8((r1(U+5))==(u8(0x0ull))));
+w1(F+2,u8((r1(U+5))==(u8(0x0ull))));
 }
 B68d3a0:{NFSU2_TR(0x68d3a0);
 u8 U[8];
@@ -4317,7 +3519,7 @@ B68d3a3:{NFSU2_TR(0x68d3a3);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+12))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68d3a6:{NFSU2_TR(0x68d3a6);
 u8 U[12];
@@ -4933,116 +4135,134 @@ w4(R+4876,b32(f32(r4(R+4876))+f32(r4(U+12))));
 B68d44b:{NFSU2_TR(0x68d44b);
 u8 U[16];
 __builtin_memmove((U+0),(R+4608),16);
-__builtin_memmove(gp(u32(r4(R+0))),(U+0),16);
+__builtin_memmove(gp(u32(r4(G+0))),(U+0),16);
 }
 B68d44e:{NFSU2_TR(0x68d44e);
 u8 U[20];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x10ull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x10ull))));
 __builtin_memmove((U+4),(R+4864),16);
 __builtin_memmove(gp(u32(r4(U+0))),(U+4),16);
 }
 B68d452:{NFSU2_TR(0x68d452);
 u8 U[20];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x20ull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x20ull))));
 __builtin_memmove((U+4),(R+4736),16);
 __builtin_memmove(gp(u32(r4(U+0))),(U+4),16);
 }
 B68d456:{NFSU2_TR(0x68d456);
 u8 U[20];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x30ull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x30ull))));
 __builtin_memmove((U+4),(R+4672),16);
 __builtin_memmove(gp(u32(r4(U+0))),(U+4),16);
 }
 B68d45a:{NFSU2_TR(0x68d45a);
-__builtin_memmove((R+16),(R+20),4);
+__builtin_memmove((G+16),(R+20),4);
 }
 B68d45c:{NFSU2_TR(0x68d45c);
 u8 U[4];
-__builtin_memmove((U+0),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
 __builtin_memmove((R+20),(U+0),4);
 }
 B68d45d:{NFSU2_TR(0x68d45d);
-__builtin_memmove((R+16),(R+12),4);
+__builtin_memmove((G+16),(R+12),4);
 }
 B68d45f:{NFSU2_TR(0x68d45f);
 u8 U[4];
-__builtin_memmove((U+0),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
 __builtin_memmove((R+12),(U+0),4);
 }
 B68d460:{NFSU2_TR(0x68d460);
-__builtin_memmove((R+644),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x8ull))));
+__builtin_memmove((R+644),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x8ull))));
 {u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
 }
-B68d465:L68d465:{c.instructions+=13;NFSU2_TR(0x68d465);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68d465(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d465:L68d465:{bud-=13;NFSU2_TR(0x68d465);
 __builtin_memmove((R+28),(R+28),4);
 }
 B68d467:{NFSU2_TR(0x68d467);
 u8 U[4];
 __builtin_memmove((U+0),(R+12),4);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x4ull))));
-s4(u32(r4(R+16)),r4(U+0));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
 }
 B68d468:{NFSU2_TR(0x68d468);
-__builtin_memmove((R+12),(R+16),4);
+__builtin_memmove((R+12),(G+16),4);
 }
 B68d46a:{NFSU2_TR(0x68d46a);
 u8 U[4];
-__builtin_memmove((U+0),(R+4),4);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x4ull))));
-s4(u32(r4(R+16)),r4(U+0));
+__builtin_memmove((U+0),(G+4),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
 }
 B68d46b:{NFSU2_TR(0x68d46b);
-w4(R+16,u32(u32(r4(R+16))&u32(u32(0xfffffff0ull))));
+w4(G+16,u32(u32(r4(G+16))&u32(u32(0xfffffff0ull))));
 }
 B68d46e:{NFSU2_TR(0x68d46e);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
 }
 B68d471:{NFSU2_TR(0x68d471);
 u8 U[4];
 __builtin_memmove((U+0),(R+20),4);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x4ull))));
-s4(u32(r4(R+16)),r4(U+0));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
 }
 B68d472:{NFSU2_TR(0x68d472);
-__builtin_memmove((R+20),(R+16),4);
+__builtin_memmove((R+20),(G+16),4);
 }
 B68d474:{NFSU2_TR(0x68d474);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+12))+u32(u32(0x10ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68d477:{NFSU2_TR(0x68d477);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+12))+u32(u32(0xcull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+4),(U+4),4);
+__builtin_memmove((G+4),(U+4),4);
 }
 B68d47a:{NFSU2_TR(0x68d47a);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x20ull))));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x20ull))));
 }
 B68d47d:{NFSU2_TR(0x68d47d);
 u8 U[4];
-w1(R+512,u8(0x0ull));
-w1(R+523,u8(0x0ull));
-w1(U+3,u8(u32(r1(R+0))&u32(u8(0xfull))));
-w1(R+519,u8(s8(r1(U+3))<s8(u8(0x0ull))));
-w1(R+518,u8((r1(U+3))==(u8(0x0ull))));
+w1(F+0,u8(0x0ull));
+w1(F+11,u8(0x0ull));
+w1(U+3,u8(u32(r1(G+0))&u32(u8(0xfull))));
+w1(F+7,u8(s8(r1(U+3))<s8(u8(0x0ull))));
+w1(F+6,u8((r1(U+3))==(u8(0x0ull))));
 w1(U+0,u8(u32(r1(U+3))&u32(u8(0xffull))));
 w1(U+1,u8(__builtin_popcountll(u64(r1(U+0)))));
 w1(U+2,u8(u32(r1(U+1))&u32(u8(0x1ull))));
-w1(R+514,u8((r1(U+2))==(u8(0x0ull))));
+w1(F+2,u8((r1(U+2))==(u8(0x0ull))));
 }
 B68d47f:{NFSU2_TR(0x68d47f);
 u8 U[1];
-w1(U+0,u8(!(r1(R+518))));
-if(r1(U+0)){{goto L68d4c1;}}
+w1(U+0,u8(!(r1(F+6))));
+if(r1(U+0)){{__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);[[clang::musttail]] return blk_68d4c1(ARGS);}}
 }
-B68d481:L68d481:{c.instructions+=19;NFSU2_TR(0x68d481);
+B68d481:L68d481:{bud-=19;NFSU2_TR(0x68d481);
 u8 U[36];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0xffffffe0ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),16);
@@ -5054,18 +4274,18 @@ __builtin_memmove((R+4684),(U+32),4);
 }
 B68d485:{NFSU2_TR(0x68d485);
 u8 U[8];
-__builtin_memmove((U+0),gp(u32(r4(R+4))),8);
+__builtin_memmove((U+0),gp(u32(r4(G+4))),8);
 __builtin_memmove((R+4672),(U+0),8);
 }
 B68d488:{NFSU2_TR(0x68d488);
 u8 U[8];
-w4(U+0,u32(u32(r4(R+4))+u32(u32(0x8ull))));
+w4(U+0,u32(u32(r4(G+4))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+4),(U+4),4);
+__builtin_memmove((G+4),(U+4),4);
 }
 B68d48b:{NFSU2_TR(0x68d48b);
 u8 U[36];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x20ull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x20ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),16);
 __builtin_memmove((U+20),(U+4),16);
 __builtin_memmove((R+4736),(U+20),4);
@@ -5076,7 +4296,7 @@ __builtin_memmove((R+4748),(U+32),4);
 B68d48f:{NFSU2_TR(0x68d48f);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0xfffffffcull))));
-__builtin_memmove((U+4),(R+4),4);
+__builtin_memmove((U+4),(G+4),4);
 s4(u32(r4(U+0)),r4(U+4));
 }
 B68d492:{NFSU2_TR(0x68d492);
@@ -5173,7 +4393,7 @@ __builtin_memmove((R+4748),(R+4620),4);
 }
 B68d4a1:{NFSU2_TR(0x68d4a1);
 u8 U[36];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x10ull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x10ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),16);
 __builtin_memmove((U+20),(U+4),16);
 __builtin_memmove((R+4608),(U+20),4);
@@ -5266,7 +4486,7 @@ w4(R+4812,b32(f32(r4(R+4812))*f32(r4(R+4620))));
 }
 B68d4af:{NFSU2_TR(0x68d4af);
 u8 U[32];
-__builtin_memmove((U+0),gp(u32(r4(R+0))),16);
+__builtin_memmove((U+0),gp(u32(r4(G+0))),16);
 __builtin_memmove((U+16),(U+0),16);
 __builtin_memmove((R+4608),(U+16),4);
 __builtin_memmove((R+4612),(U+20),4);
@@ -5363,9 +4583,27 @@ __builtin_memmove((R+4616),(R+4872),4);
 __builtin_memmove((R+4620),(R+4876),4);
 }
 B68d4bf:{NFSU2_TR(0x68d4bf);
-{goto L68d511;}
+{__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);[[clang::musttail]] return blk_68d511(ARGS);}
 }
-B68d4c1:L68d4c1:{c.instructions+=22;NFSU2_TR(0x68d4c1);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68d4c1(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d4c1:L68d4c1:{bud-=22;NFSU2_TR(0x68d4c1);
 u8 U[36];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0xffffffe0ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),16);
@@ -5377,14 +4615,14 @@ __builtin_memmove((R+4620),(U+32),4);
 }
 B68d4c5:{NFSU2_TR(0x68d4c5);
 u8 U[8];
-__builtin_memmove((U+0),gp(u32(r4(R+4))),8);
+__builtin_memmove((U+0),gp(u32(r4(G+4))),8);
 __builtin_memmove((R+4608),(U+0),8);
 }
 B68d4c8:{NFSU2_TR(0x68d4c8);
 u8 U[8];
-w4(U+0,u32(u32(r4(R+4))+u32(u32(0x8ull))));
+w4(U+0,u32(u32(r4(G+4))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+4),(U+4),4);
+__builtin_memmove((G+4),(U+4),4);
 }
 B68d4cb:{NFSU2_TR(0x68d4cb);
 u8 U[36];
@@ -5398,13 +4636,13 @@ __builtin_memmove((R+4748),(U+32),4);
 }
 B68d4cf:{NFSU2_TR(0x68d4cf);
 u8 U[12];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x20ull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x20ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),8);
 __builtin_memmove((R+4736),(U+4),8);
 }
 B68d4d3:{NFSU2_TR(0x68d4d3);
 u8 U[12];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x28ull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x28ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),8);
 __builtin_memmove((R+4744),(U+4),8);
 }
@@ -5420,20 +4658,20 @@ __builtin_memmove((R+4812),(U+32),4);
 }
 B68d4db:{NFSU2_TR(0x68d4db);
 u8 U[12];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x10ull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x10ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),8);
 __builtin_memmove((R+4800),(U+4),8);
 }
 B68d4df:{NFSU2_TR(0x68d4df);
 u8 U[12];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x18ull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x18ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),8);
 __builtin_memmove((R+4808),(U+4),8);
 }
 B68d4e3:{NFSU2_TR(0x68d4e3);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0xfffffffcull))));
-__builtin_memmove((U+4),(R+4),4);
+__builtin_memmove((U+4),(G+4),4);
 s4(u32(r4(U+0)),r4(U+4));
 }
 B68d4e6:{NFSU2_TR(0x68d4e6);
@@ -5694,12 +4932,12 @@ __builtin_memmove((R+4620),(U+32),4);
 }
 B68d507:{NFSU2_TR(0x68d507);
 u8 U[8];
-__builtin_memmove((U+0),gp(u32(r4(R+0))),8);
+__builtin_memmove((U+0),gp(u32(r4(G+0))),8);
 __builtin_memmove((R+4608),(U+0),8);
 }
 B68d50a:{NFSU2_TR(0x68d50a);
 u8 U[12];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x8ull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),8);
 __builtin_memmove((R+4616),(U+4),8);
 }
@@ -5708,12 +4946,31 @@ w4(R+4608,b32(f32(r4(R+4608))*f32(r4(R+4672))));
 w4(R+4612,b32(f32(r4(R+4612))*f32(r4(R+4676))));
 w4(R+4616,b32(f32(r4(R+4616))*f32(r4(R+4680))));
 w4(R+4620,b32(f32(r4(R+4620))*f32(r4(R+4684))));
+{[[clang::musttail]] return blk_68d511(ARGS);}
 }
-B68d511:L68d511:{c.instructions+=12;NFSU2_TR(0x68d511);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68d511(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d511:L68d511:{bud-=12;NFSU2_TR(0x68d511);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+12))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68d514:{NFSU2_TR(0x68d514);
 w4(R+4608,b32(f32(r4(R+4608))+f32(r4(R+4800))));
@@ -5739,82 +4996,100 @@ __builtin_memmove((R+4672),(R+4616),8);
 B68d520:{NFSU2_TR(0x68d520);
 u8 U[8];
 __builtin_memmove((U+0),(R+4608),8);
-s8_(u32(r4(R+0)),r8(U+0));
+s8_(u32(r4(G+0)),r8(U+0));
 }
 B68d523:{NFSU2_TR(0x68d523);
 u8 U[8];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x8ull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),(R+4672),4);
 s4(u32(r4(U+0)),r4(U+4));
 }
 B68d528:{NFSU2_TR(0x68d528);
-__builtin_memmove((R+16),(R+20),4);
+__builtin_memmove((G+16),(R+20),4);
 }
 B68d52a:{NFSU2_TR(0x68d52a);
 u8 U[4];
-__builtin_memmove((U+0),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
 __builtin_memmove((R+20),(U+0),4);
 }
 B68d52b:{NFSU2_TR(0x68d52b);
-__builtin_memmove((R+16),(R+12),4);
+__builtin_memmove((G+16),(R+12),4);
 }
 B68d52d:{NFSU2_TR(0x68d52d);
 u8 U[4];
-__builtin_memmove((U+0),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
 __builtin_memmove((R+12),(U+0),4);
 }
 B68d52e:{NFSU2_TR(0x68d52e);
-__builtin_memmove((R+644),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0xcull))));
+__builtin_memmove((R+644),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0xcull))));
 {u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
 }
-B68d531:L68d531:{c.instructions+=16;NFSU2_TR(0x68d531);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68d531(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d531:L68d531:{bud-=16;NFSU2_TR(0x68d531);
 __builtin_memmove((R+28),(R+28),4);
 }
 B68d533:{NFSU2_TR(0x68d533);
 u8 U[4];
 __builtin_memmove((U+0),(R+12),4);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x4ull))));
-s4(u32(r4(R+16)),r4(U+0));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
 }
 B68d534:{NFSU2_TR(0x68d534);
-__builtin_memmove((R+12),(R+16),4);
+__builtin_memmove((R+12),(G+16),4);
 }
 B68d536:{NFSU2_TR(0x68d536);
 u8 U[4];
-__builtin_memmove((U+0),(R+4),4);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x4ull))));
-s4(u32(r4(R+16)),r4(U+0));
+__builtin_memmove((U+0),(G+4),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
 }
 B68d537:{NFSU2_TR(0x68d537);
-w4(R+16,u32(u32(r4(R+16))&u32(u32(0xfffffff0ull))));
+w4(G+16,u32(u32(r4(G+16))&u32(u32(0xfffffff0ull))));
 }
 B68d53a:{NFSU2_TR(0x68d53a);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
 }
 B68d53d:{NFSU2_TR(0x68d53d);
 u8 U[4];
 __builtin_memmove((U+0),(R+20),4);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x4ull))));
-s4(u32(r4(R+16)),r4(U+0));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
 }
 B68d53e:{NFSU2_TR(0x68d53e);
-__builtin_memmove((R+20),(R+16),4);
+__builtin_memmove((R+20),(G+16),4);
 }
 B68d540:{NFSU2_TR(0x68d540);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+12))+u32(u32(0xcull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+4),(U+4),4);
+__builtin_memmove((G+4),(U+4),4);
 }
 B68d543:{NFSU2_TR(0x68d543);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+12))+u32(u32(0x10ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68d546:{NFSU2_TR(0x68d546);
 u8 U[36];
@@ -5828,38 +5103,38 @@ __builtin_memmove((R+4620),(U+32),4);
 }
 B68d54a:{NFSU2_TR(0x68d54a);
 u8 U[8];
-__builtin_memmove((U+0),gp(u32(r4(R+4))),8);
+__builtin_memmove((U+0),gp(u32(r4(G+4))),8);
 __builtin_memmove((R+4608),(U+0),8);
 }
 B68d54d:{NFSU2_TR(0x68d54d);
 u8 U[8];
-w4(U+0,u32(u32(r4(R+4))+u32(u32(0x8ull))));
+w4(U+0,u32(u32(r4(G+4))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+4),(U+4),4);
+__builtin_memmove((G+4),(U+4),4);
 }
 B68d550:{NFSU2_TR(0x68d550);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x20ull))));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x20ull))));
 }
 B68d553:{NFSU2_TR(0x68d553);
 u8 U[4];
-w1(R+512,u8(0x0ull));
-w1(R+523,u8(0x0ull));
-w1(U+3,u8(u32(r1(R+0))&u32(u8(0xfull))));
-w1(R+519,u8(s8(r1(U+3))<s8(u8(0x0ull))));
-w1(R+518,u8((r1(U+3))==(u8(0x0ull))));
+w1(F+0,u8(0x0ull));
+w1(F+11,u8(0x0ull));
+w1(U+3,u8(u32(r1(G+0))&u32(u8(0xfull))));
+w1(F+7,u8(s8(r1(U+3))<s8(u8(0x0ull))));
+w1(F+6,u8((r1(U+3))==(u8(0x0ull))));
 w1(U+0,u8(u32(r1(U+3))&u32(u8(0xffull))));
 w1(U+1,u8(__builtin_popcountll(u64(r1(U+0)))));
 w1(U+2,u8(u32(r1(U+1))&u32(u8(0x1ull))));
-w1(R+514,u8((r1(U+2))==(u8(0x0ull))));
+w1(F+2,u8((r1(U+2))==(u8(0x0ull))));
 }
 B68d555:{NFSU2_TR(0x68d555);
 u8 U[1];
-w1(U+0,u8(!(r1(R+518))));
-if(r1(U+0)){{goto L68d58b;}}
+w1(U+0,u8(!(r1(F+6))));
+if(r1(U+0)){{__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);[[clang::musttail]] return blk_68d58b(ARGS);}}
 }
-B68d557:L68d557:{c.instructions+=15;NFSU2_TR(0x68d557);
+B68d557:L68d557:{bud-=15;NFSU2_TR(0x68d557);
 u8 U[36];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x30ull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x30ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),16);
 __builtin_memmove((U+20),(U+4),16);
 __builtin_memmove((R+4736),(U+20),4);
@@ -5869,7 +5144,7 @@ __builtin_memmove((R+4748),(U+32),4);
 }
 B68d55b:{NFSU2_TR(0x68d55b);
 u8 U[36];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x20ull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x20ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),16);
 __builtin_memmove((U+20),(U+4),16);
 __builtin_memmove((R+4800),(U+20),4);
@@ -5880,7 +5155,7 @@ __builtin_memmove((R+4812),(U+32),4);
 B68d55f:{NFSU2_TR(0x68d55f);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0xfffffffcull))));
-__builtin_memmove((U+4),(R+4),4);
+__builtin_memmove((U+4),(G+4),4);
 s4(u32(r4(U+0)),r4(U+4));
 }
 B68d562:{NFSU2_TR(0x68d562);
@@ -5977,7 +5252,7 @@ w4(R+4812,b32(f32(r4(R+4812))+f32(r4(R+4748))));
 }
 B68d571:{NFSU2_TR(0x68d571);
 u8 U[36];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x10ull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x10ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),16);
 __builtin_memmove((U+20),(U+4),16);
 __builtin_memmove((R+4736),(U+20),4);
@@ -6147,7 +5422,7 @@ w4(R+4684,u32(u32(r4(U+31))+u32(r4(U+40))));
 }
 B68d586:{NFSU2_TR(0x68d586);
 u8 U[32];
-__builtin_memmove((U+0),gp(u32(r4(R+0))),16);
+__builtin_memmove((U+0),gp(u32(r4(G+0))),16);
 __builtin_memmove((U+16),(U+0),16);
 __builtin_memmove((R+4608),(U+16),4);
 __builtin_memmove((R+4612),(U+20),4);
@@ -6155,9 +5430,27 @@ __builtin_memmove((R+4616),(U+24),4);
 __builtin_memmove((R+4620),(U+28),4);
 }
 B68d589:{NFSU2_TR(0x68d589);
-{goto L68d5e0;}
+{__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);[[clang::musttail]] return blk_68d5e0(ARGS);}
 }
-B68d58b:L68d58b:{c.instructions+=23;NFSU2_TR(0x68d58b);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68d58b(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d58b:L68d58b:{bud-=23;NFSU2_TR(0x68d58b);
 u8 U[36];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0xffffffe0ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),16);
@@ -6169,13 +5462,13 @@ __builtin_memmove((R+4684),(U+32),4);
 }
 B68d58f:{NFSU2_TR(0x68d58f);
 u8 U[12];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x30ull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x30ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),8);
 __builtin_memmove((R+4672),(U+4),8);
 }
 B68d593:{NFSU2_TR(0x68d593);
 u8 U[12];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x38ull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x38ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),8);
 __builtin_memmove((R+4680),(U+4),8);
 }
@@ -6191,13 +5484,13 @@ __builtin_memmove((R+4812),(U+32),4);
 }
 B68d59b:{NFSU2_TR(0x68d59b);
 u8 U[12];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x20ull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x20ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),8);
 __builtin_memmove((R+4800),(U+4),8);
 }
 B68d59f:{NFSU2_TR(0x68d59f);
 u8 U[12];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x28ull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x28ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),8);
 __builtin_memmove((R+4808),(U+4),8);
 }
@@ -6210,7 +5503,7 @@ __builtin_memmove((R+4748),(R+4684),4);
 B68d5a6:{NFSU2_TR(0x68d5a6);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0xfffffffcull))));
-__builtin_memmove((U+4),(R+4),4);
+__builtin_memmove((U+4),(G+4),4);
 s4(u32(r4(U+0)),r4(U+4));
 }
 B68d5a9:{NFSU2_TR(0x68d5a9);
@@ -6317,13 +5610,13 @@ __builtin_memmove((R+4748),(U+32),4);
 }
 B68d5bc:{NFSU2_TR(0x68d5bc);
 u8 U[12];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x10ull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x10ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),8);
 __builtin_memmove((R+4736),(U+4),8);
 }
 B68d5c0:{NFSU2_TR(0x68d5c0);
 u8 U[12];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x18ull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x18ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),8);
 __builtin_memmove((R+4744),(U+4),8);
 }
@@ -6499,20 +5792,39 @@ __builtin_memmove((R+4620),(U+32),4);
 }
 B68d5d9:{NFSU2_TR(0x68d5d9);
 u8 U[8];
-__builtin_memmove((U+0),gp(u32(r4(R+0))),8);
+__builtin_memmove((U+0),gp(u32(r4(G+0))),8);
 __builtin_memmove((R+4608),(U+0),8);
 }
 B68d5dc:{NFSU2_TR(0x68d5dc);
 u8 U[12];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x8ull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),8);
 __builtin_memmove((R+4616),(U+4),8);
+{[[clang::musttail]] return blk_68d5e0(ARGS);}
 }
-B68d5e0:L68d5e0:{c.instructions+=24;NFSU2_TR(0x68d5e0);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68d5e0(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d5e0:L68d5e0:{bud-=24;NFSU2_TR(0x68d5e0);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+12))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68d5e3:{NFSU2_TR(0x68d5e3);
 w4(R+4608,b32(f32(r4(R+4608))*f32(r4(R+4672))));
@@ -6672,82 +5984,100 @@ __builtin_memmove((R+4672),(R+4616),8);
 B68d614:{NFSU2_TR(0x68d614);
 u8 U[8];
 __builtin_memmove((U+0),(R+4608),8);
-s8_(u32(r4(R+0)),r8(U+0));
+s8_(u32(r4(G+0)),r8(U+0));
 }
 B68d617:{NFSU2_TR(0x68d617);
 u8 U[8];
-w4(U+0,u32(u32(r4(R+0))+u32(u32(0x8ull))));
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),(R+4672),4);
 s4(u32(r4(U+0)),r4(U+4));
 }
 B68d61c:{NFSU2_TR(0x68d61c);
-__builtin_memmove((R+16),(R+20),4);
+__builtin_memmove((G+16),(R+20),4);
 }
 B68d61e:{NFSU2_TR(0x68d61e);
 u8 U[4];
-__builtin_memmove((U+0),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
 __builtin_memmove((R+20),(U+0),4);
 }
 B68d61f:{NFSU2_TR(0x68d61f);
-__builtin_memmove((R+16),(R+12),4);
+__builtin_memmove((G+16),(R+12),4);
 }
 B68d621:{NFSU2_TR(0x68d621);
 u8 U[4];
-__builtin_memmove((U+0),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
 __builtin_memmove((R+12),(U+0),4);
 }
 B68d622:{NFSU2_TR(0x68d622);
-__builtin_memmove((R+644),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0xcull))));
+__builtin_memmove((R+644),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0xcull))));
 {u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
 }
-B68d625:L68d625:{c.instructions+=28;NFSU2_TR(0x68d625);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68d625(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d625:L68d625:{bud-=28;NFSU2_TR(0x68d625);
 __builtin_memmove((R+28),(R+28),4);
 }
 B68d627:{NFSU2_TR(0x68d627);
 u8 U[4];
 __builtin_memmove((U+0),(R+12),4);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x4ull))));
-s4(u32(r4(R+16)),r4(U+0));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
 }
 B68d628:{NFSU2_TR(0x68d628);
-__builtin_memmove((R+12),(R+16),4);
+__builtin_memmove((R+12),(G+16),4);
 }
 B68d62a:{NFSU2_TR(0x68d62a);
 u8 U[4];
-__builtin_memmove((U+0),(R+4),4);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x4ull))));
-s4(u32(r4(R+16)),r4(U+0));
+__builtin_memmove((U+0),(G+4),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
 }
 B68d62b:{NFSU2_TR(0x68d62b);
-w4(R+16,u32(u32(r4(R+16))&u32(u32(0xfffffff0ull))));
+w4(G+16,u32(u32(r4(G+16))&u32(u32(0xfffffff0ull))));
 }
 B68d62e:{NFSU2_TR(0x68d62e);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
 }
 B68d631:{NFSU2_TR(0x68d631);
 u8 U[4];
 __builtin_memmove((U+0),(R+20),4);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x4ull))));
-s4(u32(r4(R+16)),r4(U+0));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
 }
 B68d632:{NFSU2_TR(0x68d632);
-__builtin_memmove((R+20),(R+16),4);
+__builtin_memmove((R+20),(G+16),4);
 }
 B68d634:{NFSU2_TR(0x68d634);
 u8 U[6];
-w1(R+512,u8((r4(R+16))<(u32(0x20ull))));
-w1(R+523,sborrow<u32>(r4(R+16),u32(0x20ull)));
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x20ull))));
-w1(R+519,u8(s32(r4(R+16))<s32(u32(0x0ull))));
-w1(R+518,u8((r4(R+16))==(u32(0x0ull))));
-w4(U+0,u32(u32(r4(R+16))&u32(u32(0xffull))));
+w1(F+0,u8((r4(G+16))<(u32(0x20ull))));
+w1(F+11,sborrow<u32>(r4(G+16),u32(0x20ull)));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x20ull))));
+w1(F+7,u8(s32(r4(G+16))<s32(u32(0x0ull))));
+w1(F+6,u8((r4(G+16))==(u32(0x0ull))));
+w4(U+0,u32(u32(r4(G+16))&u32(u32(0xffull))));
 w1(U+4,u8(__builtin_popcountll(u64(r4(U+0)))));
 w1(U+5,u8(u32(r1(U+4))&u32(u8(0x1ull))));
-w1(R+514,u8((r1(U+5))==(u8(0x0ull))));
+w1(F+2,u8((r1(U+5))==(u8(0x0ull))));
 }
 B68d637:{NFSU2_TR(0x68d637);
 u8 U[8];
@@ -6774,11 +6104,11 @@ w4(R+4680,u32(0x0ull));
 w4(R+4684,u32(0x0ull));
 }
 B68d646:{NFSU2_TR(0x68d646);
-w4(R+0,u32(0x7bab30ull));
+w4(G+0,u32(0x7bab30ull));
 }
 B68d64b:{NFSU2_TR(0x68d64b);
 u8 U[32];
-__builtin_memmove((U+0),gp(u32(r4(R+0))),16);
+__builtin_memmove((U+0),gp(u32(r4(G+0))),16);
 __builtin_memmove((U+16),(U+0),16);
 __builtin_memmove((R+4608),(U+16),4);
 __builtin_memmove((R+4612),(U+20),4);
@@ -6815,18 +6145,18 @@ w4(R+4684,u32(0x0ull));
 B68d665:{NFSU2_TR(0x68d665);
 u8 U[4];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0xffffffe0ull))));
-__builtin_memmove((R+0),(U+0),4);
+__builtin_memmove((G+0),(U+0),4);
 }
 B68d668:{NFSU2_TR(0x68d668);
 u8 U[4];
-__builtin_memmove((U+0),(R+0),4);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x4ull))));
-s4(u32(r4(R+16)),r4(U+0));
+__builtin_memmove((U+0),(G+0),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
 }
 B68d669:{NFSU2_TR(0x68d669);
 u8 U[4];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0xfffffff0ull))));
-__builtin_memmove((R+0),(U+0),4);
+__builtin_memmove((G+0),(U+0),4);
 }
 B68d66c:{NFSU2_TR(0x68d66c);
 u8 U[8];
@@ -6846,9 +6176,9 @@ __builtin_memmove((R+4684),(U+32),4);
 }
 B68d675:{NFSU2_TR(0x68d675);
 u8 U[4];
-__builtin_memmove((U+0),(R+0),4);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x4ull))));
-s4(u32(r4(R+16)),r4(U+0));
+__builtin_memmove((U+0),(G+0),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
 }
 B68d676:{NFSU2_TR(0x68d676);
 w4(R+4672,b32(f32(r4(R+4672))*f32(r4(R+4608))));
@@ -6858,9 +6188,9 @@ w4(R+4684,b32(f32(r4(R+4684))*f32(r4(R+4620))));
 }
 B68d679:{NFSU2_TR(0x68d679);
 u8 U[4];
-__builtin_memmove((U+0),(R+0),4);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x4ull))));
-s4(u32(r4(R+16)),r4(U+0));
+__builtin_memmove((U+0),(G+0),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
 }
 B68d67a:{NFSU2_TR(0x68d67a);
 u8 U[20];
@@ -6869,11 +6199,29 @@ __builtin_memmove((U+4),(R+4672),16);
 __builtin_memmove(gp(u32(r4(U+0))),(U+4),16);
 }
 B68d67e:{NFSU2_TR(0x68d67e);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x4ull))));
-s4(u32(r4(R+16)),u32(0x68d683ull));
-TAIL_STATIC(0x6d3b4bu,6d3);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),u32(0x68d683ull));
+{__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);[[clang::musttail]] return blk_6d3b4b(ARGS);}
 }
-B68d683:L68d683:{c.instructions+=30;NFSU2_TR(0x68d683);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68d683(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d683:L68d683:{bud-=30;NFSU2_TR(0x68d683);
 u8 U[36];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0xfffffff0ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),16);
@@ -7439,11 +6787,11 @@ w4(U+40,u32(u32(r4(U+36))*u32(r4(U+56))));
 w4(R+4940,u32(u32(r4(U+31))+u32(r4(U+40))));
 }
 B68d6ba:{NFSU2_TR(0x68d6ba);
-w4(R+0,u32(0x7bab20ull));
+w4(G+0,u32(0x7bab20ull));
 }
 B68d6bf:{NFSU2_TR(0x68d6bf);
 u8 U[32];
-__builtin_memmove((U+0),gp(u32(r4(R+0))),16);
+__builtin_memmove((U+0),gp(u32(r4(G+0))),16);
 __builtin_memmove((U+16),(U+0),16);
 __builtin_memmove((R+4864),(U+16),4);
 __builtin_memmove((R+4868),(U+20),4);
@@ -7454,7 +6802,7 @@ B68d6c2:{NFSU2_TR(0x68d6c2);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+12))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68d6c5:{NFSU2_TR(0x68d6c5);
 __builtin_memmove((R+4800),(R+4736),4);
@@ -7560,220 +6908,750 @@ w4(R+4620,b32(f32(r4(R+4620))+f32(r4(R+4684))));
 B68d6d8:{NFSU2_TR(0x68d6d8);
 u8 U[16];
 __builtin_memmove((U+0),(R+4608),16);
-__builtin_memmove(gp(u32(r4(R+0))),(U+0),16);
+__builtin_memmove(gp(u32(r4(G+0))),(U+0),16);
 }
 B68d6db:{NFSU2_TR(0x68d6db);
-__builtin_memmove((R+16),(R+20),4);
+__builtin_memmove((G+16),(R+20),4);
 }
 B68d6dd:{NFSU2_TR(0x68d6dd);
 u8 U[4];
-__builtin_memmove((U+0),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
 __builtin_memmove((R+20),(U+0),4);
 }
 B68d6de:{NFSU2_TR(0x68d6de);
-__builtin_memmove((R+16),(R+12),4);
+__builtin_memmove((G+16),(R+12),4);
 }
 B68d6e0:{NFSU2_TR(0x68d6e0);
 u8 U[4];
-__builtin_memmove((U+0),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
 __builtin_memmove((R+12),(U+0),4);
 }
 B68d6e1:{NFSU2_TR(0x68d6e1);
-__builtin_memmove((R+644),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x10ull))));
+__builtin_memmove((R+644),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x10ull))));
 {u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
 }
-B68d6e4:L68d6e4:{c.instructions+=12;NFSU2_TR(0x68d6e4);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68d6e4(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d6e4:L68d6e4:{bud-=5;NFSU2_TR(0x68d6e4);
 __builtin_memmove((R+28),(R+28),4);
 }
 B68d6e6:{NFSU2_TR(0x68d6e6);
 u8 U[4];
 __builtin_memmove((U+0),(R+20),4);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x4ull))));
-s4(u32(r4(R+16)),r4(U+0));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
 }
 B68d6e7:{NFSU2_TR(0x68d6e7);
-__builtin_memmove((R+20),(R+16),4);
+__builtin_memmove((R+20),(G+16),4);
 }
 B68d6e9:{NFSU2_TR(0x68d6e9);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x14ull))));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x14ull))));
 }
 B68d6ec:{NFSU2_TR(0x68d6ec);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0xcull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+4),(U+4),4);
+__builtin_memmove((G+4),(U+4),4);
+{[[clang::musttail]] return blk_68d6ef(ARGS);}
 }
-B68d6ef:{NFSU2_TR(0x68d6ef);
-{u32 ea_=u32(r4(R+4)+u32(20u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
 }
-B68d6f2:{NFSU2_TR(0x68d6f2);
-{u32 ea_=u32(r4(R+4));__asm__ volatile(".byte 0xd8,0x00"::"a"(ea_):"memory");}
+PN u32 blk_68d6ef(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d6ef:L68d6ef:{bud-=1;NFSU2_TR(0x68d6ef);
+{u32 ea_=u32(r4(G+4)+u32(20u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+{[[clang::musttail]] return blk_68d6f2(ARGS);}
 }
-B68d6f4:{NFSU2_TR(0x68d6f4);
-{u32 ea_=u32(r4(R+4)+u32(40u));__asm__ volatile(".byte 0xd8,0x00"::"a"(ea_):"memory");}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
 }
-B68d6f7:{NFSU2_TR(0x68d6f7);
+PN u32 blk_68d6f2(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d6f2:L68d6f2:{bud-=1;NFSU2_TR(0x68d6f2);
+{u32 ea_=u32(r4(G+4));__asm__ volatile(".byte 0xd8,0x00"::"a"(ea_):"memory");}
+{[[clang::musttail]] return blk_68d6f4(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68d6f4(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d6f4:L68d6f4:{bud-=1;NFSU2_TR(0x68d6f4);
+{u32 ea_=u32(r4(G+4)+u32(40u));__asm__ volatile(".byte 0xd8,0x00"::"a"(ea_):"memory");}
+{[[clang::musttail]] return blk_68d6f7(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68d6f7(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d6f7:L68d6f7:{bud-=4;NFSU2_TR(0x68d6f7);
 {u32 ea_=u32(u32(8224060u));__asm__ volatile(".byte 0xd8,0x10"::"a"(ea_):"memory");}
 }
 B68d6fd:{NFSU2_TR(0x68d6fd);
-{u32 ax_;__asm__ volatile(".byte 0xdf,0xe0":"=a"(ax_)::"memory");w2(R+0,u16(ax_));}
+{u32 ax_;__asm__ volatile(".byte 0xdf,0xe0":"=a"(ax_)::"memory");w2(G+0,u16(ax_));}
 }
 B68d6ff:{NFSU2_TR(0x68d6ff);
 u8 U[4];
-w1(R+512,u8(0x0ull));
-w1(R+523,u8(0x0ull));
-w1(U+3,u8(u32(r1(R+1))&u32(u8(0x41ull))));
-w1(R+519,u8(s8(r1(U+3))<s8(u8(0x0ull))));
-w1(R+518,u8((r1(U+3))==(u8(0x0ull))));
+w1(F+0,u8(0x0ull));
+w1(F+11,u8(0x0ull));
+w1(U+3,u8(u32(r1(G+1))&u32(u8(0x41ull))));
+w1(F+7,u8(s8(r1(U+3))<s8(u8(0x0ull))));
+w1(F+6,u8((r1(U+3))==(u8(0x0ull))));
 w1(U+0,u8(u32(r1(U+3))&u32(u8(0xffull))));
 w1(U+1,u8(__builtin_popcountll(u64(r1(U+0)))));
 w1(U+2,u8(u32(r1(U+1))&u32(u8(0x1ull))));
-w1(R+514,u8((r1(U+2))==(u8(0x0ull))));
+w1(F+2,u8((r1(U+2))==(u8(0x0ull))));
 }
 B68d702:{NFSU2_TR(0x68d702);
 u8 U[1];
-w1(U+0,u8(!(r1(R+518))));
-if(r1(U+0)){{goto L68d745;}}
+w1(U+0,u8(!(r1(F+6))));
+if(r1(U+0)){{[[clang::musttail]] return blk_68d745(ARGS);}}
+{__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);[[clang::musttail]] return blk_68d704(ARGS);}
 }
-B68d704:L68d704:{c.instructions+=20;NFSU2_TR(0x68d704);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68d704(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d704:L68d704:{bud-=2;NFSU2_TR(0x68d704);
 {u32 ea_=u32(u32(7881296u));__asm__ volatile(".byte 0xd8,0x00"::"a"(ea_):"memory");}
 }
 B68d70a:{NFSU2_TR(0x68d70a);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
+{[[clang::musttail]] return blk_68d70d(ARGS);}
 }
-B68d70d:{NFSU2_TR(0x68d70d);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68d70d(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d70d:L68d70d:{bud-=1;NFSU2_TR(0x68d70d);
 __asm__ volatile(".byte 0xd9,0xfa":::"memory");
+{[[clang::musttail]] return blk_68d70f(ARGS);}
 }
-B68d70f:{NFSU2_TR(0x68d70f);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68d70f(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d70f:L68d70f:{bud-=2;NFSU2_TR(0x68d70f);
 {u32 ea_=u32(u32(7881312u));__asm__ volatile(".byte 0xd8,0x08"::"a"(ea_):"memory");}
 }
 B68d715:{NFSU2_TR(0x68d715);
 __asm__ volatile(".byte 0xd9,0xc0":::"memory");
+{[[clang::musttail]] return blk_68d717(ARGS);}
 }
-B68d717:{NFSU2_TR(0x68d717);
-{u32 ea_=u32(r4(R+0)+u32(12u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
 }
-B68d71a:{NFSU2_TR(0x68d71a);
+PN u32 blk_68d717(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d717:L68d717:{bud-=1;NFSU2_TR(0x68d717);
+{u32 ea_=u32(r4(G+0)+u32(12u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+{[[clang::musttail]] return blk_68d71a(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68d71a(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d71a:L68d71a:{bud-=1;NFSU2_TR(0x68d71a);
 {u32 ea_=u32(u32(7884072u));__asm__ volatile(".byte 0xd8,0x38"::"a"(ea_):"memory");}
+{[[clang::musttail]] return blk_68d720(ARGS);}
 }
-B68d720:{NFSU2_TR(0x68d720);
-{u32 ea_=u32(r4(R+4)+u32(24u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
 }
-B68d723:{NFSU2_TR(0x68d723);
-{u32 ea_=u32(r4(R+4)+u32(36u));__asm__ volatile(".byte 0xd8,0x20"::"a"(ea_):"memory");}
+PN u32 blk_68d720(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d720:L68d720:{bud-=1;NFSU2_TR(0x68d720);
+{u32 ea_=u32(r4(G+4)+u32(24u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+{[[clang::musttail]] return blk_68d723(ARGS);}
 }
-B68d726:{NFSU2_TR(0x68d726);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68d723(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d723:L68d723:{bud-=1;NFSU2_TR(0x68d723);
+{u32 ea_=u32(r4(G+4)+u32(36u));__asm__ volatile(".byte 0xd8,0x20"::"a"(ea_):"memory");}
+{[[clang::musttail]] return blk_68d726(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68d726(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d726:L68d726:{bud-=1;NFSU2_TR(0x68d726);
 __asm__ volatile(".byte 0xd8,0xc9":::"memory");
+{[[clang::musttail]] return blk_68d728(ARGS);}
 }
-B68d728:{NFSU2_TR(0x68d728);
-{u32 ea_=u32(r4(R+0));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
 }
-B68d72a:{NFSU2_TR(0x68d72a);
-{u32 ea_=u32(r4(R+4)+u32(32u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+PN u32 blk_68d728(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d728:L68d728:{bud-=1;NFSU2_TR(0x68d728);
+{u32 ea_=u32(r4(G+0));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+{[[clang::musttail]] return blk_68d72a(ARGS);}
 }
-B68d72d:{NFSU2_TR(0x68d72d);
-{u32 ea_=u32(r4(R+4)+u32(8u));__asm__ volatile(".byte 0xd8,0x20"::"a"(ea_):"memory");}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
 }
-B68d730:{NFSU2_TR(0x68d730);
+PN u32 blk_68d72a(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d72a:L68d72a:{bud-=1;NFSU2_TR(0x68d72a);
+{u32 ea_=u32(r4(G+4)+u32(32u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+{[[clang::musttail]] return blk_68d72d(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68d72d(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d72d:L68d72d:{bud-=1;NFSU2_TR(0x68d72d);
+{u32 ea_=u32(r4(G+4)+u32(8u));__asm__ volatile(".byte 0xd8,0x20"::"a"(ea_):"memory");}
+{[[clang::musttail]] return blk_68d730(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68d730(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d730:L68d730:{bud-=1;NFSU2_TR(0x68d730);
 __asm__ volatile(".byte 0xd8,0xc9":::"memory");
+{[[clang::musttail]] return blk_68d732(ARGS);}
 }
-B68d732:{NFSU2_TR(0x68d732);
-{u32 ea_=u32(r4(R+0)+u32(4u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
 }
-B68d735:{NFSU2_TR(0x68d735);
-{u32 ea_=u32(r4(R+4)+u32(4u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+PN u32 blk_68d732(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d732:L68d732:{bud-=1;NFSU2_TR(0x68d732);
+{u32 ea_=u32(r4(G+0)+u32(4u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+{[[clang::musttail]] return blk_68d735(ARGS);}
 }
-B68d738:{NFSU2_TR(0x68d738);
-{u32 ea_=u32(r4(R+4)+u32(16u));__asm__ volatile(".byte 0xd8,0x20"::"a"(ea_):"memory");}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
 }
-B68d73b:{NFSU2_TR(0x68d73b);
+PN u32 blk_68d735(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d735:L68d735:{bud-=1;NFSU2_TR(0x68d735);
+{u32 ea_=u32(r4(G+4)+u32(4u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+{[[clang::musttail]] return blk_68d738(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68d738(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d738:L68d738:{bud-=1;NFSU2_TR(0x68d738);
+{u32 ea_=u32(r4(G+4)+u32(16u));__asm__ volatile(".byte 0xd8,0x20"::"a"(ea_):"memory");}
+{[[clang::musttail]] return blk_68d73b(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68d73b(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d73b:L68d73b:{bud-=1;NFSU2_TR(0x68d73b);
 __asm__ volatile(".byte 0xd8,0xc9":::"memory");
+{[[clang::musttail]] return blk_68d73d(ARGS);}
 }
-B68d73d:{NFSU2_TR(0x68d73d);
-{u32 ea_=u32(r4(R+0)+u32(8u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68d73d(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d73d:L68d73d:{bud-=2;NFSU2_TR(0x68d73d);
+{u32 ea_=u32(r4(G+0)+u32(8u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
 }
 B68d740:{NFSU2_TR(0x68d740);
-{goto L68d80a;}
+{[[clang::musttail]] return blk_68d80a(ARGS);}
 }
-B68d745:L68d745:{c.instructions+=15;NFSU2_TR(0x68d745);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68d745(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d745:L68d745:{bud-=1;NFSU2_TR(0x68d745);
 u8 U[8];
-w4(U+0,u32(u32(r4(R+4))+u32(u32(0x14ull))));
+w4(U+0,u32(u32(r4(G+4))+u32(u32(0x14ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
+{[[clang::musttail]] return blk_68d748(ARGS);}
 }
-B68d748:{NFSU2_TR(0x68d748);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68d748(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d748:L68d748:{bud-=1;NFSU2_TR(0x68d748);
 __asm__ volatile(".byte 0xdd,0xd8":::"memory");
+{[[clang::musttail]] return blk_68d74a(ARGS);}
 }
-B68d74a:{NFSU2_TR(0x68d74a);
-{u32 ea_=u32(r4(R+4));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68d74a(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d74a:L68d74a:{bud-=3;NFSU2_TR(0x68d74a);
+{u32 ea_=u32(r4(G+4));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
 }
 B68d74c:{NFSU2_TR(0x68d74c);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0xfffffff0ull))));
-__builtin_memmove((U+4),(R+0),4);
+__builtin_memmove((U+4),(G+0),4);
 s4(u32(r4(U+0)),r4(U+4));
 }
 B68d74f:{NFSU2_TR(0x68d74f);
 u8 U[8];
-w4(U+0,u32(u32(r4(R+4))+u32(u32(0x28ull))));
+w4(U+0,u32(u32(r4(G+4))+u32(u32(0x28ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
+{[[clang::musttail]] return blk_68d752(ARGS);}
 }
-B68d752:{NFSU2_TR(0x68d752);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68d752(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d752:L68d752:{bud-=1;NFSU2_TR(0x68d752);
 {u32 ea_=u32(r4(R+20)+u32(4294967276u));__asm__ volatile(".byte 0xd9,0x10"::"a"(ea_):"memory");}
+{[[clang::musttail]] return blk_68d755(ARGS);}
 }
-B68d755:{NFSU2_TR(0x68d755);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68d755(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d755:L68d755:{bud-=9;NFSU2_TR(0x68d755);
 {u32 ea_=u32(r4(R+20)+u32(4294967280u));__asm__ volatile(".byte 0xd8,0x18"::"a"(ea_):"memory");}
 }
 B68d758:{NFSU2_TR(0x68d758);
 u8 U[4];
 __builtin_memmove((U+0),(R+12),4);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x4ull))));
-s4(u32(r4(R+16)),r4(U+0));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
 }
 B68d759:{NFSU2_TR(0x68d759);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0xfffffff4ull))));
-__builtin_memmove((U+4),(R+0),4);
+__builtin_memmove((U+4),(G+0),4);
 s4(u32(r4(U+0)),r4(U+4));
 }
 B68d75c:{NFSU2_TR(0x68d75c);
 u8 U[4];
 __builtin_memmove((U+0),(R+24),4);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x4ull))));
-s4(u32(r4(R+16)),r4(U+0));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
 }
 B68d75d:{NFSU2_TR(0x68d75d);
 w4(R+12,u32(u32(r4(R+12))^u32(r4(R+12))));
 }
 B68d75f:{NFSU2_TR(0x68d75f);
-{u32 ax_;__asm__ volatile(".byte 0xdf,0xe0":"=a"(ax_)::"memory");w2(R+0,u16(ax_));}
+{u32 ax_;__asm__ volatile(".byte 0xdf,0xe0":"=a"(ax_)::"memory");w2(G+0,u16(ax_));}
 }
 B68d761:{NFSU2_TR(0x68d761);
 u8 U[4];
 __builtin_memmove((U+0),(R+28),4);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x4ull))));
-s4(u32(r4(R+16)),r4(U+0));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
 }
 B68d762:{NFSU2_TR(0x68d762);
 u8 U[1];
-w1(U+0,u8(u32(r1(R+1))&u32(u8(0x1ull))));
-w1(R+518,u8((r1(U+0))==(u8(0x0ull))));
+w1(U+0,u8(u32(r1(G+1))&u32(u8(0x1ull))));
+w1(F+6,u8((r1(U+0))==(u8(0x0ull))));
 }
 B68d765:{NFSU2_TR(0x68d765);
-if(r1(R+518)){{goto L68d768;}}
+if(r1(F+6)){{[[clang::musttail]] return blk_68d768(ARGS);}}
 }
-B68d767:L68d767:{c.instructions+=1;NFSU2_TR(0x68d767);
+B68d767:L68d767:{bud-=1;NFSU2_TR(0x68d767);
 w4(R+12,u32(u32(r4(R+12))+u32(u32(0x1ull))));
+{[[clang::musttail]] return blk_68d768(ARGS);}
 }
-B68d768:L68d768:{c.instructions+=6;NFSU2_TR(0x68d768);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68d768(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d768:L68d768:{bud-=2;NFSU2_TR(0x68d768);
 {u32 ea_=u32((r4(R+12)*4u)+r4(R+20)+u32(4294967276u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
 }
 B68d76c:{NFSU2_TR(0x68d76c);
@@ -7781,31 +7659,50 @@ u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0xcull))));
 __builtin_memmove((U+4),(R+12),4);
 s4(u32(r4(U+0)),r4(U+4));
+{[[clang::musttail]] return blk_68d76f(ARGS);}
 }
-B68d76f:{NFSU2_TR(0x68d76f);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68d76f(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d76f:L68d76f:{bud-=4;NFSU2_TR(0x68d76f);
 {u32 ea_=u32(r4(R+20)+u32(4294967284u));__asm__ volatile(".byte 0xd8,0x18"::"a"(ea_):"memory");}
 }
 B68d772:{NFSU2_TR(0x68d772);
-{u32 ax_;__asm__ volatile(".byte 0xdf,0xe0":"=a"(ax_)::"memory");w2(R+0,u16(ax_));}
+{u32 ax_;__asm__ volatile(".byte 0xdf,0xe0":"=a"(ax_)::"memory");w2(G+0,u16(ax_));}
 }
 B68d774:{NFSU2_TR(0x68d774);
 u8 U[1];
-w1(U+0,u8(u32(r1(R+1))&u32(u8(0x1ull))));
-w1(R+518,u8((r1(U+0))==(u8(0x0ull))));
+w1(U+0,u8(u32(r1(G+1))&u32(u8(0x1ull))));
+w1(F+6,u8((r1(U+0))==(u8(0x0ull))));
 }
 B68d777:{NFSU2_TR(0x68d777);
-if(r1(R+518)){{goto L68d77f;}}
+if(r1(F+6)){{[[clang::musttail]] return blk_68d77f(ARGS);}}
 }
-B68d779:L68d779:{c.instructions+=3;NFSU2_TR(0x68d779);
+B68d779:L68d779:{bud-=3;NFSU2_TR(0x68d779);
 u8 U[4];
 w4(U+0,u32(0x2ull));
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x4ull))));
-s4(u32(r4(R+16)),r4(U+0));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
 }
 B68d77b:{NFSU2_TR(0x68d77b);
 u8 U[4];
-__builtin_memmove((U+0),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
 __builtin_memmove((R+12),(U+0),4);
 }
 B68d77c:{NFSU2_TR(0x68d77c);
@@ -7813,8 +7710,27 @@ u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0xcull))));
 __builtin_memmove((U+4),(R+12),4);
 s4(u32(r4(U+0)),r4(U+4));
+{[[clang::musttail]] return blk_68d77f(ARGS);}
 }
-B68d77f:L68d77f:{c.instructions+=47;NFSU2_TR(0x68d77f);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68d77f(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d77f:L68d77f:{bud-=3;NFSU2_TR(0x68d77f);
 __builtin_memmove((R+8),(R+12),4);
 }
 B68d781:{NFSU2_TR(0x68d781);
@@ -7827,8 +7743,27 @@ u8 U[8];
 w4(U+0,u32(u32(r4(R+8))+u32(u32(0x7bab40ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
 __builtin_memmove((R+28),(U+4),4);
+{[[clang::musttail]] return blk_68d78a(ARGS);}
 }
-B68d78a:{NFSU2_TR(0x68d78a);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68d78a(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d78a:L68d78a:{bud-=3;NFSU2_TR(0x68d78a);
 {u32 ea_=u32(r4(R+8)+r4(R+20)+u32(4294967276u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
 }
 B68d78e:{NFSU2_TR(0x68d78e);
@@ -7838,35 +7773,73 @@ B68d790:{NFSU2_TR(0x68d790);
 u8 U[4];
 w4(U+0,u32(u32(u32(0x2ull))&u32(u32(0x1full))));
 w4(R+24,shl<u32>(r4(R+24),u64(r4(U+0))));
+{[[clang::musttail]] return blk_68d793(ARGS);}
 }
-B68d793:{NFSU2_TR(0x68d793);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68d793(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d793:L68d793:{bud-=4;NFSU2_TR(0x68d793);
 {u32 ea_=u32(r4(R+24)+r4(R+20)+u32(4294967276u));__asm__ volatile(".byte 0xd8,0x20"::"a"(ea_):"memory");}
 }
 B68d797:{NFSU2_TR(0x68d797);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+24))+u32(u32(0x7bab40ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68d79d:{NFSU2_TR(0x68d79d);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0xfffffffcull))));
-__builtin_memmove((U+4),(R+0),4);
+__builtin_memmove((U+4),(G+0),4);
 s4(u32(r4(U+0)),r4(U+4));
 }
 B68d7a0:{NFSU2_TR(0x68d7a0);
 u8 U[4];
 w4(U+0,u32(u32(u32(0x2ull))&u32(u32(0x1full))));
-w4(R+0,shl<u32>(r4(R+0),u64(r4(U+0))));
+w4(G+0,shl<u32>(r4(G+0),u64(r4(U+0))));
+{[[clang::musttail]] return blk_68d7a3(ARGS);}
 }
-B68d7a3:{NFSU2_TR(0x68d7a3);
-{u32 ea_=u32(r4(R+0)+r4(R+20)+u32(4294967276u));__asm__ volatile(".byte 0xd8,0x20"::"a"(ea_):"memory");}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68d7a3(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d7a3:L68d7a3:{bud-=4;NFSU2_TR(0x68d7a3);
+{u32 ea_=u32(r4(G+0)+r4(R+20)+u32(4294967276u));__asm__ volatile(".byte 0xd8,0x20"::"a"(ea_):"memory");}
 }
 B68d7a7:{NFSU2_TR(0x68d7a7);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x8ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68d7aa:{NFSU2_TR(0x68d7aa);
 w4(R+12,u32(u32(r4(R+12))+u32(r4(R+24))));
@@ -7876,33 +7849,166 @@ u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0xfffffff8ull))));
 __builtin_memmove((U+4),(R+28),4);
 s4(u32(r4(U+0)),r4(U+4));
+{[[clang::musttail]] return blk_68d7af(ARGS);}
 }
-B68d7af:{NFSU2_TR(0x68d7af);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68d7af(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d7af:L68d7af:{bud-=2;NFSU2_TR(0x68d7af);
 {u32 ea_=u32(u32(7881296u));__asm__ volatile(".byte 0xd8,0x00"::"a"(ea_):"memory");}
 }
 B68d7b5:{NFSU2_TR(0x68d7b5);
 w4(R+28,u32(u32(r4(R+28))+u32(r4(R+8))));
+{[[clang::musttail]] return blk_68d7b7(ARGS);}
 }
-B68d7b7:{NFSU2_TR(0x68d7b7);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68d7b7(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d7b7:L68d7b7:{bud-=1;NFSU2_TR(0x68d7b7);
 __asm__ volatile(".byte 0xd9,0xfa":::"memory");
+{[[clang::musttail]] return blk_68d7b9(ARGS);}
 }
-B68d7b9:{NFSU2_TR(0x68d7b9);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68d7b9(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d7b9:L68d7b9:{bud-=2;NFSU2_TR(0x68d7b9);
 {u32 ea_=u32(u32(7881312u));__asm__ volatile(".byte 0xd8,0x08"::"a"(ea_):"memory");}
 }
 B68d7bf:{NFSU2_TR(0x68d7bf);
 __asm__ volatile(".byte 0xd9,0xc0":::"memory");
+{[[clang::musttail]] return blk_68d7c1(ARGS);}
 }
-B68d7c1:{NFSU2_TR(0x68d7c1);
-{u32 ea_=u32(r4(R+0)+r4(R+8));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
 }
-B68d7c4:{NFSU2_TR(0x68d7c4);
+PN u32 blk_68d7c1(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d7c1:L68d7c1:{bud-=1;NFSU2_TR(0x68d7c1);
+{u32 ea_=u32(r4(G+0)+r4(R+8));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+{[[clang::musttail]] return blk_68d7c4(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68d7c4(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d7c4:L68d7c4:{bud-=1;NFSU2_TR(0x68d7c4);
 {u32 ea_=u32(u32(7884072u));__asm__ volatile(".byte 0xd8,0x38"::"a"(ea_):"memory");}
+{[[clang::musttail]] return blk_68d7ca(ARGS);}
 }
-B68d7ca:{NFSU2_TR(0x68d7ca);
-{u32 ea_=u32((r4(R+12)*4u)+r4(R+4));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
 }
-B68d7cd:{NFSU2_TR(0x68d7cd);
-{u32 ea_=u32((r4(R+28)*4u)+r4(R+4));__asm__ volatile(".byte 0xd8,0x00"::"a"(ea_):"memory");}
+PN u32 blk_68d7ca(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d7ca:L68d7ca:{bud-=1;NFSU2_TR(0x68d7ca);
+{u32 ea_=u32((r4(R+12)*4u)+r4(G+4));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+{[[clang::musttail]] return blk_68d7cd(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68d7cd(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d7cd:L68d7cd:{bud-=6;NFSU2_TR(0x68d7cd);
+{u32 ea_=u32((r4(R+28)*4u)+r4(G+4));__asm__ volatile(".byte 0xd8,0x00"::"a"(ea_):"memory");}
 }
 B68d7d0:{NFSU2_TR(0x68d7d0);
 u8 U[8];
@@ -7929,24 +8035,100 @@ u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0xfffffffcull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
 __builtin_memmove((R+28),(U+4),4);
+{[[clang::musttail]] return blk_68d7de(ARGS);}
 }
-B68d7de:{NFSU2_TR(0x68d7de);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68d7de(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d7de:L68d7de:{bud-=2;NFSU2_TR(0x68d7de);
 __asm__ volatile(".byte 0xd8,0xc9":::"memory");
 }
 B68d7e0:{NFSU2_TR(0x68d7e0);
 w4(R+8,u32(u32(r4(R+8))+u32(r4(R+28))));
+{[[clang::musttail]] return blk_68d7e2(ARGS);}
 }
-B68d7e2:{NFSU2_TR(0x68d7e2);
-{u32 ea_=u32(r4(R+0)+r4(R+24));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68d7e2(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d7e2:L68d7e2:{bud-=2;NFSU2_TR(0x68d7e2);
+{u32 ea_=u32(r4(G+0)+r4(R+24));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
 }
 B68d7e5:{NFSU2_TR(0x68d7e5);
 w4(R+24,u32(u32(r4(R+24))+u32(r4(R+28))));
+{[[clang::musttail]] return blk_68d7e7(ARGS);}
 }
-B68d7e7:{NFSU2_TR(0x68d7e7);
-{u32 ea_=u32((r4(R+12)*4u)+r4(R+4));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
 }
-B68d7ea:{NFSU2_TR(0x68d7ea);
-{u32 ea_=u32((r4(R+8)*4u)+r4(R+4));__asm__ volatile(".byte 0xd8,0x00"::"a"(ea_):"memory");}
+PN u32 blk_68d7e7(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d7e7:L68d7e7:{bud-=1;NFSU2_TR(0x68d7e7);
+{u32 ea_=u32((r4(R+12)*4u)+r4(G+4));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+{[[clang::musttail]] return blk_68d7ea(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68d7ea(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d7ea:L68d7ea:{bud-=4;NFSU2_TR(0x68d7ea);
+{u32 ea_=u32((r4(R+8)*4u)+r4(G+4));__asm__ volatile(".byte 0xd8,0x00"::"a"(ea_):"memory");}
 }
 B68d7ed:{NFSU2_TR(0x68d7ed);
 __builtin_memmove((R+8),(R+28),4);
@@ -7961,136 +8143,287 @@ B68d7f2:{NFSU2_TR(0x68d7f2);
 u8 U[4];
 w4(U+0,u32(u32(u32(0x2ull))&u32(u32(0x1full))));
 w4(R+8,shl<u32>(r4(R+8),u64(r4(U+0))));
+{[[clang::musttail]] return blk_68d7f5(ARGS);}
 }
-B68d7f5:{NFSU2_TR(0x68d7f5);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68d7f5(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d7f5:L68d7f5:{bud-=1;NFSU2_TR(0x68d7f5);
 __asm__ volatile(".byte 0xd8,0xc9":::"memory");
+{[[clang::musttail]] return blk_68d7f7(ARGS);}
 }
-B68d7f7:{NFSU2_TR(0x68d7f7);
-{u32 ea_=u32(r4(R+0)+r4(R+8));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68d7f7(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d7f7:L68d7f7:{bud-=2;NFSU2_TR(0x68d7f7);
+{u32 ea_=u32(r4(G+0)+r4(R+8));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
 }
 B68d7fa:{NFSU2_TR(0x68d7fa);
 u8 U[6];
-w1(R+512,carry<u32>(r4(R+8),r4(R+28)));
-w1(R+523,scarry<u32>(r4(R+8),r4(R+28)));
+w1(F+0,carry<u32>(r4(R+8),r4(R+28)));
+w1(F+11,scarry<u32>(r4(R+8),r4(R+28)));
 w4(R+8,u32(u32(r4(R+8))+u32(r4(R+28))));
-w1(R+519,u8(s32(r4(R+8))<s32(u32(0x0ull))));
-w1(R+518,u8((r4(R+8))==(u32(0x0ull))));
+w1(F+7,u8(s32(r4(R+8))<s32(u32(0x0ull))));
+w1(F+6,u8((r4(R+8))==(u32(0x0ull))));
 w4(U+0,u32(u32(r4(R+8))&u32(u32(0xffull))));
 w1(U+4,u8(__builtin_popcountll(u64(r4(U+0)))));
 w1(U+5,u8(u32(r1(U+4))&u32(u8(0x1ull))));
-w1(R+514,u8((r1(U+5))==(u8(0x0ull))));
+w1(F+2,u8((r1(U+5))==(u8(0x0ull))));
+{__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);[[clang::musttail]] return blk_68d7fc(ARGS);}
 }
-B68d7fc:{NFSU2_TR(0x68d7fc);
-{u32 ea_=u32((r4(R+24)*4u)+r4(R+4));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68d7fc(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d7fc:L68d7fc:{bud-=2;NFSU2_TR(0x68d7fc);
+{u32 ea_=u32((r4(R+24)*4u)+r4(G+4));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
 }
 B68d7ff:{NFSU2_TR(0x68d7ff);
 u8 U[4];
-__builtin_memmove((U+0),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
 __builtin_memmove((R+28),(U+0),4);
+{[[clang::musttail]] return blk_68d800(ARGS);}
 }
-B68d800:{NFSU2_TR(0x68d800);
-{u32 ea_=u32((r4(R+8)*4u)+r4(R+4));__asm__ volatile(".byte 0xd8,0x20"::"a"(ea_):"memory");}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68d800(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d800:L68d800:{bud-=3;NFSU2_TR(0x68d800);
+{u32 ea_=u32((r4(R+8)*4u)+r4(G+4));__asm__ volatile(".byte 0xd8,0x20"::"a"(ea_):"memory");}
 }
 B68d803:{NFSU2_TR(0x68d803);
 u8 U[4];
-__builtin_memmove((U+0),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
 __builtin_memmove((R+24),(U+0),4);
 }
 B68d804:{NFSU2_TR(0x68d804);
 u8 U[4];
-__builtin_memmove((U+0),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
 __builtin_memmove((R+12),(U+0),4);
+{[[clang::musttail]] return blk_68d805(ARGS);}
 }
-B68d805:{NFSU2_TR(0x68d805);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68d805(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d805:L68d805:{bud-=1;NFSU2_TR(0x68d805);
 __asm__ volatile(".byte 0xd8,0xc9":::"memory");
+{[[clang::musttail]] return blk_68d807(ARGS);}
 }
-B68d807:{NFSU2_TR(0x68d807);
-{u32 ea_=u32(r4(R+0)+u32(12u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
 }
-B68d80a:L68d80a:{c.instructions+=3;NFSU2_TR(0x68d80a);
+PN u32 blk_68d807(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d807:L68d807:{bud-=1;NFSU2_TR(0x68d807);
+{u32 ea_=u32(r4(G+0)+u32(12u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+{[[clang::musttail]] return blk_68d80a(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68d80a(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d80a:L68d80a:{bud-=3;NFSU2_TR(0x68d80a);
 __asm__ volatile(".byte 0xdd,0xd8":::"memory");
 }
 B68d80c:{NFSU2_TR(0x68d80c);
-__builtin_memmove((R+16),(R+20),4);
-__builtin_memmove((R+20),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
+__builtin_memmove((G+16),(R+20),4);
+__builtin_memmove((R+20),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
 }
 B68d80d:{NFSU2_TR(0x68d80d);
-__builtin_memmove((R+644),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x8ull))));
+__builtin_memmove((R+644),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x8ull))));
 {u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
 }
-B68d840:L68d840:{c.instructions+=10;NFSU2_TR(0x68d840);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0xcull))));
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68d840(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d840:L68d840:{bud-=10;NFSU2_TR(0x68d840);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0xcull))));
 }
 B68d843:{NFSU2_TR(0x68d843);
 u8 U[8];
-w4(U+0,u32(u32(u32(0x4ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x4ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),(R+24),4);
 s4(u32(r4(U+0)),r4(U+4));
 }
 B68d847:{NFSU2_TR(0x68d847);
 u8 U[8];
-w4(U+0,u32(u32(u32(0x8ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x8ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),(R+28),4);
 s4(u32(r4(U+0)),r4(U+4));
 }
 B68d84b:{NFSU2_TR(0x68d84b);
 u8 U[4];
 __builtin_memmove((U+0),(R+12),4);
-s4(u32(r4(R+16)),r4(U+0));
+s4(u32(r4(G+16)),r4(U+0));
 }
 B68d84e:{NFSU2_TR(0x68d84e);
 u8 U[8];
-w4(U+0,u32(u32(u32(0x24ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x24ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+4),(U+4),4);
+__builtin_memmove((G+4),(U+4),4);
 }
 B68d852:{NFSU2_TR(0x68d852);
 u8 U[8];
-w4(U+0,u32(u32(u32(0x10ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x10ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68d856:{NFSU2_TR(0x68d856);
 u8 U[8];
-w4(U+0,u32(u32(u32(0x18ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x18ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
 __builtin_memmove((R+12),(U+4),4);
 }
 B68d85a:{NFSU2_TR(0x68d85a);
 u8 U[8];
-w4(U+0,u32(u32(u32(0x20ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x20ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
 __builtin_memmove((R+8),(U+4),4);
 }
 B68d85e:{NFSU2_TR(0x68d85e);
 u8 U[8];
-__builtin_memmove((U+0),(R+4),4);
-w1(R+523,sborrow<u32>(r4(U+0),u32(0x0ull)));
+__builtin_memmove((U+0),(G+4),4);
+w1(F+11,sborrow<u32>(r4(U+0),u32(0x0ull)));
 w4(U+4,u32(u32(r4(U+0))-u32(u32(0x0ull))));
-w1(R+519,u8(s32(r4(U+4))<s32(u32(0x0ull))));
-w1(R+518,u8((r4(U+4))==(u32(0x0ull))));
+w1(F+7,u8(s32(r4(U+4))<s32(u32(0x0ull))));
+w1(F+6,u8((r4(U+4))==(u32(0x0ull))));
 }
 B68d861:{NFSU2_TR(0x68d861);
 u8 U[2];
-w1(U+0,u8((r1(R+523))!=(r1(R+519))));
-w1(U+1,u8((r1(R+518))||(r1(U+0))));
-if(r1(U+1)){{goto L68d8c0;}}
+w1(U+0,u8((r1(F+11))!=(r1(F+7))));
+w1(U+1,u8((r1(F+6))||(r1(U+0))));
+if(r1(U+1)){{[[clang::musttail]] return blk_68d8c0(ARGS);}}
 }
-B68d863:L68d863:{c.instructions+=6;NFSU2_TR(0x68d863);
+B68d863:L68d863:{bud-=6;NFSU2_TR(0x68d863);
 u8 U[8];
-w4(U+0,u32(u32(u32(0x1cull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x1cull))+u32(r4(G+16))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
 __builtin_memmove((R+24),(U+4),4);
 }
 B68d867:{NFSU2_TR(0x68d867);
 u8 U[8];
-w4(U+0,u32(u32(u32(0x14ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x14ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
 __builtin_memmove((R+28),(U+4),4);
 }
@@ -8132,8 +8465,27 @@ __builtin_memmove((R+5056),(U+20),4);
 __builtin_memmove((R+5060),(U+24),4);
 __builtin_memmove((R+5064),(U+28),4);
 __builtin_memmove((R+5068),(U+32),4);
+{[[clang::musttail]] return blk_68d87a(ARGS);}
 }
-B68d87a:L68d87a:{c.instructions+=20;NFSU2_TR(0x68d87a);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68d87a(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d87a:L68d87a:{bud-=20;NFSU2_TR(0x68d87a);
 u8 U[4];
 __builtin_memmove((U+0),gp(u32(r4(R+12))),4);
 __builtin_memmove((R+4608),(U+0),4);
@@ -8503,135 +8855,172 @@ w4(R+4620,b32(f32(r4(R+4620))+f32(r4(R+4748))));
 B68d8b5:{NFSU2_TR(0x68d8b5);
 u8 U[16];
 __builtin_memmove((U+0),(R+4608),16);
-__builtin_memmove(gp(u32(r4(R+0))),(U+0),16);
+__builtin_memmove(gp(u32(r4(G+0))),(U+0),16);
 }
 B68d8b8:{NFSU2_TR(0x68d8b8);
 u8 U[8];
-w4(U+0,u32(u32(r4(R+0))*u32(u32(0x1ull))));
+w4(U+0,u32(u32(r4(G+0))*u32(u32(0x1ull))));
 w4(U+4,u32(u32(r4(R+28))+u32(r4(U+0))));
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68d8bb:{NFSU2_TR(0x68d8bb);
-w1(R+523,sborrow<u32>(r4(R+4),u32(0x1ull)));
-w4(R+4,u32(u32(r4(R+4))-u32(u32(0x1ull))));
-w1(R+519,u8(s32(r4(R+4))<s32(u32(0x0ull))));
-w1(R+518,u8((r4(R+4))==(u32(0x0ull))));
+w1(F+11,sborrow<u32>(r4(G+4),u32(0x1ull)));
+w4(G+4,u32(u32(r4(G+4))-u32(u32(0x1ull))));
+w1(F+7,u8(s32(r4(G+4))<s32(u32(0x0ull))));
+w1(F+6,u8((r4(G+4))==(u32(0x0ull))));
 }
 B68d8be:{NFSU2_TR(0x68d8be);
 u8 U[3];
-w1(U+0,u8(!(r1(R+518))));
-w1(U+1,u8((r1(R+523))==(r1(R+519))));
+w1(U+0,u8(!(r1(F+6))));
+w1(U+1,u8((r1(F+11))==(r1(F+7))));
 w1(U+2,u8((r1(U+0))&&(r1(U+1))));
-if(r1(U+2)){{if(__builtin_expect(++c.chain>=2048,0)){c.chain=0;EXIT(0x68d87au);}goto L68d87a;}}
+if(r1(U+2)){{if(__builtin_expect(bud<=0,0)){EXIT(0x68d87au);}goto L68d87a;}}
+{[[clang::musttail]] return blk_68d8c0(ARGS);}
 }
-B68d8c0:L68d8c0:{c.instructions+=6;NFSU2_TR(0x68d8c0);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68d8c0(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d8c0:L68d8c0:{bud-=6;NFSU2_TR(0x68d8c0);
 u8 U[8];
-w4(U+0,u32(u32(u32(0x10ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x10ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68d8c4:{NFSU2_TR(0x68d8c4);
 u8 U[4];
-__builtin_memmove((U+0),gp(u32(r4(R+16))),4);
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
 __builtin_memmove((R+12),(U+0),4);
 }
 B68d8c7:{NFSU2_TR(0x68d8c7);
 u8 U[8];
-w4(U+0,u32(u32(u32(0x4ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x4ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
 __builtin_memmove((R+24),(U+4),4);
 }
 B68d8cb:{NFSU2_TR(0x68d8cb);
 u8 U[8];
-w4(U+0,u32(u32(u32(0x8ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x8ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
 __builtin_memmove((R+28),(U+4),4);
 }
 B68d8cf:{NFSU2_TR(0x68d8cf);
 u8 U[6];
-w1(R+512,carry<u32>(r4(R+16),u32(0xcull)));
-w1(R+523,scarry<u32>(r4(R+16),u32(0xcull)));
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0xcull))));
-w1(R+519,u8(s32(r4(R+16))<s32(u32(0x0ull))));
-w1(R+518,u8((r4(R+16))==(u32(0x0ull))));
-w4(U+0,u32(u32(r4(R+16))&u32(u32(0xffull))));
+w1(F+0,carry<u32>(r4(G+16),u32(0xcull)));
+w1(F+11,scarry<u32>(r4(G+16),u32(0xcull)));
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0xcull))));
+w1(F+7,u8(s32(r4(G+16))<s32(u32(0x0ull))));
+w1(F+6,u8((r4(G+16))==(u32(0x0ull))));
+w4(U+0,u32(u32(r4(G+16))&u32(u32(0xffull))));
 w1(U+4,u8(__builtin_popcountll(u64(r4(U+0)))));
 w1(U+5,u8(u32(r1(U+4))&u32(u8(0x1ull))));
-w1(R+514,u8((r1(U+5))==(u8(0x0ull))));
+w1(F+2,u8((r1(U+5))==(u8(0x0ull))));
 }
 B68d8d2:{NFSU2_TR(0x68d8d2);
-__builtin_memmove((R+644),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x18ull))));
+__builtin_memmove((R+644),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x18ull))));
 {u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
 }
-B68d900:L68d900:{c.instructions+=10;NFSU2_TR(0x68d900);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0xcull))));
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68d900(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d900:L68d900:{bud-=10;NFSU2_TR(0x68d900);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0xcull))));
 }
 B68d903:{NFSU2_TR(0x68d903);
 u8 U[8];
-w4(U+0,u32(u32(u32(0x4ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x4ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),(R+24),4);
 s4(u32(r4(U+0)),r4(U+4));
 }
 B68d907:{NFSU2_TR(0x68d907);
 u8 U[8];
-w4(U+0,u32(u32(u32(0x8ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x8ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),(R+28),4);
 s4(u32(r4(U+0)),r4(U+4));
 }
 B68d90b:{NFSU2_TR(0x68d90b);
 u8 U[4];
 __builtin_memmove((U+0),(R+12),4);
-s4(u32(r4(R+16)),r4(U+0));
+s4(u32(r4(G+16)),r4(U+0));
 }
 B68d90e:{NFSU2_TR(0x68d90e);
 u8 U[8];
-w4(U+0,u32(u32(u32(0x24ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x24ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+4),(U+4),4);
+__builtin_memmove((G+4),(U+4),4);
 }
 B68d912:{NFSU2_TR(0x68d912);
 u8 U[8];
-w4(U+0,u32(u32(u32(0x10ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x10ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68d916:{NFSU2_TR(0x68d916);
 u8 U[8];
-w4(U+0,u32(u32(u32(0x18ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x18ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
 __builtin_memmove((R+12),(U+4),4);
 }
 B68d91a:{NFSU2_TR(0x68d91a);
 u8 U[8];
-w4(U+0,u32(u32(u32(0x20ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x20ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
 __builtin_memmove((R+8),(U+4),4);
 }
 B68d91e:{NFSU2_TR(0x68d91e);
 u8 U[8];
-__builtin_memmove((U+0),(R+4),4);
-w1(R+523,sborrow<u32>(r4(U+0),u32(0x0ull)));
+__builtin_memmove((U+0),(G+4),4);
+w1(F+11,sborrow<u32>(r4(U+0),u32(0x0ull)));
 w4(U+4,u32(u32(r4(U+0))-u32(u32(0x0ull))));
-w1(R+519,u8(s32(r4(U+4))<s32(u32(0x0ull))));
-w1(R+518,u8((r4(U+4))==(u32(0x0ull))));
+w1(F+7,u8(s32(r4(U+4))<s32(u32(0x0ull))));
+w1(F+6,u8((r4(U+4))==(u32(0x0ull))));
 }
 B68d921:{NFSU2_TR(0x68d921);
 u8 U[2];
-w1(U+0,u8((r1(R+523))!=(r1(R+519))));
-w1(U+1,u8((r1(R+518))||(r1(U+0))));
-if(r1(U+1)){{goto L68d980;}}
+w1(U+0,u8((r1(F+11))!=(r1(F+7))));
+w1(U+1,u8((r1(F+6))||(r1(U+0))));
+if(r1(U+1)){{[[clang::musttail]] return blk_68d980(ARGS);}}
 }
-B68d923:L68d923:{c.instructions+=6;NFSU2_TR(0x68d923);
+B68d923:L68d923:{bud-=6;NFSU2_TR(0x68d923);
 u8 U[8];
-w4(U+0,u32(u32(u32(0x1cull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x1cull))+u32(r4(G+16))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
 __builtin_memmove((R+24),(U+4),4);
 }
 B68d927:{NFSU2_TR(0x68d927);
 u8 U[8];
-w4(U+0,u32(u32(u32(0x14ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x14ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
 __builtin_memmove((R+28),(U+4),4);
 }
@@ -8673,8 +9062,27 @@ __builtin_memmove((R+5056),(U+20),4);
 __builtin_memmove((R+5060),(U+24),4);
 __builtin_memmove((R+5064),(U+28),4);
 __builtin_memmove((R+5068),(U+32),4);
+{[[clang::musttail]] return blk_68d93a(ARGS);}
 }
-B68d93a:L68d93a:{c.instructions+=20;NFSU2_TR(0x68d93a);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68d93a(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d93a:L68d93a:{bud-=20;NFSU2_TR(0x68d93a);
 u8 U[4];
 __builtin_memmove((U+0),gp(u32(r4(R+12))),4);
 __builtin_memmove((R+4608),(U+0),4);
@@ -9044,106 +9452,143 @@ w4(R+4620,b32(f32(r4(R+4620))+f32(r4(R+4748))));
 B68d975:{NFSU2_TR(0x68d975);
 u8 U[16];
 __builtin_memmove((U+0),(R+4608),16);
-__builtin_memmove(gp(u32(r4(R+0))),(U+0),16);
+__builtin_memmove(gp(u32(r4(G+0))),(U+0),16);
 }
 B68d978:{NFSU2_TR(0x68d978);
 u8 U[8];
-w4(U+0,u32(u32(r4(R+0))*u32(u32(0x1ull))));
+w4(U+0,u32(u32(r4(G+0))*u32(u32(0x1ull))));
 w4(U+4,u32(u32(r4(R+28))+u32(r4(U+0))));
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68d97b:{NFSU2_TR(0x68d97b);
-w1(R+523,sborrow<u32>(r4(R+4),u32(0x1ull)));
-w4(R+4,u32(u32(r4(R+4))-u32(u32(0x1ull))));
-w1(R+519,u8(s32(r4(R+4))<s32(u32(0x0ull))));
-w1(R+518,u8((r4(R+4))==(u32(0x0ull))));
+w1(F+11,sborrow<u32>(r4(G+4),u32(0x1ull)));
+w4(G+4,u32(u32(r4(G+4))-u32(u32(0x1ull))));
+w1(F+7,u8(s32(r4(G+4))<s32(u32(0x0ull))));
+w1(F+6,u8((r4(G+4))==(u32(0x0ull))));
 }
 B68d97e:{NFSU2_TR(0x68d97e);
 u8 U[3];
-w1(U+0,u8(!(r1(R+518))));
-w1(U+1,u8((r1(R+523))==(r1(R+519))));
+w1(U+0,u8(!(r1(F+6))));
+w1(U+1,u8((r1(F+11))==(r1(F+7))));
 w1(U+2,u8((r1(U+0))&&(r1(U+1))));
-if(r1(U+2)){{if(__builtin_expect(++c.chain>=2048,0)){c.chain=0;EXIT(0x68d93au);}goto L68d93a;}}
+if(r1(U+2)){{if(__builtin_expect(bud<=0,0)){EXIT(0x68d93au);}goto L68d93a;}}
+{[[clang::musttail]] return blk_68d980(ARGS);}
 }
-B68d980:L68d980:{c.instructions+=6;NFSU2_TR(0x68d980);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68d980(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d980:L68d980:{bud-=6;NFSU2_TR(0x68d980);
 u8 U[8];
-w4(U+0,u32(u32(u32(0x10ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x10ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68d984:{NFSU2_TR(0x68d984);
 u8 U[4];
-__builtin_memmove((U+0),gp(u32(r4(R+16))),4);
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
 __builtin_memmove((R+12),(U+0),4);
 }
 B68d987:{NFSU2_TR(0x68d987);
 u8 U[8];
-w4(U+0,u32(u32(u32(0x4ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x4ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
 __builtin_memmove((R+24),(U+4),4);
 }
 B68d98b:{NFSU2_TR(0x68d98b);
 u8 U[8];
-w4(U+0,u32(u32(u32(0x8ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x8ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
 __builtin_memmove((R+28),(U+4),4);
 }
 B68d98f:{NFSU2_TR(0x68d98f);
 u8 U[6];
-w1(R+512,carry<u32>(r4(R+16),u32(0xcull)));
-w1(R+523,scarry<u32>(r4(R+16),u32(0xcull)));
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0xcull))));
-w1(R+519,u8(s32(r4(R+16))<s32(u32(0x0ull))));
-w1(R+518,u8((r4(R+16))==(u32(0x0ull))));
-w4(U+0,u32(u32(r4(R+16))&u32(u32(0xffull))));
+w1(F+0,carry<u32>(r4(G+16),u32(0xcull)));
+w1(F+11,scarry<u32>(r4(G+16),u32(0xcull)));
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0xcull))));
+w1(F+7,u8(s32(r4(G+16))<s32(u32(0x0ull))));
+w1(F+6,u8((r4(G+16))==(u32(0x0ull))));
+w4(U+0,u32(u32(r4(G+16))&u32(u32(0xffull))));
 w1(U+4,u8(__builtin_popcountll(u64(r4(U+0)))));
 w1(U+5,u8(u32(r1(U+4))&u32(u8(0x1ull))));
-w1(R+514,u8((r1(U+5))==(u8(0x0ull))));
+w1(F+2,u8((r1(U+5))==(u8(0x0ull))));
 }
 B68d992:{NFSU2_TR(0x68d992);
-__builtin_memmove((R+644),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x18ull))));
+__builtin_memmove((R+644),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x18ull))));
 {u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
 }
-B68d9c0:L68d9c0:{c.instructions+=11;NFSU2_TR(0x68d9c0);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x10cull))));
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68d9c0(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68d9c0:L68d9c0:{bud-=11;NFSU2_TR(0x68d9c0);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x10cull))));
 }
 B68d9c6:{NFSU2_TR(0x68d9c6);
 u8 U[8];
-w4(U+0,u32(u32(u32(0x100ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x100ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),(R+20),4);
 s4(u32(r4(U+0)),r4(U+4));
 }
 B68d9cd:{NFSU2_TR(0x68d9cd);
 u8 U[8];
-w4(U+0,u32(u32(u32(0x104ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x104ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),(R+24),4);
 s4(u32(r4(U+0)),r4(U+4));
 }
 B68d9d4:{NFSU2_TR(0x68d9d4);
 u8 U[8];
-w4(U+0,u32(u32(u32(0x108ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x108ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),(R+28),4);
 s4(u32(r4(U+0)),r4(U+4));
 }
 B68d9db:{NFSU2_TR(0x68d9db);
-__builtin_memmove((R+20),(R+16),4);
+__builtin_memmove((R+20),(G+16),4);
 }
 B68d9dd:{NFSU2_TR(0x68d9dd);
-w4(R+16,u32(u32(r4(R+16))&u32(u32(0xfffffff0ull))));
+w4(G+16,u32(u32(r4(G+16))&u32(u32(0xfffffff0ull))));
 }
 B68d9e0:{NFSU2_TR(0x68d9e0);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x124ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+4),(U+4),4);
+__builtin_memmove((G+4),(U+4),4);
 }
 B68d9e6:{NFSU2_TR(0x68d9e6);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x110ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68d9ec:{NFSU2_TR(0x68d9ec);
 u8 U[8];
@@ -9153,17 +9598,17 @@ __builtin_memmove((R+8),(U+4),4);
 }
 B68d9f2:{NFSU2_TR(0x68d9f2);
 u8 U[8];
-__builtin_memmove((U+0),(R+4),4);
-w1(R+523,sborrow<u32>(r4(U+0),u32(0x4ull)));
+__builtin_memmove((U+0),(G+4),4);
+w1(F+11,sborrow<u32>(r4(U+0),u32(0x4ull)));
 w4(U+4,u32(u32(r4(U+0))-u32(u32(0x4ull))));
-w1(R+519,u8(s32(r4(U+4))<s32(u32(0x0ull))));
+w1(F+7,u8(s32(r4(U+4))<s32(u32(0x0ull))));
 }
 B68d9f5:{NFSU2_TR(0x68d9f5);
 u8 U[1];
-w1(U+0,u8((r1(R+523))==(r1(R+519))));
-if(r1(U+0)){{goto L68da39;}}
+w1(U+0,u8((r1(F+11))==(r1(F+7))));
+if(r1(U+0)){{[[clang::musttail]] return blk_68da39(ARGS);}}
 }
-B68d9f7:L68d9f7:{c.instructions+=2;NFSU2_TR(0x68d9f7);
+B68d9f7:L68d9f7:{bud-=2;NFSU2_TR(0x68d9f7);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x118ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
@@ -9171,52 +9616,89 @@ __builtin_memmove((R+24),(U+4),4);
 }
 B68d9fd:{NFSU2_TR(0x68d9fd);
 u8 U[8];
-__builtin_memmove((U+0),(R+4),4);
+__builtin_memmove((U+0),(G+4),4);
 w4(U+4,u32(u32(r4(U+0))-u32(u32(0x0ull))));
-w1(R+518,u8((r4(U+4))==(u32(0x0ull))));
+w1(F+6,u8((r4(U+4))==(u32(0x0ull))));
+{__builtin_memcpy(R+518,F+6,1);[[clang::musttail]] return blk_68da00(ARGS);}
 }
-B68da00:L68da00:{c.instructions+=1;NFSU2_TR(0x68da00);
-if(r1(R+518)){{goto L68dbf9;}}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
 }
-B68da06:L68da06:{c.instructions+=5;NFSU2_TR(0x68da06);
+PN u32 blk_68da00(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68da00:L68da00:{bud-=1;NFSU2_TR(0x68da00);
+if(r1(F+6)){{[[clang::musttail]] return blk_68dbf9(ARGS);}}
+}
+B68da06:L68da06:{bud-=5;NFSU2_TR(0x68da06);
 u8 U[6];
-w1(R+512,u8((r4(R+16))<(u32(0xcull))));
-w1(R+523,sborrow<u32>(r4(R+16),u32(0xcull)));
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0xcull))));
-w1(R+519,u8(s32(r4(R+16))<s32(u32(0x0ull))));
-w1(R+518,u8((r4(R+16))==(u32(0x0ull))));
-w4(U+0,u32(u32(r4(R+16))&u32(u32(0xffull))));
+w1(F+0,u8((r4(G+16))<(u32(0xcull))));
+w1(F+11,sborrow<u32>(r4(G+16),u32(0xcull)));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0xcull))));
+w1(F+7,u8(s32(r4(G+16))<s32(u32(0x0ull))));
+w1(F+6,u8((r4(G+16))==(u32(0x0ull))));
+w4(U+0,u32(u32(r4(G+16))&u32(u32(0xffull))));
 w1(U+4,u8(__builtin_popcountll(u64(r4(U+0)))));
 w1(U+5,u8(u32(r1(U+4))&u32(u8(0x1ull))));
-w1(R+514,u8((r1(U+5))==(u8(0x0ull))));
+w1(F+2,u8((r1(U+5))==(u8(0x0ull))));
 }
 B68da09:{NFSU2_TR(0x68da09);
 u8 U[4];
-__builtin_memmove((U+0),(R+0),4);
-s4(u32(r4(R+16)),r4(U+0));
+__builtin_memmove((U+0),(G+0),4);
+s4(u32(r4(G+16)),r4(U+0));
 }
 B68da0c:{NFSU2_TR(0x68da0c);
 u8 U[8];
-w4(U+0,u32(u32(u32(0x4ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x4ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),(R+24),4);
 s4(u32(r4(U+0)),r4(U+4));
 }
 B68da10:{NFSU2_TR(0x68da10);
 u8 U[8];
-w4(U+0,u32(u32(u32(0x8ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x8ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),(R+8),4);
 s4(u32(r4(U+0)),r4(U+4));
 }
 B68da14:{NFSU2_TR(0x68da14);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x4ull))));
-s4(u32(r4(R+16)),u32(0x68da19ull));
-TAIL_STATIC(0x69477bu,694);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),u32(0x68da19ull));
+{__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);[[clang::musttail]] return blk_69477b(ARGS);}
 }
-B68da19:L68da19:{c.instructions+=6;NFSU2_TR(0x68da19);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68da19(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68da19:L68da19:{bud-=6;NFSU2_TR(0x68da19);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x114ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-w4(R+0,u32(u32(r4(R+0))+u32(r4(U+4))));
+w4(G+0,u32(u32(r4(G+0))+u32(r4(U+4))));
 }
 B68da1f:{NFSU2_TR(0x68da1f);
 u8 U[8];
@@ -9243,12 +9725,30 @@ __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
 w4(U+4,u32(u32(r4(U+4))-u32(u32(0x1ull))));
 s4(u32(r4(U+0)),r4(U+4));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-w1(R+518,u8((r4(U+4))==(u32(0x0ull))));
+w1(F+6,u8((r4(U+4))==(u32(0x0ull))));
 }
 B68da37:{NFSU2_TR(0x68da37);
-{if(__builtin_expect(++c.chain>=2048,0)){c.chain=0;EXIT(0x68da00u);}goto L68da00;}
+{__builtin_memcpy(R+518,F+6,1);if(__builtin_expect(bud<=0,0)){EXIT(0x68da00u);}[[clang::musttail]] return blk_68da00(ARGS);}
 }
-B68da39:L68da39:{c.instructions+=39;NFSU2_TR(0x68da39);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68da39(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68da39:L68da39:{bud-=39;NFSU2_TR(0x68da39);
 u8 U[4];
 __builtin_memmove((U+0),gp(u32(r4(R+8))),4);
 __builtin_memmove((R+4608),(U+0),4);
@@ -9890,47 +10390,47 @@ w4(R+5068,u32(u32(r4(U+31))+u32(r4(U+40))));
 B68da80:{NFSU2_TR(0x68da80);
 u8 U[16];
 __builtin_memmove((U+0),(R+4608),16);
-__builtin_memmove(gp(u32(r4(R+16))),(U+0),16);
+__builtin_memmove(gp(u32(r4(G+16))),(U+0),16);
 }
 B68da84:{NFSU2_TR(0x68da84);
 u8 U[20];
-w4(U+0,u32(u32(u32(0x10ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x10ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),(R+4672),16);
 __builtin_memmove(gp(u32(r4(U+0))),(U+4),16);
 }
 B68da89:{NFSU2_TR(0x68da89);
 u8 U[20];
-w4(U+0,u32(u32(u32(0x20ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x20ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),(R+4736),16);
 __builtin_memmove(gp(u32(r4(U+0))),(U+4),16);
 }
 B68da8e:{NFSU2_TR(0x68da8e);
 u8 U[20];
-w4(U+0,u32(u32(u32(0x30ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x30ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),(R+4800),16);
 __builtin_memmove(gp(u32(r4(U+0))),(U+4),16);
 }
 B68da93:{NFSU2_TR(0x68da93);
 u8 U[20];
-w4(U+0,u32(u32(u32(0x40ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x40ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),(R+4864),16);
 __builtin_memmove(gp(u32(r4(U+0))),(U+4),16);
 }
 B68da98:{NFSU2_TR(0x68da98);
 u8 U[20];
-w4(U+0,u32(u32(u32(0x50ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x50ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),(R+4928),16);
 __builtin_memmove(gp(u32(r4(U+0))),(U+4),16);
 }
 B68da9d:{NFSU2_TR(0x68da9d);
 u8 U[20];
-w4(U+0,u32(u32(u32(0x60ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x60ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),(R+4992),16);
 __builtin_memmove(gp(u32(r4(U+0))),(U+4),16);
 }
 B68daa2:{NFSU2_TR(0x68daa2);
 u8 U[20];
-w4(U+0,u32(u32(u32(0x70ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x70ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),(R+5056),16);
 __builtin_memmove(gp(u32(r4(U+0))),(U+4),16);
 }
@@ -10256,25 +10756,25 @@ w4(R+4812,u32(u32(r4(U+31))+u32(r4(U+40))));
 }
 B68dacb:{NFSU2_TR(0x68dacb);
 u8 U[20];
-w4(U+0,u32(u32(u32(0xc0ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0xc0ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),(R+4608),16);
 __builtin_memmove(gp(u32(r4(U+0))),(U+4),16);
 }
 B68dad3:{NFSU2_TR(0x68dad3);
 u8 U[20];
-w4(U+0,u32(u32(u32(0xd0ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0xd0ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),(R+4672),16);
 __builtin_memmove(gp(u32(r4(U+0))),(U+4),16);
 }
 B68dadb:{NFSU2_TR(0x68dadb);
 u8 U[20];
-w4(U+0,u32(u32(u32(0xe0ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0xe0ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),(R+4736),16);
 __builtin_memmove(gp(u32(r4(U+0))),(U+4),16);
 }
 B68dae3:{NFSU2_TR(0x68dae3);
 u8 U[20];
-w4(U+0,u32(u32(u32(0xf0ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0xf0ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),(R+4800),16);
 __builtin_memmove(gp(u32(r4(U+0))),(U+4),16);
 }
@@ -10295,20 +10795,39 @@ u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x114ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
 __builtin_memmove((R+28),(U+4),4);
+{[[clang::musttail]] return blk_68dafd(ARGS);}
 }
-B68dafd:L68dafd:{c.instructions+=2;NFSU2_TR(0x68dafd);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68dafd(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+519,F+7,1);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68dafd:L68dafd:{bud-=2;NFSU2_TR(0x68dafd);
 u8 U[8];
-__builtin_memmove((U+0),(R+4),4);
-w1(R+523,sborrow<u32>(r4(U+0),u32(0x4ull)));
+__builtin_memmove((U+0),(G+4),4);
+w1(F+11,sborrow<u32>(r4(U+0),u32(0x4ull)));
 w4(U+4,u32(u32(r4(U+0))-u32(u32(0x4ull))));
-w1(R+519,u8(s32(r4(U+4))<s32(u32(0x0ull))));
+w1(F+7,u8(s32(r4(U+4))<s32(u32(0x0ull))));
 }
 B68db00:{NFSU2_TR(0x68db00);
 u8 U[1];
-w1(U+0,u8((r1(R+523))!=(r1(R+519))));
-if(r1(U+0)){{goto L68dbd1;}}
+w1(U+0,u8((r1(F+11))!=(r1(F+7))));
+if(r1(U+0)){{[[clang::musttail]] return blk_68dbd1(ARGS);}}
 }
-B68db06:L68db06:{c.instructions+=54;NFSU2_TR(0x68db06);
+B68db06:L68db06:{bud-=54;NFSU2_TR(0x68db06);
 u8 U[8];
 __builtin_memmove((U+0),gp(u32(r4(R+8))),8);
 __builtin_memmove((R+4608),(U+0),8);
@@ -10386,7 +10905,7 @@ __builtin_memmove((R+4940),(R+4620),4);
 }
 B68db32:{NFSU2_TR(0x68db32);
 u8 U[32];
-__builtin_memmove((U+0),gp(u32(r4(R+16))),16);
+__builtin_memmove((U+0),gp(u32(r4(G+16))),16);
 __builtin_memmove((U+16),(U+0),16);
 w4(R+4608,b32(f32(r4(R+4608))*f32(r4(U+16))));
 w4(R+4612,b32(f32(r4(R+4612))*f32(r4(U+20))));
@@ -10395,7 +10914,7 @@ w4(R+4620,b32(f32(r4(R+4620))*f32(r4(U+28))));
 }
 B68db36:{NFSU2_TR(0x68db36);
 u8 U[36];
-w4(U+0,u32(u32(u32(0x10ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x10ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),16);
 __builtin_memmove((U+20),(U+4),16);
 w4(R+4672,b32(f32(r4(R+4672))*f32(r4(U+20))));
@@ -10405,7 +10924,7 @@ w4(R+4684,b32(f32(r4(R+4684))*f32(r4(U+32))));
 }
 B68db3b:{NFSU2_TR(0x68db3b);
 u8 U[36];
-w4(U+0,u32(u32(u32(0x20ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x20ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),16);
 __builtin_memmove((U+20),(U+4),16);
 w4(R+4800,b32(f32(r4(R+4800))*f32(r4(U+20))));
@@ -10415,7 +10934,7 @@ w4(R+4812,b32(f32(r4(R+4812))*f32(r4(U+32))));
 }
 B68db40:{NFSU2_TR(0x68db40);
 u8 U[36];
-w4(U+0,u32(u32(u32(0x30ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x30ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),16);
 __builtin_memmove((U+20),(U+4),16);
 w4(R+4928,b32(f32(r4(R+4928))*f32(r4(U+20))));
@@ -10443,7 +10962,7 @@ __builtin_memmove((R+5068),(R+4876),4);
 }
 B68db4e:{NFSU2_TR(0x68db4e);
 u8 U[36];
-w4(U+0,u32(u32(u32(0x40ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x40ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),16);
 __builtin_memmove((U+20),(U+4),16);
 w4(R+4864,b32(f32(r4(R+4864))*f32(r4(U+20))));
@@ -10453,7 +10972,7 @@ w4(R+4876,b32(f32(r4(R+4876))*f32(r4(U+32))));
 }
 B68db53:{NFSU2_TR(0x68db53);
 u8 U[36];
-w4(U+0,u32(u32(u32(0x50ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x50ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),16);
 __builtin_memmove((U+20),(U+4),16);
 w4(R+4736,b32(f32(r4(R+4736))*f32(r4(U+20))));
@@ -10463,7 +10982,7 @@ w4(R+4748,b32(f32(r4(R+4748))*f32(r4(U+32))));
 }
 B68db58:{NFSU2_TR(0x68db58);
 u8 U[36];
-w4(U+0,u32(u32(u32(0x60ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x60ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),16);
 __builtin_memmove((U+20),(U+4),16);
 w4(R+4992,b32(f32(r4(R+4992))*f32(r4(U+20))));
@@ -10473,7 +10992,7 @@ w4(R+5004,b32(f32(r4(R+5004))*f32(r4(U+32))));
 }
 B68db5d:{NFSU2_TR(0x68db5d);
 u8 U[36];
-w4(U+0,u32(u32(u32(0x70ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x70ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),16);
 __builtin_memmove((U+20),(U+4),16);
 w4(R+5056,b32(f32(r4(R+5056))*f32(r4(U+20))));
@@ -10507,7 +11026,7 @@ w4(R+4940,b32(f32(r4(R+4940))+f32(r4(R+5068))));
 }
 B68db6e:{NFSU2_TR(0x68db6e);
 u8 U[36];
-w4(U+0,u32(u32(u32(0xc0ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0xc0ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),16);
 __builtin_memmove((U+20),(U+4),16);
 w4(R+4608,b32(f32(r4(R+4608))+f32(r4(U+20))));
@@ -10517,7 +11036,7 @@ w4(R+4620,b32(f32(r4(R+4620))+f32(r4(U+32))));
 }
 B68db76:{NFSU2_TR(0x68db76);
 u8 U[36];
-w4(U+0,u32(u32(u32(0xd0ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0xd0ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),16);
 __builtin_memmove((U+20),(U+4),16);
 w4(R+4672,b32(f32(r4(R+4672))+f32(r4(U+20))));
@@ -10527,7 +11046,7 @@ w4(R+4684,b32(f32(r4(R+4684))+f32(r4(U+32))));
 }
 B68db7e:{NFSU2_TR(0x68db7e);
 u8 U[36];
-w4(U+0,u32(u32(u32(0xe0ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0xe0ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),16);
 __builtin_memmove((U+20),(U+4),16);
 w4(R+4800,b32(f32(r4(R+4800))+f32(r4(U+20))));
@@ -10537,7 +11056,7 @@ w4(R+4812,b32(f32(r4(R+4812))+f32(r4(U+32))));
 }
 B68db86:{NFSU2_TR(0x68db86);
 u8 U[36];
-w4(U+0,u32(u32(u32(0xf0ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0xf0ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),16);
 __builtin_memmove((U+20),(U+4),16);
 w4(R+4928,b32(f32(r4(R+4928))+f32(r4(U+20))));
@@ -10612,11 +11131,11 @@ __builtin_memmove((R+4864),(R+4936),8);
 B68dbb5:{NFSU2_TR(0x68dbb5);
 u8 U[16];
 __builtin_memmove((U+0),(R+4608),16);
-__builtin_memmove(gp(u32(r4(R+0))),(U+0),16);
+__builtin_memmove(gp(u32(r4(G+0))),(U+0),16);
 }
 B68dbb8:{NFSU2_TR(0x68dbb8);
 u8 U[24];
-w4(U+0,u32(u32(r4(R+0))*u32(u32(0x1ull))));
+w4(U+0,u32(u32(r4(G+0))*u32(u32(0x1ull))));
 w4(U+4,u32(u32(r4(R+28))+u32(r4(U+0))));
 __builtin_memmove((U+8),(R+4800),16);
 __builtin_memmove(gp(u32(r4(U+4))),(U+8),16);
@@ -10624,17 +11143,17 @@ __builtin_memmove(gp(u32(r4(U+4))),(U+8),16);
 B68dbbc:{NFSU2_TR(0x68dbbc);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+28))*u32(u32(0x2ull))));
-w4(U+4,u32(u32(r4(R+0))+u32(r4(U+0))));
-__builtin_memmove((R+0),(U+4),4);
+w4(U+4,u32(u32(r4(G+0))+u32(r4(U+0))));
+__builtin_memmove((G+0),(U+4),4);
 }
 B68dbbf:{NFSU2_TR(0x68dbbf);
 u8 U[16];
 __builtin_memmove((U+0),(R+4736),16);
-__builtin_memmove(gp(u32(r4(R+0))),(U+0),16);
+__builtin_memmove(gp(u32(r4(G+0))),(U+0),16);
 }
 B68dbc2:{NFSU2_TR(0x68dbc2);
 u8 U[24];
-w4(U+0,u32(u32(r4(R+0))*u32(u32(0x1ull))));
+w4(U+0,u32(u32(r4(G+0))*u32(u32(0x1ull))));
 w4(U+4,u32(u32(r4(R+28))+u32(r4(U+0))));
 __builtin_memmove((U+8),(R+4864),16);
 __builtin_memmove(gp(u32(r4(U+4))),(U+8),16);
@@ -10642,38 +11161,56 @@ __builtin_memmove(gp(u32(r4(U+4))),(U+8),16);
 B68dbc6:{NFSU2_TR(0x68dbc6);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+28))*u32(u32(0x2ull))));
-w4(U+4,u32(u32(r4(R+0))+u32(r4(U+0))));
-__builtin_memmove((R+0),(U+4),4);
+w4(U+4,u32(u32(r4(G+0))+u32(r4(U+0))));
+__builtin_memmove((G+0),(U+4),4);
 }
 B68dbc9:{NFSU2_TR(0x68dbc9);
-w4(R+4,u32(u32(r4(R+4))-u32(u32(0x4ull))));
+w4(G+4,u32(u32(r4(G+4))-u32(u32(0x4ull))));
 }
 B68dbcc:{NFSU2_TR(0x68dbcc);
-{if(__builtin_expect(++c.chain>=2048,0)){c.chain=0;EXIT(0x68dafdu);}goto L68dafd;}
+{if(__builtin_expect(bud<=0,0)){EXIT(0x68dafdu);}goto L68dafd;}
 }
-B68dbd1:L68dbd1:{c.instructions+=2;NFSU2_TR(0x68dbd1);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68dbd1(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68dbd1:L68dbd1:{bud-=2;NFSU2_TR(0x68dbd1);
 u8 U[8];
-__builtin_memmove((U+0),(R+4),4);
+__builtin_memmove((U+0),(G+4),4);
 w4(U+4,u32(u32(r4(U+0))-u32(u32(0x0ull))));
-w1(R+518,u8((r4(U+4))==(u32(0x0ull))));
+w1(F+6,u8((r4(U+4))==(u32(0x0ull))));
 }
 B68dbd4:{NFSU2_TR(0x68dbd4);
-if(r1(R+518)){{goto L68dbf9;}}
+if(r1(F+6)){{[[clang::musttail]] return blk_68dbf9(ARGS);}}
 }
-B68dbd6:L68dbd6:{c.instructions+=9;NFSU2_TR(0x68dbd6);
-w4(R+4,u32(u32(r4(R+4))-u32(u32(0x4ull))));
+B68dbd6:L68dbd6:{bud-=9;NFSU2_TR(0x68dbd6);
+w4(G+4,u32(u32(r4(G+4))-u32(u32(0x4ull))));
 }
 B68dbd9:{NFSU2_TR(0x68dbd9);
 u8 U[24];
 w8(U+0,u64(s64(s32(r4(R+28)))));
-w8(U+8,u64(s64(s32(r4(R+4)))));
+w8(U+8,u64(s64(s32(r4(G+4)))));
 w8(U+16,u64(u64(r8(U+0))*u64(r8(U+8))));
 w4(R+28,u32(r8(U+16)));
 }
 B68dbdc:{NFSU2_TR(0x68dbdc);
 u8 U[24];
 w8(U+0,u64(s64(s32(r4(R+24)))));
-w8(U+8,u64(s64(s32(r4(R+4)))));
+w8(U+8,u64(s64(s32(r4(G+4)))));
 w8(U+16,u64(u64(r8(U+0))*u64(r8(U+8))));
 w4(R+24,u32(r8(U+16)));
 }
@@ -10681,10 +11218,10 @@ B68dbdf:{NFSU2_TR(0x68dbdf);
 w4(R+8,u32(u32(r4(R+8))+u32(r4(R+24))));
 }
 B68dbe1:{NFSU2_TR(0x68dbe1);
-w4(R+0,u32(u32(r4(R+0))+u32(r4(R+28))));
+w4(G+0,u32(u32(r4(G+0))+u32(r4(R+28))));
 }
 B68dbe3:{NFSU2_TR(0x68dbe3);
-w4(R+4,u32(0x4ull));
+w4(G+4,u32(0x4ull));
 }
 B68dbe8:{NFSU2_TR(0x68dbe8);
 u8 U[8];
@@ -10699,91 +11236,127 @@ __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
 __builtin_memmove((R+28),(U+4),4);
 }
 B68dbf4:{NFSU2_TR(0x68dbf4);
-{if(__builtin_expect(++c.chain>=2048,0)){c.chain=0;EXIT(0x68dafdu);}goto L68dafd;}
+{if(__builtin_expect(bud<=0,0)){EXIT(0x68dafdu);}[[clang::musttail]] return blk_68dafd(ARGS);}
 }
-B68dbf9:L68dbf9:{c.instructions+=7;NFSU2_TR(0x68dbf9);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68dbf9(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68dbf9:L68dbf9:{bud-=7;NFSU2_TR(0x68dbf9);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x110ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68dbff:{NFSU2_TR(0x68dbff);
-__builtin_memmove((R+16),(R+20),4);
+__builtin_memmove((G+16),(R+20),4);
 }
 B68dc01:{NFSU2_TR(0x68dc01);
 u8 U[8];
-w4(U+0,u32(u32(u32(0x100ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x100ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
 __builtin_memmove((R+20),(U+4),4);
 }
 B68dc08:{NFSU2_TR(0x68dc08);
 u8 U[8];
-w4(U+0,u32(u32(u32(0x104ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x104ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
 __builtin_memmove((R+24),(U+4),4);
 }
 B68dc0f:{NFSU2_TR(0x68dc0f);
 u8 U[8];
-w4(U+0,u32(u32(u32(0x108ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x108ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
 __builtin_memmove((R+28),(U+4),4);
 }
 B68dc16:{NFSU2_TR(0x68dc16);
 u8 U[6];
-w1(R+512,carry<u32>(r4(R+16),u32(0x10cull)));
-w1(R+523,scarry<u32>(r4(R+16),u32(0x10cull)));
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x10cull))));
-w1(R+519,u8(s32(r4(R+16))<s32(u32(0x0ull))));
-w1(R+518,u8((r4(R+16))==(u32(0x0ull))));
-w4(U+0,u32(u32(r4(R+16))&u32(u32(0xffull))));
+w1(F+0,carry<u32>(r4(G+16),u32(0x10cull)));
+w1(F+11,scarry<u32>(r4(G+16),u32(0x10cull)));
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x10cull))));
+w1(F+7,u8(s32(r4(G+16))<s32(u32(0x0ull))));
+w1(F+6,u8((r4(G+16))==(u32(0x0ull))));
+w4(U+0,u32(u32(r4(G+16))&u32(u32(0xffull))));
 w1(U+4,u8(__builtin_popcountll(u64(r4(U+0)))));
 w1(U+5,u8(u32(r1(U+4))&u32(u8(0x1ull))));
-w1(R+514,u8((r1(U+5))==(u8(0x0ull))));
+w1(F+2,u8((r1(U+5))==(u8(0x0ull))));
 }
 B68dc1c:{NFSU2_TR(0x68dc1c);
-__builtin_memmove((R+644),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x18ull))));
+__builtin_memmove((R+644),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x18ull))));
 {u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
 }
-B68dc20:L68dc20:{c.instructions+=11;NFSU2_TR(0x68dc20);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x10cull))));
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68dc20(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68dc20:L68dc20:{bud-=11;NFSU2_TR(0x68dc20);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x10cull))));
 }
 B68dc26:{NFSU2_TR(0x68dc26);
 u8 U[8];
-w4(U+0,u32(u32(u32(0x100ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x100ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),(R+20),4);
 s4(u32(r4(U+0)),r4(U+4));
 }
 B68dc2d:{NFSU2_TR(0x68dc2d);
 u8 U[8];
-w4(U+0,u32(u32(u32(0x104ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x104ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),(R+24),4);
 s4(u32(r4(U+0)),r4(U+4));
 }
 B68dc34:{NFSU2_TR(0x68dc34);
 u8 U[8];
-w4(U+0,u32(u32(u32(0x108ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x108ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),(R+28),4);
 s4(u32(r4(U+0)),r4(U+4));
 }
 B68dc3b:{NFSU2_TR(0x68dc3b);
-__builtin_memmove((R+20),(R+16),4);
+__builtin_memmove((R+20),(G+16),4);
 }
 B68dc3d:{NFSU2_TR(0x68dc3d);
-w4(R+16,u32(u32(r4(R+16))&u32(u32(0xfffffff0ull))));
+w4(G+16,u32(u32(r4(G+16))&u32(u32(0xfffffff0ull))));
 }
 B68dc40:{NFSU2_TR(0x68dc40);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x124ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+4),(U+4),4);
+__builtin_memmove((G+4),(U+4),4);
 }
 B68dc46:{NFSU2_TR(0x68dc46);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x110ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68dc4c:{NFSU2_TR(0x68dc4c);
 u8 U[8];
@@ -10793,17 +11366,17 @@ __builtin_memmove((R+8),(U+4),4);
 }
 B68dc52:{NFSU2_TR(0x68dc52);
 u8 U[8];
-__builtin_memmove((U+0),(R+4),4);
-w1(R+523,sborrow<u32>(r4(U+0),u32(0x4ull)));
+__builtin_memmove((U+0),(G+4),4);
+w1(F+11,sborrow<u32>(r4(U+0),u32(0x4ull)));
 w4(U+4,u32(u32(r4(U+0))-u32(u32(0x4ull))));
-w1(R+519,u8(s32(r4(U+4))<s32(u32(0x0ull))));
+w1(F+7,u8(s32(r4(U+4))<s32(u32(0x0ull))));
 }
 B68dc55:{NFSU2_TR(0x68dc55);
 u8 U[1];
-w1(U+0,u8((r1(R+523))==(r1(R+519))));
-if(r1(U+0)){{goto L68dc99;}}
+w1(U+0,u8((r1(F+11))==(r1(F+7))));
+if(r1(U+0)){{[[clang::musttail]] return blk_68dc99(ARGS);}}
 }
-B68dc57:L68dc57:{c.instructions+=2;NFSU2_TR(0x68dc57);
+B68dc57:L68dc57:{bud-=2;NFSU2_TR(0x68dc57);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x118ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
@@ -10811,52 +11384,89 @@ __builtin_memmove((R+24),(U+4),4);
 }
 B68dc5d:{NFSU2_TR(0x68dc5d);
 u8 U[8];
-__builtin_memmove((U+0),(R+4),4);
+__builtin_memmove((U+0),(G+4),4);
 w4(U+4,u32(u32(r4(U+0))-u32(u32(0x0ull))));
-w1(R+518,u8((r4(U+4))==(u32(0x0ull))));
+w1(F+6,u8((r4(U+4))==(u32(0x0ull))));
+{__builtin_memcpy(R+518,F+6,1);[[clang::musttail]] return blk_68dc60(ARGS);}
 }
-B68dc60:L68dc60:{c.instructions+=1;NFSU2_TR(0x68dc60);
-if(r1(R+518)){{goto L68de3f;}}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
 }
-B68dc66:L68dc66:{c.instructions+=5;NFSU2_TR(0x68dc66);
+PN u32 blk_68dc60(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68dc60:L68dc60:{bud-=1;NFSU2_TR(0x68dc60);
+if(r1(F+6)){{[[clang::musttail]] return blk_68de3f(ARGS);}}
+}
+B68dc66:L68dc66:{bud-=5;NFSU2_TR(0x68dc66);
 u8 U[6];
-w1(R+512,u8((r4(R+16))<(u32(0xcull))));
-w1(R+523,sborrow<u32>(r4(R+16),u32(0xcull)));
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0xcull))));
-w1(R+519,u8(s32(r4(R+16))<s32(u32(0x0ull))));
-w1(R+518,u8((r4(R+16))==(u32(0x0ull))));
-w4(U+0,u32(u32(r4(R+16))&u32(u32(0xffull))));
+w1(F+0,u8((r4(G+16))<(u32(0xcull))));
+w1(F+11,sborrow<u32>(r4(G+16),u32(0xcull)));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0xcull))));
+w1(F+7,u8(s32(r4(G+16))<s32(u32(0x0ull))));
+w1(F+6,u8((r4(G+16))==(u32(0x0ull))));
+w4(U+0,u32(u32(r4(G+16))&u32(u32(0xffull))));
 w1(U+4,u8(__builtin_popcountll(u64(r4(U+0)))));
 w1(U+5,u8(u32(r1(U+4))&u32(u8(0x1ull))));
-w1(R+514,u8((r1(U+5))==(u8(0x0ull))));
+w1(F+2,u8((r1(U+5))==(u8(0x0ull))));
 }
 B68dc69:{NFSU2_TR(0x68dc69);
 u8 U[4];
-__builtin_memmove((U+0),(R+0),4);
-s4(u32(r4(R+16)),r4(U+0));
+__builtin_memmove((U+0),(G+0),4);
+s4(u32(r4(G+16)),r4(U+0));
 }
 B68dc6c:{NFSU2_TR(0x68dc6c);
 u8 U[8];
-w4(U+0,u32(u32(u32(0x4ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x4ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),(R+24),4);
 s4(u32(r4(U+0)),r4(U+4));
 }
 B68dc70:{NFSU2_TR(0x68dc70);
 u8 U[8];
-w4(U+0,u32(u32(u32(0x8ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x8ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),(R+8),4);
 s4(u32(r4(U+0)),r4(U+4));
 }
 B68dc74:{NFSU2_TR(0x68dc74);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x4ull))));
-s4(u32(r4(R+16)),u32(0x68dc79ull));
-TAIL_STATIC(0x69480du,694);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),u32(0x68dc79ull));
+{__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);[[clang::musttail]] return blk_69480d(ARGS);}
 }
-B68dc79:L68dc79:{c.instructions+=6;NFSU2_TR(0x68dc79);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68dc79(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68dc79:L68dc79:{bud-=6;NFSU2_TR(0x68dc79);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x114ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-w4(R+0,u32(u32(r4(R+0))+u32(r4(U+4))));
+w4(G+0,u32(u32(r4(G+0))+u32(r4(U+4))));
 }
 B68dc7f:{NFSU2_TR(0x68dc7f);
 u8 U[8];
@@ -10883,12 +11493,30 @@ __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
 w4(U+4,u32(u32(r4(U+4))-u32(u32(0x1ull))));
 s4(u32(r4(U+0)),r4(U+4));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-w1(R+518,u8((r4(U+4))==(u32(0x0ull))));
+w1(F+6,u8((r4(U+4))==(u32(0x0ull))));
 }
 B68dc97:{NFSU2_TR(0x68dc97);
-{if(__builtin_expect(++c.chain>=2048,0)){c.chain=0;EXIT(0x68dc60u);}goto L68dc60;}
+{__builtin_memcpy(R+518,F+6,1);if(__builtin_expect(bud<=0,0)){EXIT(0x68dc60u);}[[clang::musttail]] return blk_68dc60(ARGS);}
 }
-B68dc99:L68dc99:{c.instructions+=39;NFSU2_TR(0x68dc99);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68dc99(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68dc99:L68dc99:{bud-=39;NFSU2_TR(0x68dc99);
 u8 U[4];
 __builtin_memmove((U+0),gp(u32(r4(R+8))),4);
 __builtin_memmove((R+4608),(U+0),4);
@@ -11530,47 +12158,47 @@ w4(R+5068,u32(u32(r4(U+31))+u32(r4(U+40))));
 B68dce0:{NFSU2_TR(0x68dce0);
 u8 U[16];
 __builtin_memmove((U+0),(R+4608),16);
-__builtin_memmove(gp(u32(r4(R+16))),(U+0),16);
+__builtin_memmove(gp(u32(r4(G+16))),(U+0),16);
 }
 B68dce4:{NFSU2_TR(0x68dce4);
 u8 U[20];
-w4(U+0,u32(u32(u32(0x10ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x10ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),(R+4672),16);
 __builtin_memmove(gp(u32(r4(U+0))),(U+4),16);
 }
 B68dce9:{NFSU2_TR(0x68dce9);
 u8 U[20];
-w4(U+0,u32(u32(u32(0x20ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x20ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),(R+4736),16);
 __builtin_memmove(gp(u32(r4(U+0))),(U+4),16);
 }
 B68dcee:{NFSU2_TR(0x68dcee);
 u8 U[20];
-w4(U+0,u32(u32(u32(0x30ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x30ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),(R+4800),16);
 __builtin_memmove(gp(u32(r4(U+0))),(U+4),16);
 }
 B68dcf3:{NFSU2_TR(0x68dcf3);
 u8 U[20];
-w4(U+0,u32(u32(u32(0x40ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x40ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),(R+4864),16);
 __builtin_memmove(gp(u32(r4(U+0))),(U+4),16);
 }
 B68dcf8:{NFSU2_TR(0x68dcf8);
 u8 U[20];
-w4(U+0,u32(u32(u32(0x50ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x50ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),(R+4928),16);
 __builtin_memmove(gp(u32(r4(U+0))),(U+4),16);
 }
 B68dcfd:{NFSU2_TR(0x68dcfd);
 u8 U[20];
-w4(U+0,u32(u32(u32(0x60ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x60ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),(R+4992),16);
 __builtin_memmove(gp(u32(r4(U+0))),(U+4),16);
 }
 B68dd02:{NFSU2_TR(0x68dd02);
 u8 U[20];
-w4(U+0,u32(u32(u32(0x70ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x70ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),(R+5056),16);
 __builtin_memmove(gp(u32(r4(U+0))),(U+4),16);
 }
@@ -11896,25 +12524,25 @@ w4(R+4812,u32(u32(r4(U+31))+u32(r4(U+40))));
 }
 B68dd2b:{NFSU2_TR(0x68dd2b);
 u8 U[20];
-w4(U+0,u32(u32(u32(0xc0ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0xc0ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),(R+4608),16);
 __builtin_memmove(gp(u32(r4(U+0))),(U+4),16);
 }
 B68dd33:{NFSU2_TR(0x68dd33);
 u8 U[20];
-w4(U+0,u32(u32(u32(0xd0ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0xd0ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),(R+4672),16);
 __builtin_memmove(gp(u32(r4(U+0))),(U+4),16);
 }
 B68dd3b:{NFSU2_TR(0x68dd3b);
 u8 U[20];
-w4(U+0,u32(u32(u32(0xe0ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0xe0ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),(R+4736),16);
 __builtin_memmove(gp(u32(r4(U+0))),(U+4),16);
 }
 B68dd43:{NFSU2_TR(0x68dd43);
 u8 U[20];
-w4(U+0,u32(u32(u32(0xf0ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0xf0ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),(R+4800),16);
 __builtin_memmove(gp(u32(r4(U+0))),(U+4),16);
 }
@@ -11935,20 +12563,39 @@ u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x114ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
 __builtin_memmove((R+28),(U+4),4);
+{[[clang::musttail]] return blk_68dd5d(ARGS);}
 }
-B68dd5d:L68dd5d:{c.instructions+=2;NFSU2_TR(0x68dd5d);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68dd5d(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+519,F+7,1);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68dd5d:L68dd5d:{bud-=2;NFSU2_TR(0x68dd5d);
 u8 U[8];
-__builtin_memmove((U+0),(R+4),4);
-w1(R+523,sborrow<u32>(r4(U+0),u32(0x4ull)));
+__builtin_memmove((U+0),(G+4),4);
+w1(F+11,sborrow<u32>(r4(U+0),u32(0x4ull)));
 w4(U+4,u32(u32(r4(U+0))-u32(u32(0x4ull))));
-w1(R+519,u8(s32(r4(U+4))<s32(u32(0x0ull))));
+w1(F+7,u8(s32(r4(U+4))<s32(u32(0x0ull))));
 }
 B68dd60:{NFSU2_TR(0x68dd60);
 u8 U[1];
-w1(U+0,u8((r1(R+523))!=(r1(R+519))));
-if(r1(U+0)){{goto L68de17;}}
+w1(U+0,u8((r1(F+11))!=(r1(F+7))));
+if(r1(U+0)){{[[clang::musttail]] return blk_68de17(ARGS);}}
 }
-B68dd66:L68dd66:{c.instructions+=47;NFSU2_TR(0x68dd66);
+B68dd66:L68dd66:{bud-=47;NFSU2_TR(0x68dd66);
 u8 U[8];
 __builtin_memmove((U+0),gp(u32(r4(R+8))),8);
 __builtin_memmove((R+4608),(U+0),8);
@@ -12020,7 +12667,7 @@ __builtin_memmove((R+4940),(R+4620),4);
 }
 B68dd8f:{NFSU2_TR(0x68dd8f);
 u8 U[32];
-__builtin_memmove((U+0),gp(u32(r4(R+16))),16);
+__builtin_memmove((U+0),gp(u32(r4(G+16))),16);
 __builtin_memmove((U+16),(U+0),16);
 w4(R+4608,b32(f32(r4(R+4608))*f32(r4(U+16))));
 w4(R+4612,b32(f32(r4(R+4612))*f32(r4(U+20))));
@@ -12029,7 +12676,7 @@ w4(R+4620,b32(f32(r4(R+4620))*f32(r4(U+28))));
 }
 B68dd93:{NFSU2_TR(0x68dd93);
 u8 U[36];
-w4(U+0,u32(u32(u32(0x10ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x10ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),16);
 __builtin_memmove((U+20),(U+4),16);
 w4(R+4672,b32(f32(r4(R+4672))*f32(r4(U+20))));
@@ -12039,7 +12686,7 @@ w4(R+4684,b32(f32(r4(R+4684))*f32(r4(U+32))));
 }
 B68dd98:{NFSU2_TR(0x68dd98);
 u8 U[36];
-w4(U+0,u32(u32(u32(0x30ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x30ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),16);
 __builtin_memmove((U+20),(U+4),16);
 w4(R+4928,b32(f32(r4(R+4928))*f32(r4(U+20))));
@@ -12061,7 +12708,7 @@ __builtin_memmove((R+5068),(R+4876),4);
 }
 B68dda3:{NFSU2_TR(0x68dda3);
 u8 U[36];
-w4(U+0,u32(u32(u32(0x40ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x40ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),16);
 __builtin_memmove((U+20),(U+4),16);
 w4(R+4864,b32(f32(r4(R+4864))*f32(r4(U+20))));
@@ -12071,7 +12718,7 @@ w4(R+4876,b32(f32(r4(R+4876))*f32(r4(U+32))));
 }
 B68dda8:{NFSU2_TR(0x68dda8);
 u8 U[36];
-w4(U+0,u32(u32(u32(0x50ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x50ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),16);
 __builtin_memmove((U+20),(U+4),16);
 w4(R+4736,b32(f32(r4(R+4736))*f32(r4(U+20))));
@@ -12081,7 +12728,7 @@ w4(R+4748,b32(f32(r4(R+4748))*f32(r4(U+32))));
 }
 B68ddad:{NFSU2_TR(0x68ddad);
 u8 U[36];
-w4(U+0,u32(u32(u32(0x70ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x70ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),16);
 __builtin_memmove((U+20),(U+4),16);
 w4(R+5056,b32(f32(r4(R+5056))*f32(r4(U+20))));
@@ -12117,7 +12764,7 @@ __builtin_memmove((R+4748),(U+12),4);
 }
 B68ddc2:{NFSU2_TR(0x68ddc2);
 u8 U[36];
-w4(U+0,u32(u32(u32(0xc0ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0xc0ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),16);
 __builtin_memmove((U+20),(U+4),16);
 w4(R+4608,b32(f32(r4(R+4608))+f32(r4(U+20))));
@@ -12127,7 +12774,7 @@ w4(R+4620,b32(f32(r4(R+4620))+f32(r4(U+32))));
 }
 B68ddca:{NFSU2_TR(0x68ddca);
 u8 U[36];
-w4(U+0,u32(u32(u32(0xd0ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0xd0ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),16);
 __builtin_memmove((U+20),(U+4),16);
 w4(R+4672,b32(f32(r4(R+4672))+f32(r4(U+20))));
@@ -12137,7 +12784,7 @@ w4(R+4684,b32(f32(r4(R+4684))+f32(r4(U+32))));
 }
 B68ddd2:{NFSU2_TR(0x68ddd2);
 u8 U[36];
-w4(U+0,u32(u32(u32(0xf0ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0xf0ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),16);
 __builtin_memmove((U+20),(U+4),16);
 w4(R+4928,b32(f32(r4(R+4928))+f32(r4(U+20))));
@@ -12198,14 +12845,14 @@ __builtin_memmove((R+4748),(R+4684),4);
 B68ddf5:{NFSU2_TR(0x68ddf5);
 u8 U[8];
 __builtin_memmove((U+0),(R+4608),8);
-s8_(u32(r4(R+0)),r8(U+0));
+s8_(u32(r4(G+0)),r8(U+0));
 }
 B68ddf8:{NFSU2_TR(0x68ddf8);
 __builtin_memmove((R+4608),(R+4616),8);
 }
 B68ddfb:{NFSU2_TR(0x68ddfb);
 u8 U[16];
-w4(U+0,u32(u32(r4(R+0))*u32(u32(0x1ull))));
+w4(U+0,u32(u32(r4(G+0))*u32(u32(0x1ull))));
 w4(U+4,u32(u32(r4(R+28))+u32(r4(U+0))));
 __builtin_memmove((U+8),(R+4608),8);
 s8_(u32(r4(U+4)),r8(U+8));
@@ -12213,20 +12860,20 @@ s8_(u32(r4(U+4)),r8(U+8));
 B68ddff:{NFSU2_TR(0x68ddff);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+28))*u32(u32(0x2ull))));
-w4(U+4,u32(u32(r4(R+0))+u32(r4(U+0))));
-__builtin_memmove((R+0),(U+4),4);
+w4(U+4,u32(u32(r4(G+0))+u32(r4(U+0))));
+__builtin_memmove((G+0),(U+4),4);
 }
 B68de02:{NFSU2_TR(0x68de02);
 u8 U[8];
 __builtin_memmove((U+0),(R+4736),8);
-s8_(u32(r4(R+0)),r8(U+0));
+s8_(u32(r4(G+0)),r8(U+0));
 }
 B68de05:{NFSU2_TR(0x68de05);
 __builtin_memmove((R+4736),(R+4744),8);
 }
 B68de08:{NFSU2_TR(0x68de08);
 u8 U[16];
-w4(U+0,u32(u32(r4(R+0))*u32(u32(0x1ull))));
+w4(U+0,u32(u32(r4(G+0))*u32(u32(0x1ull))));
 w4(U+4,u32(u32(r4(R+28))+u32(r4(U+0))));
 __builtin_memmove((U+8),(R+4736),8);
 s8_(u32(r4(U+4)),r8(U+8));
@@ -12234,38 +12881,56 @@ s8_(u32(r4(U+4)),r8(U+8));
 B68de0c:{NFSU2_TR(0x68de0c);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+28))*u32(u32(0x2ull))));
-w4(U+4,u32(u32(r4(R+0))+u32(r4(U+0))));
-__builtin_memmove((R+0),(U+4),4);
+w4(U+4,u32(u32(r4(G+0))+u32(r4(U+0))));
+__builtin_memmove((G+0),(U+4),4);
 }
 B68de0f:{NFSU2_TR(0x68de0f);
-w4(R+4,u32(u32(r4(R+4))-u32(u32(0x4ull))));
+w4(G+4,u32(u32(r4(G+4))-u32(u32(0x4ull))));
 }
 B68de12:{NFSU2_TR(0x68de12);
-{if(__builtin_expect(++c.chain>=2048,0)){c.chain=0;EXIT(0x68dd5du);}goto L68dd5d;}
+{if(__builtin_expect(bud<=0,0)){EXIT(0x68dd5du);}goto L68dd5d;}
 }
-B68de17:L68de17:{c.instructions+=2;NFSU2_TR(0x68de17);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68de17(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68de17:L68de17:{bud-=2;NFSU2_TR(0x68de17);
 u8 U[8];
-__builtin_memmove((U+0),(R+4),4);
+__builtin_memmove((U+0),(G+4),4);
 w4(U+4,u32(u32(r4(U+0))-u32(u32(0x0ull))));
-w1(R+518,u8((r4(U+4))==(u32(0x0ull))));
+w1(F+6,u8((r4(U+4))==(u32(0x0ull))));
 }
 B68de1a:{NFSU2_TR(0x68de1a);
-if(r1(R+518)){{goto L68de3f;}}
+if(r1(F+6)){{[[clang::musttail]] return blk_68de3f(ARGS);}}
 }
-B68de1c:L68de1c:{c.instructions+=9;NFSU2_TR(0x68de1c);
-w4(R+4,u32(u32(r4(R+4))-u32(u32(0x4ull))));
+B68de1c:L68de1c:{bud-=9;NFSU2_TR(0x68de1c);
+w4(G+4,u32(u32(r4(G+4))-u32(u32(0x4ull))));
 }
 B68de1f:{NFSU2_TR(0x68de1f);
 u8 U[24];
 w8(U+0,u64(s64(s32(r4(R+28)))));
-w8(U+8,u64(s64(s32(r4(R+4)))));
+w8(U+8,u64(s64(s32(r4(G+4)))));
 w8(U+16,u64(u64(r8(U+0))*u64(r8(U+8))));
 w4(R+28,u32(r8(U+16)));
 }
 B68de22:{NFSU2_TR(0x68de22);
 u8 U[24];
 w8(U+0,u64(s64(s32(r4(R+24)))));
-w8(U+8,u64(s64(s32(r4(R+4)))));
+w8(U+8,u64(s64(s32(r4(G+4)))));
 w8(U+16,u64(u64(r8(U+0))*u64(r8(U+8))));
 w4(R+24,u32(r8(U+16)));
 }
@@ -12273,10 +12938,10 @@ B68de25:{NFSU2_TR(0x68de25);
 w4(R+8,u32(u32(r4(R+8))+u32(r4(R+24))));
 }
 B68de27:{NFSU2_TR(0x68de27);
-w4(R+0,u32(u32(r4(R+0))+u32(r4(R+28))));
+w4(G+0,u32(u32(r4(G+0))+u32(r4(R+28))));
 }
 B68de29:{NFSU2_TR(0x68de29);
-w4(R+4,u32(0x4ull));
+w4(G+4,u32(0x4ull));
 }
 B68de2e:{NFSU2_TR(0x68de2e);
 u8 U[8];
@@ -12291,91 +12956,127 @@ __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
 __builtin_memmove((R+28),(U+4),4);
 }
 B68de3a:{NFSU2_TR(0x68de3a);
-{if(__builtin_expect(++c.chain>=2048,0)){c.chain=0;EXIT(0x68dd5du);}goto L68dd5d;}
+{if(__builtin_expect(bud<=0,0)){EXIT(0x68dd5du);}[[clang::musttail]] return blk_68dd5d(ARGS);}
 }
-B68de3f:L68de3f:{c.instructions+=7;NFSU2_TR(0x68de3f);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68de3f(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68de3f:L68de3f:{bud-=7;NFSU2_TR(0x68de3f);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x110ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68de45:{NFSU2_TR(0x68de45);
-__builtin_memmove((R+16),(R+20),4);
+__builtin_memmove((G+16),(R+20),4);
 }
 B68de47:{NFSU2_TR(0x68de47);
 u8 U[8];
-w4(U+0,u32(u32(u32(0x100ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x100ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
 __builtin_memmove((R+20),(U+4),4);
 }
 B68de4e:{NFSU2_TR(0x68de4e);
 u8 U[8];
-w4(U+0,u32(u32(u32(0x104ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x104ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
 __builtin_memmove((R+24),(U+4),4);
 }
 B68de55:{NFSU2_TR(0x68de55);
 u8 U[8];
-w4(U+0,u32(u32(u32(0x108ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x108ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
 __builtin_memmove((R+28),(U+4),4);
 }
 B68de5c:{NFSU2_TR(0x68de5c);
 u8 U[6];
-w1(R+512,carry<u32>(r4(R+16),u32(0x10cull)));
-w1(R+523,scarry<u32>(r4(R+16),u32(0x10cull)));
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x10cull))));
-w1(R+519,u8(s32(r4(R+16))<s32(u32(0x0ull))));
-w1(R+518,u8((r4(R+16))==(u32(0x0ull))));
-w4(U+0,u32(u32(r4(R+16))&u32(u32(0xffull))));
+w1(F+0,carry<u32>(r4(G+16),u32(0x10cull)));
+w1(F+11,scarry<u32>(r4(G+16),u32(0x10cull)));
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x10cull))));
+w1(F+7,u8(s32(r4(G+16))<s32(u32(0x0ull))));
+w1(F+6,u8((r4(G+16))==(u32(0x0ull))));
+w4(U+0,u32(u32(r4(G+16))&u32(u32(0xffull))));
 w1(U+4,u8(__builtin_popcountll(u64(r4(U+0)))));
 w1(U+5,u8(u32(r1(U+4))&u32(u8(0x1ull))));
-w1(R+514,u8((r1(U+5))==(u8(0x0ull))));
+w1(F+2,u8((r1(U+5))==(u8(0x0ull))));
 }
 B68de62:{NFSU2_TR(0x68de62);
-__builtin_memmove((R+644),gp(u32(r4(R+16))),4);
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
-w4(R+16,u32(u32(r4(R+16))+u32(u32(0x18ull))));
+__builtin_memmove((R+644),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x18ull))));
 {u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
 }
-B68de80:L68de80:{c.instructions+=11;NFSU2_TR(0x68de80);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x10cull))));
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68de80(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68de80:L68de80:{bud-=11;NFSU2_TR(0x68de80);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x10cull))));
 }
 B68de86:{NFSU2_TR(0x68de86);
 u8 U[8];
-w4(U+0,u32(u32(u32(0x100ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x100ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),(R+20),4);
 s4(u32(r4(U+0)),r4(U+4));
 }
 B68de8d:{NFSU2_TR(0x68de8d);
 u8 U[8];
-w4(U+0,u32(u32(u32(0x104ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x104ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),(R+24),4);
 s4(u32(r4(U+0)),r4(U+4));
 }
 B68de94:{NFSU2_TR(0x68de94);
 u8 U[8];
-w4(U+0,u32(u32(u32(0x108ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x108ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),(R+28),4);
 s4(u32(r4(U+0)),r4(U+4));
 }
 B68de9b:{NFSU2_TR(0x68de9b);
-__builtin_memmove((R+20),(R+16),4);
+__builtin_memmove((R+20),(G+16),4);
 }
 B68de9d:{NFSU2_TR(0x68de9d);
-w4(R+16,u32(u32(r4(R+16))&u32(u32(0xfffffff0ull))));
+w4(G+16,u32(u32(r4(G+16))&u32(u32(0xfffffff0ull))));
 }
 B68dea0:{NFSU2_TR(0x68dea0);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x124ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+4),(U+4),4);
+__builtin_memmove((G+4),(U+4),4);
 }
 B68dea6:{NFSU2_TR(0x68dea6);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x110ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-__builtin_memmove((R+0),(U+4),4);
+__builtin_memmove((G+0),(U+4),4);
 }
 B68deac:{NFSU2_TR(0x68deac);
 u8 U[8];
@@ -12385,17 +13086,17 @@ __builtin_memmove((R+8),(U+4),4);
 }
 B68deb2:{NFSU2_TR(0x68deb2);
 u8 U[8];
-__builtin_memmove((U+0),(R+4),4);
-w1(R+523,sborrow<u32>(r4(U+0),u32(0x4ull)));
+__builtin_memmove((U+0),(G+4),4);
+w1(F+11,sborrow<u32>(r4(U+0),u32(0x4ull)));
 w4(U+4,u32(u32(r4(U+0))-u32(u32(0x4ull))));
-w1(R+519,u8(s32(r4(U+4))<s32(u32(0x0ull))));
+w1(F+7,u8(s32(r4(U+4))<s32(u32(0x0ull))));
 }
 B68deb5:{NFSU2_TR(0x68deb5);
 u8 U[1];
-w1(U+0,u8((r1(R+523))==(r1(R+519))));
-if(r1(U+0)){{goto L68def9;}}
+w1(U+0,u8((r1(F+11))==(r1(F+7))));
+if(r1(U+0)){{[[clang::musttail]] return blk_68def9(ARGS);}}
 }
-B68deb7:L68deb7:{c.instructions+=2;NFSU2_TR(0x68deb7);
+B68deb7:L68deb7:{bud-=2;NFSU2_TR(0x68deb7);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x118ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
@@ -12403,52 +13104,89 @@ __builtin_memmove((R+24),(U+4),4);
 }
 B68debd:{NFSU2_TR(0x68debd);
 u8 U[8];
-__builtin_memmove((U+0),(R+4),4);
+__builtin_memmove((U+0),(G+4),4);
 w4(U+4,u32(u32(r4(U+0))-u32(u32(0x0ull))));
-w1(R+518,u8((r4(U+4))==(u32(0x0ull))));
+w1(F+6,u8((r4(U+4))==(u32(0x0ull))));
+{__builtin_memcpy(R+518,F+6,1);[[clang::musttail]] return blk_68dec0(ARGS);}
 }
-B68dec0:L68dec0:{c.instructions+=1;NFSU2_TR(0x68dec0);
-if(r1(R+518)){TAIL_STATIC(0x68e010u,68e);}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
 }
-B68dec6:L68dec6:{c.instructions+=5;NFSU2_TR(0x68dec6);
+PN u32 blk_68dec0(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68dec0:L68dec0:{bud-=1;NFSU2_TR(0x68dec0);
+if(r1(F+6)){{[[clang::musttail]] return blk_68e010(ARGS);}}
+}
+B68dec6:L68dec6:{bud-=5;NFSU2_TR(0x68dec6);
 u8 U[6];
-w1(R+512,u8((r4(R+16))<(u32(0xcull))));
-w1(R+523,sborrow<u32>(r4(R+16),u32(0xcull)));
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0xcull))));
-w1(R+519,u8(s32(r4(R+16))<s32(u32(0x0ull))));
-w1(R+518,u8((r4(R+16))==(u32(0x0ull))));
-w4(U+0,u32(u32(r4(R+16))&u32(u32(0xffull))));
+w1(F+0,u8((r4(G+16))<(u32(0xcull))));
+w1(F+11,sborrow<u32>(r4(G+16),u32(0xcull)));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0xcull))));
+w1(F+7,u8(s32(r4(G+16))<s32(u32(0x0ull))));
+w1(F+6,u8((r4(G+16))==(u32(0x0ull))));
+w4(U+0,u32(u32(r4(G+16))&u32(u32(0xffull))));
 w1(U+4,u8(__builtin_popcountll(u64(r4(U+0)))));
 w1(U+5,u8(u32(r1(U+4))&u32(u8(0x1ull))));
-w1(R+514,u8((r1(U+5))==(u8(0x0ull))));
+w1(F+2,u8((r1(U+5))==(u8(0x0ull))));
 }
 B68dec9:{NFSU2_TR(0x68dec9);
 u8 U[4];
-__builtin_memmove((U+0),(R+0),4);
-s4(u32(r4(R+16)),r4(U+0));
+__builtin_memmove((U+0),(G+0),4);
+s4(u32(r4(G+16)),r4(U+0));
 }
 B68decc:{NFSU2_TR(0x68decc);
 u8 U[8];
-w4(U+0,u32(u32(u32(0x4ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x4ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),(R+24),4);
 s4(u32(r4(U+0)),r4(U+4));
 }
 B68ded0:{NFSU2_TR(0x68ded0);
 u8 U[8];
-w4(U+0,u32(u32(u32(0x8ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x8ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),(R+8),4);
 s4(u32(r4(U+0)),r4(U+4));
 }
 B68ded4:{NFSU2_TR(0x68ded4);
-w4(R+16,u32(u32(r4(R+16))-u32(u32(0x4ull))));
-s4(u32(r4(R+16)),u32(0x68ded9ull));
-TAIL_STATIC(0x6947d2u,694);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),u32(0x68ded9ull));
+{__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);[[clang::musttail]] return blk_6947d2(ARGS);}
 }
-B68ded9:L68ded9:{c.instructions+=6;NFSU2_TR(0x68ded9);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68ded9(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68ded9:L68ded9:{bud-=6;NFSU2_TR(0x68ded9);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x114ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-w4(R+0,u32(u32(r4(R+0))+u32(r4(U+4))));
+w4(G+0,u32(u32(r4(G+0))+u32(r4(U+4))));
 }
 B68dedf:{NFSU2_TR(0x68dedf);
 u8 U[8];
@@ -12475,12 +13213,30 @@ __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
 w4(U+4,u32(u32(r4(U+4))-u32(u32(0x1ull))));
 s4(u32(r4(U+0)),r4(U+4));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
-w1(R+518,u8((r4(U+4))==(u32(0x0ull))));
+w1(F+6,u8((r4(U+4))==(u32(0x0ull))));
 }
 B68def7:{NFSU2_TR(0x68def7);
-{if(__builtin_expect(++c.chain>=2048,0)){c.chain=0;EXIT(0x68dec0u);}goto L68dec0;}
+{__builtin_memcpy(R+518,F+6,1);if(__builtin_expect(bud<=0,0)){EXIT(0x68dec0u);}[[clang::musttail]] return blk_68dec0(ARGS);}
 }
-B68def9:L68def9:{c.instructions+=27;NFSU2_TR(0x68def9);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68def9(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68def9:L68def9:{bud-=27;NFSU2_TR(0x68def9);
 u8 U[4];
 __builtin_memmove((U+0),gp(u32(r4(R+8))),4);
 __builtin_memmove((R+4608),(U+0),4);
@@ -13122,47 +13878,47 @@ w4(R+5068,u32(u32(r4(U+31))+u32(r4(U+40))));
 B68df40:{NFSU2_TR(0x68df40);
 u8 U[16];
 __builtin_memmove((U+0),(R+4608),16);
-__builtin_memmove(gp(u32(r4(R+16))),(U+0),16);
+__builtin_memmove(gp(u32(r4(G+16))),(U+0),16);
 }
 B68df44:{NFSU2_TR(0x68df44);
 u8 U[20];
-w4(U+0,u32(u32(u32(0x10ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x10ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),(R+4672),16);
 __builtin_memmove(gp(u32(r4(U+0))),(U+4),16);
 }
 B68df49:{NFSU2_TR(0x68df49);
 u8 U[20];
-w4(U+0,u32(u32(u32(0x20ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x20ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),(R+4736),16);
 __builtin_memmove(gp(u32(r4(U+0))),(U+4),16);
 }
 B68df4e:{NFSU2_TR(0x68df4e);
 u8 U[20];
-w4(U+0,u32(u32(u32(0x30ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x30ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),(R+4800),16);
 __builtin_memmove(gp(u32(r4(U+0))),(U+4),16);
 }
 B68df53:{NFSU2_TR(0x68df53);
 u8 U[20];
-w4(U+0,u32(u32(u32(0x40ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x40ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),(R+4864),16);
 __builtin_memmove(gp(u32(r4(U+0))),(U+4),16);
 }
 B68df58:{NFSU2_TR(0x68df58);
 u8 U[20];
-w4(U+0,u32(u32(u32(0x50ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x50ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),(R+4928),16);
 __builtin_memmove(gp(u32(r4(U+0))),(U+4),16);
 }
 B68df5d:{NFSU2_TR(0x68df5d);
 u8 U[20];
-w4(U+0,u32(u32(u32(0x60ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x60ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),(R+4992),16);
 __builtin_memmove(gp(u32(r4(U+0))),(U+4),16);
 }
 B68df62:{NFSU2_TR(0x68df62);
 u8 U[20];
-w4(U+0,u32(u32(u32(0x70ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x70ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),(R+5056),16);
 __builtin_memmove(gp(u32(r4(U+0))),(U+4),16);
 }
@@ -13183,20 +13939,39 @@ u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x114ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
 __builtin_memmove((R+28),(U+4),4);
+{[[clang::musttail]] return blk_68df79(ARGS);}
 }
-B68df79:L68df79:{c.instructions+=2;NFSU2_TR(0x68df79);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68df79(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+519,F+7,1);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68df79:L68df79:{bud-=2;NFSU2_TR(0x68df79);
 u8 U[8];
-__builtin_memmove((U+0),(R+4),4);
-w1(R+523,sborrow<u32>(r4(U+0),u32(0x4ull)));
+__builtin_memmove((U+0),(G+4),4);
+w1(F+11,sborrow<u32>(r4(U+0),u32(0x4ull)));
 w4(U+4,u32(u32(r4(U+0))-u32(u32(0x4ull))));
-w1(R+519,u8(s32(r4(U+4))<s32(u32(0x0ull))));
+w1(F+7,u8(s32(r4(U+4))<s32(u32(0x0ull))));
 }
 B68df7c:{NFSU2_TR(0x68df7c);
 u8 U[1];
-w1(U+0,u8((r1(R+523))!=(r1(R+519))));
-if(r1(U+0)){{goto L68dfe8;}}
+w1(U+0,u8((r1(F+11))!=(r1(F+7))));
+if(r1(U+0)){{[[clang::musttail]] return blk_68dfe8(ARGS);}}
 }
-B68df7e:L68df7e:{c.instructions+=32;NFSU2_TR(0x68df7e);
+B68df7e:L68df7e:{bud-=32;NFSU2_TR(0x68df7e);
 u8 U[8];
 __builtin_memmove((U+0),gp(u32(r4(R+8))),8);
 __builtin_memmove((R+4608),(U+0),8);
@@ -13262,7 +14037,7 @@ __builtin_memmove((R+4684),(R+4620),4);
 }
 B68dfa4:{NFSU2_TR(0x68dfa4);
 u8 U[32];
-__builtin_memmove((U+0),gp(u32(r4(R+16))),16);
+__builtin_memmove((U+0),gp(u32(r4(G+16))),16);
 __builtin_memmove((U+16),(U+0),16);
 w4(R+4608,b32(f32(r4(R+4608))*f32(r4(U+16))));
 w4(R+4612,b32(f32(r4(R+4612))*f32(r4(U+20))));
@@ -13271,7 +14046,7 @@ w4(R+4620,b32(f32(r4(R+4620))*f32(r4(U+28))));
 }
 B68dfa8:{NFSU2_TR(0x68dfa8);
 u8 U[36];
-w4(U+0,u32(u32(u32(0x10ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x10ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),16);
 __builtin_memmove((U+20),(U+4),16);
 w4(R+4672,b32(f32(r4(R+4672))*f32(r4(U+20))));
@@ -13287,7 +14062,7 @@ __builtin_memmove((R+4748),(R+4876),4);
 }
 B68dfb0:{NFSU2_TR(0x68dfb0);
 u8 U[36];
-w4(U+0,u32(u32(u32(0x40ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x40ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),16);
 __builtin_memmove((U+20),(U+4),16);
 w4(R+4864,b32(f32(r4(R+4864))*f32(r4(U+20))));
@@ -13297,7 +14072,7 @@ w4(R+4876,b32(f32(r4(R+4876))*f32(r4(U+32))));
 }
 B68dfb5:{NFSU2_TR(0x68dfb5);
 u8 U[36];
-w4(U+0,u32(u32(u32(0x50ull))+u32(r4(R+16))));
+w4(U+0,u32(u32(u32(0x50ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),16);
 __builtin_memmove((U+20),(U+4),16);
 w4(R+4736,b32(f32(r4(R+4736))*f32(r4(U+20))));
@@ -13337,14 +14112,14 @@ __builtin_memmove((R+4748),(R+4684),4);
 B68dfc9:{NFSU2_TR(0x68dfc9);
 u8 U[8];
 __builtin_memmove((U+0),(R+4608),8);
-s8_(u32(r4(R+0)),r8(U+0));
+s8_(u32(r4(G+0)),r8(U+0));
 }
 B68dfcc:{NFSU2_TR(0x68dfcc);
 __builtin_memmove((R+4608),(R+4616),8);
 }
 B68dfcf:{NFSU2_TR(0x68dfcf);
 u8 U[16];
-w4(U+0,u32(u32(r4(R+0))*u32(u32(0x1ull))));
+w4(U+0,u32(u32(r4(G+0))*u32(u32(0x1ull))));
 w4(U+4,u32(u32(r4(R+28))+u32(r4(U+0))));
 __builtin_memmove((U+8),(R+4608),8);
 s8_(u32(r4(U+4)),r8(U+8));
@@ -13352,20 +14127,20 @@ s8_(u32(r4(U+4)),r8(U+8));
 B68dfd3:{NFSU2_TR(0x68dfd3);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+28))*u32(u32(0x2ull))));
-w4(U+4,u32(u32(r4(R+0))+u32(r4(U+0))));
-__builtin_memmove((R+0),(U+4),4);
+w4(U+4,u32(u32(r4(G+0))+u32(r4(U+0))));
+__builtin_memmove((G+0),(U+4),4);
 }
 B68dfd6:{NFSU2_TR(0x68dfd6);
 u8 U[8];
 __builtin_memmove((U+0),(R+4736),8);
-s8_(u32(r4(R+0)),r8(U+0));
+s8_(u32(r4(G+0)),r8(U+0));
 }
 B68dfd9:{NFSU2_TR(0x68dfd9);
 __builtin_memmove((R+4736),(R+4744),8);
 }
 B68dfdc:{NFSU2_TR(0x68dfdc);
 u8 U[16];
-w4(U+0,u32(u32(r4(R+0))*u32(u32(0x1ull))));
+w4(U+0,u32(u32(r4(G+0))*u32(u32(0x1ull))));
 w4(U+4,u32(u32(r4(R+28))+u32(r4(U+0))));
 __builtin_memmove((U+8),(R+4736),8);
 s8_(u32(r4(U+4)),r8(U+8));
@@ -13373,38 +14148,56 @@ s8_(u32(r4(U+4)),r8(U+8));
 B68dfe0:{NFSU2_TR(0x68dfe0);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+28))*u32(u32(0x2ull))));
-w4(U+4,u32(u32(r4(R+0))+u32(r4(U+0))));
-__builtin_memmove((R+0),(U+4),4);
+w4(U+4,u32(u32(r4(G+0))+u32(r4(U+0))));
+__builtin_memmove((G+0),(U+4),4);
 }
 B68dfe3:{NFSU2_TR(0x68dfe3);
-w4(R+4,u32(u32(r4(R+4))-u32(u32(0x4ull))));
+w4(G+4,u32(u32(r4(G+4))-u32(u32(0x4ull))));
 }
 B68dfe6:{NFSU2_TR(0x68dfe6);
-{if(__builtin_expect(++c.chain>=2048,0)){c.chain=0;EXIT(0x68df79u);}goto L68df79;}
+{if(__builtin_expect(bud<=0,0)){EXIT(0x68df79u);}goto L68df79;}
 }
-B68dfe8:L68dfe8:{c.instructions+=2;NFSU2_TR(0x68dfe8);
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_68dfe8(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B68dfe8:L68dfe8:{bud-=2;NFSU2_TR(0x68dfe8);
 u8 U[8];
-__builtin_memmove((U+0),(R+4),4);
+__builtin_memmove((U+0),(G+4),4);
 w4(U+4,u32(u32(r4(U+0))-u32(u32(0x0ull))));
-w1(R+518,u8((r4(U+4))==(u32(0x0ull))));
+w1(F+6,u8((r4(U+4))==(u32(0x0ull))));
 }
 B68dfeb:{NFSU2_TR(0x68dfeb);
-if(r1(R+518)){TAIL_STATIC(0x68e010u,68e);}
+if(r1(F+6)){{[[clang::musttail]] return blk_68e010(ARGS);}}
 }
-B68dfed:L68dfed:{c.instructions+=7;NFSU2_TR(0x68dfed);
-w4(R+4,u32(u32(r4(R+4))-u32(u32(0x4ull))));
+B68dfed:L68dfed:{bud-=7;NFSU2_TR(0x68dfed);
+w4(G+4,u32(u32(r4(G+4))-u32(u32(0x4ull))));
 }
 B68dff0:{NFSU2_TR(0x68dff0);
 u8 U[24];
 w8(U+0,u64(s64(s32(r4(R+28)))));
-w8(U+8,u64(s64(s32(r4(R+4)))));
+w8(U+8,u64(s64(s32(r4(G+4)))));
 w8(U+16,u64(u64(r8(U+0))*u64(r8(U+8))));
 w4(R+28,u32(r8(U+16)));
 }
 B68dff3:{NFSU2_TR(0x68dff3);
 u8 U[24];
 w8(U+0,u64(s64(s32(r4(R+24)))));
-w8(U+8,u64(s64(s32(r4(R+4)))));
+w8(U+8,u64(s64(s32(r4(G+4)))));
 w8(U+16,u64(u64(r8(U+0))*u64(r8(U+8))));
 w4(R+24,u32(r8(U+16)));
 }
@@ -13412,24 +14205,125 @@ B68dff6:{NFSU2_TR(0x68dff6);
 w4(R+8,u32(u32(r4(R+8))+u32(r4(R+24))));
 }
 B68dff8:{NFSU2_TR(0x68dff8);
-w4(R+0,u32(u32(r4(R+0))+u32(r4(R+28))));
+w4(G+0,u32(u32(r4(G+0))+u32(r4(R+28))));
 }
 B68dffa:{NFSU2_TR(0x68dffa);
-w4(R+4,u32(0x4ull));
+w4(G+4,u32(0x4ull));
 }
 B68dfff:{NFSU2_TR(0x68dfff);
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x11cull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
 __builtin_memmove((R+24),(U+4),4);
-TAIL_STATIC(0x68e005u,68e);
+{[[clang::musttail]] return blk_68e005(ARGS);}
 }
-XIT:NFSU2_TR_EXIT(0x68d,nx);return nx;
-FLT:fast_fault(c,fm,fpc);
-#undef SPILL
-#undef EXIT
-#undef NFSU2_FAULT
-#undef TAIL_STATIC
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
 }
+PN u32 ent_68d(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){switch(c.pc){
+case 0x68d002:[[clang::musttail]] return blk_68d002(c,a4,a0,a1,bud);
+case 0x68d03f:[[clang::musttail]] return blk_68d03f(c,a4,a0,a1,bud);
+case 0x68d046:[[clang::musttail]] return blk_68d046(c,a4,a0,a1,bud);
+case 0x68d096:[[clang::musttail]] return blk_68d096(c,a4,a0,a1,bud);
+case 0x68d0e1:[[clang::musttail]] return blk_68d0e1(c,a4,a0,a1,bud);
+case 0x68d0e8:[[clang::musttail]] return blk_68d0e8(c,a4,a0,a1,bud);
+case 0x68d0f7:[[clang::musttail]] return blk_68d0f7(c,a4,a0,a1,bud);
+case 0x68d1a9:[[clang::musttail]] return blk_68d1a9(c,a4,a0,a1,bud);
+case 0x68d295:[[clang::musttail]] return blk_68d295(c,a4,a0,a1,bud);
+case 0x68d2fb:[[clang::musttail]] return blk_68d2fb(c,a4,a0,a1,bud);
+case 0x68d38d:[[clang::musttail]] return blk_68d38d(c,a4,a0,a1,bud);
+case 0x68d465:[[clang::musttail]] return blk_68d465(c,a4,a0,a1,bud);
+case 0x68d4c1:[[clang::musttail]] return blk_68d4c1(c,a4,a0,a1,bud);
+case 0x68d511:[[clang::musttail]] return blk_68d511(c,a4,a0,a1,bud);
+case 0x68d531:[[clang::musttail]] return blk_68d531(c,a4,a0,a1,bud);
+case 0x68d58b:[[clang::musttail]] return blk_68d58b(c,a4,a0,a1,bud);
+case 0x68d5e0:[[clang::musttail]] return blk_68d5e0(c,a4,a0,a1,bud);
+case 0x68d625:[[clang::musttail]] return blk_68d625(c,a4,a0,a1,bud);
+case 0x68d683:[[clang::musttail]] return blk_68d683(c,a4,a0,a1,bud);
+case 0x68d6e4:[[clang::musttail]] return blk_68d6e4(c,a4,a0,a1,bud);
+case 0x68d6ef:[[clang::musttail]] return blk_68d6ef(c,a4,a0,a1,bud);
+case 0x68d6f2:[[clang::musttail]] return blk_68d6f2(c,a4,a0,a1,bud);
+case 0x68d6f4:[[clang::musttail]] return blk_68d6f4(c,a4,a0,a1,bud);
+case 0x68d6f7:[[clang::musttail]] return blk_68d6f7(c,a4,a0,a1,bud);
+case 0x68d704:[[clang::musttail]] return blk_68d704(c,a4,a0,a1,bud);
+case 0x68d70d:[[clang::musttail]] return blk_68d70d(c,a4,a0,a1,bud);
+case 0x68d70f:[[clang::musttail]] return blk_68d70f(c,a4,a0,a1,bud);
+case 0x68d717:[[clang::musttail]] return blk_68d717(c,a4,a0,a1,bud);
+case 0x68d71a:[[clang::musttail]] return blk_68d71a(c,a4,a0,a1,bud);
+case 0x68d720:[[clang::musttail]] return blk_68d720(c,a4,a0,a1,bud);
+case 0x68d723:[[clang::musttail]] return blk_68d723(c,a4,a0,a1,bud);
+case 0x68d726:[[clang::musttail]] return blk_68d726(c,a4,a0,a1,bud);
+case 0x68d728:[[clang::musttail]] return blk_68d728(c,a4,a0,a1,bud);
+case 0x68d72a:[[clang::musttail]] return blk_68d72a(c,a4,a0,a1,bud);
+case 0x68d72d:[[clang::musttail]] return blk_68d72d(c,a4,a0,a1,bud);
+case 0x68d730:[[clang::musttail]] return blk_68d730(c,a4,a0,a1,bud);
+case 0x68d732:[[clang::musttail]] return blk_68d732(c,a4,a0,a1,bud);
+case 0x68d735:[[clang::musttail]] return blk_68d735(c,a4,a0,a1,bud);
+case 0x68d738:[[clang::musttail]] return blk_68d738(c,a4,a0,a1,bud);
+case 0x68d73b:[[clang::musttail]] return blk_68d73b(c,a4,a0,a1,bud);
+case 0x68d73d:[[clang::musttail]] return blk_68d73d(c,a4,a0,a1,bud);
+case 0x68d745:[[clang::musttail]] return blk_68d745(c,a4,a0,a1,bud);
+case 0x68d748:[[clang::musttail]] return blk_68d748(c,a4,a0,a1,bud);
+case 0x68d74a:[[clang::musttail]] return blk_68d74a(c,a4,a0,a1,bud);
+case 0x68d752:[[clang::musttail]] return blk_68d752(c,a4,a0,a1,bud);
+case 0x68d755:[[clang::musttail]] return blk_68d755(c,a4,a0,a1,bud);
+case 0x68d768:[[clang::musttail]] return blk_68d768(c,a4,a0,a1,bud);
+case 0x68d76f:[[clang::musttail]] return blk_68d76f(c,a4,a0,a1,bud);
+case 0x68d77f:[[clang::musttail]] return blk_68d77f(c,a4,a0,a1,bud);
+case 0x68d78a:[[clang::musttail]] return blk_68d78a(c,a4,a0,a1,bud);
+case 0x68d793:[[clang::musttail]] return blk_68d793(c,a4,a0,a1,bud);
+case 0x68d7a3:[[clang::musttail]] return blk_68d7a3(c,a4,a0,a1,bud);
+case 0x68d7af:[[clang::musttail]] return blk_68d7af(c,a4,a0,a1,bud);
+case 0x68d7b7:[[clang::musttail]] return blk_68d7b7(c,a4,a0,a1,bud);
+case 0x68d7b9:[[clang::musttail]] return blk_68d7b9(c,a4,a0,a1,bud);
+case 0x68d7c1:[[clang::musttail]] return blk_68d7c1(c,a4,a0,a1,bud);
+case 0x68d7c4:[[clang::musttail]] return blk_68d7c4(c,a4,a0,a1,bud);
+case 0x68d7ca:[[clang::musttail]] return blk_68d7ca(c,a4,a0,a1,bud);
+case 0x68d7cd:[[clang::musttail]] return blk_68d7cd(c,a4,a0,a1,bud);
+case 0x68d7de:[[clang::musttail]] return blk_68d7de(c,a4,a0,a1,bud);
+case 0x68d7e2:[[clang::musttail]] return blk_68d7e2(c,a4,a0,a1,bud);
+case 0x68d7e7:[[clang::musttail]] return blk_68d7e7(c,a4,a0,a1,bud);
+case 0x68d7ea:[[clang::musttail]] return blk_68d7ea(c,a4,a0,a1,bud);
+case 0x68d7f5:[[clang::musttail]] return blk_68d7f5(c,a4,a0,a1,bud);
+case 0x68d7f7:[[clang::musttail]] return blk_68d7f7(c,a4,a0,a1,bud);
+case 0x68d7fc:[[clang::musttail]] return blk_68d7fc(c,a4,a0,a1,bud);
+case 0x68d800:[[clang::musttail]] return blk_68d800(c,a4,a0,a1,bud);
+case 0x68d805:[[clang::musttail]] return blk_68d805(c,a4,a0,a1,bud);
+case 0x68d807:[[clang::musttail]] return blk_68d807(c,a4,a0,a1,bud);
+case 0x68d80a:[[clang::musttail]] return blk_68d80a(c,a4,a0,a1,bud);
+case 0x68d840:[[clang::musttail]] return blk_68d840(c,a4,a0,a1,bud);
+case 0x68d87a:[[clang::musttail]] return blk_68d87a(c,a4,a0,a1,bud);
+case 0x68d8c0:[[clang::musttail]] return blk_68d8c0(c,a4,a0,a1,bud);
+case 0x68d900:[[clang::musttail]] return blk_68d900(c,a4,a0,a1,bud);
+case 0x68d93a:[[clang::musttail]] return blk_68d93a(c,a4,a0,a1,bud);
+case 0x68d980:[[clang::musttail]] return blk_68d980(c,a4,a0,a1,bud);
+case 0x68d9c0:[[clang::musttail]] return blk_68d9c0(c,a4,a0,a1,bud);
+case 0x68da00:[[clang::musttail]] return blk_68da00(c,a4,a0,a1,bud);
+case 0x68da19:[[clang::musttail]] return blk_68da19(c,a4,a0,a1,bud);
+case 0x68da39:[[clang::musttail]] return blk_68da39(c,a4,a0,a1,bud);
+case 0x68dafd:[[clang::musttail]] return blk_68dafd(c,a4,a0,a1,bud);
+case 0x68dbd1:[[clang::musttail]] return blk_68dbd1(c,a4,a0,a1,bud);
+case 0x68dbf9:[[clang::musttail]] return blk_68dbf9(c,a4,a0,a1,bud);
+case 0x68dc20:[[clang::musttail]] return blk_68dc20(c,a4,a0,a1,bud);
+case 0x68dc60:[[clang::musttail]] return blk_68dc60(c,a4,a0,a1,bud);
+case 0x68dc79:[[clang::musttail]] return blk_68dc79(c,a4,a0,a1,bud);
+case 0x68dc99:[[clang::musttail]] return blk_68dc99(c,a4,a0,a1,bud);
+case 0x68dd5d:[[clang::musttail]] return blk_68dd5d(c,a4,a0,a1,bud);
+case 0x68de17:[[clang::musttail]] return blk_68de17(c,a4,a0,a1,bud);
+case 0x68de3f:[[clang::musttail]] return blk_68de3f(c,a4,a0,a1,bud);
+case 0x68de80:[[clang::musttail]] return blk_68de80(c,a4,a0,a1,bud);
+case 0x68dec0:[[clang::musttail]] return blk_68dec0(c,a4,a0,a1,bud);
+case 0x68ded9:[[clang::musttail]] return blk_68ded9(c,a4,a0,a1,bud);
+case 0x68def9:[[clang::musttail]] return blk_68def9(c,a4,a0,a1,bud);
+case 0x68df79:[[clang::musttail]] return blk_68df79(c,a4,a0,a1,bud);
+case 0x68dfe8:[[clang::musttail]] return blk_68dfe8(c,a4,a0,a1,bud);
+default:missing_instruction(c.pc);}}
+u32 page_68d(Cpu& c){u8* R=c.regs.data();return ent_68d(c,r4(R+16),r4(R+0),r4(R+4),REG_BUDGET);}
+#undef EXIT
 }

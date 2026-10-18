@@ -47,3 +47,5 @@ coverage.json
 tools/export_java.args
 build32r/
 generated_fast_regs*/
+!assets/nue-logo-light.png
+!assets/nue-logo-dark.png
