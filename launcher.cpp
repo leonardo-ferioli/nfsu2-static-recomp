@@ -1,4 +1,4 @@
-// NFSU2 static launcher: runs the statically translated SPEED2.EXE against the user's own game directory.
+// NFS Underground 2 - NUE: launcher that runs the statically translated SPEED2.EXE against the user's own game directory.
 //
 // The program contains compiled C++ translated from the supported SPEED2.EXE build (SHA-256 below) and the image of
 // that build (its sections) as data, so SPEED2.EXE is not read at run time. At start it checks every block of that
@@ -55,7 +55,7 @@ void apply_performance_hints() {
     SetThreadInformation(GetCurrentThread(), ThreadPowerThrottling, &thread_state, sizeof(thread_state));
     SetPriorityClass(GetCurrentProcess(), ABOVE_NORMAL_PRIORITY_CLASS);
 }
-constexpr const char* version_text = "NFSU2 static launcher 0.1 (fast backend)";
+constexpr const char* version_text = "NFS Underground 2 - NUE launcher 0.1 (fast backend)";
 // third_party/sleigh_spec/x86.sla (see PROVENANCE.txt there).
 constexpr const char* sleigh_spec_sha256 = "52bb7d8371a164f6726702cdd1b5bc46a6341912798d59e1a935f405c51d8b46";
 // Exit codes: 0 normal, 2 usage or configuration, 3 game directory or executable, 4 verification, 5 run stopped, 124 watchdog.
@@ -417,7 +417,7 @@ void attach_console() {
 void report_failure(const Config& config, const std::string& text) {
     logger.error(text);
     std::cerr << text << std::endl;
-    if (config.dialogs) MessageBoxA(nullptr, text.c_str(), "NFSU2 static launcher", MB_OK | MB_ICONERROR);
+    if (config.dialogs) MessageBoxA(nullptr, text.c_str(), "NFS Underground 2 - NUE", MB_OK | MB_ICONERROR);
 }
 
 // ---- game directory -----------------------------------------------------------------------------------------------
