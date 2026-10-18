@@ -100,7 +100,7 @@ Time inside Direct3D per frame (windows in which the call was among the most exp
 User-reported: ~440 draws and ~900 constant uploads per frame.
 
 Consequences: (a) over 10,000 guest→host calls per frame, more than half of them texture refcounts: refcounts live in the shim's facade object
-and never reach the layer; (b) about half of all calls are redundant state sets: the layer keeps a shadow and builds one `DrawState` per draw;
+and never reach the layer; (b) about half of all calls are redundant state sets: the layer keeps a shadow and builds one `DrawDesc` per draw;
 (c) the interface between shim and layer is called ~10,000 times per frame: plain virtual calls, no allocation, no locking.
 
 ### 2.3 Host-side code of ours that touches Direct3D or the window
@@ -183,7 +183,7 @@ the game thread polls; the shim turns events into `WM_*` messages and `suspended
    |  LEVEL A  d3d9::Device   "what the game says": Direct3D 9 semantics, handle-based, ~40 methods. The record/replay point.
  D3D9 LAYER (written once): state shadow, state blocks, FVF + fixed-function emulation, shader translation (3.4),
    |                        lock rings and resource versioning, format conversion, reset / lost device, bgfx view management (3.5)
-   |  LEVEL B  gpu::Gpu       "what a modern API does": explicit buffers, textures, passes, one DrawState per draw
+   |  LEVEL B  gpu::Gpu       "what a modern API does": explicit buffers, textures, passes, one DrawDesc per draw
  bgfx adapter -> D3D11 | D3D12 | Vulkan | OpenGL ES | Metal        (later, only if profiling demands: own Vulkan / Metal)
 ```
 
@@ -254,7 +254,7 @@ enum class Format : uint8_t { rgba8, bgra8, r5g6b5, a4r4g4b4, a1r5g5b5, r8, a8, 
 enum class Topology : uint8_t { points, lines, line_strip, triangles, triangle_strip };      // fans are converted to lists by the layer
 struct VertexAttribute { uint8_t stream, offset, type, semantic, index; };                   // hashed by the backend into a layout cache
 struct SamplerDesc { uint8_t min, mag, mip, address_u, address_v, address_w; float lod_bias; uint8_t max_aniso; uint32_t border_argb; };
-struct DrawState {                                       // everything one draw needs; built by the layer from its shadow
+struct DrawDesc {                                       // everything one draw needs; built by the layer from its shadow
     Program program;
     Buffer vertex_buffer[4]; uint32_t vertex_offset[4], vertex_stride[4]; Buffer index_buffer; bool index32;
     std::span<const VertexAttribute> layout;
@@ -275,7 +275,7 @@ public:
     virtual Result<Texture> create_texture(uint32_t w, uint32_t h, uint32_t levels, Format, bool render_target, bool cube, Bytes initial) = 0;
     virtual void            update_texture(Texture, uint32_t level, uint32_t face, const uint32_t* rect4, Bytes, uint32_t row_pitch) = 0;
     virtual Result<Program> create_program(Bytes vertex_binary, Bytes pixel_binary) = 0;    // binary: the bgfx container produced by 3.4
-    virtual void begin_pass(const PassDesc&) = 0;  virtual void draw(const DrawState&) = 0;  virtual void end_pass() = 0;
+    virtual void begin_pass(const PassDesc&) = 0;  virtual void draw(const DrawDesc&) = 0;  virtual void end_pass() = 0;
     virtual Status present(uint32_t swap_interval) = 0;                                      // = bgfx::frame()
     virtual Status resize(uint32_t w, uint32_t h) = 0;
     virtual void   read_back(Texture, uint32_t level, MutableBytes) = 0;                      // GetRenderTargetData (rare; stalls)
@@ -390,7 +390,7 @@ are applied **before** the frame's draws. The layer bridges that. Decisions (eac
     `GetRenderTargetData` is a read-back that waits for the frame (rare).
   - Because `Lock` always hands out CPU staging memory, **a lock can never wait for the GPU**: this is the structural answer to the 6–18 ms
     `Lock` stalls of the heavy scenes (a design property, not yet measured on a backend).
-- **State shadow and `DrawState`.** `Set*State`, `SetTexture`, `SetStreamSource`, constants and the like are stores into the shadow with a dirty
+- **State shadow and `DrawDesc`.** `Set*State`, `SetTexture`, `SetStreamSource`, constants and the like are stores into the shadow with a dirty
   mask; nothing reaches bgfx until a draw. At a draw the layer selects a program (3.4 key = shader pair or FF state key), a vertex layout (hash),
   packs `bgfx` state flags, samplers (`BGFX_SAMPLER_*`; LOD bias and border colours that bgfx lacks go through shader constants/permutations),
   and uploads constants as one block **limited to the registers the program reads** (known from the translator), instead of 256 float4 per draw.
@@ -449,7 +449,7 @@ store replacing the registry. All of these stay behind today's Windows code.
 
 ### 3.7 Null platform and test strategy
 
-The `null` implementations (display list, window events, Level A device that counts and validates, Gpu that records `DrawState`s) let the shim and the
+The `null` implementations (display list, window events, Level A device that counts and validates, Gpu that records `DrawDesc`s) let the shim and the
 layer be tested without window, GPU or game data, and let a recorded trace be **replayed headless**.
 
 ## 4. How the game gets its Direct3D objects without Windows' d3d9
