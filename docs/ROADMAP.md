@@ -24,14 +24,18 @@ Windows implementation behind them with no behavior change. The existing tests v
 - Keep the real Direct3D 9 backend (Windows) as the reference.
 - Record and replay Direct3D 9 call traces against two backends and compare the images; this makes every backend verifiable
   without playing.
-- *Decision*: DXVK Native (shortest Vulkan path), a Direct3D 9 layer on **The Forge** (Vulkan, D3D12, Metal; the only route
-  covering Apple and consoles), or both. A native renderer reading the game's data is the long-term end state.
+- **Chosen first backend: bgfx** (Vulkan, OpenGL ES 3, Metal, D3D11/12; BSD-2-Clause) under our own Direct3D 9-semantics layer
+  and a small GPU interface of our own. Requirements it answers: an Android player can switch between Vulkan and OpenGL ES in the
+  game, iPhone runs on Metal. To be validated with a measured spike (many draws, Android on Vulkan and GLES, an iPhone). See
+  [`GRAPHICS_BACKEND.md`](GRAPHICS_BACKEND.md). Own Vulkan/Metal backends can replace bgfx where profiling demands; a native renderer
+  reading the game's data is the long-term end state.
 - Mobile specifics: render thread with a command queue, pipeline cache, texture format conversion (DXT is not universally
   supported), dynamic internal resolution.
 
 ## 3. Other subsystems
 
-Window, input (gamepad, touch), audio, files and settings storage: candidates are SDL3 and The Forge's OS layer. The game keeps its own
+Window, input (gamepad, touch), audio, files and settings storage: bgfx only renders, so these come from SDL3 (candidate) or code per
+platform. The game keeps its own
 main loop, so the portable window/render layer runs on the application thread and talks to the game thread through queues
 (also needed for Android's pause/resume and lost-surface handling).
 
@@ -45,7 +49,7 @@ Touch controls, safe areas and a UI scale belong here.
 
 - Linux desktop first (same Vulkan path as Android, easy to debug and to run in CI).
 - Android: process budget **2 GB** (see below), touch/gyro input, scoped storage for the user's game data.
-- Apple platforms and consoles: via The Forge or MoltenVK. *Decision* once the backend comparison exists.
+- Apple platforms: bgfx's Metal backend (iOS 16+, macOS 13+). Consoles are out of scope for now.
 
 ## Memory budget
 

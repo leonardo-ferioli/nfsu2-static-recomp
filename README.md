@@ -33,12 +33,14 @@ The goal is not "make it run on my PC" but a **portable core with explicit bound
  |  time/threads | settings storage                                   |
  +------+-------------------------------------------------------------+
         |  implemented by interchangeable backends
-   Windows (today)      DXVK Native / Vulkan      The Forge (Vulkan, D3D12, Metal)    ...
+   Windows: native D3D9 (today)     bgfx (Vulkan | OpenGL ES | Metal | D3D11/12)     own backends where profiling demands
 ```
 
 - The graphics boundary is kept at Direct3D 9 level so any backend can implement it without the game noticing.
-- **The Forge** (Apache-2.0 for PC/Android/Apple) is being evaluated as one cross-platform backend — for window, input,
-  files, audio and a D3D9-semantics renderer — next to **DXVK Native** as a shorter Vulkan path. Neither is integrated yet.
+- **bgfx** (BSD-2-Clause) is the chosen first cross-platform renderer: it offers Vulkan, OpenGL ES 3 and Metal behind one API, so an
+  Android player can pick Vulkan or OpenGL ES in the game and iPhone runs on Metal. Nothing is integrated yet; the choice is to be
+  validated with a measured spike. Rationale and alternatives (The Forge, SDL_gpu, DXVK/MoltenVK, own backends) are in
+  [`docs/GRAPHICS_BACKEND.md`](docs/GRAPHICS_BACKEND.md). This work lives on the `bgfx` branch.
 - Everything added on top of the original (settings, widescreen, HUD scaling, resolution list) is plain C++ meant to
   survive the port: it lives behind small interfaces instead of calling the platform directly.
 
@@ -122,5 +124,5 @@ and those files and directories must be removed (they can be regenerated from yo
 
 ## Credits
 
-Ghidra SLEIGH (NSA, Apache-2.0) · NFSU2 Widescreen Fix by ThirteenAG and contributors (MIT) · DXVK, The Forge and
-Direct3D 9-on-12 are studied as references for the portable backends.
+Ghidra SLEIGH (NSA, Apache-2.0) · NFSU2 Widescreen Fix by ThirteenAG and contributors (MIT) · bgfx (BSD-2-Clause) is the planned
+renderer; DXVK, Direct3D 9-on-12, d9mt and DXMT are studied as references for Direct3D 9 semantics and Metal.
