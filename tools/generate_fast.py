@@ -857,6 +857,7 @@ def main():
         gen_regs.set_target(args.reg_params)
         TAIL_CALLS = True
         program = gen_regs.Program()
+    specs = []
     if args.use_mods:
         specs = args.mods or sorted(str(f) for f in (ROOT / "mods").glob("*_spec.json"))
         if specs:
@@ -881,6 +882,7 @@ def main():
         print(f"Flag liveness solved over {len(info)} instructions in {rounds} rounds", flush=True)
         if regs:
             tables = json.loads((ROOT / "tools/static_jump_tables.json").read_text())
+            program.add_external(ROOT, specs, MODS or {})
             program.finish(manifest, tables, info, live_out, ALL_PAGES, export)
             program.live_out, program.hook_addrs = live_out, set(MOD_HOOKS)
             reg_emitter = regs.make(sys.modules[__name__])

@@ -155,4 +155,8 @@ if(TARGET fast_resource_tests)
     add_test(NAME fast_widescreen_scaled COMMAND fast_widescreen_tests "${CMAKE_CURRENT_SOURCE_DIR}/export" "${CMAKE_CURRENT_SOURCE_DIR}/../data game (pc)" scaled)
     add_test(NAME fast_seh COMMAND fast_seh_tests "${CMAKE_CURRENT_SOURCE_DIR}/export" "${CMAKE_CURRENT_SOURCE_DIR}/../data game (pc)")
     add_test(NAME fast_resources COMMAND fast_resource_tests "${CMAKE_CURRENT_SOURCE_DIR}/export" "${CMAKE_CURRENT_SOURCE_DIR}/../data game (pc)")
+    if(Python3_Interpreter_FOUND)
+        # Register-parameter shape only (generate_fast.py --reg-params): every mod patch point and function entry must be a block entry.
+        add_test(NAME reg_entries COMMAND ${Python3_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/tools/test_reg_entries.py" "${CMAKE_CURRENT_SOURCE_DIR}/${FAST_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/export" "${CMAKE_CURRENT_SOURCE_DIR}/mods")
+    endif()
 endif()

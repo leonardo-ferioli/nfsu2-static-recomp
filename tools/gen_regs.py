@@ -94,9 +94,53 @@ class Program:
         if last in ("BRANCH", "BRANCHIND", "RETURN"):
             self.terminal_next.add(a + n)
 
+    def add_external(self, root, spec_paths, mods):
+        """Entry points that code outside the translation names: the mod patch points (a hook range ends, a retarget or a forced
+        jump lands, a skipped instruction continues, a hook handler redirects c.pc) and every code address written as a literal
+        in the native sources (call_guest targets, callbacks, tables) or as a number in the mod specifications."""
+        ext = set()
+        for h in mods.get("hooks", []):
+            ext.add(h["begin"])
+            if h.get("end") is not None:
+                ext.add(h["end"])
+        for e in mods.get("retargets", []):
+            ext |= {e["old"], e["new"]}
+        for e in mods.get("force_jumps", []):
+            ext.add(e["target"])
+        for e in mods.get("nops", []):
+            ext.add(e["insn"])
+        self.mod_points = set(ext)
+        self.nop_insns = {e["insn"] for e in mods.get("nops", [])}
+
+        def numbers(node):
+            if isinstance(node, bool):
+                return
+            if isinstance(node, int):
+                yield node
+            elif isinstance(node, str):
+                if re.fullmatch(r"0x[0-9a-fA-F]+", node):
+                    yield int(node, 16)
+            elif isinstance(node, dict):
+                for v in node.values():
+                    yield from numbers(v)
+            elif isinstance(node, list):
+                for v in node:
+                    yield from numbers(v)
+        for path in spec_paths:
+            ext |= {v for v in numbers(json.loads(Path(path).read_text())) if TEXT_LO <= v < TEXT_HI}
+        for pattern in ("mods*.cpp", "mods*.inc", "mods*.hpp", "launcher.cpp", "native32.cpp", "dynamic_code.cpp", "userops.cpp"):
+            for f in Path(root).glob(pattern):
+                for m in re.finditer(r"0x([0-9a-fA-F]{6,8})", f.read_text(errors="replace")):
+                    v = int(m.group(1), 16)
+                    if TEXT_LO <= v < TEXT_HI:
+                        ext.add(v)
+        self.external = ext
+
     def finish(self, manifest, jump_tables, info, live_out, pages, export_dir):
         have = set(self.addrs)
-        leaders = set(self.static_targets) | self.return_sites | self.terminal_next | self.address_taken
+        leaders = set(self.static_targets) | self.return_sites | self.terminal_next | self.address_taken | self.external
+        # a skipped (nopped) instruction continues at the next one
+        leaders |= {a + self.lengths[a] for a in self.nop_insns if a in self.lengths}
         # Every aligned 32-bit word of the program image that points into the code (vtables, callback tables, SEH and
         # switch tables): a dynamic transfer can only enter a function body at a leader.
         for block in manifest["memory"]:
@@ -114,6 +158,9 @@ class Program:
         self.leaders = leaders & have
         self.live_in = {a: flaglive.transfer(info[a], live_out[a]) for a in self.addrs}
         self.blocks = {a for a in self.leaders if (a >> 12) in pages}
+        missing = sorted(a for a in self.mod_points if (a >> 12) in pages and a in have and a not in self.blocks)
+        if missing:
+            raise ValueError("mod patch points without a block entry: " + ", ".join(hex(a) for a in missing))
 
 
 def written_flags(insns):
