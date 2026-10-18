@@ -65,31 +65,41 @@ public:
     std::deque<WindowEvent> events;
 };
 
-// A Gpu that records what it is asked to do and draws nothing.
+// A Gpu that draws nothing and keeps a running hash of everything it is asked to do (every call with all its arguments and data, in order):
+// two runs that issue the same Level B call sequence end with the same `call_hash`. The hash is how replay determinism is checked, and the
+// counters are the cost measurements of a trace (draws, bytes uploaded, transient bytes...).
 class NullGpu final : public gpu::Gpu {
 public:
     NullGpu();
     const gpu::GpuCaps& caps() override { return capabilities; }
-    Result<gpu::Buffer> create_static_buffer(Bytes initial) override;
-    Result<gpu::Buffer> allocate_transient(uint32_t bytes, MutableBytes& out) override;
-    Result<gpu::Texture> create_texture(uint32_t, uint32_t, uint32_t, gpu::Format, bool, bool, Bytes) override { ++textures_created; return {Status::ok, gpu::Texture{++next_id}}; }
-    void update_texture(gpu::Texture, uint32_t, uint32_t, const uint32_t*, Bytes data, uint32_t) override { ++texture_updates; texture_bytes += data.size(); }
-    Result<gpu::Program> create_program(Bytes, Bytes) override { ++programs_created; return {Status::ok, gpu::Program{++next_id}}; }
-    void begin_pass(const gpu::PassDesc&) override { ++passes; }
-    void draw(const gpu::DrawState& state) override { ++draws; last_draw_program = state.program; }
-    void end_pass() override {}
-    Status present(uint32_t) override { ++frames; transient.clear(); return Status::ok; }
+    Result<gpu::Buffer> create_static_buffer(Bytes initial, bool index_buffer) override;
+    Result<gpu::Buffer> allocate_transient(uint32_t bytes, uint32_t stride, MutableBytes& out) override;
+    Result<gpu::Texture> create_texture(uint32_t width, uint32_t height, uint32_t levels, gpu::Format format, bool render_target, bool cube) override;
+    void update_texture(gpu::Texture, uint32_t level, uint32_t face, const uint32_t* rect4, Bytes data, uint32_t row_pitch) override;
+    Result<gpu::Program> create_program(Bytes vertex_binary, Bytes pixel_binary) override;
+    void begin_pass(const gpu::PassDesc&) override;
+    void draw(const gpu::DrawDesc& state) override;
+    void end_pass() override { mix(0xE1); ++pass_ends; }
+    Status present(uint32_t interval) override;
     Status resize(uint32_t, uint32_t) override { return Status::ok; }
     void read_back(gpu::Texture, uint32_t, MutableBytes out) override { for (auto& b : out) b = std::byte{0}; }
-    void destroy(gpu::Buffer) override { ++destroyed; }
-    void destroy(gpu::Texture) override { ++destroyed; }
-    void destroy(gpu::Program) override { ++destroyed; }
+    void destroy(gpu::Buffer) override { mix(0xD1); ++destroyed; }
+    void destroy(gpu::Texture) override { mix(0xD2); ++destroyed; }
+    void destroy(gpu::Program) override { mix(0xD3); ++destroyed; }
 
     gpu::GpuCaps capabilities;
     uint32_t next_id = 0;
-    uint64_t draws = 0, frames = 0, passes = 0, textures_created = 0, programs_created = 0, texture_updates = 0, texture_bytes = 0, destroyed = 0, buffers_created = 0, transient_bytes = 0;
+    uint64_t draws = 0, frames = 0, passes = 0, pass_ends = 0, textures_created = 0, programs_created = 0, texture_updates = 0, texture_bytes = 0, destroyed = 0, buffers_created = 0,
+             static_buffer_bytes = 0, transient_bytes = 0, transient_allocations = 0, vertices_drawn = 0, indices_drawn = 0, constant_bytes = 0;
+    uint64_t call_hash = 0xcbf29ce484222325ull;
     gpu::Program last_draw_program;
     std::deque<std::vector<std::byte>> transient;
+    std::map<uint32_t, size_t> transient_index;   // buffer id -> position in `transient` (this frame)
+
+private:
+    void mix(uint64_t value);
+    void mix_bytes(const void* data, size_t size);
+    template <class T> void mix_value(const T& v) { mix_bytes(&v, sizeof v); }
 };
 
 // A Direct3D 9 device that validates handle use, counts every call and keeps lock staging memory. It is the base of the recorder tests.
