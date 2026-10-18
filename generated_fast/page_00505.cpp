@@ -1831,7 +1831,7 @@ B505169:{NFSU2_TR(0x505169);
 {u32 ea_=u32(r4(R+0));__asm__ volatile(".byte 0xd8,0x00"::"a"(ea_):"memory");}
 }
 B50516b:{NFSU2_TR(0x50516b);
-if(mod_hook_table[47]){SPILL();c.pc=0x50516bu;mod_hook_table[47](c);SPILL();if(c.pc!=0x50516bu){TAIL_DYNAMIC(c.pc);}goto B505172;}
+if(mod_hook_table[49]){SPILL();c.pc=0x50516bu;mod_hook_table[49](c);SPILL();if(c.pc!=0x50516bu){TAIL_DYNAMIC(c.pc);}goto B505172;}
 {u32 ea_=u32(r4(R+8));__asm__ volatile(".byte 0xd8,0x00"::"a"(ea_):"memory");}
 }
 B50516d:{NFSU2_TR(0x50516d);

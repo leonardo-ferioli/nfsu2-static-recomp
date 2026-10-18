@@ -3548,6 +3548,7 @@ w4(R+16,u32(u32(r4(R+16))+u32(u32(0x30ull))));
 {u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
 }
 B51a5d0:L51a5d0:{c.instructions+=7;NFSU2_TR(0x51a5d0);
+if(mod_hook_table[41]){SPILL();c.pc=0x51a5d0u;mod_hook_table[41](c);SPILL();if(c.pc!=0x51a5d0u){TAIL_DYNAMIC(c.pc);}}
 u8 U[4];
 __builtin_memmove((U+0),(R+12),4);
 w4(R+16,u32(u32(r4(R+16))-u32(u32(0x4ull))));
@@ -3771,6 +3772,7 @@ w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
 __builtin_memmove((R+12),(U+0),4);
 }
 B51a634:{NFSU2_TR(0x51a634);
+if(mod_hook_table[42]){SPILL();c.pc=0x51a634u;mod_hook_table[42](c);SPILL();if(c.pc!=0x51a634u){TAIL_DYNAMIC(c.pc);}}
 __builtin_memmove((R+644),gp(u32(r4(R+16))),4);
 w4(R+16,u32(u32(r4(R+16))+u32(u32(0x4ull))));
 {u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}

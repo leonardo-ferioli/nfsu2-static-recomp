@@ -3836,7 +3836,7 @@ __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
 __builtin_memmove((R+8),(U+4),4);
 }
 B51d655:{NFSU2_TR(0x51d655);
-if(mod_hook_table[45]){SPILL();c.pc=0x51d655u;mod_hook_table[45](c);SPILL();if(c.pc!=0x51d655u){TAIL_DYNAMIC(c.pc);}goto B51d65a;}
+if(mod_hook_table[47]){SPILL();c.pc=0x51d655u;mod_hook_table[47](c);SPILL();if(c.pc!=0x51d655u){TAIL_DYNAMIC(c.pc);}goto B51d65a;}
 u8 U[4];
 __builtin_memmove((U+0),(R+4),4);
 s4(u32(r4(R+8)),r4(U+0));
