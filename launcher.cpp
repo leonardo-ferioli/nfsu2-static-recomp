@@ -28,7 +28,28 @@
 namespace fs = std::filesystem;
 using namespace nfsu2raw;
 
+// Read by the NVIDIA and AMD drivers: on a laptop with two graphics processors the game runs on the fast one, not the power-saving one.
+extern "C" {
+__declspec(dllexport) DWORD NvOptimusEnablement = 1;
+__declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
+}
+
 namespace {
+// Windows 11 may move a process it considers unimportant to the efficiency cores and ignore its timer-resolution requests (the frame limiter
+// depends on them). The game opts out of both and runs a little above normal priority.
+void apply_performance_hints() {
+    PROCESS_POWER_THROTTLING_STATE process_state{};
+    process_state.Version = PROCESS_POWER_THROTTLING_CURRENT_VERSION;
+    process_state.ControlMask = PROCESS_POWER_THROTTLING_EXECUTION_SPEED | PROCESS_POWER_THROTTLING_IGNORE_TIMER_RESOLUTION;
+    process_state.StateMask = 0;
+    SetProcessInformation(GetCurrentProcess(), ProcessPowerThrottling, &process_state, sizeof(process_state));
+    THREAD_POWER_THROTTLING_STATE thread_state{};
+    thread_state.Version = THREAD_POWER_THROTTLING_CURRENT_VERSION;
+    thread_state.ControlMask = THREAD_POWER_THROTTLING_EXECUTION_SPEED;
+    thread_state.StateMask = 0;
+    SetThreadInformation(GetCurrentThread(), ThreadPowerThrottling, &thread_state, sizeof(thread_state));
+    SetPriorityClass(GetCurrentProcess(), ABOVE_NORMAL_PRIORITY_CLASS);
+}
 constexpr const char* version_text = "NFSU2 static launcher 0.1 (fast backend)";
 // third_party/sleigh_spec/x86.sla (see PROVENANCE.txt there).
 constexpr const char* sleigh_spec_sha256 = "52bb7d8371a164f6726702cdd1b5bc46a6341912798d59e1a935f405c51d8b46";
@@ -40,7 +61,7 @@ struct Config {
     unsigned log_max_kb = 1024, log_keep = 3, watchdog_seconds = 0;
     uint64_t max_instructions = 0;  // 0: unlimited
     WidescreenSettings widescreen;
-    bool dialogs = true, verify_only = false, info = false, help = false, version = false, trace = true, state_cache = true, vsync = false;
+    bool dialogs = true, verify_only = false, info = false, help = false, version = false, trace = true, state_cache = true, vsync = false, profile = false;
 };
 
 std::string trim(std::string s) {
@@ -269,6 +290,7 @@ void apply_setting(Config& config, const std::string& key, const std::string& va
     }
     else if (key == "state_cache") config.state_cache = parse_bool(value, true);
     else if (key == "vsync") config.vsync = parse_bool(value, false);
+    else if (key == "profile") config.profile = parse_bool(value, false);
     else if (key == "trace") config.trace = parse_bool(value, true);
     else throw std::runtime_error(origin + ": unknown key " + key);
 }
@@ -317,6 +339,7 @@ const char* usage_text =
     "  --fps-limit N        limita los fotogramas por segundo (0 = sin limite; -1 = tasa del monitor; -2 = el doble; por defecto 60)\n"
     "  --no-state-cache     no omite las llamadas de estado de Direct3D que repiten el valor actual\n"
     "  --vsync              fuerza la sincronizacion vertical (evita el desgarro de imagen)\n"
+    "  --profile            cada 5 s anota en logs/native_trace.log fps, tiempo dentro de Direct3D y otros datos de rendimiento\n"
     "  --no-widescreen      desactiva el parche de pantalla ancha (resolucion original 640x480)\n"
     "  --width N --height N resolucion de pantalla ancha; con estas opciones se usa siempre, aunque haya otra guardada\n"
     "  --windowed           abre el juego en una ventana con borde (1280x720 salvo que se indique otra con --width/--height): para capturas\n"
@@ -351,6 +374,7 @@ Config parse_arguments(int argc, char** argv) {
         else if (arg == "--fps-limit") overrides["fps_limit"] = value();
         else if (arg == "--no-state-cache") overrides["state_cache"] = "off";
         else if (arg == "--vsync") overrides["vsync"] = "on";
+        else if (arg == "--profile") overrides["profile"] = "on";
         else if (arg == "--no-widescreen") widescreen_overrides.emplace_back("enabled", "off");
         else if (arg == "--width") { widescreen_overrides.emplace_back("width", value()); widescreen_overrides.emplace_back("force_resolution", "on"); given_size = true; }
         else if (arg == "--height") { widescreen_overrides.emplace_back("height", value()); widescreen_overrides.emplace_back("force_resolution", "on"); given_size = true; }
@@ -486,6 +510,8 @@ static int launcher_main(int argc, char** argv) {
         }
     }
 
+    if (config.profile) SetEnvironmentVariableA("NFSU2_PROFILE", "1");
+    apply_performance_hints();
     Cpu cpu;
     try {
         NativePlatform platform(cpu, game, NativePlatform::FromExecutable{});
