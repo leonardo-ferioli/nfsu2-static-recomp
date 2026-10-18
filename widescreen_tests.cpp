@@ -172,7 +172,7 @@ int main(int argc, char** argv) {
                 call_hook(c, hook);
                 return double(pop_x87());
             };
-            i32_at(address_of("game_state")) = 3;   // in a race
+            i32_at(address_of("game_state")) = 6;   // racing (3 is the front end)
             close_to(load("fe_quad_x0", 700, 760, 400, 450), 700 + (width - cx) * k, "right-zone element moves outwards (x, corner 0)");
             close_to(load("fe_quad_x1", 700, 760, 400, 450), 760 + (width - cx) * k, "right-zone element moves rigidly (x, corner 1)");
             close_to(load("fe_quad_y0", 700, 760, 400, 450), 400 + (height - cy) * k, "bottom-zone element moves outwards (y)");
