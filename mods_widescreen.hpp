@@ -48,6 +48,8 @@ struct WidescreenSettings {
     // [GRAPHICS]
     bool console_gamma = false;              // the mod defaults to on; off here until it has been seen working
     int hide_aa_bug = 1;
+    float radar_mask_scale = 2.0f;           // RadarMaskScale (not in the original mod): the map's mask is this many times the screen size
+    float radar_mask_limit = 4096.0f;        // RadarMaskLimit (not in the original mod): the mask is never larger than this many units
     // [NOSTrail]
     bool fix_nos_trail = true;
     float custom_nos_trail_length = 1.0f;

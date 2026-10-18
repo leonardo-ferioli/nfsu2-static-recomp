@@ -99,6 +99,8 @@ INI = """; NFSU2 static launcher configuration. Every line is optional; lines st
 [GRAPHICS]
 ;ConsoleGamma = 0                    ; Xbox 360 gamma (the mod's default is 1; off here until it has been seen working on screen).
 ;HideAABug = 1                       ; Hides a stray line at the screen edge with multisampling. (0 = off | 1 = top/left | 2 = all sides)
+;RadarMaskScale = 2.0                ; Size of the map's mask as a multiple of the screen (the original mod uses 2). Not in the original mod.
+;RadarMaskLimit = 4096               ; The mask is never larger than this many units: on very large screens a 2x mask can draw the map wrongly.
 
 [NOSTrail]
 ;FixNOSTrailLength = 1

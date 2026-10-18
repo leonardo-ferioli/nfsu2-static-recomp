@@ -226,6 +226,8 @@ void apply_widescreen_setting(Config& config, const std::string& section, const 
     } else if (section == "graphics") {
         if (key == "consolegamma") w.console_gamma = flag();
         else if (key == "hideaabug") w.hide_aa_bug = int(integer(0, 2));
+        else if (key == "radarmaskscale") w.radar_mask_scale = real();
+        else if (key == "radarmasklimit") w.radar_mask_limit = real();
         else if (key == "smaa" && !flag()) {}
         else if (key == "smaa") throw std::runtime_error(origin + ": SMAA is not part of this port");
         else throw std::runtime_error(origin + ": unknown key " + key);
