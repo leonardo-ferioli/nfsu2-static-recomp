@@ -1,5 +1,8 @@
 <p align="center">
-  <img alt="NUE - NFS Underground 2" src="assets/nue-banner.svg" width="720">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/nue-logo-dark.png">
+    <img alt="NUE" src="assets/nue-logo-light.png" width="420">
+  </picture>
 </p>
 
 <p align="center">
@@ -125,8 +128,8 @@ in `[GRAPHICS]` control the mini-map on very large screens.
   and a HUD that follows the device in use (touch, controller or keyboard).
 - **Interface quality.** The 3D scene scaled to what the GPU can hold, the HUD and menus drawn at the
   display's native resolution.
-- **Faster translated code.** A code shape that keeps the hottest guest registers in host registers
-  (1.8x to 3.5x faster in console benchmarks) is in progress.
+- **More speed from the translated code.** The code already keeps the hottest guest registers in host registers;
+  the next profile decides what is left to gain.
 
 See [`docs/ROADMAP.md`](docs/ROADMAP.md).
 
@@ -165,9 +168,11 @@ See [`PLATFORM.md`](PLATFORM.md) and [`docs/GRAPHICS_BACKEND.md`](docs/GRAPHICS_
 
 ### Fast backend
 
-Guest registers in a `noalias` register file, guest memory at the identical 32-bit host address, native
-integer types, whole-program dead-flag elimination, per-block instruction counting, page-to-page
-`musttail` calls and x87 passed through to the host FPU. The reference backend (`runtime.hpp`) models
+One function per guest superblock, with the three hottest guest registers passed as function arguments and
+flags kept as locals (1.8x to 3.5x faster than one function per page in console benchmarks, see
+[`docs/REGISTER_PARAMS.md`](docs/REGISTER_PARAMS.md)). Guest memory at the identical 32-bit host address,
+native integer types, whole-program dead-flag elimination, a register instruction budget, `musttail` calls
+between blocks and x87 passed through to the host FPU. The reference backend (`runtime.hpp`) models
 every P-code operation explicitly and is the oracle for the differential tests.
 
 ### Verification
