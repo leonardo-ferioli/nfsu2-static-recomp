@@ -15,7 +15,7 @@
 #include <tuple>
 
 namespace nfsu2raw {
-using namespace nfsu2::platform::d3d9;
+using namespace nue::d3d9;
 
 namespace {
 #define SLOT(Vtbl, Name) (unsigned(offsetof(Vtbl, Name) / sizeof(void*)))

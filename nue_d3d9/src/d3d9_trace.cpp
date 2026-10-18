@@ -18,11 +18,11 @@
 //   clear [count, flags, argb, z, stencil, count*4 rect ints]   draw_indexed [primitive, base_vertex, min_vertex, vertex_count, start_index, primitive_count]
 //   draw_up [primitive, primitive_count, stride, blob]   op_frame_marker [frame, instructions_low, instructions_high]
 //   op_reference_image [frame, w, h, format, blob]   op_unknown_call [slot, up to 8 argument words]
-#include "platform/d3d9_trace.hpp"
+#include "nue/d3d9_trace.hpp"
 #include <cstring>
 #include <unordered_map>
 
-namespace nfsu2::platform::d3d9 {
+namespace nue::d3d9 {
 namespace {
 // 64-bit hash of a data block, eight bytes at a time (the recorder hashes every lock of the run: it must stay cheap). Equal hash and size mean
 // equal data for this purpose (a collision would need two different blocks of the same size with the same 64-bit hash).
@@ -253,4 +253,4 @@ bool replay(TraceReader& reader, Device& device, ReplayStats& stats, std::string
     return true;
 }
 
-}  // namespace nfsu2::platform::d3d9
+}  // namespace nue::d3d9
