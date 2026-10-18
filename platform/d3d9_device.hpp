@@ -62,6 +62,7 @@ public:
     virtual Result<LockedRegion> lock_texture(TextureId, uint32_t level, uint32_t face, const int32_t* rect4, uint32_t flags) = 0;
     virtual Status unlock_texture(TextureId, uint32_t level, uint32_t face) = 0;
     virtual Result<SurfaceId> texture_surface(TextureId, uint32_t level, uint32_t face) = 0;
+    virtual Result<SurfaceId> back_buffer(uint32_t swap_chain, uint32_t index) = 0;
     virtual Status stretch_rect(SurfaceId from, const int32_t* from_rect4, SurfaceId to, const int32_t* to_rect4, uint32_t filter) = 0;
 
     // state: plain stores into the shadow; nothing reaches the GPU until a draw
@@ -99,7 +100,7 @@ enum class Method : uint8_t {
     create_texture, create_cube_texture, create_vertex_buffer, create_index_buffer, create_render_target, create_depth_stencil,
     create_vertex_declaration, create_vertex_shader, create_pixel_shader,
     destroy_texture, destroy_buffer, destroy_surface, destroy_declaration, destroy_shader, destroy_state_block,
-    lock_buffer, unlock_buffer, lock_texture, unlock_texture, texture_surface, stretch_rect,
+    lock_buffer, unlock_buffer, lock_texture, unlock_texture, texture_surface, get_back_buffer, stretch_rect,
     set_render_state, set_sampler_state, set_texture_stage_state, set_transform, set_viewport, set_texture, set_render_target, set_depth_stencil,
     set_vertex_declaration, set_fvf, set_vertex_shader, set_pixel_shader, set_vertex_shader_constants_f, set_pixel_shader_constants_f,
     set_stream_source, set_indices, begin_state_block, end_state_block, apply_state_block,

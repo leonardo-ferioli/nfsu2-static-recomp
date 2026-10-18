@@ -63,7 +63,8 @@ constexpr const char* sleigh_spec_sha256 = "52bb7d8371a164f6726702cdd1b5bc46a634
 enum Exit { ok = 0, usage = 2, game_files = 3, verification = 4, stopped = 5, watchdog = 124 };
 
 struct Config {
-    fs::path game_dir, log_dir, config_file, sleigh_spec;
+    fs::path game_dir, log_dir, config_file, sleigh_spec, record_dir;
+    unsigned record_frames = 120, record_capture_every = 30, record_start_frame = 0, record_max_mb = 3072;   // Direct3D 9 call recorder (--record-d3d9)
     unsigned log_max_kb = 1024, log_keep = 3, watchdog_seconds = 0;
     uint64_t max_instructions = 0;  // 0: unlimited
     WidescreenSettings widescreen;
@@ -287,6 +288,11 @@ void apply_setting(Config& config, const std::string& key, const std::string& va
     else if (key == "log_dir") config.log_dir = path_value();
     else if (key == "sleigh_spec") config.sleigh_spec = path_value();
     else if (key == "log_max_kb") config.log_max_kb = unsigned(number_value(1u << 20));
+    else if (key == "record_d3d9") config.record_dir = path_value();
+    else if (key == "record_frames") config.record_frames = unsigned(number_value(100000));
+    else if (key == "record_capture_every") config.record_capture_every = unsigned(number_value(100000));
+    else if (key == "record_start_frame") config.record_start_frame = unsigned(number_value(100000000));
+    else if (key == "record_max_mb") config.record_max_mb = unsigned(number_value(1000000));
     else if (key == "log_keep") config.log_keep = unsigned(number_value(20));
     else if (key == "max_instructions") config.max_instructions = number_value(~0ull);
     else if (key == "watchdog_seconds") config.watchdog_seconds = unsigned(number_value(86400));
@@ -345,6 +351,11 @@ const char* usage_text =
     "  --fps-limit N        limita los fotogramas por segundo (0 = sin limite; -1 = tasa del monitor; -2 = el doble; por defecto 60)\n"
     "  --no-state-cache     no omite las llamadas de estado de Direct3D que repiten el valor actual\n"
     "  --vsync              fuerza la sincronizacion vertical (evita el desgarro de imagen)\n"
+    "  --record-d3d9 DIR    graba las llamadas Direct3D 9 (trazas + imagenes de referencia) en DIR; F9 abre una ventana de grabacion de --record-frames fotogramas\n"
+    "  --record-frames N    fotogramas por ventana de grabacion (por defecto 120)\n"
+    "  --record-capture-every N  una imagen de referencia cada N fotogramas de la ventana (por defecto 30; 0 = ninguna)\n"
+    "  --record-start-frame N    abre la primera ventana en el fotograma N en lugar de esperar a F9\n"
+    "  --record-max-mb N    tope en MB de los datos grabados (texturas, vertices, shaders; por defecto 3072)\n"
     "  --profile            cada 5 s anota en logs/native_trace.log fps, tiempo dentro de Direct3D y otros datos de rendimiento\n"
     "  --no-widescreen      desactiva el parche de pantalla ancha (resolucion original 640x480)\n"
     "  --width N --height N resolucion de pantalla ancha; con estas opciones se usa siempre, aunque haya otra guardada\n"
@@ -378,6 +389,11 @@ Config parse_arguments(int argc, char** argv) {
         else if (arg == "--max-instructions") overrides["max_instructions"] = value();
         else if (arg == "--watchdog") overrides["watchdog_seconds"] = value();
         else if (arg == "--fps-limit") overrides["fps_limit"] = value();
+        else if (arg == "--record-d3d9") overrides["record_d3d9"] = value();
+        else if (arg == "--record-frames") overrides["record_frames"] = value();
+        else if (arg == "--record-capture-every") overrides["record_capture_every"] = value();
+        else if (arg == "--record-start-frame") overrides["record_start_frame"] = value();
+        else if (arg == "--record-max-mb") overrides["record_max_mb"] = value();
         else if (arg == "--no-state-cache") overrides["state_cache"] = "off";
         else if (arg == "--vsync") overrides["vsync"] = "on";
         else if (arg == "--profile") overrides["profile"] = "on";
@@ -516,6 +532,17 @@ static int launcher_main(int argc, char** argv) {
         platform.set_frame_limit(fps_cap);
         platform.set_state_cache(config.state_cache);
         platform.set_vsync(config.vsync);
+        if (!config.record_dir.empty()) {
+            RecorderOptions record;
+            record.directory = config.record_dir;
+            record.window_frames = config.record_frames;
+            record.capture_every = config.record_capture_every;
+            record.start_frame = config.record_start_frame;
+            record.max_blob_mb = config.record_max_mb;
+            const std::string failure = platform.set_d3d9_recorder(record);
+            if (!failure.empty()) throw std::runtime_error("grabador Direct3D 9: " + failure);
+            logger.info("Direct3D 9 recorder: " + config.record_dir.string() + " (F9 opens a window of " + std::to_string(config.record_frames) + " frames; state cache off)");
+        }
         logger.info(config.vsync ? "vertical sync: forced on" : "vertical sync: as the game asks");
         logger.info(config.state_cache ? "Direct3D state cache: on" : "Direct3D state cache: off");
         logger.info(fps_cap ? "frame-rate cap: " + std::to_string(fps_cap) + " fps" : std::string("frame-rate cap: off"));

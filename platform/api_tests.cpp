@@ -3,9 +3,12 @@
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
 #include <windows.h>
+#include "platform/d3d9_trace.hpp"
 #include "platform/null/null_platform.hpp"
 #include "platform/services.hpp"
 #include "platform/win32/win32_services.hpp"
+#include <cstring>
+#include <filesystem>
 #include <iostream>
 #include <stdexcept>
 #include <string>
@@ -75,6 +78,58 @@ void null_device_and_gpu() {
     CHECK(gpu.present(1) == Status::ok && gpu.draws == 1 && gpu.frames == 1 && gpu.transient.empty());
 }
 
+void trace_roundtrip() {
+    using namespace d3d9;
+    const auto dir = std::filesystem::temp_directory_path() / "nfsu2_trace_test";
+    std::filesystem::remove_all(dir);
+    std::string error;
+    {
+        TraceWriter w;
+        CHECK(w.open(dir, 0, error));
+        auto f = [](float v) { uint32_t b; std::memcpy(&b, &v, 4); return b; };
+        w.record(op_device_created, {0, 0x40, 640, 480, 22, 75, 0, 1, 1, 0});
+        w.record(uint8_t(Method::create_texture), {0x1000, 64, 64, 1, 0, 21, 1});
+        w.record(uint8_t(Method::create_vertex_buffer), {0x2000, 256, 0, 0, 0});
+        w.record(uint8_t(Method::lock_buffer), {0x2000, 16, 64, lock_discard});
+        std::vector<uint8_t> vertices(64, 0xAB);
+        const Blob vb = w.blob(vertices.data(), 64), vb_again = w.blob(vertices.data(), 64);
+        CHECK(vb.size == 64 && vb.offset == vb_again.offset);   // equal data is stored once
+        CHECK(w.blob_bytes() == 64);
+        w.record(uint8_t(Method::unlock_buffer), {0x2000, uint32_t(vb.offset), uint32_t(vb.offset >> 32), vb.size});
+        const uint32_t shader_code[] = {0xFFFF0101, 0x0000FFFF};
+        const Blob sb = w.blob(shader_code, sizeof(shader_code));
+        w.record(uint8_t(Method::create_pixel_shader), {0x3000, uint32_t(sb.offset), uint32_t(sb.offset >> 32), sb.size});
+        w.record(uint8_t(Method::set_pixel_shader), {0x3000});
+        w.record(uint8_t(Method::set_texture), {0, 0x1000});
+        w.record(uint8_t(Method::set_stream_source), {0, 0x2000, 0, 16});
+        w.record(uint8_t(Method::set_render_state), {7, 1});
+        w.record(uint8_t(Method::set_viewport), {0, 0, 640, 480, f(0.0f), f(1.0f)});
+        w.record(uint8_t(Method::begin_scene), {});
+        w.record(uint8_t(Method::draw_indexed), {4, 0, 0, 3, 0, 1});
+        const Blob up = w.blob(vertices.data(), 48);
+        w.record(uint8_t(Method::draw_up), {5, 1, 16, uint32_t(up.offset), uint32_t(up.offset >> 32), up.size});
+        w.record(uint8_t(Method::end_scene), {});
+        w.record(uint8_t(Method::present), {});
+        w.record(op_frame_marker, {1, 0, 0});
+        w.record(op_unknown_call, {53, 1, 2});
+        w.record(uint8_t(Method::destroy_texture), {0x1000});
+        w.close();
+    }
+    TraceReader reader;
+    CHECK(reader.open(dir, error));
+    null::NullDevice device;
+    ReplayStats stats;
+    CHECK(replay(reader, device, stats, error));
+    CHECK(stats.frames == 1 && stats.records == 19 && stats.unsupported == 1 && stats.bad_objects == 0);
+    CHECK(device.draws == 2 && device.calls[size_t(Method::create_texture)] == 1 && device.calls[size_t(Method::destroy_texture)] == 1);
+    CHECK(device.calls[size_t(Method::lock_buffer)] == 1 && device.calls[size_t(Method::unlock_buffer)] == 1 && device.calls[size_t(Method::create_pixel_shader)] == 1);
+    CHECK(device.live_resources() == 2);   // the vertex buffer and the pixel shader are still alive
+    reader.close();
+    TraceReader bad;
+    CHECK(!bad.open(dir / "missing", error));
+    std::filesystem::remove_all(dir);
+}
+
 void win32_display() {
     auto& display = win32::display();
     const auto with_modes = display.list(true);
@@ -129,6 +184,7 @@ void win32_window() {
 int main() try {
     null_display_and_window();
     null_device_and_gpu();
+    trace_roundtrip();
     win32_display();
     win32_window();
     std::cout << "PASS platform api: null display/window/device/gpu, win32 display and window\n";

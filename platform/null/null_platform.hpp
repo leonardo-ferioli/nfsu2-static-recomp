@@ -118,6 +118,7 @@ public:
     Result<d3d9::LockedRegion> lock_texture(d3d9::TextureId, uint32_t, uint32_t, const int32_t*, uint32_t) override;
     Status unlock_texture(d3d9::TextureId id, uint32_t, uint32_t) override { count(d3d9::Method::unlock_texture); return textures.count(id.value) ? Status::ok : Status::invalid_argument; }
     Result<d3d9::SurfaceId> texture_surface(d3d9::TextureId, uint32_t, uint32_t) override { count(d3d9::Method::texture_surface); return make<d3d9::SurfaceId>(surfaces); }
+    Result<d3d9::SurfaceId> back_buffer(uint32_t, uint32_t) override { count(d3d9::Method::get_back_buffer); return make<d3d9::SurfaceId>(surfaces); }
     Status stretch_rect(d3d9::SurfaceId, const int32_t*, d3d9::SurfaceId, const int32_t*, uint32_t) override { count(d3d9::Method::stretch_rect); return Status::ok; }
     void set_render_state(uint32_t, uint32_t) override { count(d3d9::Method::set_render_state); }
     void set_sampler_state(uint32_t, uint32_t, uint32_t) override { count(d3d9::Method::set_sampler_state); }

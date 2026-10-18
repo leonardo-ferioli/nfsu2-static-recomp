@@ -1,6 +1,7 @@
 #pragma once
 #include "runtime.hpp"
 #include "dynamic_code.hpp"
+#include "d3d9_recorder.hpp"
 #include <filesystem>
 #include <fstream>
 #include <map>
@@ -71,6 +72,8 @@ public:
     // Present with the display's vertical sync (IDirect3D9::CreateDevice/Reset presentation parameters whose interval is
     // IMMEDIATE are changed to ONE): no tearing, at the price of whole-refresh frame times when a frame is late.
     void set_vsync(bool on){vsync_on=on;}
+    // Records the game's Direct3D 9 calls and data (d3d9_recorder.hpp). Turns the state cache off (the trace should hold every call). Returns an error text, empty on success.
+    std::string set_d3d9_recorder(const RecorderOptions& options);
     void register_dynamic_region(uint32_t base,uint32_t size);
     uint64_t dynamic_instructions_decoded() const{auto* d=dynamic.load();return d?d->decoded_count():0;}
 private:
@@ -113,6 +116,8 @@ private:
     struct ImportOverride{unsigned argument_count;NativeHook handler;};
     static constexpr unsigned import_override_slots=512;
     std::unique_ptr<ImportOverride> import_overrides[import_override_slots];   // by import token: (token-0xf0000000)>>4
+    std::unique_ptr<D3d9Recorder> d3d9_recorder;
+    std::atomic<D3d9Recorder*> d3d9_recorder_ptr{nullptr};
     std::atomic<ImportOverride*> method_tokens[method_token_slots]={};   // by (token-method_token_base)>>4; entries live until the platform is destroyed
     std::atomic<unsigned> method_token_count{0};
     std::atomic<uintptr_t> thread_affinity{0};

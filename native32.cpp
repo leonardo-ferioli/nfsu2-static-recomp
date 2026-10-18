@@ -360,6 +360,7 @@ NativePlatform::NativePlatform(Cpu& c,const std::filesystem::path& game,const Bl
 }
 NativePlatform::~NativePlatform(){
     stopping=true;
+    d3d9_recorder_ptr.store(nullptr);if(d3d9_recorder)d3d9_recorder->finish();
     if(profile_sampler.joinable())profile_sampler.join();
     for(;;){
         std::map<uint32_t,uintptr_t> pending;{std::lock_guard lock(state_mutex);pending.swap(timers);}
@@ -773,7 +774,11 @@ bool NativePlatform::dispatch(Cpu& c){
     const bool profiling=profile_enabled(),profiling_full=profiling&&profile_full();const uint64_t started=profiling_full?profile_clock():0;
     const char* profile_name=resolved_name;
     const uint64_t light_started=(profiling && !profiling_full && route.id)?profile_clock():0;
-    invoke_native32(&frame);const DWORD guest_error=__readfsdword(0x34);invalidate_native_memory();s4(teb+0x34,guest_error);
+    D3d9Recorder* const recorder=d3d9_recorder_ptr.load(std::memory_order_relaxed);
+    const bool recording=recorder && &c==&main_cpu;
+    if(recording)recorder->before(uint32_t(target),original_sp);
+    invoke_native32(&frame);const DWORD guest_error=__readfsdword(0x34);
+    if(recording){if(route.d3d_create && frame.eax)recorder->created_d3d9(frame.eax);recorder->after(uint32_t(target),original_sp,frame.eax,c.instructions);}invalidate_native_memory();s4(teb+0x34,guest_error);
     if(light_started)light_ticks[route.id].fetch_add(profile_clock()-light_started,std::memory_order_relaxed);
     const unsigned limit=frame_limit.load(std::memory_order_relaxed);
     if((profiling && !profiling_full) || limit || state_cache_on.load(std::memory_order_relaxed) || vsync_on.load(std::memory_order_relaxed)){
@@ -935,6 +940,13 @@ uint32_t NativePlatform::window_callback(unsigned slot,std::initializer_list<uin
     uint32_t address;{std::lock_guard lock(state_mutex);address=slot<window_proc_count?window_procs[slot]:0;}
     if(!address){record("CALLBACK FAULT window procedure slot has no guest target");return 0;}
     return callback(address,args);
+}
+std::string NativePlatform::set_d3d9_recorder(const RecorderOptions& options){
+    auto recorder=std::make_unique<D3d9Recorder>(options);
+    if(!recorder->ok())return recorder->error();
+    state_cache_on=false;
+    d3d9_recorder=std::move(recorder);d3d9_recorder_ptr.store(d3d9_recorder.get());
+    return "";
 }
 void NativePlatform::register_dynamic_region(uint32_t base,uint32_t size){
     std::lock_guard lock(state_mutex);
