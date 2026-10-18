@@ -1,8 +1,9 @@
 // NFSU2 static launcher: runs the statically translated SPEED2.EXE against the user's own game directory.
 //
-// The program contains compiled C++ translated from the supported SPEED2.EXE build (SHA-256 below) and nothing
-// of the game's data. At start it reads SPEED2.EXE from the game directory, checks its SHA-256 and every mapped
-// block, and maps the sections as data. It never executes the original machine code.
+// The program contains compiled C++ translated from the supported SPEED2.EXE build (SHA-256 below) and the image of
+// that build (its sections) as data, so SPEED2.EXE is not read at run time. At start it checks every block of that
+// image against its SHA-256 and maps it into the guest address range. It never executes the original machine code.
+// The game's own data (cars, tracks, sound...) is read from the game directory the user points it to.
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
 #include <windows.h>
@@ -24,6 +25,10 @@
 #include <vector>
 #include "native32.hpp"
 #include "mods_widescreen.hpp"
+
+// The guest image blocks held in the program (image_data.cpp, made by tools/embed_image.py): SPEED2.EXE is not read.
+extern const nfsu2raw::EmbeddedImageBlock embedded_image_blocks[];
+extern const unsigned embedded_image_block_count;
 
 namespace fs = std::filesystem;
 using namespace nfsu2raw;
@@ -426,7 +431,7 @@ fs::path resolve_game_dir(const Config& config, std::vector<std::string>& tried)
     for (const auto& c : candidates) {
         tried.push_back(c.string());
         std::error_code ec;
-        if (fs::is_regular_file(c / "SPEED2.EXE", ec)) return fs::absolute(c);
+        if (fs::is_directory(c / "GLOBAL", ec)) return fs::absolute(c);   // the game folder is recognised by its data folders
     }
     return {};
 }
@@ -462,24 +467,14 @@ static int launcher_main(int argc, char** argv) {
     std::vector<std::string> tried;
     const fs::path game = resolve_game_dir(config, tried);
     if (game.empty()) {
-        std::string text = "No se encuentra SPEED2.EXE. Carpetas probadas:";
+        std::string text = "No se encuentra la carpeta del juego (la que contiene GLOBAL, CARS, TRACKS...). Carpetas probadas:";
         for (const auto& t : tried) text += "\n  " + t;
         text += "\nIndique la carpeta del juego con --game-dir o game_dir= en launcher.ini.";
         report_failure(config, text);
         return Exit::game_files;
     }
     logger.info("game directory: " + game.string());
-    try {
-        const std::string actual = sha256_file(game / "SPEED2.EXE");
-        if (actual != input_sha256) {
-            report_failure(config, "SPEED2.EXE no es la version compatible.\n  encontrado: " + actual + "\n  esperado:   " + input_sha256);
-            return Exit::verification;
-        }
-        logger.info("SPEED2.EXE SHA-256 verified");
-    } catch (const std::exception& e) {
-        report_failure(config, std::string("No se puede leer SPEED2.EXE: ") + e.what());
-        return Exit::game_files;
-    }
+    logger.info("guest image: held in the launcher (SPEED2.EXE is not read)");
     std::vector<std::string> missing;
     for (const char* directory : {"GLOBAL", "FRONTEND", "CARS", "TRACKS", "SOUND", "LANGUAGES"}) {
         std::error_code ec;
@@ -514,7 +509,7 @@ static int launcher_main(int argc, char** argv) {
     apply_performance_hints();
     Cpu cpu;
     try {
-        NativePlatform platform(cpu, game, NativePlatform::FromExecutable{});
+        NativePlatform platform(cpu, game, NativePlatform::FromEmbedded{embedded_image_blocks, embedded_image_block_count});
         platform.set_dynamic_code_specification(sleigh_spec);
         const unsigned fps_cap = widescreen_effective_fps_limit(config.widescreen);
         platform.set_frame_limit(fps_cap);

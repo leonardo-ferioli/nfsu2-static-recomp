@@ -62,11 +62,12 @@ def main():
                                                 "fast_platform_tests.exe", "fast_resource_tests.exe")
                     if (requires_image and not guest_reservation) or (guest_reservation and (guest_reservation["rva"] != "0x1000" or guest_reservation["executable"])):
                         raise RuntimeError(f"Missing or executable guest data reservation: {p}")
-        if embedded != -1:
+        holds_image = p.name == "nfsu2_launcher.exe"   # the launcher holds the guest image as data (tools/embed_image.py); it is never executed
+        if embedded != -1 and not holds_image:
             raise RuntimeError(f"Original x86 text blob unexpectedly embedded in {p}")
         artifacts.append({"file": str(p.relative_to(ROOT)), "bytes": p.stat().st_size,
                           "sha256": sha256(p), "pe_machine": arch,
-                          "contains_original_text_blob": False, "guest_reservation": guest_reservation})
+                          "contains_original_text_blob": embedded != -1, "guest_reservation": guest_reservation})
     audit = ROOT.parent / "auditoria_gemini_2026-10-16/evidencia_binaria.json"
     preservation = {}
     if audit.exists():

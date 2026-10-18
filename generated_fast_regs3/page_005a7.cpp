@@ -1,0 +1,7021 @@
+#include "fast_regs.hpp"
+namespace nfsu2raw {
+#define EXIT(T) do{nx=u32(T);goto XIT;}while(0)
+PN u32 ent_dispatch(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_43c780(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5997e0(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_599d90(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_59b160(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_59b200(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a6450(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a6580(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a6fd7(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a712d(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a71b6(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a71f5(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a71ff(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a7265(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a7355(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a7490(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a751d(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a7530(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a75e4(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a7692(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a76d1(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a7744(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a776f(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a7771(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a7790(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a77df(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a77e1(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a7800(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a784e(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a7850(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a786f(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a79b5(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a79b7(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a79bf(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a79c1(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a79cc(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a79ce(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a7a5b(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a7a5f(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a7a78(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a7a80(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a7a90(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a7ac1(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a7ace(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a7adc(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a7aef(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a7b02(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a7b0f(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a7b1d(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a7b30(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a7b32(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a7c7d(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a7ce0(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a7d6f(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a7dd8(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a7e10(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a7ead(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a7ec4(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a7ef6(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_75bed4(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a7140(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a7155(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a71c0(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a71d9(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a7220(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a7360(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a7375(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a74a0(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a74b8(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a76e3(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a7750(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a77a8(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a77c0(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a7818(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a7830(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a7887(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a7890(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a78c2(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a78e0(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a7930(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a7970(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a79f0(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a7a17(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a7a25(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a7a37(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a7a49(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a7b80(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a7bc4(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a7beb(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a7c12(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a7c39(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a7cb0(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a7cff(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a7d1f(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a7da0(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a7e05(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a7e1a(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a7e3d(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a7e4e(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a7e5d(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a7e6b(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a7e73(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a7e81(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a7ea3(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a7ebe(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a7f30(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a7f73(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_5a7001(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+519,F+7,1);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a7001:L5a7001:{bud-=56;NFSU2_TR(0x5a7001);
+{u32 ea_=u32(r4(G+4)+u32(368u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a7007:{NFSU2_TR(0x5a7007);
+{u32 ea_=u32(r4(R+8));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a7009:{NFSU2_TR(0x5a7009);
+__asm__ volatile(".byte 0xd8,0xe1":::"memory");
+}
+B5a700b:{NFSU2_TR(0x5a700b);
+{u32 ea_=u32(r4(G+16)+u32(12u));__asm__ volatile(".byte 0xd8,0x08"::"a"(ea_):"memory");}
+}
+B5a700f:{NFSU2_TR(0x5a700f);
+__asm__ volatile(".byte 0xd8,0xc1":::"memory");
+}
+B5a7011:{NFSU2_TR(0x5a7011);
+{u32 ea_=u32(r4(G+4)+u32(368u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+}
+B5a7017:{NFSU2_TR(0x5a7017);
+__asm__ volatile(".byte 0xdd,0xd8":::"memory");
+}
+B5a7019:{NFSU2_TR(0x5a7019);
+{u32 ea_=u32(r4(G+4)+u32(372u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a701f:{NFSU2_TR(0x5a701f);
+{u32 ea_=u32(r4(R+8)+u32(4u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a7022:{NFSU2_TR(0x5a7022);
+__asm__ volatile(".byte 0xd8,0xe1":::"memory");
+}
+B5a7024:{NFSU2_TR(0x5a7024);
+{u32 ea_=u32(r4(G+16)+u32(12u));__asm__ volatile(".byte 0xd8,0x08"::"a"(ea_):"memory");}
+}
+B5a7028:{NFSU2_TR(0x5a7028);
+__asm__ volatile(".byte 0xd8,0xc1":::"memory");
+}
+B5a702a:{NFSU2_TR(0x5a702a);
+{u32 ea_=u32(r4(G+4)+u32(372u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+}
+B5a7030:{NFSU2_TR(0x5a7030);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+24))*u32(u32(0x8ull))));
+w4(U+4,u32(u32(u32(0x0ull))+u32(r4(U+0))));
+__builtin_memmove((G+4),(U+4),4);
+}
+B5a7037:{NFSU2_TR(0x5a7037);
+__asm__ volatile(".byte 0xdd,0xd8":::"memory");
+}
+B5a7039:{NFSU2_TR(0x5a7039);
+{u32 ea_=u32((r4(G+4)*4u)+r4(G+0)+u32(388u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a7040:{NFSU2_TR(0x5a7040);
+{u32 ea_=u32(r4(R+8)+u32(20u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a7043:{NFSU2_TR(0x5a7043);
+__asm__ volatile(".byte 0xd8,0xe1":::"memory");
+}
+B5a7045:{NFSU2_TR(0x5a7045);
+{u32 ea_=u32(r4(G+16)+u32(12u));__asm__ volatile(".byte 0xd8,0x08"::"a"(ea_):"memory");}
+}
+B5a7049:{NFSU2_TR(0x5a7049);
+__asm__ volatile(".byte 0xd8,0xc1":::"memory");
+}
+B5a704b:{NFSU2_TR(0x5a704b);
+{u32 ea_=u32((r4(G+4)*4u)+r4(G+0)+u32(388u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+}
+B5a7052:{NFSU2_TR(0x5a7052);
+__asm__ volatile(".byte 0xdd,0xd8":::"memory");
+}
+B5a7054:{NFSU2_TR(0x5a7054);
+{u32 ea_=u32((r4(G+4)*4u)+r4(G+0)+u32(376u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a705b:{NFSU2_TR(0x5a705b);
+{u32 ea_=u32(r4(R+8)+u32(8u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a705e:{NFSU2_TR(0x5a705e);
+__asm__ volatile(".byte 0xd8,0xe1":::"memory");
+}
+B5a7060:{NFSU2_TR(0x5a7060);
+{u32 ea_=u32(r4(G+16)+u32(12u));__asm__ volatile(".byte 0xd8,0x08"::"a"(ea_):"memory");}
+}
+B5a7064:{NFSU2_TR(0x5a7064);
+__asm__ volatile(".byte 0xd8,0xc1":::"memory");
+}
+B5a7066:{NFSU2_TR(0x5a7066);
+{u32 ea_=u32((r4(G+4)*4u)+r4(G+0)+u32(376u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+}
+B5a706d:{NFSU2_TR(0x5a706d);
+__asm__ volatile(".byte 0xdd,0xd8":::"memory");
+}
+B5a706f:{NFSU2_TR(0x5a706f);
+{u32 ea_=u32((r4(G+4)*4u)+r4(G+0)+u32(392u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a7076:{NFSU2_TR(0x5a7076);
+{u32 ea_=u32(r4(R+8)+u32(24u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a7079:{NFSU2_TR(0x5a7079);
+__asm__ volatile(".byte 0xd8,0xe1":::"memory");
+}
+B5a707b:{NFSU2_TR(0x5a707b);
+{u32 ea_=u32(r4(G+16)+u32(12u));__asm__ volatile(".byte 0xd8,0x08"::"a"(ea_):"memory");}
+}
+B5a707f:{NFSU2_TR(0x5a707f);
+__asm__ volatile(".byte 0xd8,0xc1":::"memory");
+}
+B5a7081:{NFSU2_TR(0x5a7081);
+{u32 ea_=u32((r4(G+4)*4u)+r4(G+0)+u32(392u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+}
+B5a7088:{NFSU2_TR(0x5a7088);
+__asm__ volatile(".byte 0xdd,0xd8":::"memory");
+}
+B5a708a:{NFSU2_TR(0x5a708a);
+{u32 ea_=u32((r4(G+4)*4u)+r4(G+0)+u32(380u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a7091:{NFSU2_TR(0x5a7091);
+{u32 ea_=u32(r4(R+8)+u32(12u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a7094:{NFSU2_TR(0x5a7094);
+__asm__ volatile(".byte 0xd8,0xe1":::"memory");
+}
+B5a7096:{NFSU2_TR(0x5a7096);
+{u32 ea_=u32(r4(G+16)+u32(12u));__asm__ volatile(".byte 0xd8,0x08"::"a"(ea_):"memory");}
+}
+B5a709a:{NFSU2_TR(0x5a709a);
+__asm__ volatile(".byte 0xd8,0xc1":::"memory");
+}
+B5a709c:{NFSU2_TR(0x5a709c);
+{u32 ea_=u32((r4(G+4)*4u)+r4(G+0)+u32(380u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+}
+B5a70a3:{NFSU2_TR(0x5a70a3);
+u8 U[4];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0xcull))));
+__builtin_memmove((G+4),(U+0),4);
+}
+B5a70a6:{NFSU2_TR(0x5a70a6);
+u8 U[4];
+w4(U+0,u32(u32(u32(0x5ull))&u32(u32(0x1full))));
+w4(G+4,shl<u32>(r4(G+4),u64(r4(U+0))));
+}
+B5a70a9:{NFSU2_TR(0x5a70a9);
+__asm__ volatile(".byte 0xdd,0xd8":::"memory");
+}
+B5a70ab:{NFSU2_TR(0x5a70ab);
+w4(G+4,u32(u32(r4(G+4))+u32(r4(G+0))));
+}
+B5a70ad:{NFSU2_TR(0x5a70ad);
+{u32 ea_=u32(r4(G+4));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a70af:{NFSU2_TR(0x5a70af);
+w4(R+24,u32(u32(r4(R+24))+u32(u32(0x1ull))));
+}
+B5a70b0:{NFSU2_TR(0x5a70b0);
+u8 U[8];
+__builtin_memmove((U+0),(R+24),4);
+w1(F+11,sborrow<u32>(r4(U+0),u32(0x2ull)));
+w4(U+4,u32(u32(r4(U+0))-u32(u32(0x2ull))));
+w1(F+7,u8(s32(r4(U+4))<s32(u32(0x0ull))));
+}
+B5a70b3:{NFSU2_TR(0x5a70b3);
+{u32 ea_=u32(r4(R+8)+u32(16u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a70b6:{NFSU2_TR(0x5a70b6);
+__asm__ volatile(".byte 0xd8,0xe1":::"memory");
+}
+B5a70b8:{NFSU2_TR(0x5a70b8);
+{u32 ea_=u32(r4(G+16)+u32(16u));__asm__ volatile(".byte 0xd8,0x08"::"a"(ea_):"memory");}
+}
+B5a70bc:{NFSU2_TR(0x5a70bc);
+__asm__ volatile(".byte 0xd8,0xc1":::"memory");
+}
+B5a70be:{NFSU2_TR(0x5a70be);
+{u32 ea_=u32(r4(G+4));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+}
+B5a70c0:{NFSU2_TR(0x5a70c0);
+__asm__ volatile(".byte 0xdd,0xd8":::"memory");
+}
+B5a70c2:{NFSU2_TR(0x5a70c2);
+u8 U[1];
+w1(U+0,u8((r1(F+11))!=(r1(F+7))));
+if(r1(U+0)){{if(__builtin_expect(bud<=0,0)){EXIT(0x5a6fd7u);}[[clang::musttail]] return blk_5a6fd7(ARGS);}}
+}
+B5a70c8:L5a70c8:{bud-=29;NFSU2_TR(0x5a70c8);
+{u32 ea_=u32(r4(G+16)+u32(12u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a70cc:{NFSU2_TR(0x5a70cc);
+{u32 ea_=u32(r4(R+28)+u32(68u));__asm__ volatile(".byte 0xd8,0x08"::"a"(ea_):"memory");}
+}
+B5a70cf:{NFSU2_TR(0x5a70cf);
+{u32 ea_=u32(r4(G+0)+u32(24u));__asm__ volatile(".byte 0xd8,0x00"::"a"(ea_):"memory");}
+}
+B5a70d2:{NFSU2_TR(0x5a70d2);
+{u32 ea_=u32(r4(G+0)+u32(24u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+}
+B5a70d5:{NFSU2_TR(0x5a70d5);
+{u32 ea_=u32(r4(G+16)+u32(12u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a70d9:{NFSU2_TR(0x5a70d9);
+{u32 ea_=u32(r4(R+28)+u32(68u));__asm__ volatile(".byte 0xd8,0x08"::"a"(ea_):"memory");}
+}
+B5a70dc:{NFSU2_TR(0x5a70dc);
+{u32 ea_=u32(r4(G+0)+u32(72u));__asm__ volatile(".byte 0xd8,0x00"::"a"(ea_):"memory");}
+}
+B5a70df:{NFSU2_TR(0x5a70df);
+{u32 ea_=u32(r4(G+0)+u32(72u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+}
+B5a70e2:{NFSU2_TR(0x5a70e2);
+{u32 ea_=u32(r4(G+16)+u32(12u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a70e6:{NFSU2_TR(0x5a70e6);
+{u32 ea_=u32(r4(R+28)+u32(72u));__asm__ volatile(".byte 0xd8,0x08"::"a"(ea_):"memory");}
+}
+B5a70e9:{NFSU2_TR(0x5a70e9);
+{u32 ea_=u32(r4(G+0)+u32(120u));__asm__ volatile(".byte 0xd8,0x00"::"a"(ea_):"memory");}
+}
+B5a70ec:{NFSU2_TR(0x5a70ec);
+{u32 ea_=u32(r4(G+0)+u32(120u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+}
+B5a70ef:{NFSU2_TR(0x5a70ef);
+{u32 ea_=u32(r4(G+16)+u32(12u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a70f3:{NFSU2_TR(0x5a70f3);
+{u32 ea_=u32(r4(R+28)+u32(72u));__asm__ volatile(".byte 0xd8,0x08"::"a"(ea_):"memory");}
+}
+B5a70f6:{NFSU2_TR(0x5a70f6);
+{u32 ea_=u32(r4(G+0)+u32(168u));__asm__ volatile(".byte 0xd8,0x00"::"a"(ea_):"memory");}
+}
+B5a70fc:{NFSU2_TR(0x5a70fc);
+{u32 ea_=u32(r4(G+0)+u32(168u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+}
+B5a7102:{NFSU2_TR(0x5a7102);
+{u32 ea_=u32(r4(R+28)+u32(64u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a7105:{NFSU2_TR(0x5a7105);
+u8 U[4];
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+__builtin_memmove((R+28),(U+0),4);
+}
+B5a7106:{NFSU2_TR(0x5a7106);
+{u32 ea_=u32(r4(G+16)+u32(8u));__asm__ volatile(".byte 0xd8,0x08"::"a"(ea_):"memory");}
+}
+B5a710a:{NFSU2_TR(0x5a710a);
+u8 U[4];
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+__builtin_memmove((R+24),(U+0),4);
+}
+B5a710b:{NFSU2_TR(0x5a710b);
+{u32 ea_=u32(r4(G+0)+u32(8u));__asm__ volatile(".byte 0xd8,0x28"::"a"(ea_):"memory");}
+}
+B5a710e:{NFSU2_TR(0x5a710e);
+{u32 ea_=u32(r4(G+0)+u32(8u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+}
+B5a7111:{NFSU2_TR(0x5a7111);
+{u32 ea_=u32(r4(G+0)+u32(624u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a7117:{NFSU2_TR(0x5a7117);
+{u32 ea_=u32(r4(R+12)+u32(1468u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a711d:{NFSU2_TR(0x5a711d);
+__asm__ volatile(".byte 0xd8,0xe1":::"memory");
+}
+B5a711f:{NFSU2_TR(0x5a711f);
+{u32 ea_=u32(r4(G+16)+u32(12u));__asm__ volatile(".byte 0xd8,0x08"::"a"(ea_):"memory");}
+}
+B5a7123:{NFSU2_TR(0x5a7123);
+__asm__ volatile(".byte 0xd8,0xc1":::"memory");
+}
+B5a7125:{NFSU2_TR(0x5a7125);
+{u32 ea_=u32(r4(G+0)+u32(624u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+}
+B5a712b:{NFSU2_TR(0x5a712b);
+__asm__ volatile(".byte 0xdd,0xd8":::"memory");
+{[[clang::musttail]] return blk_5a712d(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a712d(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a712d:L5a712d:{bud-=3;NFSU2_TR(0x5a712d);
+u8 U[4];
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+__builtin_memmove((R+12),(U+0),4);
+}
+B5a712e:{NFSU2_TR(0x5a712e);
+u8 U[6];
+w1(F+0,carry<u32>(r4(G+16),u32(0xcull)));
+w1(F+11,scarry<u32>(r4(G+16),u32(0xcull)));
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0xcull))));
+w1(F+7,u8(s32(r4(G+16))<s32(u32(0x0ull))));
+w1(F+6,u8((r4(G+16))==(u32(0x0ull))));
+w4(U+0,u32(u32(r4(G+16))&u32(u32(0xffull))));
+w1(U+4,u8(__builtin_popcountll(u64(r4(U+0)))));
+w1(U+5,u8(u32(r1(U+4))&u32(u8(0x1ull))));
+w1(F+2,u8((r1(U+5))==(u8(0x0ull))));
+}
+B5a7131:{NFSU2_TR(0x5a7131);
+__builtin_memmove((R+644),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x8ull))));
+{u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a7140(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a7140:L5a7140:{bud-=8;NFSU2_TR(0x5a7140);
+u8 U[4];
+__builtin_memmove((U+0),(R+24),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7141:{NFSU2_TR(0x5a7141);
+u8 U[4];
+w4(U+0,u32(u32(u32(0xcull))+u32(r4(G+16))));
+__builtin_memmove((G+0),(U+0),4);
+}
+B5a7145:{NFSU2_TR(0x5a7145);
+u8 U[4];
+__builtin_memmove((U+0),(G+0),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7146:{NFSU2_TR(0x5a7146);
+u8 U[4];
+w4(U+0,u32(0x1ull));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7148:{NFSU2_TR(0x5a7148);
+__builtin_memmove((R+24),(G+4),4);
+}
+B5a714a:{NFSU2_TR(0x5a714a);
+u8 U[8];
+w4(U+0,u32(u32(u32(0x14ull))+u32(r4(G+16))));
+__builtin_memmove((U+4),gp(u32(r4(U+0))),4);
+__builtin_memmove((G+4),(U+4),4);
+}
+B5a714e:{NFSU2_TR(0x5a714e);
+u8 U[4];
+w4(U+0,u32(0x6ull));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7150:{NFSU2_TR(0x5a7150);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),u32(0x5a7155ull));
+{if(__builtin_expect(bud<=0,0)){EXIT(0x5a6580u);}[[clang::musttail]] return blk_5a6580(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a7155(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a7155:L5a7155:{bud-=5;NFSU2_TR(0x5a7155);
+{u32 ea_=u32(u32(8224060u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a715b:{NFSU2_TR(0x5a715b);
+__asm__ volatile(".byte 0xd8,0xd9":::"memory");
+}
+B5a715d:{NFSU2_TR(0x5a715d);
+{u32 ax_;__asm__ volatile(".byte 0xdf,0xe0":"=a"(ax_)::"memory");w2(G+0,u16(ax_));}
+}
+B5a715f:{NFSU2_TR(0x5a715f);
+u8 U[4];
+w1(F+0,u8(0x0ull));
+w1(F+11,u8(0x0ull));
+w1(U+3,u8(u32(r1(G+1))&u32(u8(0x44ull))));
+w1(F+7,u8(s8(r1(U+3))<s8(u8(0x0ull))));
+w1(F+6,u8((r1(U+3))==(u8(0x0ull))));
+w1(U+0,u8(u32(r1(U+3))&u32(u8(0xffull))));
+w1(U+1,u8(__builtin_popcountll(u64(r1(U+0)))));
+w1(U+2,u8(u32(r1(U+1))&u32(u8(0x1ull))));
+w1(F+2,u8((r1(U+2))==(u8(0x0ull))));
+}
+B5a7162:{NFSU2_TR(0x5a7162);
+u8 U[1];
+w1(U+0,u8(!(r1(F+2))));
+if(r1(U+0)){{__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);[[clang::musttail]] return blk_5a71b6(ARGS);}}
+}
+B5a7164:L5a7164:{bud-=22;NFSU2_TR(0x5a7164);
+u8 U[8];
+w4(U+0,u32(u32(u32(0x8ull))+u32(r4(G+16))));
+__builtin_memmove((U+4),gp(u32(r4(U+0))),4);
+__builtin_memmove((G+0),(U+4),4);
+}
+B5a7168:{NFSU2_TR(0x5a7168);
+{u32 ea_=u32(r4(G+0)+u32(636u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a716e:{NFSU2_TR(0x5a716e);
+{u32 ea_=u32(r4(R+24)+u32(1464u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a7174:{NFSU2_TR(0x5a7174);
+__asm__ volatile(".byte 0xd8,0xe1":::"memory");
+}
+B5a7176:{NFSU2_TR(0x5a7176);
+__asm__ volatile(".byte 0xd8,0xca":::"memory");
+}
+B5a7178:{NFSU2_TR(0x5a7178);
+__asm__ volatile(".byte 0xd8,0xc1":::"memory");
+}
+B5a717a:{NFSU2_TR(0x5a717a);
+{u32 ea_=u32(r4(G+0)+u32(636u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+}
+B5a7180:{NFSU2_TR(0x5a7180);
+__asm__ volatile(".byte 0xdd,0xd8":::"memory");
+}
+B5a7182:{NFSU2_TR(0x5a7182);
+{u32 ea_=u32(r4(G+0)+u32(632u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a7188:{NFSU2_TR(0x5a7188);
+{u32 ea_=u32(r4(R+24)+u32(1460u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a718e:{NFSU2_TR(0x5a718e);
+__asm__ volatile(".byte 0xd8,0xe1":::"memory");
+}
+B5a7190:{NFSU2_TR(0x5a7190);
+__asm__ volatile(".byte 0xd8,0xca":::"memory");
+}
+B5a7192:{NFSU2_TR(0x5a7192);
+__asm__ volatile(".byte 0xd8,0xc1":::"memory");
+}
+B5a7194:{NFSU2_TR(0x5a7194);
+{u32 ea_=u32(r4(G+0)+u32(632u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+}
+B5a719a:{NFSU2_TR(0x5a719a);
+__asm__ volatile(".byte 0xdd,0xd8":::"memory");
+}
+B5a719c:{NFSU2_TR(0x5a719c);
+{u32 ea_=u32(r4(G+0)+u32(628u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a71a2:{NFSU2_TR(0x5a71a2);
+{u32 ea_=u32(r4(R+24)+u32(1456u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a71a8:{NFSU2_TR(0x5a71a8);
+__asm__ volatile(".byte 0xd8,0xe1":::"memory");
+}
+B5a71aa:{NFSU2_TR(0x5a71aa);
+__asm__ volatile(".byte 0xd8,0xca":::"memory");
+}
+B5a71ac:{NFSU2_TR(0x5a71ac);
+__asm__ volatile(".byte 0xd8,0xc1":::"memory");
+}
+B5a71ae:{NFSU2_TR(0x5a71ae);
+{u32 ea_=u32(r4(G+0)+u32(628u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+}
+B5a71b4:{NFSU2_TR(0x5a71b4);
+__asm__ volatile(".byte 0xdd,0xd8":::"memory");
+{__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);[[clang::musttail]] return blk_5a71b6(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a71b6(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a71b6:L5a71b6:{bud-=3;NFSU2_TR(0x5a71b6);
+__asm__ volatile(".byte 0xdd,0xd8":::"memory");
+}
+B5a71b8:{NFSU2_TR(0x5a71b8);
+u8 U[4];
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+__builtin_memmove((R+24),(U+0),4);
+}
+B5a71b9:{NFSU2_TR(0x5a71b9);
+__builtin_memmove((R+644),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x8ull))));
+{u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a71c0(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a71c0:L5a71c0:{bud-=11;NFSU2_TR(0x5a71c0);
+u8 U[4];
+__builtin_memmove((U+0),(R+12),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a71c1:{NFSU2_TR(0x5a71c1);
+u8 U[8];
+w4(U+0,u32(u32(u32(0xcull))+u32(r4(G+16))));
+__builtin_memmove((U+4),gp(u32(r4(U+0))),4);
+__builtin_memmove((R+12),(U+4),4);
+}
+B5a71c5:{NFSU2_TR(0x5a71c5);
+u8 U[4];
+__builtin_memmove((U+0),(R+24),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a71c6:{NFSU2_TR(0x5a71c6);
+u8 U[4];
+__builtin_memmove((U+0),(R+28),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a71c7:{NFSU2_TR(0x5a71c7);
+u8 U[4];
+w4(U+0,u32(u32(u32(0x14ull))+u32(r4(G+16))));
+__builtin_memmove((G+0),(U+0),4);
+}
+B5a71cb:{NFSU2_TR(0x5a71cb);
+u8 U[4];
+__builtin_memmove((U+0),(G+0),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a71cc:{NFSU2_TR(0x5a71cc);
+u8 U[4];
+w4(U+0,u32(0x1ull));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a71ce:{NFSU2_TR(0x5a71ce);
+__builtin_memmove((R+28),(G+4),4);
+}
+B5a71d0:{NFSU2_TR(0x5a71d0);
+u8 U[4];
+w4(U+0,u32(0x7ull));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a71d2:{NFSU2_TR(0x5a71d2);
+__builtin_memmove((G+4),(R+12),4);
+}
+B5a71d4:{NFSU2_TR(0x5a71d4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),u32(0x5a71d9ull));
+{if(__builtin_expect(bud<=0,0)){EXIT(0x5a6580u);}[[clang::musttail]] return blk_5a6580(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a71d9(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a71d9:L5a71d9:{bud-=4;NFSU2_TR(0x5a71d9);
+u8 U[5];
+w4(U+0,u32(u32(r4(R+12))+u32(u32(0x7dull))));
+__builtin_memmove((U+4),gp(u32(r4(U+0))),1);
+__builtin_memmove((G+0),(U+4),1);
+}
+B5a71dc:{NFSU2_TR(0x5a71dc);
+u8 U[1];
+w1(U+0,u8(u32(r1(G+0))&u32(r1(G+0))));
+w1(F+6,u8((r1(U+0))==(u8(0x0ull))));
+}
+B5a71de:{NFSU2_TR(0x5a71de);
+u8 U[8];
+w4(U+0,u32(u32(u32(0x10ull))+u32(r4(G+16))));
+__builtin_memmove((U+4),gp(u32(r4(U+0))),4);
+__builtin_memmove((R+24),(U+4),4);
+}
+B5a71e2:{NFSU2_TR(0x5a71e2);
+u8 U[1];
+w1(U+0,u8(!(r1(F+6))));
+if(r1(U+0)){{[[clang::musttail]] return blk_5a71f5(ARGS);}}
+}
+B5a71e4:L5a71e4:{bud-=3;NFSU2_TR(0x5a71e4);
+u8 U[5];
+w4(U+0,u32(u32(r4(R+12))+u32(u32(0x7eull))));
+__builtin_memmove((U+4),gp(u32(r4(U+0))),1);
+__builtin_memmove((G+0),(U+4),1);
+}
+B5a71e7:{NFSU2_TR(0x5a71e7);
+u8 U[1];
+w1(U+0,u8(u32(r1(G+0))&u32(r1(G+0))));
+w1(F+6,u8((r1(U+0))==(u8(0x0ull))));
+}
+B5a71e9:{NFSU2_TR(0x5a71e9);
+u8 U[1];
+w1(U+0,u8(!(r1(F+6))));
+if(r1(U+0)){{[[clang::musttail]] return blk_5a71f5(ARGS);}}
+}
+B5a71eb:L5a71eb:{bud-=3;NFSU2_TR(0x5a71eb);
+u8 U[5];
+w4(U+0,u32(u32(r4(R+12))+u32(u32(0x83ull))));
+__builtin_memmove((U+4),gp(u32(r4(U+0))),1);
+__builtin_memmove((G+0),(U+4),1);
+}
+B5a71f1:{NFSU2_TR(0x5a71f1);
+u8 U[1];
+w1(U+0,u8(u32(r1(G+0))&u32(r1(G+0))));
+w1(F+6,u8((r1(U+0))==(u8(0x0ull))));
+}
+B5a71f3:{NFSU2_TR(0x5a71f3);
+if(r1(F+6)){{[[clang::musttail]] return blk_5a71ff(ARGS);}}
+{[[clang::musttail]] return blk_5a71f5(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a71f5(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a71f5:L5a71f5:{bud-=1;NFSU2_TR(0x5a71f5);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0x290ull))));
+w4(U+4,u32(0x0ull));
+s4(u32(r4(U+0)),r4(U+4));
+{[[clang::musttail]] return blk_5a71ff(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a71ff(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a71ff:L5a71ff:{bud-=5;NFSU2_TR(0x5a71ff);
+{u32 ea_=u32(u32(8224060u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a7205:{NFSU2_TR(0x5a7205);
+__asm__ volatile(".byte 0xd8,0xd9":::"memory");
+}
+B5a7207:{NFSU2_TR(0x5a7207);
+{u32 ax_;__asm__ volatile(".byte 0xdf,0xe0":"=a"(ax_)::"memory");w2(G+0,u16(ax_));}
+}
+B5a7209:{NFSU2_TR(0x5a7209);
+u8 U[4];
+w1(F+0,u8(0x0ull));
+w1(F+11,u8(0x0ull));
+w1(U+3,u8(u32(r1(G+1))&u32(u8(0x44ull))));
+w1(F+7,u8(s8(r1(U+3))<s8(u8(0x0ull))));
+w1(F+6,u8((r1(U+3))==(u8(0x0ull))));
+w1(U+0,u8(u32(r1(U+3))&u32(u8(0xffull))));
+w1(U+1,u8(__builtin_popcountll(u64(r1(U+0)))));
+w1(U+2,u8(u32(r1(U+1))&u32(u8(0x1ull))));
+w1(F+2,u8((r1(U+2))==(u8(0x0ull))));
+}
+B5a720c:{NFSU2_TR(0x5a720c);
+u8 U[1];
+w1(U+0,u8(!(r1(F+2))));
+if(r1(U+0)){{__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);[[clang::musttail]] return blk_5a7355(ARGS);}}
+}
+B5a7212:L5a7212:{bud-=3;NFSU2_TR(0x5a7212);
+{u32 ea_=u32(r4(R+12)+u32(28u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a7215:{NFSU2_TR(0x5a7215);
+{u32 ea_=u32(u32(7881312u));__asm__ volatile(".byte 0xd8,0x00"::"a"(ea_):"memory");}
+}
+B5a721b:{NFSU2_TR(0x5a721b);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),u32(0x5a7220ull));
+{[[clang::musttail]] return blk_75bed4(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a7220(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a7220:L5a7220:{bud-=2;NFSU2_TR(0x5a7220);
+u8 U[14];
+__builtin_memmove((U+6),(G+0),4);
+w1(F+0,u8((r4(U+6))<(u32(0x1ull))));
+w1(F+11,sborrow<u32>(r4(U+6),u32(0x1ull)));
+w4(U+10,u32(u32(r4(U+6))-u32(u32(0x1ull))));
+w1(F+7,u8(s32(r4(U+10))<s32(u32(0x0ull))));
+w1(F+6,u8((r4(U+10))==(u32(0x0ull))));
+w4(U+0,u32(u32(r4(U+10))&u32(u32(0xffull))));
+w1(U+4,u8(__builtin_popcountll(u64(r4(U+0)))));
+w1(U+5,u8(u32(r1(U+4))&u32(u8(0x1ull))));
+w1(F+2,u8((r1(U+5))==(u8(0x0ull))));
+}
+B5a7223:{NFSU2_TR(0x5a7223);
+u8 U[1];
+w1(U+0,u8((r1(F+11))!=(r1(F+7))));
+if(r1(U+0)){{__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);[[clang::musttail]] return blk_5a7265(ARGS);}}
+}
+B5a7225:L5a7225:{bud-=2;NFSU2_TR(0x5a7225);
+u8 U[14];
+__builtin_memmove((U+6),(G+0),4);
+w1(F+0,u8((r4(U+6))<(u32(0x3ull))));
+w1(F+11,sborrow<u32>(r4(U+6),u32(0x3ull)));
+w4(U+10,u32(u32(r4(U+6))-u32(u32(0x3ull))));
+w1(F+7,u8(s32(r4(U+10))<s32(u32(0x0ull))));
+w1(F+6,u8((r4(U+10))==(u32(0x0ull))));
+w4(U+0,u32(u32(r4(U+10))&u32(u32(0xffull))));
+w1(U+4,u8(__builtin_popcountll(u64(r4(U+0)))));
+w1(U+5,u8(u32(r1(U+4))&u32(u8(0x1ull))));
+w1(F+2,u8((r1(U+5))==(u8(0x0ull))));
+}
+B5a7228:{NFSU2_TR(0x5a7228);
+u8 U[3];
+w1(U+0,u8(!(r1(F+6))));
+w1(U+1,u8((r1(F+11))==(r1(F+7))));
+w1(U+2,u8((r1(U+0))&&(r1(U+1))));
+if(r1(U+2)){{__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);[[clang::musttail]] return blk_5a7265(ARGS);}}
+}
+B5a722a:L5a722a:{bud-=11;NFSU2_TR(0x5a722a);
+u8 U[45];
+w4(U+37,u32(u32(u32(0x6ull))&u32(u32(0x1full))));
+__builtin_memmove((U+41),(G+0),4);
+w4(G+0,shl<u32>(r4(G+0),u64(r4(U+37))));
+w1(U+24,u8((r4(U+37))==(u32(0x0ull))));
+w4(U+25,u32(u32(r4(U+37))-u32(u32(0x1ull))));
+w4(U+29,shl<u32>(r4(U+41),u64(r4(U+25))));
+w1(U+33,u8(s32(r4(U+29))<s32(u32(0x0ull))));
+__builtin_memmove((U+0),(U+24),1);
+w1(U+1,u8(u32(r1(U+0))*u32(r1(F+0))));
+w1(U+2,u8(!(r1(U+24))));
+__builtin_memmove((U+3),(U+2),1);
+w1(U+4,u8(u32(r1(U+3))*u32(r1(U+33))));
+w1(F+0,u8(u32(r1(U+1))|u32(r1(U+4))));
+w1(U+34,u8((r4(U+37))==(u32(0x1ull))));
+w1(U+35,u8(s32(r4(G+0))<s32(u32(0x0ull))));
+w1(U+36,u8(u32(r1(F+0))^u32(r1(U+35))));
+__builtin_memmove((U+0),(U+34),1);
+w1(U+1,u8(u32(r1(U+0))*u32(r1(U+36))));
+w1(U+2,u8(!(r1(U+34))));
+__builtin_memmove((U+3),(U+2),1);
+w1(U+4,u8(u32(r1(U+3))*u32(r1(F+11))));
+w1(F+11,u8(u32(r1(U+1))|u32(r1(U+4))));
+w1(U+5,u8((r4(U+37))!=(u32(0x0ull))));
+w1(U+6,u8(s32(r4(G+0))<s32(u32(0x0ull))));
+w1(U+7,u8(!(r1(U+5))));
+w1(U+8,u8(u32(r1(U+7))&u32(r1(F+7))));
+w1(U+9,u8(u32(r1(U+5))&u32(r1(U+6))));
+w1(F+7,u8(u32(r1(U+8))|u32(r1(U+9))));
+w1(U+10,u8((r4(G+0))==(u32(0x0ull))));
+w1(U+11,u8(!(r1(U+5))));
+w1(U+12,u8(u32(r1(U+11))&u32(r1(F+6))));
+w1(U+13,u8(u32(r1(U+5))&u32(r1(U+10))));
+w1(F+6,u8(u32(r1(U+12))|u32(r1(U+13))));
+w4(U+14,u32(u32(r4(G+0))&u32(u32(0xffull))));
+w1(U+18,u8(__builtin_popcountll(u64(r4(U+14)))));
+w1(U+19,u8(u32(r1(U+18))&u32(u8(0x1ull))));
+w1(U+20,u8((r1(U+19))==(u8(0x0ull))));
+w1(U+21,u8(!(r1(U+5))));
+w1(U+22,u8(u32(r1(U+21))&u32(r1(F+2))));
+w1(U+23,u8(u32(r1(U+5))&u32(r1(U+20))));
+w1(F+2,u8(u32(r1(U+22))|u32(r1(U+23))));
+}
+B5a722d:{NFSU2_TR(0x5a722d);
+{u32 ea_=u32(r4(R+28)+r4(G+0)+u32(1040u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a7234:{NFSU2_TR(0x5a7234);
+u8 U[12];
+w4(U+0,u32(u32(u32(0x410ull))+u32(r4(G+0))));
+w4(U+4,u32(u32(r4(R+28))*u32(u32(0x1ull))));
+w4(U+8,u32(u32(r4(U+0))+u32(r4(U+4))));
+__builtin_memmove((G+0),(U+8),4);
+}
+B5a723b:{NFSU2_TR(0x5a723b);
+{u32 ea_=u32(r4(R+24)+u32(496u));__asm__ volatile(".byte 0xd8,0x00"::"a"(ea_):"memory");}
+}
+B5a7241:{NFSU2_TR(0x5a7241);
+{u32 ea_=u32(r4(R+24)+u32(496u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+}
+B5a7247:{NFSU2_TR(0x5a7247);
+{u32 ea_=u32(r4(G+0)+u32(4u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a724a:{NFSU2_TR(0x5a724a);
+{u32 ea_=u32(r4(R+24)+u32(500u));__asm__ volatile(".byte 0xd8,0x00"::"a"(ea_):"memory");}
+}
+B5a7250:{NFSU2_TR(0x5a7250);
+{u32 ea_=u32(r4(R+24)+u32(500u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+}
+B5a7256:{NFSU2_TR(0x5a7256);
+{u32 ea_=u32(r4(G+0)+u32(8u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a7259:{NFSU2_TR(0x5a7259);
+{u32 ea_=u32(r4(R+24)+u32(504u));__asm__ volatile(".byte 0xd8,0x00"::"a"(ea_):"memory");}
+}
+B5a725f:{NFSU2_TR(0x5a725f);
+{u32 ea_=u32(r4(R+24)+u32(504u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+{__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);[[clang::musttail]] return blk_5a7265(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a7265(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a7265:L5a7265:{bud-=48;NFSU2_TR(0x5a7265);
+{u32 ea_=u32(r4(R+28)+u32(1248u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a726b:{NFSU2_TR(0x5a726b);
+__asm__ volatile(".byte 0xd8,0xc9":::"memory");
+}
+B5a726d:{NFSU2_TR(0x5a726d);
+{u32 ea_=u32(r4(R+24)+u32(512u));__asm__ volatile(".byte 0xd8,0x00"::"a"(ea_):"memory");}
+}
+B5a7273:{NFSU2_TR(0x5a7273);
+{u32 ea_=u32(r4(R+24)+u32(512u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+}
+B5a7279:{NFSU2_TR(0x5a7279);
+{u32 ea_=u32(r4(R+28)+u32(1252u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a727f:{NFSU2_TR(0x5a727f);
+__asm__ volatile(".byte 0xd8,0xc9":::"memory");
+}
+B5a7281:{NFSU2_TR(0x5a7281);
+{u32 ea_=u32(r4(R+24)+u32(516u));__asm__ volatile(".byte 0xd8,0x00"::"a"(ea_):"memory");}
+}
+B5a7287:{NFSU2_TR(0x5a7287);
+{u32 ea_=u32(r4(R+24)+u32(516u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+}
+B5a728d:{NFSU2_TR(0x5a728d);
+{u32 ea_=u32(r4(R+28)+u32(1256u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a7293:{NFSU2_TR(0x5a7293);
+__asm__ volatile(".byte 0xd8,0xc9":::"memory");
+}
+B5a7295:{NFSU2_TR(0x5a7295);
+{u32 ea_=u32(r4(R+24)+u32(520u));__asm__ volatile(".byte 0xd8,0x00"::"a"(ea_):"memory");}
+}
+B5a729b:{NFSU2_TR(0x5a729b);
+{u32 ea_=u32(r4(R+24)+u32(520u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+}
+B5a72a1:{NFSU2_TR(0x5a72a1);
+{u32 ea_=u32(r4(R+28)+u32(1260u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a72a7:{NFSU2_TR(0x5a72a7);
+__asm__ volatile(".byte 0xd8,0xc9":::"memory");
+}
+B5a72a9:{NFSU2_TR(0x5a72a9);
+{u32 ea_=u32(r4(R+24)+u32(524u));__asm__ volatile(".byte 0xd8,0x00"::"a"(ea_):"memory");}
+}
+B5a72af:{NFSU2_TR(0x5a72af);
+{u32 ea_=u32(r4(R+24)+u32(524u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+}
+B5a72b5:{NFSU2_TR(0x5a72b5);
+{u32 ea_=u32(r4(R+28)+u32(1264u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a72bb:{NFSU2_TR(0x5a72bb);
+__asm__ volatile(".byte 0xd8,0xc9":::"memory");
+}
+B5a72bd:{NFSU2_TR(0x5a72bd);
+{u32 ea_=u32(r4(R+24)+u32(528u));__asm__ volatile(".byte 0xd8,0x00"::"a"(ea_):"memory");}
+}
+B5a72c3:{NFSU2_TR(0x5a72c3);
+{u32 ea_=u32(r4(R+24)+u32(528u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+}
+B5a72c9:{NFSU2_TR(0x5a72c9);
+{u32 ea_=u32(r4(R+28)+u32(1268u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a72cf:{NFSU2_TR(0x5a72cf);
+__asm__ volatile(".byte 0xd8,0xc9":::"memory");
+}
+B5a72d1:{NFSU2_TR(0x5a72d1);
+{u32 ea_=u32(r4(R+24)+u32(532u));__asm__ volatile(".byte 0xd8,0x00"::"a"(ea_):"memory");}
+}
+B5a72d7:{NFSU2_TR(0x5a72d7);
+{u32 ea_=u32(r4(R+24)+u32(532u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+}
+B5a72dd:{NFSU2_TR(0x5a72dd);
+{u32 ea_=u32(r4(R+28)+u32(1272u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a72e3:{NFSU2_TR(0x5a72e3);
+__asm__ volatile(".byte 0xd8,0xc9":::"memory");
+}
+B5a72e5:{NFSU2_TR(0x5a72e5);
+{u32 ea_=u32(r4(R+24)+u32(536u));__asm__ volatile(".byte 0xd8,0x00"::"a"(ea_):"memory");}
+}
+B5a72eb:{NFSU2_TR(0x5a72eb);
+{u32 ea_=u32(r4(R+24)+u32(536u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+}
+B5a72f1:{NFSU2_TR(0x5a72f1);
+{u32 ea_=u32(r4(R+28)+u32(1276u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a72f7:{NFSU2_TR(0x5a72f7);
+__asm__ volatile(".byte 0xd8,0xc9":::"memory");
+}
+B5a72f9:{NFSU2_TR(0x5a72f9);
+{u32 ea_=u32(r4(R+24)+u32(540u));__asm__ volatile(".byte 0xd8,0x00"::"a"(ea_):"memory");}
+}
+B5a72ff:{NFSU2_TR(0x5a72ff);
+{u32 ea_=u32(r4(R+24)+u32(540u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+}
+B5a7305:{NFSU2_TR(0x5a7305);
+{u32 ea_=u32(r4(R+28)+u32(1280u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a730b:{NFSU2_TR(0x5a730b);
+__asm__ volatile(".byte 0xd8,0xc9":::"memory");
+}
+B5a730d:{NFSU2_TR(0x5a730d);
+{u32 ea_=u32(r4(R+24)+u32(544u));__asm__ volatile(".byte 0xd8,0x00"::"a"(ea_):"memory");}
+}
+B5a7313:{NFSU2_TR(0x5a7313);
+{u32 ea_=u32(r4(R+24)+u32(544u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+}
+B5a7319:{NFSU2_TR(0x5a7319);
+{u32 ea_=u32(r4(R+28)+u32(1284u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a731f:{NFSU2_TR(0x5a731f);
+__asm__ volatile(".byte 0xd8,0xc9":::"memory");
+}
+B5a7321:{NFSU2_TR(0x5a7321);
+{u32 ea_=u32(r4(R+24)+u32(584u));__asm__ volatile(".byte 0xd8,0x00"::"a"(ea_):"memory");}
+}
+B5a7327:{NFSU2_TR(0x5a7327);
+{u32 ea_=u32(r4(R+24)+u32(584u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+}
+B5a732d:{NFSU2_TR(0x5a732d);
+{u32 ea_=u32(r4(R+28)+u32(1288u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a7333:{NFSU2_TR(0x5a7333);
+__asm__ volatile(".byte 0xd8,0xc9":::"memory");
+}
+B5a7335:{NFSU2_TR(0x5a7335);
+{u32 ea_=u32(r4(R+24)+u32(588u));__asm__ volatile(".byte 0xd8,0x00"::"a"(ea_):"memory");}
+}
+B5a733b:{NFSU2_TR(0x5a733b);
+{u32 ea_=u32(r4(R+24)+u32(588u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+}
+B5a7341:{NFSU2_TR(0x5a7341);
+{u32 ea_=u32(r4(R+28)+u32(1292u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a7347:{NFSU2_TR(0x5a7347);
+__asm__ volatile(".byte 0xd8,0xc9":::"memory");
+}
+B5a7349:{NFSU2_TR(0x5a7349);
+{u32 ea_=u32(r4(R+24)+u32(592u));__asm__ volatile(".byte 0xd8,0x00"::"a"(ea_):"memory");}
+}
+B5a734f:{NFSU2_TR(0x5a734f);
+{u32 ea_=u32(r4(R+24)+u32(592u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+{[[clang::musttail]] return blk_5a7355(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a7355(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a7355:L5a7355:{bud-=5;NFSU2_TR(0x5a7355);
+u8 U[4];
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+__builtin_memmove((R+28),(U+0),4);
+}
+B5a7356:{NFSU2_TR(0x5a7356);
+__asm__ volatile(".byte 0xdd,0xd8":::"memory");
+}
+B5a7358:{NFSU2_TR(0x5a7358);
+u8 U[4];
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+__builtin_memmove((R+24),(U+0),4);
+}
+B5a7359:{NFSU2_TR(0x5a7359);
+u8 U[4];
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+__builtin_memmove((R+12),(U+0),4);
+}
+B5a735a:{NFSU2_TR(0x5a735a);
+__builtin_memmove((R+644),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x8ull))));
+{u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a7360(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a7360:L5a7360:{bud-=8;NFSU2_TR(0x5a7360);
+u8 U[4];
+__builtin_memmove((U+0),(R+24),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7361:{NFSU2_TR(0x5a7361);
+u8 U[4];
+w4(U+0,u32(u32(u32(0xcull))+u32(r4(G+16))));
+__builtin_memmove((G+0),(U+0),4);
+}
+B5a7365:{NFSU2_TR(0x5a7365);
+u8 U[4];
+__builtin_memmove((U+0),(G+0),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7366:{NFSU2_TR(0x5a7366);
+u8 U[4];
+w4(U+0,u32(0x1ull));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7368:{NFSU2_TR(0x5a7368);
+__builtin_memmove((R+24),(G+4),4);
+}
+B5a736a:{NFSU2_TR(0x5a736a);
+u8 U[8];
+w4(U+0,u32(u32(u32(0x14ull))+u32(r4(G+16))));
+__builtin_memmove((U+4),gp(u32(r4(U+0))),4);
+__builtin_memmove((G+4),(U+4),4);
+}
+B5a736e:{NFSU2_TR(0x5a736e);
+u8 U[4];
+w4(U+0,u32(0x8ull));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7370:{NFSU2_TR(0x5a7370);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),u32(0x5a7375ull));
+{if(__builtin_expect(bud<=0,0)){EXIT(0x5a6580u);}[[clang::musttail]] return blk_5a6580(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a7375(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a7375:L5a7375:{bud-=5;NFSU2_TR(0x5a7375);
+{u32 ea_=u32(u32(8224060u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a737b:{NFSU2_TR(0x5a737b);
+__asm__ volatile(".byte 0xd8,0xd9":::"memory");
+}
+B5a737d:{NFSU2_TR(0x5a737d);
+{u32 ax_;__asm__ volatile(".byte 0xdf,0xe0":"=a"(ax_)::"memory");w2(G+0,u16(ax_));}
+}
+B5a737f:{NFSU2_TR(0x5a737f);
+u8 U[4];
+w1(F+0,u8(0x0ull));
+w1(F+11,u8(0x0ull));
+w1(U+3,u8(u32(r1(G+1))&u32(u8(0x44ull))));
+w1(F+7,u8(s8(r1(U+3))<s8(u8(0x0ull))));
+w1(F+6,u8((r1(U+3))==(u8(0x0ull))));
+w1(U+0,u8(u32(r1(U+3))&u32(u8(0xffull))));
+w1(U+1,u8(__builtin_popcountll(u64(r1(U+0)))));
+w1(U+2,u8(u32(r1(U+1))&u32(u8(0x1ull))));
+w1(F+2,u8((r1(U+2))==(u8(0x0ull))));
+}
+B5a7382:{NFSU2_TR(0x5a7382);
+u8 U[1];
+w1(U+0,u8(!(r1(F+2))));
+if(r1(U+0)){{__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);[[clang::musttail]] return blk_5a7490(ARGS);}}
+}
+B5a7388:L5a7388:{bud-=71;NFSU2_TR(0x5a7388);
+u8 U[8];
+w4(U+0,u32(u32(u32(0x8ull))+u32(r4(G+16))));
+__builtin_memmove((U+4),gp(u32(r4(U+0))),4);
+__builtin_memmove((G+0),(U+4),4);
+}
+B5a738c:{NFSU2_TR(0x5a738c);
+{u32 ea_=u32(r4(G+0)+u32(216u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a7392:{NFSU2_TR(0x5a7392);
+{u32 ea_=u32(r4(R+24)+u32(1352u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a7398:{NFSU2_TR(0x5a7398);
+__asm__ volatile(".byte 0xd8,0xe1":::"memory");
+}
+B5a739a:{NFSU2_TR(0x5a739a);
+__asm__ volatile(".byte 0xd8,0xca":::"memory");
+}
+B5a739c:{NFSU2_TR(0x5a739c);
+__asm__ volatile(".byte 0xd8,0xc1":::"memory");
+}
+B5a739e:{NFSU2_TR(0x5a739e);
+{u32 ea_=u32(r4(G+0)+u32(216u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+}
+B5a73a4:{NFSU2_TR(0x5a73a4);
+__asm__ volatile(".byte 0xdd,0xd8":::"memory");
+}
+B5a73a6:{NFSU2_TR(0x5a73a6);
+{u32 ea_=u32(r4(G+0)+u32(212u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a73ac:{NFSU2_TR(0x5a73ac);
+{u32 ea_=u32(r4(R+24)+u32(1348u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a73b2:{NFSU2_TR(0x5a73b2);
+__asm__ volatile(".byte 0xd8,0xe1":::"memory");
+}
+B5a73b4:{NFSU2_TR(0x5a73b4);
+__asm__ volatile(".byte 0xd8,0xca":::"memory");
+}
+B5a73b6:{NFSU2_TR(0x5a73b6);
+__asm__ volatile(".byte 0xd8,0xc1":::"memory");
+}
+B5a73b8:{NFSU2_TR(0x5a73b8);
+{u32 ea_=u32(r4(G+0)+u32(212u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+}
+B5a73be:{NFSU2_TR(0x5a73be);
+__asm__ volatile(".byte 0xdd,0xd8":::"memory");
+}
+B5a73c0:{NFSU2_TR(0x5a73c0);
+{u32 ea_=u32(r4(G+0)+u32(208u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a73c6:{NFSU2_TR(0x5a73c6);
+{u32 ea_=u32(r4(R+24)+u32(1344u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a73cc:{NFSU2_TR(0x5a73cc);
+__asm__ volatile(".byte 0xd8,0xe1":::"memory");
+}
+B5a73ce:{NFSU2_TR(0x5a73ce);
+__asm__ volatile(".byte 0xd8,0xca":::"memory");
+}
+B5a73d0:{NFSU2_TR(0x5a73d0);
+__asm__ volatile(".byte 0xd8,0xc1":::"memory");
+}
+B5a73d2:{NFSU2_TR(0x5a73d2);
+{u32 ea_=u32(r4(G+0)+u32(208u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+}
+B5a73d8:{NFSU2_TR(0x5a73d8);
+__asm__ volatile(".byte 0xdd,0xd8":::"memory");
+}
+B5a73da:{NFSU2_TR(0x5a73da);
+{u32 ea_=u32(r4(G+0)+u32(224u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a73e0:{NFSU2_TR(0x5a73e0);
+{u32 ea_=u32(r4(R+24)+u32(1360u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a73e6:{NFSU2_TR(0x5a73e6);
+__asm__ volatile(".byte 0xd8,0xe1":::"memory");
+}
+B5a73e8:{NFSU2_TR(0x5a73e8);
+__asm__ volatile(".byte 0xd8,0xca":::"memory");
+}
+B5a73ea:{NFSU2_TR(0x5a73ea);
+__asm__ volatile(".byte 0xd8,0xc1":::"memory");
+}
+B5a73ec:{NFSU2_TR(0x5a73ec);
+{u32 ea_=u32(r4(G+0)+u32(224u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+}
+B5a73f2:{NFSU2_TR(0x5a73f2);
+__asm__ volatile(".byte 0xdd,0xd8":::"memory");
+}
+B5a73f4:{NFSU2_TR(0x5a73f4);
+{u32 ea_=u32(r4(G+0)+u32(220u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a73fa:{NFSU2_TR(0x5a73fa);
+{u32 ea_=u32(r4(R+24)+u32(1356u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a7400:{NFSU2_TR(0x5a7400);
+__asm__ volatile(".byte 0xd8,0xe1":::"memory");
+}
+B5a7402:{NFSU2_TR(0x5a7402);
+__asm__ volatile(".byte 0xd8,0xca":::"memory");
+}
+B5a7404:{NFSU2_TR(0x5a7404);
+__asm__ volatile(".byte 0xd8,0xc1":::"memory");
+}
+B5a7406:{NFSU2_TR(0x5a7406);
+{u32 ea_=u32(r4(G+0)+u32(220u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+}
+B5a740c:{NFSU2_TR(0x5a740c);
+__asm__ volatile(".byte 0xdd,0xd8":::"memory");
+}
+B5a740e:{NFSU2_TR(0x5a740e);
+{u32 ea_=u32(r4(G+0)+u32(248u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a7414:{NFSU2_TR(0x5a7414);
+{u32 ea_=u32(r4(R+24)+u32(1384u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a741a:{NFSU2_TR(0x5a741a);
+__asm__ volatile(".byte 0xd8,0xe1":::"memory");
+}
+B5a741c:{NFSU2_TR(0x5a741c);
+__asm__ volatile(".byte 0xd8,0xca":::"memory");
+}
+B5a741e:{NFSU2_TR(0x5a741e);
+__asm__ volatile(".byte 0xd8,0xc1":::"memory");
+}
+B5a7420:{NFSU2_TR(0x5a7420);
+{u32 ea_=u32(r4(G+0)+u32(248u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+}
+B5a7426:{NFSU2_TR(0x5a7426);
+__asm__ volatile(".byte 0xdd,0xd8":::"memory");
+}
+B5a7428:{NFSU2_TR(0x5a7428);
+{u32 ea_=u32(r4(G+0)+u32(244u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a742e:{NFSU2_TR(0x5a742e);
+{u32 ea_=u32(r4(R+24)+u32(1380u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a7434:{NFSU2_TR(0x5a7434);
+__asm__ volatile(".byte 0xd8,0xe1":::"memory");
+}
+B5a7436:{NFSU2_TR(0x5a7436);
+__asm__ volatile(".byte 0xd8,0xca":::"memory");
+}
+B5a7438:{NFSU2_TR(0x5a7438);
+__asm__ volatile(".byte 0xd8,0xc1":::"memory");
+}
+B5a743a:{NFSU2_TR(0x5a743a);
+{u32 ea_=u32(r4(G+0)+u32(244u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+}
+B5a7440:{NFSU2_TR(0x5a7440);
+__asm__ volatile(".byte 0xdd,0xd8":::"memory");
+}
+B5a7442:{NFSU2_TR(0x5a7442);
+{u32 ea_=u32(r4(G+0)+u32(240u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a7448:{NFSU2_TR(0x5a7448);
+{u32 ea_=u32(r4(R+24)+u32(1376u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a744e:{NFSU2_TR(0x5a744e);
+__asm__ volatile(".byte 0xd8,0xe1":::"memory");
+}
+B5a7450:{NFSU2_TR(0x5a7450);
+__asm__ volatile(".byte 0xd8,0xca":::"memory");
+}
+B5a7452:{NFSU2_TR(0x5a7452);
+__asm__ volatile(".byte 0xd8,0xc1":::"memory");
+}
+B5a7454:{NFSU2_TR(0x5a7454);
+{u32 ea_=u32(r4(G+0)+u32(240u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+}
+B5a745a:{NFSU2_TR(0x5a745a);
+__asm__ volatile(".byte 0xdd,0xd8":::"memory");
+}
+B5a745c:{NFSU2_TR(0x5a745c);
+{u32 ea_=u32(r4(G+0)+u32(256u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a7462:{NFSU2_TR(0x5a7462);
+{u32 ea_=u32(r4(R+24)+u32(1392u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a7468:{NFSU2_TR(0x5a7468);
+__asm__ volatile(".byte 0xd8,0xe1":::"memory");
+}
+B5a746a:{NFSU2_TR(0x5a746a);
+__asm__ volatile(".byte 0xd8,0xca":::"memory");
+}
+B5a746c:{NFSU2_TR(0x5a746c);
+__asm__ volatile(".byte 0xd8,0xc1":::"memory");
+}
+B5a746e:{NFSU2_TR(0x5a746e);
+{u32 ea_=u32(r4(G+0)+u32(256u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+}
+B5a7474:{NFSU2_TR(0x5a7474);
+__asm__ volatile(".byte 0xdd,0xd8":::"memory");
+}
+B5a7476:{NFSU2_TR(0x5a7476);
+{u32 ea_=u32(r4(G+0)+u32(252u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a747c:{NFSU2_TR(0x5a747c);
+{u32 ea_=u32(r4(R+24)+u32(1388u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a7482:{NFSU2_TR(0x5a7482);
+__asm__ volatile(".byte 0xd8,0xe1":::"memory");
+}
+B5a7484:{NFSU2_TR(0x5a7484);
+__asm__ volatile(".byte 0xd8,0xca":::"memory");
+}
+B5a7486:{NFSU2_TR(0x5a7486);
+__asm__ volatile(".byte 0xd8,0xc1":::"memory");
+}
+B5a7488:{NFSU2_TR(0x5a7488);
+{u32 ea_=u32(r4(G+0)+u32(252u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+}
+B5a748e:{NFSU2_TR(0x5a748e);
+__asm__ volatile(".byte 0xdd,0xd8":::"memory");
+{__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);[[clang::musttail]] return blk_5a7490(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a7490(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a7490:L5a7490:{bud-=3;NFSU2_TR(0x5a7490);
+__asm__ volatile(".byte 0xdd,0xd8":::"memory");
+}
+B5a7492:{NFSU2_TR(0x5a7492);
+u8 U[4];
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+__builtin_memmove((R+24),(U+0),4);
+}
+B5a7493:{NFSU2_TR(0x5a7493);
+__builtin_memmove((R+644),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x8ull))));
+{u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a74a0(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a74a0:L5a74a0:{bud-=9;NFSU2_TR(0x5a74a0);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x8ull))));
+}
+B5a74a3:{NFSU2_TR(0x5a74a3);
+u8 U[4];
+__builtin_memmove((U+0),(R+24),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a74a4:{NFSU2_TR(0x5a74a4);
+u8 U[4];
+w4(U+0,u32(u32(u32(0x4ull))+u32(r4(G+16))));
+__builtin_memmove((G+0),(U+0),4);
+}
+B5a74a8:{NFSU2_TR(0x5a74a8);
+u8 U[4];
+__builtin_memmove((U+0),(G+0),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a74a9:{NFSU2_TR(0x5a74a9);
+u8 U[4];
+w4(U+0,u32(0x2ull));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a74ab:{NFSU2_TR(0x5a74ab);
+__builtin_memmove((R+24),(G+4),4);
+}
+B5a74ad:{NFSU2_TR(0x5a74ad);
+u8 U[8];
+w4(U+0,u32(u32(u32(0x1cull))+u32(r4(G+16))));
+__builtin_memmove((U+4),gp(u32(r4(U+0))),4);
+__builtin_memmove((G+4),(U+4),4);
+}
+B5a74b1:{NFSU2_TR(0x5a74b1);
+u8 U[4];
+w4(U+0,u32(0x9ull));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a74b3:{NFSU2_TR(0x5a74b3);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),u32(0x5a74b8ull));
+{if(__builtin_expect(bud<=0,0)){EXIT(0x5a6580u);}[[clang::musttail]] return blk_5a6580(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a74b8(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+514,F+2,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a74b8:L5a74b8:{bud-=5;NFSU2_TR(0x5a74b8);
+{u32 ea_=u32(u32(8224060u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a74be:{NFSU2_TR(0x5a74be);
+__asm__ volatile(".byte 0xd8,0xd9":::"memory");
+}
+B5a74c0:{NFSU2_TR(0x5a74c0);
+{u32 ax_;__asm__ volatile(".byte 0xdf,0xe0":"=a"(ax_)::"memory");w2(G+0,u16(ax_));}
+}
+B5a74c2:{NFSU2_TR(0x5a74c2);
+u8 U[4];
+w1(U+3,u8(u32(r1(G+1))&u32(u8(0x44ull))));
+w1(U+0,u8(u32(r1(U+3))&u32(u8(0xffull))));
+w1(U+1,u8(__builtin_popcountll(u64(r1(U+0)))));
+w1(U+2,u8(u32(r1(U+1))&u32(u8(0x1ull))));
+w1(F+2,u8((r1(U+2))==(u8(0x0ull))));
+}
+B5a74c5:{NFSU2_TR(0x5a74c5);
+u8 U[1];
+w1(U+0,u8(!(r1(F+2))));
+if(r1(U+0)){{[[clang::musttail]] return blk_5a751d(ARGS);}}
+}
+B5a74c7:L5a74c7:{bud-=16;NFSU2_TR(0x5a74c7);
+{u32 ea_=u32(r4(R+24)+u32(1424u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a74cd:{NFSU2_TR(0x5a74cd);
+u8 U[8];
+w4(U+0,u32(u32(u32(0x10ull))+u32(r4(G+16))));
+__builtin_memmove((U+4),gp(u32(r4(U+0))),4);
+__builtin_memmove((G+0),(U+4),4);
+}
+B5a74d1:{NFSU2_TR(0x5a74d1);
+{u32 ea_=u32(r4(R+24)+u32(1440u));__asm__ volatile(".byte 0xd8,0x00"::"a"(ea_):"memory");}
+}
+B5a74d7:{NFSU2_TR(0x5a74d7);
+{u32 ea_=u32(r4(G+16)+u32(4u));__asm__ volatile(".byte 0xd8,0x08"::"a"(ea_):"memory");}
+}
+B5a74db:{NFSU2_TR(0x5a74db);
+{u32 ea_=u32(r4(G+0)+u32(612u));__asm__ volatile(".byte 0xd8,0x00"::"a"(ea_):"memory");}
+}
+B5a74e1:{NFSU2_TR(0x5a74e1);
+{u32 ea_=u32(r4(G+0)+u32(612u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+}
+B5a74e7:{NFSU2_TR(0x5a74e7);
+{u32 ea_=u32(r4(R+24)+u32(1428u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a74ed:{NFSU2_TR(0x5a74ed);
+{u32 ea_=u32(r4(R+24)+u32(1444u));__asm__ volatile(".byte 0xd8,0x00"::"a"(ea_):"memory");}
+}
+B5a74f3:{NFSU2_TR(0x5a74f3);
+{u32 ea_=u32(r4(G+16)+u32(8u));__asm__ volatile(".byte 0xd8,0x08"::"a"(ea_):"memory");}
+}
+B5a74f7:{NFSU2_TR(0x5a74f7);
+{u32 ea_=u32(r4(G+0)+u32(616u));__asm__ volatile(".byte 0xd8,0x00"::"a"(ea_):"memory");}
+}
+B5a74fd:{NFSU2_TR(0x5a74fd);
+{u32 ea_=u32(r4(G+0)+u32(616u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+}
+B5a7503:{NFSU2_TR(0x5a7503);
+{u32 ea_=u32(r4(R+24)+u32(1432u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a7509:{NFSU2_TR(0x5a7509);
+{u32 ea_=u32(r4(R+24)+u32(1448u));__asm__ volatile(".byte 0xd8,0x00"::"a"(ea_):"memory");}
+}
+B5a750f:{NFSU2_TR(0x5a750f);
+__asm__ volatile(".byte 0xd8,0xc9":::"memory");
+}
+B5a7511:{NFSU2_TR(0x5a7511);
+{u32 ea_=u32(r4(G+0)+u32(620u));__asm__ volatile(".byte 0xd8,0x00"::"a"(ea_):"memory");}
+}
+B5a7517:{NFSU2_TR(0x5a7517);
+{u32 ea_=u32(r4(G+0)+u32(620u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+{[[clang::musttail]] return blk_5a751d(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a751d(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a751d:L5a751d:{bud-=4;NFSU2_TR(0x5a751d);
+__asm__ volatile(".byte 0xdd,0xd8":::"memory");
+}
+B5a751f:{NFSU2_TR(0x5a751f);
+u8 U[4];
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+__builtin_memmove((R+24),(U+0),4);
+}
+B5a7520:{NFSU2_TR(0x5a7520);
+u8 U[6];
+w1(F+0,carry<u32>(r4(G+16),u32(0x8ull)));
+w1(F+11,scarry<u32>(r4(G+16),u32(0x8ull)));
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x8ull))));
+w1(F+7,u8(s32(r4(G+16))<s32(u32(0x0ull))));
+w1(F+6,u8((r4(G+16))==(u32(0x0ull))));
+w4(U+0,u32(u32(r4(G+16))&u32(u32(0xffull))));
+w1(U+4,u8(__builtin_popcountll(u64(r4(U+0)))));
+w1(U+5,u8(u32(r1(U+4))&u32(u8(0x1ull))));
+w1(F+2,u8((r1(U+5))==(u8(0x0ull))));
+}
+B5a7523:{NFSU2_TR(0x5a7523);
+__builtin_memmove((R+644),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x8ull))));
+{u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a7530(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a7530:L5a7530:{bud-=57;NFSU2_TR(0x5a7530);
+u8 U[8];
+w4(U+0,u32(u32(u32(0xcull))+u32(r4(G+16))));
+__builtin_memmove((U+4),gp(u32(r4(U+0))),4);
+__builtin_memmove((G+4),(U+4),4);
+}
+B5a7534:{NFSU2_TR(0x5a7534);
+u8 U[4];
+__builtin_memmove((U+0),(R+12),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7535:{NFSU2_TR(0x5a7535);
+u8 U[8];
+w4(U+0,u32(u32(u32(0xcull))+u32(r4(G+16))));
+__builtin_memmove((U+4),gp(u32(r4(U+0))),4);
+__builtin_memmove((R+12),(U+4),4);
+}
+B5a7539:{NFSU2_TR(0x5a7539);
+{u32 ea_=u32(r4(R+12)+u32(36u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a753c:{NFSU2_TR(0x5a753c);
+u8 U[4];
+__builtin_memmove((U+0),(R+24),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a753d:{NFSU2_TR(0x5a753d);
+{u32 ea_=u32(u32(7889736u));__asm__ volatile(".byte 0xd8,0x08"::"a"(ea_):"memory");}
+}
+B5a7543:{NFSU2_TR(0x5a7543);
+u8 U[8];
+w4(U+0,u32(u32(u32(0xcull))+u32(r4(G+16))));
+__builtin_memmove((U+4),gp(u32(r4(U+0))),4);
+__builtin_memmove((R+24),(U+4),4);
+}
+B5a7547:{NFSU2_TR(0x5a7547);
+{u32 ea_=u32(r4(G+4)+u32(8u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a754a:{NFSU2_TR(0x5a754a);
+u8 U[4];
+__builtin_memmove((U+0),(R+28),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a754b:{NFSU2_TR(0x5a754b);
+{u32 ea_=u32(r4(G+4)+u32(52u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a754e:{NFSU2_TR(0x5a754e);
+w4(R+28,u32(u32(r4(R+28))^u32(r4(R+28))));
+}
+B5a7550:{NFSU2_TR(0x5a7550);
+__asm__ volatile(".byte 0xd8,0xe1":::"memory");
+}
+B5a7552:{NFSU2_TR(0x5a7552);
+__asm__ volatile(".byte 0xd8,0xca":::"memory");
+}
+B5a7554:{NFSU2_TR(0x5a7554);
+__asm__ volatile(".byte 0xd8,0xc1":::"memory");
+}
+B5a7556:{NFSU2_TR(0x5a7556);
+{u32 ea_=u32(r4(R+24)+u32(612u));__asm__ volatile(".byte 0xd8,0x08"::"a"(ea_):"memory");}
+}
+B5a755c:{NFSU2_TR(0x5a755c);
+{u32 ea_=u32(r4(R+24)+u32(612u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+}
+B5a7562:{NFSU2_TR(0x5a7562);
+__asm__ volatile(".byte 0xdd,0xd8":::"memory");
+}
+B5a7564:{NFSU2_TR(0x5a7564);
+{u32 ea_=u32(r4(G+4)+u32(12u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a7567:{NFSU2_TR(0x5a7567);
+{u32 ea_=u32(r4(G+4)+u32(56u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a756a:{NFSU2_TR(0x5a756a);
+__asm__ volatile(".byte 0xd8,0xe1":::"memory");
+}
+B5a756c:{NFSU2_TR(0x5a756c);
+__asm__ volatile(".byte 0xd8,0xca":::"memory");
+}
+B5a756e:{NFSU2_TR(0x5a756e);
+__asm__ volatile(".byte 0xd8,0xc1":::"memory");
+}
+B5a7570:{NFSU2_TR(0x5a7570);
+{u32 ea_=u32(r4(R+24)+u32(616u));__asm__ volatile(".byte 0xd8,0x08"::"a"(ea_):"memory");}
+}
+B5a7576:{NFSU2_TR(0x5a7576);
+{u32 ea_=u32(r4(R+24)+u32(616u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+}
+B5a757c:{NFSU2_TR(0x5a757c);
+__asm__ volatile(".byte 0xdd,0xd8":::"memory");
+}
+B5a757e:{NFSU2_TR(0x5a757e);
+__asm__ volatile(".byte 0xdd,0xd8":::"memory");
+}
+B5a7580:{NFSU2_TR(0x5a7580);
+{u32 ea_=u32(r4(R+12));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a7582:{NFSU2_TR(0x5a7582);
+{u32 ea_=u32(u32(7889736u));__asm__ volatile(".byte 0xd8,0x08"::"a"(ea_):"memory");}
+}
+B5a7588:{NFSU2_TR(0x5a7588);
+{u32 ea_=u32(r4(G+4)+u32(16u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a758b:{NFSU2_TR(0x5a758b);
+{u32 ea_=u32(r4(G+4)+u32(60u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a758e:{NFSU2_TR(0x5a758e);
+__asm__ volatile(".byte 0xd8,0xe1":::"memory");
+}
+B5a7590:{NFSU2_TR(0x5a7590);
+__asm__ volatile(".byte 0xd8,0xca":::"memory");
+}
+B5a7592:{NFSU2_TR(0x5a7592);
+__asm__ volatile(".byte 0xd8,0xc1":::"memory");
+}
+B5a7594:{NFSU2_TR(0x5a7594);
+{u32 ea_=u32(r4(R+24)+u32(352u));__asm__ volatile(".byte 0xd8,0x08"::"a"(ea_):"memory");}
+}
+B5a759a:{NFSU2_TR(0x5a759a);
+{u32 ea_=u32(r4(R+24)+u32(352u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+}
+B5a75a0:{NFSU2_TR(0x5a75a0);
+__asm__ volatile(".byte 0xdd,0xd8":::"memory");
+}
+B5a75a2:{NFSU2_TR(0x5a75a2);
+{u32 ea_=u32(r4(G+4)+u32(20u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a75a5:{NFSU2_TR(0x5a75a5);
+{u32 ea_=u32(r4(G+4)+u32(64u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a75a8:{NFSU2_TR(0x5a75a8);
+__asm__ volatile(".byte 0xd8,0xe1":::"memory");
+}
+B5a75aa:{NFSU2_TR(0x5a75aa);
+__asm__ volatile(".byte 0xd8,0xca":::"memory");
+}
+B5a75ac:{NFSU2_TR(0x5a75ac);
+__asm__ volatile(".byte 0xd8,0xc1":::"memory");
+}
+B5a75ae:{NFSU2_TR(0x5a75ae);
+{u32 ea_=u32(r4(R+24)+u32(272u));__asm__ volatile(".byte 0xd8,0x08"::"a"(ea_):"memory");}
+}
+B5a75b4:{NFSU2_TR(0x5a75b4);
+{u32 ea_=u32(r4(R+24)+u32(272u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+}
+B5a75ba:{NFSU2_TR(0x5a75ba);
+__asm__ volatile(".byte 0xdd,0xd8":::"memory");
+}
+B5a75bc:{NFSU2_TR(0x5a75bc);
+__asm__ volatile(".byte 0xdd,0xd8":::"memory");
+}
+B5a75be:{NFSU2_TR(0x5a75be);
+{u32 ea_=u32(r4(G+4)+u32(24u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a75c1:{NFSU2_TR(0x5a75c1);
+{u32 ea_=u32(r4(G+4)+u32(68u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a75c4:{NFSU2_TR(0x5a75c4);
+__asm__ volatile(".byte 0xd8,0xe1":::"memory");
+}
+B5a75c6:{NFSU2_TR(0x5a75c6);
+{u32 ea_=u32(r4(R+12)+u32(20u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a75c9:{NFSU2_TR(0x5a75c9);
+{u32 ea_=u32(u32(7889736u));__asm__ volatile(".byte 0xd8,0x08"::"a"(ea_):"memory");}
+}
+B5a75cf:{NFSU2_TR(0x5a75cf);
+__asm__ volatile(".byte 0xde,0xc9":::"memory");
+}
+B5a75d1:{NFSU2_TR(0x5a75d1);
+__asm__ volatile(".byte 0xd8,0xc1":::"memory");
+}
+B5a75d3:{NFSU2_TR(0x5a75d3);
+{u32 ea_=u32(r4(R+24)+u32(8u));__asm__ volatile(".byte 0xd8,0x28"::"a"(ea_):"memory");}
+}
+B5a75d6:{NFSU2_TR(0x5a75d6);
+{u32 ea_=u32(r4(R+24)+u32(8u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+}
+B5a75d9:{NFSU2_TR(0x5a75d9);
+__asm__ volatile(".byte 0xdd,0xd8":::"memory");
+}
+B5a75db:{NFSU2_TR(0x5a75db);
+{u32 ea_=u32(r4(R+12)+u32(32u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a75de:{NFSU2_TR(0x5a75de);
+{u32 ea_=u32(u32(7889736u));__asm__ volatile(".byte 0xd8,0x08"::"a"(ea_):"memory");}
+{[[clang::musttail]] return blk_5a75e4(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a75e4(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a75e4:L5a75e4:{bud-=27;NFSU2_TR(0x5a75e4);
+__builtin_memmove((G+0),(R+28),4);
+}
+B5a75e6:{NFSU2_TR(0x5a75e6);
+u8 U[8];
+w8(U+0,u64(s64(s32(r4(G+0)))));
+w4(R+8,u32(u64(r8(U+0))>>32));
+}
+B5a75e7:{NFSU2_TR(0x5a75e7);
+w4(G+0,u32(u32(r4(G+0))-u32(r4(R+8))));
+}
+B5a75e9:{NFSU2_TR(0x5a75e9);
+w4(G+0,sar<u32>(r4(G+0),u64(u32(0x1ull))));
+}
+B5a75eb:{NFSU2_TR(0x5a75eb);
+__builtin_memmove((R+8),(G+0),4);
+}
+B5a75ed:{NFSU2_TR(0x5a75ed);
+{u32 ea_=u32((r4(G+0)*4u)+r4(G+4)+u32(28u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a75f1:{NFSU2_TR(0x5a75f1);
+u8 U[4];
+w4(U+0,u32(u32(u32(0x5ull))&u32(u32(0x1full))));
+w4(R+8,shl<u32>(r4(R+8),u64(r4(U+0))));
+}
+B5a75f4:{NFSU2_TR(0x5a75f4);
+{u32 ea_=u32((r4(G+0)*4u)+r4(G+4)+u32(72u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a75f8:{NFSU2_TR(0x5a75f8);
+__asm__ volatile(".byte 0xd8,0xe1":::"memory");
+}
+B5a75fa:{NFSU2_TR(0x5a75fa);
+u8 U[12];
+w4(U+0,u32(u32(u32(0xd0ull))+u32(r4(R+8))));
+w4(U+4,u32(u32(r4(R+24))*u32(u32(0x1ull))));
+w4(U+8,u32(u32(r4(U+0))+u32(r4(U+4))));
+__builtin_memmove((R+8),(U+8),4);
+}
+B5a7601:{NFSU2_TR(0x5a7601);
+u8 U[8];
+w4(U+0,u32(u32(r4(G+0))*u32(u32(0x4ull))));
+w4(U+4,u32(u32(u32(0x24ull))+u32(r4(U+0))));
+__builtin_memmove((G+0),(U+4),4);
+}
+B5a7608:{NFSU2_TR(0x5a7608);
+w4(R+28,u32(u32(r4(R+28))+u32(u32(0x2ull))));
+}
+B5a760b:{NFSU2_TR(0x5a760b);
+u8 U[8];
+__builtin_memmove((U+0),(R+28),4);
+w1(F+11,sborrow<u32>(r4(U+0),u32(0x3ull)));
+w4(U+4,u32(u32(r4(U+0))-u32(u32(0x3ull))));
+w1(F+7,u8(s32(r4(U+4))<s32(u32(0x0ull))));
+}
+B5a760e:{NFSU2_TR(0x5a760e);
+__asm__ volatile(".byte 0xd8,0xca":::"memory");
+}
+B5a7610:{NFSU2_TR(0x5a7610);
+__asm__ volatile(".byte 0xd8,0xc1":::"memory");
+}
+B5a7612:{NFSU2_TR(0x5a7612);
+{u32 ea_=u32(r4(R+8)+u32(12u));__asm__ volatile(".byte 0xd8,0x08"::"a"(ea_):"memory");}
+}
+B5a7615:{NFSU2_TR(0x5a7615);
+{u32 ea_=u32(r4(R+8)+u32(12u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+}
+B5a7618:{NFSU2_TR(0x5a7618);
+__asm__ volatile(".byte 0xdd,0xd8":::"memory");
+}
+B5a761a:{NFSU2_TR(0x5a761a);
+{u32 ea_=u32(r4(G+4)+r4(G+0));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a761d:{NFSU2_TR(0x5a761d);
+{u32 ea_=u32(r4(G+4)+r4(G+0)+u32(44u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a7621:{NFSU2_TR(0x5a7621);
+__asm__ volatile(".byte 0xd8,0xe1":::"memory");
+}
+B5a7623:{NFSU2_TR(0x5a7623);
+__asm__ volatile(".byte 0xd8,0xca":::"memory");
+}
+B5a7625:{NFSU2_TR(0x5a7625);
+__asm__ volatile(".byte 0xd8,0xc1":::"memory");
+}
+B5a7627:{NFSU2_TR(0x5a7627);
+{u32 ea_=u32(r4(R+8)+u32(16u));__asm__ volatile(".byte 0xd8,0x08"::"a"(ea_):"memory");}
+}
+B5a762a:{NFSU2_TR(0x5a762a);
+{u32 ea_=u32(r4(R+8)+u32(16u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+}
+B5a762d:{NFSU2_TR(0x5a762d);
+__asm__ volatile(".byte 0xdd,0xd8":::"memory");
+}
+B5a762f:{NFSU2_TR(0x5a762f);
+u8 U[1];
+w1(U+0,u8((r1(F+11))!=(r1(F+7))));
+if(r1(U+0)){{if(__builtin_expect(bud<=0,0)){EXIT(0x5a75e4u);}goto L5a75e4;}}
+}
+B5a7631:L5a7631:{bud-=27;NFSU2_TR(0x5a7631);
+__asm__ volatile(".byte 0xdd,0xd8":::"memory");
+}
+B5a7633:{NFSU2_TR(0x5a7633);
+{u32 ea_=u32(r4(G+4));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a7635:{NFSU2_TR(0x5a7635);
+{u32 ea_=u32(r4(G+4)+u32(44u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a7638:{NFSU2_TR(0x5a7638);
+__asm__ volatile(".byte 0xd8,0xe1":::"memory");
+}
+B5a763a:{NFSU2_TR(0x5a763a);
+{u32 ea_=u32(r4(R+12)+u32(24u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a763d:{NFSU2_TR(0x5a763d);
+{u32 ea_=u32(u32(7889736u));__asm__ volatile(".byte 0xd8,0x08"::"a"(ea_):"memory");}
+}
+B5a7643:{NFSU2_TR(0x5a7643);
+__asm__ volatile(".byte 0xde,0xc9":::"memory");
+}
+B5a7645:{NFSU2_TR(0x5a7645);
+{u32 ea_=u32(r4(R+24)+u32(636u));__asm__ volatile(".byte 0xd8,0x00"::"a"(ea_):"memory");}
+}
+B5a764b:{NFSU2_TR(0x5a764b);
+__asm__ volatile(".byte 0xd8,0xc1":::"memory");
+}
+B5a764d:{NFSU2_TR(0x5a764d);
+{u32 ea_=u32(r4(R+24)+u32(636u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+}
+B5a7653:{NFSU2_TR(0x5a7653);
+__asm__ volatile(".byte 0xdd,0xd8":::"memory");
+}
+B5a7655:{NFSU2_TR(0x5a7655);
+{u32 ea_=u32(r4(G+4)+u32(4u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a7658:{NFSU2_TR(0x5a7658);
+{u32 ea_=u32(r4(G+4)+u32(48u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a765b:{NFSU2_TR(0x5a765b);
+__asm__ volatile(".byte 0xd8,0xe1":::"memory");
+}
+B5a765d:{NFSU2_TR(0x5a765d);
+{u32 ea_=u32(r4(R+12)+u32(4u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a7660:{NFSU2_TR(0x5a7660);
+{u32 ea_=u32(u32(7889736u));__asm__ volatile(".byte 0xd8,0x08"::"a"(ea_):"memory");}
+}
+B5a7666:{NFSU2_TR(0x5a7666);
+__asm__ volatile(".byte 0xde,0xc9":::"memory");
+}
+B5a7668:{NFSU2_TR(0x5a7668);
+__asm__ volatile(".byte 0xd8,0xc1":::"memory");
+}
+B5a766a:{NFSU2_TR(0x5a766a);
+{u32 ea_=u32(r4(R+24)+u32(448u));__asm__ volatile(".byte 0xd8,0x00"::"a"(ea_):"memory");}
+}
+B5a7670:{NFSU2_TR(0x5a7670);
+{u32 ea_=u32(r4(R+24)+u32(448u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+}
+B5a7676:{NFSU2_TR(0x5a7676);
+__asm__ volatile(".byte 0xdd,0xd8":::"memory");
+}
+B5a7678:{NFSU2_TR(0x5a7678);
+{u32 ea_=u32(r4(R+24)+u32(8u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a767b:{NFSU2_TR(0x5a767b);
+{u32 ea_=u32(u32(8224060u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a7681:{NFSU2_TR(0x5a7681);
+__asm__ volatile(".byte 0xd8,0xd9":::"memory");
+}
+B5a7683:{NFSU2_TR(0x5a7683);
+{u32 ax_;__asm__ volatile(".byte 0xdf,0xe0":"=a"(ax_)::"memory");w2(G+0,u16(ax_));}
+}
+B5a7685:{NFSU2_TR(0x5a7685);
+u8 U[1];
+w1(U+0,u8(u32(r1(G+1))&u32(u8(0x41ull))));
+w1(F+6,u8((r1(U+0))==(u8(0x0ull))));
+}
+B5a7688:{NFSU2_TR(0x5a7688);
+u8 U[1];
+w1(U+0,u8(!(r1(F+6))));
+if(r1(U+0)){{[[clang::musttail]] return blk_5a7692(ARGS);}}
+}
+B5a768a:L5a768a:{bud-=2;NFSU2_TR(0x5a768a);
+__asm__ volatile(".byte 0xdd,0xd8":::"memory");
+}
+B5a768c:{NFSU2_TR(0x5a768c);
+{u32 ea_=u32(u32(8224060u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+{[[clang::musttail]] return blk_5a7692(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a7692(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a7692:L5a7692:{bud-=8;NFSU2_TR(0x5a7692);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0x27cull))));
+__builtin_memmove((U+4),gp(u32(r4(U+0))),4);
+__builtin_memmove((G+0),(U+4),4);
+}
+B5a7698:{NFSU2_TR(0x5a7698);
+{u32 ea_=u32(r4(R+24)+u32(8u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+}
+B5a769b:{NFSU2_TR(0x5a769b);
+u8 U[8];
+w4(U+0,u32(u32(u32(0x18ull))+u32(r4(G+16))));
+__builtin_memmove((U+4),(G+0),4);
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a769f:{NFSU2_TR(0x5a769f);
+{u32 ea_=u32(r4(G+16)+u32(24u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a76a3:{NFSU2_TR(0x5a76a3);
+{u32 ea_=u32(u32(8224060u));__asm__ volatile(".byte 0xd8,0x18"::"a"(ea_):"memory");}
+}
+B5a76a9:{NFSU2_TR(0x5a76a9);
+{u32 ax_;__asm__ volatile(".byte 0xdf,0xe0":"=a"(ax_)::"memory");w2(G+0,u16(ax_));}
+}
+B5a76ab:{NFSU2_TR(0x5a76ab);
+u8 U[1];
+w1(U+0,u8(u32(r1(G+1))&u32(u8(0x41ull))));
+w1(F+6,u8((r1(U+0))==(u8(0x0ull))));
+}
+B5a76ae:{NFSU2_TR(0x5a76ae);
+u8 U[1];
+w1(U+0,u8(!(r1(F+6))));
+if(r1(U+0)){{[[clang::musttail]] return blk_5a7744(ARGS);}}
+}
+B5a76b4:L5a76b4:{bud-=6;NFSU2_TR(0x5a76b4);
+{u32 ea_=u32(r4(G+16)+u32(24u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a76b8:{NFSU2_TR(0x5a76b8);
+{u32 ea_=u32(u32(7881296u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a76be:{NFSU2_TR(0x5a76be);
+{u32 ea_=u32(r4(G+16)+u32(24u));__asm__ volatile(".byte 0xd8,0x18"::"a"(ea_):"memory");}
+}
+B5a76c2:{NFSU2_TR(0x5a76c2);
+{u32 ax_;__asm__ volatile(".byte 0xdf,0xe0":"=a"(ax_)::"memory");w2(G+0,u16(ax_));}
+}
+B5a76c4:{NFSU2_TR(0x5a76c4);
+u8 U[4];
+w1(U+3,u8(u32(r1(G+1))&u32(u8(0x5ull))));
+w1(U+0,u8(u32(r1(U+3))&u32(u8(0xffull))));
+w1(U+1,u8(__builtin_popcountll(u64(r1(U+0)))));
+w1(U+2,u8(u32(r1(U+1))&u32(u8(0x1ull))));
+w1(F+2,u8((r1(U+2))==(u8(0x0ull))));
+}
+B5a76c7:{NFSU2_TR(0x5a76c7);
+if(r1(F+2)){{[[clang::musttail]] return blk_5a76d1(ARGS);}}
+}
+B5a76c9:L5a76c9:{bud-=2;NFSU2_TR(0x5a76c9);
+__asm__ volatile(".byte 0xdd,0xd8":::"memory");
+}
+B5a76cb:{NFSU2_TR(0x5a76cb);
+{u32 ea_=u32(u32(7881296u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+{[[clang::musttail]] return blk_5a76d1(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a76d1(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a76d1:L5a76d1:{bud-=4;NFSU2_TR(0x5a76d1);
+u8 U[4];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0x120ull))));
+__builtin_memmove((R+28),(U+0),4);
+}
+B5a76d7:{NFSU2_TR(0x5a76d7);
+{u32 ea_=u32(r4(R+24)+u32(636u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+}
+B5a76dd:{NFSU2_TR(0x5a76dd);
+u8 U[4];
+__builtin_memmove((U+0),(R+28),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a76de:{NFSU2_TR(0x5a76de);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),u32(0x5a76e3ull));
+{if(__builtin_expect(bud<=0,0)){EXIT(0x43c780u);}[[clang::musttail]] return blk_43c780(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a76e3(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a76e3:L5a76e3:{bud-=28;NFSU2_TR(0x5a76e3);
+{u32 ea_=u32(r4(R+24)+u32(276u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a76e9:{NFSU2_TR(0x5a76e9);
+__asm__ volatile(".byte 0xd9,0xc0":::"memory");
+}
+B5a76eb:{NFSU2_TR(0x5a76eb);
+u8 U[6];
+w1(F+0,carry<u32>(r4(G+16),u32(0x4ull)));
+w1(F+11,scarry<u32>(r4(G+16),u32(0x4ull)));
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+w1(F+7,u8(s32(r4(G+16))<s32(u32(0x0ull))));
+w1(F+6,u8((r4(G+16))==(u32(0x0ull))));
+w4(U+0,u32(u32(r4(G+16))&u32(u32(0xffull))));
+w1(U+4,u8(__builtin_popcountll(u64(r4(U+0)))));
+w1(U+5,u8(u32(r1(U+4))&u32(u8(0x1ull))));
+w1(F+2,u8((r1(U+5))==(u8(0x0ull))));
+}
+B5a76ee:{NFSU2_TR(0x5a76ee);
+__asm__ volatile(".byte 0xde,0xc9":::"memory");
+}
+B5a76f0:{NFSU2_TR(0x5a76f0);
+{u32 ea_=u32(r4(R+24)+u32(280u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a76f6:{NFSU2_TR(0x5a76f6);
+__asm__ volatile(".byte 0xd9,0xc0":::"memory");
+}
+B5a76f8:{NFSU2_TR(0x5a76f8);
+__asm__ volatile(".byte 0xde,0xc9":::"memory");
+}
+B5a76fa:{NFSU2_TR(0x5a76fa);
+{u32 ea_=u32(r4(R+24)+u32(284u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a7700:{NFSU2_TR(0x5a7700);
+__asm__ volatile(".byte 0xd9,0xc0":::"memory");
+}
+B5a7702:{NFSU2_TR(0x5a7702);
+__asm__ volatile(".byte 0xde,0xc9":::"memory");
+}
+B5a7704:{NFSU2_TR(0x5a7704);
+__asm__ volatile(".byte 0xd9,0xc0":::"memory");
+}
+B5a7706:{NFSU2_TR(0x5a7706);
+__asm__ volatile(".byte 0xd8,0xc2":::"memory");
+}
+B5a7708:{NFSU2_TR(0x5a7708);
+{u32 ea_=u32(r4(R+24)+u32(272u));__asm__ volatile(".byte 0xd8,0x08"::"a"(ea_):"memory");}
+}
+B5a770e:{NFSU2_TR(0x5a770e);
+{u32 ea_=u32(u32(7894448u));__asm__ volatile(".byte 0xd8,0x08"::"a"(ea_):"memory");}
+}
+B5a7714:{NFSU2_TR(0x5a7714);
+{u32 ea_=u32(r4(R+28));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+}
+B5a7716:{NFSU2_TR(0x5a7716);
+u8 U[4];
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+__builtin_memmove((R+28),(U+0),4);
+}
+B5a7717:{NFSU2_TR(0x5a7717);
+__asm__ volatile(".byte 0xd8,0xc2":::"memory");
+}
+B5a7719:{NFSU2_TR(0x5a7719);
+{u32 ea_=u32(r4(R+24)+u32(272u));__asm__ volatile(".byte 0xd8,0x08"::"a"(ea_):"memory");}
+}
+B5a771f:{NFSU2_TR(0x5a771f);
+{u32 ea_=u32(u32(7894448u));__asm__ volatile(".byte 0xd8,0x08"::"a"(ea_):"memory");}
+}
+B5a7725:{NFSU2_TR(0x5a7725);
+{u32 ea_=u32(r4(R+24)+u32(308u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+}
+B5a772b:{NFSU2_TR(0x5a772b);
+__asm__ volatile(".byte 0xd8,0xc1":::"memory");
+}
+B5a772d:{NFSU2_TR(0x5a772d);
+{u32 ea_=u32(r4(R+24)+u32(272u));__asm__ volatile(".byte 0xd8,0x08"::"a"(ea_):"memory");}
+}
+B5a7733:{NFSU2_TR(0x5a7733);
+{u32 ea_=u32(u32(7894448u));__asm__ volatile(".byte 0xd8,0x08"::"a"(ea_):"memory");}
+}
+B5a7739:{NFSU2_TR(0x5a7739);
+{u32 ea_=u32(r4(R+24)+u32(328u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+}
+B5a773f:{NFSU2_TR(0x5a773f);
+u8 U[4];
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+__builtin_memmove((R+24),(U+0),4);
+}
+B5a7740:{NFSU2_TR(0x5a7740);
+__asm__ volatile(".byte 0xdd,0xd8":::"memory");
+}
+B5a7742:{NFSU2_TR(0x5a7742);
+u8 U[4];
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+__builtin_memmove((R+12),(U+0),4);
+}
+B5a7743:{NFSU2_TR(0x5a7743);
+__builtin_memmove((R+644),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+{u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a7744(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a7744:L5a7744:{bud-=2;NFSU2_TR(0x5a7744);
+{u32 ea_=u32(u32(8224060u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a774a:{NFSU2_TR(0x5a774a);
+{if(__builtin_expect(bud<=0,0)){EXIT(0x5a76d1u);}[[clang::musttail]] return blk_5a76d1(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a7750(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+514,F+2,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a7750:L5a7750:{bud-=7;NFSU2_TR(0x5a7750);
+u8 U[4];
+__builtin_memmove((U+0),(R+24),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7751:{NFSU2_TR(0x5a7751);
+u8 U[8];
+w4(U+0,u32(u32(u32(0x8ull))+u32(r4(G+16))));
+__builtin_memmove((U+4),gp(u32(r4(U+0))),4);
+__builtin_memmove((R+24),(U+4),4);
+}
+B5a7755:{NFSU2_TR(0x5a7755);
+{u32 ea_=u32(r4(R+24)+u32(448u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a775b:{NFSU2_TR(0x5a775b);
+{u32 ea_=u32(u32(7882068u));__asm__ volatile(".byte 0xd8,0x18"::"a"(ea_):"memory");}
+}
+B5a7761:{NFSU2_TR(0x5a7761);
+{u32 ax_;__asm__ volatile(".byte 0xdf,0xe0":"=a"(ax_)::"memory");w2(G+0,u16(ax_));}
+}
+B5a7763:{NFSU2_TR(0x5a7763);
+u8 U[4];
+w1(U+3,u8(u32(r1(G+1))&u32(u8(0x5ull))));
+w1(U+0,u8(u32(r1(U+3))&u32(u8(0xffull))));
+w1(U+1,u8(__builtin_popcountll(u64(r1(U+0)))));
+w1(U+2,u8(u32(r1(U+1))&u32(u8(0x1ull))));
+w1(F+2,u8((r1(U+2))==(u8(0x0ull))));
+}
+B5a7766:{NFSU2_TR(0x5a7766);
+if(r1(F+2)){{[[clang::musttail]] return blk_5a776f(ARGS);}}
+}
+B5a7768:L5a7768:{bud-=2;NFSU2_TR(0x5a7768);
+w4(G+0,u32(0x1ull));
+}
+B5a776d:{NFSU2_TR(0x5a776d);
+{[[clang::musttail]] return blk_5a7771(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a776f(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a776f:L5a776f:{bud-=1;NFSU2_TR(0x5a776f);
+w4(G+0,u32(u32(r4(G+0))^u32(r4(G+0))));
+{[[clang::musttail]] return blk_5a7771(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a7771(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a7771:L5a7771:{bud-=8;NFSU2_TR(0x5a7771);
+{u32 ea_=u32(r4(R+24)+u32(448u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a7777:{NFSU2_TR(0x5a7777);
+w4(G+4,u32(u32(r4(G+4))^u32(r4(G+4))));
+}
+B5a7779:{NFSU2_TR(0x5a7779);
+{u32 ea_=u32(u32(7885036u));__asm__ volatile(".byte 0xd8,0x18"::"a"(ea_):"memory");}
+}
+B5a777f:{NFSU2_TR(0x5a777f);
+u8 U[4];
+w4(U+0,u32(u32(r4(G+0))&u32(r4(G+0))));
+w1(F+6,u8((r4(U+0))==(u32(0x0ull))));
+}
+B5a7781:{NFSU2_TR(0x5a7781);
+__builtin_memmove((G+4),(F+6),1);
+}
+B5a7784:{NFSU2_TR(0x5a7784);
+{u32 ax_;__asm__ volatile(".byte 0xdf,0xe0":"=a"(ax_)::"memory");w2(G+0,u16(ax_));}
+}
+B5a7786:{NFSU2_TR(0x5a7786);
+u8 U[1];
+w1(U+0,u8(u32(r1(G+1))&u32(u8(0x41ull))));
+w1(F+6,u8((r1(U+0))==(u8(0x0ull))));
+}
+B5a7789:{NFSU2_TR(0x5a7789);
+u8 U[1];
+w1(U+0,u8(!(r1(F+6))));
+if(r1(U+0)){{[[clang::musttail]] return blk_5a7790(ARGS);}}
+}
+B5a778b:L5a778b:{bud-=1;NFSU2_TR(0x5a778b);
+w4(G+4,u32(0x2ull));
+{[[clang::musttail]] return blk_5a7790(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a7790(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a7790:L5a7790:{bud-=7;NFSU2_TR(0x5a7790);
+u8 U[8];
+w4(U+0,u32(u32(u32(0xcull))+u32(r4(G+16))));
+__builtin_memmove((U+4),gp(u32(r4(U+0))),4);
+__builtin_memmove((G+0),(U+4),4);
+}
+B5a7794:{NFSU2_TR(0x5a7794);
+u8 U[24];
+w8(U+0,u64(s64(s32(r4(G+4)))));
+w8(U+8,u64(s64(s32(u32(0x144ull)))));
+w8(U+16,u64(u64(r8(U+0))*u64(r8(U+8))));
+w4(G+4,u32(r8(U+16)));
+}
+B5a779a:{NFSU2_TR(0x5a779a);
+w4(G+4,u32(u32(r4(G+4))+u32(u32(0x7fc2e4ull))));
+}
+B5a77a0:{NFSU2_TR(0x5a77a0);
+u8 U[4];
+__builtin_memmove((U+0),(G+4),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a77a1:{NFSU2_TR(0x5a77a1);
+u8 U[4];
+__builtin_memmove((U+0),(G+0),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a77a2:{NFSU2_TR(0x5a77a2);
+u8 U[4];
+__builtin_memmove((U+0),(R+24),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a77a3:{NFSU2_TR(0x5a77a3);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),u32(0x5a77a8ull));
+{if(__builtin_expect(bud<=0,0)){EXIT(0x5a7530u);}[[clang::musttail]] return blk_5a7530(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a77a8(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a77a8:L5a77a8:{bud-=4;NFSU2_TR(0x5a77a8);
+u8 U[6];
+w1(F+0,carry<u32>(r4(G+16),u32(0xcull)));
+w1(F+11,scarry<u32>(r4(G+16),u32(0xcull)));
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0xcull))));
+w1(F+7,u8(s32(r4(G+16))<s32(u32(0x0ull))));
+w1(F+6,u8((r4(G+16))==(u32(0x0ull))));
+w4(U+0,u32(u32(r4(G+16))&u32(u32(0xffull))));
+w1(U+4,u8(__builtin_popcountll(u64(r4(U+0)))));
+w1(U+5,u8(u32(r1(U+4))&u32(u8(0x1ull))));
+w1(F+2,u8((r1(U+5))==(u8(0x0ull))));
+}
+B5a77ab:{NFSU2_TR(0x5a77ab);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0x2a0ull))));
+w4(U+4,u32(0x0ull));
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a77b5:{NFSU2_TR(0x5a77b5);
+u8 U[4];
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+__builtin_memmove((R+24),(U+0),4);
+}
+B5a77b6:{NFSU2_TR(0x5a77b6);
+__builtin_memmove((R+644),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x8ull))));
+{u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a77c0(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+514,F+2,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a77c0:L5a77c0:{bud-=7;NFSU2_TR(0x5a77c0);
+u8 U[4];
+__builtin_memmove((U+0),(R+24),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a77c1:{NFSU2_TR(0x5a77c1);
+u8 U[8];
+w4(U+0,u32(u32(u32(0x8ull))+u32(r4(G+16))));
+__builtin_memmove((U+4),gp(u32(r4(U+0))),4);
+__builtin_memmove((R+24),(U+4),4);
+}
+B5a77c5:{NFSU2_TR(0x5a77c5);
+{u32 ea_=u32(r4(R+24)+u32(448u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a77cb:{NFSU2_TR(0x5a77cb);
+{u32 ea_=u32(u32(7882068u));__asm__ volatile(".byte 0xd8,0x18"::"a"(ea_):"memory");}
+}
+B5a77d1:{NFSU2_TR(0x5a77d1);
+{u32 ax_;__asm__ volatile(".byte 0xdf,0xe0":"=a"(ax_)::"memory");w2(G+0,u16(ax_));}
+}
+B5a77d3:{NFSU2_TR(0x5a77d3);
+u8 U[4];
+w1(U+3,u8(u32(r1(G+1))&u32(u8(0x5ull))));
+w1(U+0,u8(u32(r1(U+3))&u32(u8(0xffull))));
+w1(U+1,u8(__builtin_popcountll(u64(r1(U+0)))));
+w1(U+2,u8(u32(r1(U+1))&u32(u8(0x1ull))));
+w1(F+2,u8((r1(U+2))==(u8(0x0ull))));
+}
+B5a77d6:{NFSU2_TR(0x5a77d6);
+if(r1(F+2)){{[[clang::musttail]] return blk_5a77df(ARGS);}}
+}
+B5a77d8:L5a77d8:{bud-=2;NFSU2_TR(0x5a77d8);
+w4(G+0,u32(0x1ull));
+}
+B5a77dd:{NFSU2_TR(0x5a77dd);
+{[[clang::musttail]] return blk_5a77e1(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a77df(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a77df:L5a77df:{bud-=1;NFSU2_TR(0x5a77df);
+w4(G+0,u32(u32(r4(G+0))^u32(r4(G+0))));
+{[[clang::musttail]] return blk_5a77e1(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a77e1(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a77e1:L5a77e1:{bud-=8;NFSU2_TR(0x5a77e1);
+{u32 ea_=u32(r4(R+24)+u32(448u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a77e7:{NFSU2_TR(0x5a77e7);
+w4(G+4,u32(u32(r4(G+4))^u32(r4(G+4))));
+}
+B5a77e9:{NFSU2_TR(0x5a77e9);
+{u32 ea_=u32(u32(7885036u));__asm__ volatile(".byte 0xd8,0x18"::"a"(ea_):"memory");}
+}
+B5a77ef:{NFSU2_TR(0x5a77ef);
+u8 U[4];
+w4(U+0,u32(u32(r4(G+0))&u32(r4(G+0))));
+w1(F+6,u8((r4(U+0))==(u32(0x0ull))));
+}
+B5a77f1:{NFSU2_TR(0x5a77f1);
+__builtin_memmove((G+4),(F+6),1);
+}
+B5a77f4:{NFSU2_TR(0x5a77f4);
+{u32 ax_;__asm__ volatile(".byte 0xdf,0xe0":"=a"(ax_)::"memory");w2(G+0,u16(ax_));}
+}
+B5a77f6:{NFSU2_TR(0x5a77f6);
+u8 U[1];
+w1(U+0,u8(u32(r1(G+1))&u32(u8(0x41ull))));
+w1(F+6,u8((r1(U+0))==(u8(0x0ull))));
+}
+B5a77f9:{NFSU2_TR(0x5a77f9);
+u8 U[1];
+w1(U+0,u8(!(r1(F+6))));
+if(r1(U+0)){{[[clang::musttail]] return blk_5a7800(ARGS);}}
+}
+B5a77fb:L5a77fb:{bud-=1;NFSU2_TR(0x5a77fb);
+w4(G+4,u32(0x2ull));
+{[[clang::musttail]] return blk_5a7800(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a7800(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a7800:L5a7800:{bud-=7;NFSU2_TR(0x5a7800);
+u8 U[8];
+w4(U+0,u32(u32(u32(0xcull))+u32(r4(G+16))));
+__builtin_memmove((U+4),gp(u32(r4(U+0))),4);
+__builtin_memmove((G+0),(U+4),4);
+}
+B5a7804:{NFSU2_TR(0x5a7804);
+u8 U[24];
+w8(U+0,u64(s64(s32(r4(G+4)))));
+w8(U+8,u64(s64(s32(u32(0x144ull)))));
+w8(U+16,u64(u64(r8(U+0))*u64(r8(U+8))));
+w4(G+4,u32(r8(U+16)));
+}
+B5a780a:{NFSU2_TR(0x5a780a);
+w4(G+4,u32(u32(r4(G+4))+u32(u32(0x7fc33cull))));
+}
+B5a7810:{NFSU2_TR(0x5a7810);
+u8 U[4];
+__builtin_memmove((U+0),(G+4),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7811:{NFSU2_TR(0x5a7811);
+u8 U[4];
+__builtin_memmove((U+0),(G+0),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7812:{NFSU2_TR(0x5a7812);
+u8 U[4];
+__builtin_memmove((U+0),(R+24),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7813:{NFSU2_TR(0x5a7813);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),u32(0x5a7818ull));
+{if(__builtin_expect(bud<=0,0)){EXIT(0x5a7530u);}[[clang::musttail]] return blk_5a7530(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a7818(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a7818:L5a7818:{bud-=4;NFSU2_TR(0x5a7818);
+u8 U[6];
+w1(F+0,carry<u32>(r4(G+16),u32(0xcull)));
+w1(F+11,scarry<u32>(r4(G+16),u32(0xcull)));
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0xcull))));
+w1(F+7,u8(s32(r4(G+16))<s32(u32(0x0ull))));
+w1(F+6,u8((r4(G+16))==(u32(0x0ull))));
+w4(U+0,u32(u32(r4(G+16))&u32(u32(0xffull))));
+w1(U+4,u8(__builtin_popcountll(u64(r4(U+0)))));
+w1(U+5,u8(u32(r1(U+4))&u32(u8(0x1ull))));
+w1(F+2,u8((r1(U+5))==(u8(0x0ull))));
+}
+B5a781b:{NFSU2_TR(0x5a781b);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0x2a0ull))));
+w4(U+4,u32(0x0ull));
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a7825:{NFSU2_TR(0x5a7825);
+u8 U[4];
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+__builtin_memmove((R+24),(U+0),4);
+}
+B5a7826:{NFSU2_TR(0x5a7826);
+__builtin_memmove((R+644),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x8ull))));
+{u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a7830(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+514,F+2,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a7830:L5a7830:{bud-=6;NFSU2_TR(0x5a7830);
+u8 U[8];
+w4(U+0,u32(u32(u32(0x4ull))+u32(r4(G+16))));
+__builtin_memmove((U+4),gp(u32(r4(U+0))),4);
+__builtin_memmove((R+8),(U+4),4);
+}
+B5a7834:{NFSU2_TR(0x5a7834);
+{u32 ea_=u32(r4(R+8)+u32(448u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a783a:{NFSU2_TR(0x5a783a);
+{u32 ea_=u32(u32(7882068u));__asm__ volatile(".byte 0xd8,0x18"::"a"(ea_):"memory");}
+}
+B5a7840:{NFSU2_TR(0x5a7840);
+{u32 ax_;__asm__ volatile(".byte 0xdf,0xe0":"=a"(ax_)::"memory");w2(G+0,u16(ax_));}
+}
+B5a7842:{NFSU2_TR(0x5a7842);
+u8 U[4];
+w1(U+3,u8(u32(r1(G+1))&u32(u8(0x5ull))));
+w1(U+0,u8(u32(r1(U+3))&u32(u8(0xffull))));
+w1(U+1,u8(__builtin_popcountll(u64(r1(U+0)))));
+w1(U+2,u8(u32(r1(U+1))&u32(u8(0x1ull))));
+w1(F+2,u8((r1(U+2))==(u8(0x0ull))));
+}
+B5a7845:{NFSU2_TR(0x5a7845);
+if(r1(F+2)){{[[clang::musttail]] return blk_5a784e(ARGS);}}
+}
+B5a7847:L5a7847:{bud-=2;NFSU2_TR(0x5a7847);
+w4(G+0,u32(0x1ull));
+}
+B5a784c:{NFSU2_TR(0x5a784c);
+{[[clang::musttail]] return blk_5a7850(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a784e(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a784e:L5a784e:{bud-=1;NFSU2_TR(0x5a784e);
+w4(G+0,u32(u32(r4(G+0))^u32(r4(G+0))));
+{[[clang::musttail]] return blk_5a7850(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a7850(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a7850:L5a7850:{bud-=8;NFSU2_TR(0x5a7850);
+{u32 ea_=u32(r4(R+8)+u32(448u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a7856:{NFSU2_TR(0x5a7856);
+w4(G+4,u32(u32(r4(G+4))^u32(r4(G+4))));
+}
+B5a7858:{NFSU2_TR(0x5a7858);
+{u32 ea_=u32(u32(7885036u));__asm__ volatile(".byte 0xd8,0x18"::"a"(ea_):"memory");}
+}
+B5a785e:{NFSU2_TR(0x5a785e);
+u8 U[4];
+w4(U+0,u32(u32(r4(G+0))&u32(r4(G+0))));
+w1(F+6,u8((r4(U+0))==(u32(0x0ull))));
+}
+B5a7860:{NFSU2_TR(0x5a7860);
+__builtin_memmove((G+4),(F+6),1);
+}
+B5a7863:{NFSU2_TR(0x5a7863);
+{u32 ax_;__asm__ volatile(".byte 0xdf,0xe0":"=a"(ax_)::"memory");w2(G+0,u16(ax_));}
+}
+B5a7865:{NFSU2_TR(0x5a7865);
+u8 U[1];
+w1(U+0,u8(u32(r1(G+1))&u32(u8(0x41ull))));
+w1(F+6,u8((r1(U+0))==(u8(0x0ull))));
+}
+B5a7868:{NFSU2_TR(0x5a7868);
+u8 U[1];
+w1(U+0,u8(!(r1(F+6))));
+if(r1(U+0)){{[[clang::musttail]] return blk_5a786f(ARGS);}}
+}
+B5a786a:L5a786a:{bud-=1;NFSU2_TR(0x5a786a);
+w4(G+4,u32(0x2ull));
+{[[clang::musttail]] return blk_5a786f(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a786f(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a786f:L5a786f:{bud-=7;NFSU2_TR(0x5a786f);
+u8 U[8];
+w4(U+0,u32(u32(u32(0x8ull))+u32(r4(G+16))));
+__builtin_memmove((U+4),gp(u32(r4(U+0))),4);
+__builtin_memmove((G+0),(U+4),4);
+}
+B5a7873:{NFSU2_TR(0x5a7873);
+u8 U[24];
+w8(U+0,u64(s64(s32(r4(G+4)))));
+w8(U+8,u64(s64(s32(u32(0x144ull)))));
+w8(U+16,u64(u64(r8(U+0))*u64(r8(U+8))));
+w4(G+4,u32(r8(U+16)));
+}
+B5a7879:{NFSU2_TR(0x5a7879);
+w4(G+4,u32(u32(r4(G+4))+u32(u32(0x7fc394ull))));
+}
+B5a787f:{NFSU2_TR(0x5a787f);
+u8 U[4];
+__builtin_memmove((U+0),(G+4),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7880:{NFSU2_TR(0x5a7880);
+u8 U[4];
+__builtin_memmove((U+0),(G+0),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7881:{NFSU2_TR(0x5a7881);
+u8 U[4];
+__builtin_memmove((U+0),(R+8),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7882:{NFSU2_TR(0x5a7882);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),u32(0x5a7887ull));
+{if(__builtin_expect(bud<=0,0)){EXIT(0x5a7530u);}[[clang::musttail]] return blk_5a7530(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a7887(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a7887:L5a7887:{bud-=2;NFSU2_TR(0x5a7887);
+u8 U[6];
+w1(F+0,carry<u32>(r4(G+16),u32(0xcull)));
+w1(F+11,scarry<u32>(r4(G+16),u32(0xcull)));
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0xcull))));
+w1(F+7,u8(s32(r4(G+16))<s32(u32(0x0ull))));
+w1(F+6,u8((r4(G+16))==(u32(0x0ull))));
+w4(U+0,u32(u32(r4(G+16))&u32(u32(0xffull))));
+w1(U+4,u8(__builtin_popcountll(u64(r4(U+0)))));
+w1(U+5,u8(u32(r1(U+4))&u32(u8(0x1ull))));
+w1(F+2,u8((r1(U+5))==(u8(0x0ull))));
+}
+B5a788a:{NFSU2_TR(0x5a788a);
+__builtin_memmove((R+644),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x8ull))));
+{u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a7890(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a7890:L5a7890:{bud-=18;NFSU2_TR(0x5a7890);
+u8 U[4];
+__builtin_memmove((U+0),(R+12),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7891:{NFSU2_TR(0x5a7891);
+u8 U[8];
+w4(U+0,u32(u32(u32(0x8ull))+u32(r4(G+16))));
+__builtin_memmove((U+4),gp(u32(r4(U+0))),4);
+__builtin_memmove((R+12),(U+4),4);
+}
+B5a7895:{NFSU2_TR(0x5a7895);
+u8 U[4];
+__builtin_memmove((U+0),(R+24),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7896:{NFSU2_TR(0x5a7896);
+__builtin_memmove((R+24),(G+4),4);
+}
+B5a7898:{NFSU2_TR(0x5a7898);
+w4(G+0,u32(u32(r4(G+0))^u32(r4(G+0))));
+}
+B5a789a:{NFSU2_TR(0x5a789a);
+u8 U[4];
+__builtin_memmove((U+0),(R+28),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a789b:{NFSU2_TR(0x5a789b);
+u8 U[4];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0x2e0ull))));
+__builtin_memmove((R+28),(U+0),4);
+}
+B5a78a1:{NFSU2_TR(0x5a78a1);
+u8 U[4];
+w4(U+0,u32(0xffffffffull));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a78a3:{NFSU2_TR(0x5a78a3);
+__builtin_memmove((G+4),(R+28),4);
+}
+B5a78a5:{NFSU2_TR(0x5a78a5);
+u8 U[4];
+__builtin_memmove((U+0),(R+12),4);
+s4(u32(r4(R+24)),r4(U+0));
+}
+B5a78a7:{NFSU2_TR(0x5a78a7);
+u8 U[5];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0x4ull))));
+w1(U+4,u8(0xffull));
+s1(u32(r4(U+0)),r1(U+4));
+}
+B5a78ab:{NFSU2_TR(0x5a78ab);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0x8ull))));
+__builtin_memmove((U+4),(G+0),4);
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a78ae:{NFSU2_TR(0x5a78ae);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0x10ull))));
+__builtin_memmove((U+4),(G+0),4);
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a78b1:{NFSU2_TR(0x5a78b1);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0x14ull))));
+__builtin_memmove((U+4),(G+0),4);
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a78b4:{NFSU2_TR(0x5a78b4);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0x18ull))));
+__builtin_memmove((U+4),(G+0),4);
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a78b7:{NFSU2_TR(0x5a78b7);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0x20ull))));
+__builtin_memmove((U+4),(G+0),4);
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a78ba:{NFSU2_TR(0x5a78ba);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0x1cull))));
+__builtin_memmove((U+4),(G+0),4);
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a78bd:{NFSU2_TR(0x5a78bd);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),u32(0x5a78c2ull));
+{if(__builtin_expect(bud<=0,0)){EXIT(0x5a6450u);}[[clang::musttail]] return blk_5a6450(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a78c2(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a78c2:L5a78c2:{bud-=8;NFSU2_TR(0x5a78c2);
+u8 U[4];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0x30ull))));
+__builtin_memmove((G+0),(U+0),4);
+}
+B5a78c5:{NFSU2_TR(0x5a78c5);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0x37cull))));
+__builtin_memmove((U+4),(R+28),4);
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a78cb:{NFSU2_TR(0x5a78cb);
+u8 U[4];
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+__builtin_memmove((R+28),(U+0),4);
+}
+B5a78cc:{NFSU2_TR(0x5a78cc);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0x374ull))));
+__builtin_memmove((U+4),(R+12),4);
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a78d2:{NFSU2_TR(0x5a78d2);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0x380ull))));
+__builtin_memmove((U+4),(G+0),4);
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a78d8:{NFSU2_TR(0x5a78d8);
+u8 U[4];
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+__builtin_memmove((R+24),(U+0),4);
+}
+B5a78d9:{NFSU2_TR(0x5a78d9);
+u8 U[4];
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+__builtin_memmove((R+12),(U+0),4);
+}
+B5a78da:{NFSU2_TR(0x5a78da);
+__builtin_memmove((R+644),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+{u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a78e0(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+523,F+11,1);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a78e0:L5a78e0:{bud-=18;NFSU2_TR(0x5a78e0);
+u8 U[8];
+w4(U+0,u32(u32(u32(0x8ull))+u32(r4(G+16))));
+__builtin_memmove((U+4),gp(u32(r4(U+0))),4);
+__builtin_memmove((G+4),(U+4),4);
+}
+B5a78e4:{NFSU2_TR(0x5a78e4);
+__builtin_memmove((G+0),gp(0x86b338),4);
+}
+B5a78e9:{NFSU2_TR(0x5a78e9);
+u8 U[32];
+w8(U+8,u64(s64(s32(r4(G+4)))));
+w8(U+16,u64(s64(s32(u32(0x10cull)))));
+w8(U+24,u64(u64(r8(U+8))*u64(r8(U+16))));
+w4(G+4,u32(r8(U+24)));
+w8(U+0,u64(s64(s32(r4(G+4)))));
+w1(F+0,u8((r8(U+0))!=(r8(U+24))));
+__builtin_memmove((F+11),(F+0),1);
+}
+B5a78ef:{NFSU2_TR(0x5a78ef);
+u8 U[12];
+w4(U+0,u32(u32(u32(0xcull))+u32(r4(G+4))));
+w4(U+4,u32(u32(r4(G+0))*u32(u32(0x1ull))));
+w4(U+8,u32(u32(r4(U+0))+u32(r4(U+4))));
+__builtin_memmove((R+8),(U+8),4);
+}
+B5a78f3:{NFSU2_TR(0x5a78f3);
+u8 U[8];
+w4(U+0,u32(u32(u32(0x4ull))+u32(r4(G+16))));
+__builtin_memmove((U+4),gp(u32(r4(U+0))),4);
+__builtin_memmove((G+0),(U+4),4);
+}
+B5a78f7:{NFSU2_TR(0x5a78f7);
+u8 U[8];
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x10ull))));
+__builtin_memmove((U+4),(R+8),4);
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a78fa:{NFSU2_TR(0x5a78fa);
+u8 U[4];
+w4(U+0,u32(0x40ull));
+s4(u32(r4(G+0)),r4(U+0));
+}
+B5a7900:{NFSU2_TR(0x5a7900);
+{u32 ea_=u32(r4(G+0)+u32(8u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a7903:{NFSU2_TR(0x5a7903);
+{u32 ea_=u32(r4(G+0)+u32(4u));__asm__ volatile(".byte 0xd8,0x20"::"a"(ea_):"memory");}
+}
+B5a7906:{NFSU2_TR(0x5a7906);
+{u32 ea_=u32(u32(7884980u));__asm__ volatile(".byte 0xd8,0x38"::"a"(ea_):"memory");}
+}
+B5a790c:{NFSU2_TR(0x5a790c);
+{u32 ea_=u32(r4(G+0)+u32(12u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+}
+B5a790f:{NFSU2_TR(0x5a790f);
+__builtin_memmove((R+8),gp(0x86b338),4);
+}
+B5a7915:{NFSU2_TR(0x5a7915);
+{u32 ea_=u32(r4(R+8)+r4(G+4));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a7918:{NFSU2_TR(0x5a7918);
+{u32 ea_=u32(r4(G+0)+u32(8u));__asm__ volatile(".byte 0xd9,0x10"::"a"(ea_):"memory");}
+}
+B5a791b:{NFSU2_TR(0x5a791b);
+u8 U[8];
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x4ull))));
+w4(U+4,u32(0x0ull));
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a7922:{NFSU2_TR(0x5a7922);
+{u32 ea_=u32(u32(7884980u));__asm__ volatile(".byte 0xd8,0x38"::"a"(ea_):"memory");}
+}
+B5a7928:{NFSU2_TR(0x5a7928);
+{u32 ea_=u32(r4(G+0)+u32(12u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+}
+B5a792b:{NFSU2_TR(0x5a792b);
+__builtin_memmove((R+644),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+{u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a7930(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a7930:L5a7930:{bud-=19;NFSU2_TR(0x5a7930);
+__builtin_memmove((G+0),(G+4),4);
+}
+B5a7932:{NFSU2_TR(0x5a7932);
+w4(G+4,u32(0x64646464ull));
+}
+B5a7937:{NFSU2_TR(0x5a7937);
+__builtin_memmove((R+8),(G+0),4);
+}
+B5a7939:{NFSU2_TR(0x5a7939);
+u8 U[4];
+__builtin_memmove((U+0),(G+4),4);
+s4(u32(r4(R+8)),r4(U+0));
+}
+B5a793b:{NFSU2_TR(0x5a793b);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+8))+u32(u32(0x4ull))));
+__builtin_memmove((U+4),(G+4),4);
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a793e:{NFSU2_TR(0x5a793e);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+8))+u32(u32(0x8ull))));
+__builtin_memmove((U+4),(G+4),4);
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a7941:{NFSU2_TR(0x5a7941);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+8))+u32(u32(0xcull))));
+__builtin_memmove((U+4),(G+4),4);
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a7944:{NFSU2_TR(0x5a7944);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+8))+u32(u32(0x10ull))));
+__builtin_memmove((U+4),(G+4),4);
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a7947:{NFSU2_TR(0x5a7947);
+u8 U[6];
+w4(U+0,u32(u32(r4(R+8))+u32(u32(0x14ull))));
+__builtin_memmove((U+4),(G+4),2);
+s2(u32(r4(U+0)),r2(U+4));
+}
+B5a794b:{NFSU2_TR(0x5a794b);
+u8 U[5];
+w4(U+0,u32(u32(r4(R+8))+u32(u32(0x16ull))));
+__builtin_memmove((U+4),(G+4),1);
+s1(u32(r4(U+0)),r1(U+4));
+}
+B5a794e:{NFSU2_TR(0x5a794e);
+u8 U[4];
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x17ull))));
+__builtin_memmove((R+8),(U+0),4);
+}
+B5a7951:{NFSU2_TR(0x5a7951);
+u8 U[4];
+__builtin_memmove((U+0),(G+4),4);
+s4(u32(r4(R+8)),r4(U+0));
+}
+B5a7953:{NFSU2_TR(0x5a7953);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+8))+u32(u32(0x4ull))));
+__builtin_memmove((U+4),(G+4),4);
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a7956:{NFSU2_TR(0x5a7956);
+u8 U[5];
+w4(U+0,u32(u32(r4(R+8))+u32(u32(0x8ull))));
+__builtin_memmove((U+4),(G+4),1);
+s1(u32(r4(U+0)),r1(U+4));
+}
+B5a7959:{NFSU2_TR(0x5a7959);
+u8 U[4];
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x20ull))));
+__builtin_memmove((R+8),(U+0),4);
+}
+B5a795c:{NFSU2_TR(0x5a795c);
+u8 U[4];
+__builtin_memmove((U+0),(G+4),4);
+s4(u32(r4(R+8)),r4(U+0));
+}
+B5a795e:{NFSU2_TR(0x5a795e);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+8))+u32(u32(0x4ull))));
+__builtin_memmove((U+4),(G+4),4);
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a7961:{NFSU2_TR(0x5a7961);
+u8 U[5];
+w4(U+0,u32(u32(r4(R+8))+u32(u32(0x8ull))));
+__builtin_memmove((U+4),(G+4),1);
+s1(u32(r4(U+0)),r1(U+4));
+}
+B5a7964:{NFSU2_TR(0x5a7964);
+__builtin_memmove((R+644),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+{u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a7970(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a7970:L5a7970:{bud-=25;NFSU2_TR(0x5a7970);
+__builtin_memmove((R+8),(G+4),4);
+}
+B5a7972:{NFSU2_TR(0x5a7972);
+u8 U[4];
+__builtin_memmove((U+0),(R+24),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7973:{NFSU2_TR(0x5a7973);
+u8 U[4];
+w4(U+0,u32(u32(r4(R+8))+u32(u32(0x14ull))));
+__builtin_memmove((G+0),(U+0),4);
+}
+B5a7976:{NFSU2_TR(0x5a7976);
+__builtin_memmove((R+24),(G+0),4);
+}
+B5a7978:{NFSU2_TR(0x5a7978);
+w4(G+4,u32(0x64646464ull));
+}
+B5a797d:{NFSU2_TR(0x5a797d);
+u8 U[4];
+__builtin_memmove((U+0),(G+4),4);
+s4(u32(r4(R+24)),r4(U+0));
+}
+B5a797f:{NFSU2_TR(0x5a797f);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0x4ull))));
+__builtin_memmove((U+4),(G+4),4);
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a7982:{NFSU2_TR(0x5a7982);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0x8ull))));
+__builtin_memmove((U+4),(G+4),4);
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a7985:{NFSU2_TR(0x5a7985);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0xcull))));
+__builtin_memmove((U+4),(G+4),4);
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a7988:{NFSU2_TR(0x5a7988);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0x10ull))));
+__builtin_memmove((U+4),(G+4),4);
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a798b:{NFSU2_TR(0x5a798b);
+u8 U[6];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0x14ull))));
+__builtin_memmove((U+4),(G+4),2);
+s2(u32(r4(U+0)),r2(U+4));
+}
+B5a798f:{NFSU2_TR(0x5a798f);
+u8 U[5];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0x16ull))));
+__builtin_memmove((U+4),(G+4),1);
+s1(u32(r4(U+0)),r1(U+4));
+}
+B5a7992:{NFSU2_TR(0x5a7992);
+u8 U[4];
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x17ull))));
+__builtin_memmove((R+24),(U+0),4);
+}
+B5a7995:{NFSU2_TR(0x5a7995);
+w4(G+0,u32(u32(r4(G+0))+u32(u32(0x20ull))));
+}
+B5a7998:{NFSU2_TR(0x5a7998);
+u8 U[4];
+__builtin_memmove((U+0),(R+28),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7999:{NFSU2_TR(0x5a7999);
+u8 U[4];
+__builtin_memmove((U+0),(G+4),4);
+s4(u32(r4(R+24)),r4(U+0));
+}
+B5a799b:{NFSU2_TR(0x5a799b);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0x4ull))));
+__builtin_memmove((U+4),(G+4),4);
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a799e:{NFSU2_TR(0x5a799e);
+u8 U[5];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0x8ull))));
+__builtin_memmove((U+4),(G+4),1);
+s1(u32(r4(U+0)),r1(U+4));
+}
+B5a79a1:{NFSU2_TR(0x5a79a1);
+u8 U[4];
+__builtin_memmove((U+0),(G+4),4);
+s4(u32(r4(G+0)),r4(U+0));
+}
+B5a79a3:{NFSU2_TR(0x5a79a3);
+u8 U[8];
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x4ull))));
+__builtin_memmove((U+4),(G+4),4);
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a79a6:{NFSU2_TR(0x5a79a6);
+u8 U[5];
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x8ull))));
+__builtin_memmove((U+4),(G+4),1);
+s1(u32(r4(U+0)),r1(U+4));
+}
+B5a79a9:{NFSU2_TR(0x5a79a9);
+u8 U[6];
+w1(F+0,u8(0x0ull));
+w1(F+11,u8(0x0ull));
+w4(G+0,u32(u32(r4(G+0))^u32(r4(G+0))));
+w1(F+7,u8(s32(r4(G+0))<s32(u32(0x0ull))));
+w1(F+6,u8((r4(G+0))==(u32(0x0ull))));
+w4(U+0,u32(u32(r4(G+0))&u32(u32(0xffull))));
+w1(U+4,u8(__builtin_popcountll(u64(r4(U+0)))));
+w1(U+5,u8(u32(r1(U+4))&u32(u8(0x1ull))));
+w1(F+2,u8((r1(U+5))==(u8(0x0ull))));
+}
+B5a79ab:{NFSU2_TR(0x5a79ab);
+u8 U[4];
+w4(U+0,u32(u32(r4(R+8))+u32(u32(0x40ull))));
+__builtin_memmove((R+24),(U+0),4);
+}
+B5a79ae:{NFSU2_TR(0x5a79ae);
+__builtin_memmove((R+28),(R+24),4);
+}
+B5a79b0:{NFSU2_TR(0x5a79b0);
+w4(G+4,u32(0x17ull));
+{__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);[[clang::musttail]] return blk_5a79b5(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a79b5(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a79b5:L5a79b5:{bud-=1;NFSU2_TR(0x5a79b5);
+u8 U[21];
+w1(U+20,u8((r4(G+4))==(u32(0x0ull))));
+if(r1(U+20)){{[[clang::musttail]] return blk_5a79b7(ARGS);}}
+w4(G+4,u32(u32(r4(G+4))-u32(u32(0x1ull))));
+__builtin_memmove((U+0),(R+28),4);
+w4(U+4,u32(u32(r4(R+28))+u32(u32(0x4ull))));
+w4(U+8,u32(r1(F+10)));
+w4(U+12,u32(u32(u32(0x8ull))*u32(r4(U+8))));
+w4(R+28,u32(u32(r4(U+4))-u32(r4(U+12))));
+__builtin_memmove((U+16),(G+0),4);
+s4(u32(r4(U+0)),r4(U+16));
+{if(__builtin_expect(bud<=0,0)){EXIT(0x5a79b5u);}goto L5a79b5;}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a79b7(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a79b7:L5a79b7:{bud-=2;NFSU2_TR(0x5a79b7);
+u8 U[4];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0x5cull))));
+__builtin_memmove((R+28),(U+0),4);
+}
+B5a79ba:{NFSU2_TR(0x5a79ba);
+w4(G+4,u32(0x9ull));
+{[[clang::musttail]] return blk_5a79bf(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a79bf(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a79bf:L5a79bf:{bud-=1;NFSU2_TR(0x5a79bf);
+u8 U[21];
+w1(U+20,u8((r4(G+4))==(u32(0x0ull))));
+if(r1(U+20)){{[[clang::musttail]] return blk_5a79c1(ARGS);}}
+w4(G+4,u32(u32(r4(G+4))-u32(u32(0x1ull))));
+__builtin_memmove((U+0),(R+28),4);
+w4(U+4,u32(u32(r4(R+28))+u32(u32(0x4ull))));
+w4(U+8,u32(r1(F+10)));
+w4(U+12,u32(u32(u32(0x8ull))*u32(r4(U+8))));
+w4(R+28,u32(u32(r4(U+4))-u32(r4(U+12))));
+__builtin_memmove((U+16),(G+0),4);
+s4(u32(r4(U+0)),r4(U+16));
+{if(__builtin_expect(bud<=0,0)){EXIT(0x5a79bfu);}goto L5a79bf;}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a79c1(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a79c1:L5a79c1:{bud-=2;NFSU2_TR(0x5a79c1);
+u8 U[4];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0x80ull))));
+__builtin_memmove((R+28),(U+0),4);
+}
+B5a79c7:{NFSU2_TR(0x5a79c7);
+w4(G+4,u32(0x9ull));
+{[[clang::musttail]] return blk_5a79cc(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a79cc(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a79cc:L5a79cc:{bud-=1;NFSU2_TR(0x5a79cc);
+u8 U[21];
+w1(U+20,u8((r4(G+4))==(u32(0x0ull))));
+if(r1(U+20)){{[[clang::musttail]] return blk_5a79ce(ARGS);}}
+w4(G+4,u32(u32(r4(G+4))-u32(u32(0x1ull))));
+__builtin_memmove((U+0),(R+28),4);
+w4(U+4,u32(u32(r4(R+28))+u32(u32(0x4ull))));
+w4(U+8,u32(r1(F+10)));
+w4(U+12,u32(u32(u32(0x8ull))*u32(r4(U+8))));
+w4(R+28,u32(u32(r4(U+4))-u32(r4(U+12))));
+__builtin_memmove((U+16),(G+0),4);
+s4(u32(r4(U+0)),r4(U+16));
+{if(__builtin_expect(bud<=0,0)){EXIT(0x5a79ccu);}goto L5a79cc;}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a79ce(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a79ce:L5a79ce:{bud-=10;NFSU2_TR(0x5a79ce);
+u8 U[4];
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+__builtin_memmove((R+28),(U+0),4);
+}
+B5a79cf:{NFSU2_TR(0x5a79cf);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+8))+u32(u32(0xcull))));
+__builtin_memmove((U+4),(G+0),4);
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a79d2:{NFSU2_TR(0x5a79d2);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+8))+u32(u32(0x8ull))));
+__builtin_memmove((U+4),(G+0),4);
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a79d5:{NFSU2_TR(0x5a79d5);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+8))+u32(u32(0x10ull))));
+__builtin_memmove((U+4),(G+0),4);
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a79d8:{NFSU2_TR(0x5a79d8);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+8))+u32(u32(0xe4ull))));
+__builtin_memmove((U+4),(G+0),4);
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a79de:{NFSU2_TR(0x5a79de);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+8))+u32(u32(0x4ull))));
+w4(U+4,u32(0x1ull));
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a79e5:{NFSU2_TR(0x5a79e5);
+u8 U[4];
+w4(U+0,u32(0xffffffffull));
+s4(u32(r4(R+8)),r4(U+0));
+}
+B5a79eb:{NFSU2_TR(0x5a79eb);
+__builtin_memmove((G+0),(R+8),4);
+}
+B5a79ed:{NFSU2_TR(0x5a79ed);
+u8 U[4];
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+__builtin_memmove((R+24),(U+0),4);
+}
+B5a79ee:{NFSU2_TR(0x5a79ee);
+__builtin_memmove((R+644),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+{u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a79f0(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a79f0:L5a79f0:{bud-=9;NFSU2_TR(0x5a79f0);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x8ull))));
+}
+B5a79f3:{NFSU2_TR(0x5a79f3);
+u8 U[4];
+__builtin_memmove((U+0),(R+12),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a79f4:{NFSU2_TR(0x5a79f4);
+u8 U[8];
+w4(U+0,u32(u32(u32(0x10ull))+u32(r4(G+16))));
+__builtin_memmove((U+4),gp(u32(r4(U+0))),4);
+__builtin_memmove((R+12),(U+4),4);
+}
+B5a79f8:{NFSU2_TR(0x5a79f8);
+u8 U[4];
+__builtin_memmove((U+0),(R+24),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a79f9:{NFSU2_TR(0x5a79f9);
+u8 U[4];
+__builtin_memmove((U+0),(R+28),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a79fa:{NFSU2_TR(0x5a79fa);
+w4(R+28,u32(u32(r4(R+28))^u32(r4(R+28))));
+}
+B5a79fc:{NFSU2_TR(0x5a79fc);
+u8 U[14];
+__builtin_memmove((U+6),(R+12),4);
+w1(F+0,u8((r4(U+6))<(u32(0x16ull))));
+w1(F+11,sborrow<u32>(r4(U+6),u32(0x16ull)));
+w4(U+10,u32(u32(r4(U+6))-u32(u32(0x16ull))));
+w1(F+7,u8(s32(r4(U+10))<s32(u32(0x0ull))));
+w1(F+6,u8((r4(U+10))==(u32(0x0ull))));
+w4(U+0,u32(u32(r4(U+10))&u32(u32(0xffull))));
+w1(U+4,u8(__builtin_popcountll(u64(r4(U+0)))));
+w1(U+5,u8(u32(r1(U+4))&u32(u8(0x1ull))));
+w1(F+2,u8((r1(U+5))==(u8(0x0ull))));
+}
+B5a79ff:{NFSU2_TR(0x5a79ff);
+u8 U[8];
+w4(U+0,u32(u32(u32(0x10ull))+u32(r4(G+16))));
+w4(U+4,u32(0xffffffffull));
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a7a07:{NFSU2_TR(0x5a7a07);
+u8 U[2];
+w1(U+0,u8((r1(F+0))||(r1(F+6))));
+w1(U+1,u8(!(r1(U+0))));
+if(r1(U+1)){{[[clang::musttail]] return blk_5a7a5b(ARGS);}}
+}
+B5a7a09:L5a7a09:{bud-=2;NFSU2_TR(0x5a7a09);
+u8 U[5];
+w4(U+0,u32(u32(r4(R+12))+u32(u32(0x5a7b60ull))));
+__builtin_memmove((U+4),gp(u32(r4(U+0))),1);
+w4(G+0,u32(r1(U+4)));
+}
+B5a7a10:{NFSU2_TR(0x5a7a10);
+u8 U[12];
+w4(U+0,u32(u32(r4(G+0))*u32(u32(0x4ull))));
+w4(U+4,u32(u32(u32(0x5a7b4cull))+u32(r4(U+0))));
+__builtin_memmove((U+8),gp(u32(r4(U+4))),4);
+{u32 t_=u32(r4(U+8));TAIL_DYNAMIC(t_);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a7a17(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a7a17:L5a7a17:{bud-=3;NFSU2_TR(0x5a7a17);
+u8 U[8];
+w4(U+0,u32(u32(u32(0xcull))+u32(r4(G+16))));
+__builtin_memmove((U+4),(R+28),4);
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a7a1b:{NFSU2_TR(0x5a7a1b);
+u8 U[8];
+w4(U+0,u32(u32(u32(0x10ull))+u32(r4(G+16))));
+w4(U+4,u32(0x4ull));
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a7a23:{NFSU2_TR(0x5a7a23);
+{[[clang::musttail]] return blk_5a7a5f(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a7a25(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a7a25:L5a7a25:{bud-=3;NFSU2_TR(0x5a7a25);
+u8 U[8];
+w4(U+0,u32(u32(u32(0xcull))+u32(r4(G+16))));
+w4(U+4,u32(0x2ull));
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a7a2d:{NFSU2_TR(0x5a7a2d);
+u8 U[8];
+w4(U+0,u32(u32(u32(0x10ull))+u32(r4(G+16))));
+w4(U+4,u32(0x6ull));
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a7a35:{NFSU2_TR(0x5a7a35);
+{[[clang::musttail]] return blk_5a7a5f(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a7a37(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a7a37:L5a7a37:{bud-=3;NFSU2_TR(0x5a7a37);
+u8 U[8];
+w4(U+0,u32(u32(u32(0xcull))+u32(r4(G+16))));
+w4(U+4,u32(0x15ull));
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a7a3f:{NFSU2_TR(0x5a7a3f);
+u8 U[8];
+w4(U+0,u32(u32(u32(0x10ull))+u32(r4(G+16))));
+w4(U+4,u32(0x16ull));
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a7a47:{NFSU2_TR(0x5a7a47);
+{[[clang::musttail]] return blk_5a7a5f(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a7a49(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a7a49:L5a7a49:{bud-=3;NFSU2_TR(0x5a7a49);
+u8 U[8];
+w4(U+0,u32(u32(u32(0xcull))+u32(r4(G+16))));
+w4(U+4,u32(0x3ull));
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a7a51:{NFSU2_TR(0x5a7a51);
+u8 U[8];
+w4(U+0,u32(u32(u32(0x10ull))+u32(r4(G+16))));
+w4(U+4,u32(0x7ull));
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a7a59:{NFSU2_TR(0x5a7a59);
+{[[clang::musttail]] return blk_5a7a5f(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a7a5b(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a7a5b:L5a7a5b:{bud-=1;NFSU2_TR(0x5a7a5b);
+u8 U[8];
+w4(U+0,u32(u32(u32(0xcull))+u32(r4(G+16))));
+__builtin_memmove((U+4),(R+12),4);
+s4(u32(r4(U+0)),r4(U+4));
+{[[clang::musttail]] return blk_5a7a5f(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a7a5f(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a7a5f:L5a7a5f:{bud-=3;NFSU2_TR(0x5a7a5f);
+__builtin_memmove((G+0),(R+12),4);
+}
+B5a7a61:{NFSU2_TR(0x5a7a61);
+w4(G+0,u32(u32(r4(G+0))-u32(u32(0x3ull))));
+w1(F+6,u8((r4(G+0))==(u32(0x0ull))));
+}
+B5a7a64:{NFSU2_TR(0x5a7a64);
+if(r1(F+6)){{[[clang::musttail]] return blk_5a7a78(ARGS);}}
+}
+B5a7a66:L5a7a66:{bud-=2;NFSU2_TR(0x5a7a66);
+w4(G+0,u32(u32(r4(G+0))-u32(u32(0x4ull))));
+w1(F+6,u8((r4(G+0))==(u32(0x0ull))));
+}
+B5a7a69:{NFSU2_TR(0x5a7a69);
+if(r1(F+6)){{[[clang::musttail]] return blk_5a7a78(ARGS);}}
+}
+B5a7a6b:L5a7a6b:{bud-=3;NFSU2_TR(0x5a7a6b);
+w4(G+0,u32(u32(r4(G+0))-u32(u32(0x2ull))));
+w1(F+6,u8((r4(G+0))==(u32(0x0ull))));
+}
+B5a7a6e:{NFSU2_TR(0x5a7a6e);
+u8 U[8];
+w4(U+0,u32(u32(u32(0x18ull))+u32(r4(G+16))));
+w4(U+4,u32(0xcb189680ull));
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a7a76:{NFSU2_TR(0x5a7a76);
+u8 U[1];
+w1(U+0,u8(!(r1(F+6))));
+if(r1(U+0)){{[[clang::musttail]] return blk_5a7a80(ARGS);}}
+{[[clang::musttail]] return blk_5a7a78(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a7a78(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a7a78:L5a7a78:{bud-=1;NFSU2_TR(0x5a7a78);
+u8 U[8];
+w4(U+0,u32(u32(u32(0x18ull))+u32(r4(G+16))));
+w4(U+4,u32(0x4b189680ull));
+s4(u32(r4(U+0)),r4(U+4));
+{[[clang::musttail]] return blk_5a7a80(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a7a80(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a7a80:L5a7a80:{bud-=2;NFSU2_TR(0x5a7a80);
+u8 U[8];
+w4(U+0,u32(u32(u32(0x1cull))+u32(r4(G+16))));
+__builtin_memmove((U+4),gp(u32(r4(U+0))),4);
+__builtin_memmove((R+24),(U+4),4);
+}
+B5a7a84:{NFSU2_TR(0x5a7a84);
+{[[clang::musttail]] return blk_5a7a90(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a7a90(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a7a90:L5a7a90:{bud-=3;NFSU2_TR(0x5a7a90);
+u8 U[16];
+w4(U+0,u32(u32(u32(0xcull))+u32(r4(G+16))));
+w4(U+4,u32(u32(r4(R+28))*u32(u32(0x4ull))));
+w4(U+8,u32(u32(r4(U+0))+u32(r4(U+4))));
+__builtin_memmove((U+12),gp(u32(r4(U+8))),4);
+__builtin_memmove((G+0),(U+12),4);
+}
+B5a7a94:{NFSU2_TR(0x5a7a94);
+u8 U[8];
+__builtin_memmove((U+0),(G+0),4);
+w4(U+4,u32(u32(r4(U+0))-u32(u32(0xffffffffull))));
+w1(F+6,u8((r4(U+4))==(u32(0x0ull))));
+}
+B5a7a97:{NFSU2_TR(0x5a7a97);
+if(r1(F+6)){{[[clang::musttail]] return blk_5a7b32(ARGS);}}
+}
+B5a7a9d:L5a7a9d:{bud-=3;NFSU2_TR(0x5a7a9d);
+__builtin_memmove((R+8),(R+12),4);
+}
+B5a7a9f:{NFSU2_TR(0x5a7a9f);
+w4(R+8,u32(u32(r4(R+8))-u32(u32(0x3ull))));
+w1(F+6,u8((r4(R+8))==(u32(0x0ull))));
+}
+B5a7aa2:{NFSU2_TR(0x5a7aa2);
+if(r1(F+6)){{[[clang::musttail]] return blk_5a7aef(ARGS);}}
+}
+B5a7aa4:L5a7aa4:{bud-=2;NFSU2_TR(0x5a7aa4);
+w4(R+8,u32(u32(r4(R+8))-u32(u32(0x4ull))));
+w1(F+6,u8((r4(R+8))==(u32(0x0ull))));
+}
+B5a7aa7:{NFSU2_TR(0x5a7aa7);
+if(r1(F+6)){{[[clang::musttail]] return blk_5a7aef(ARGS);}}
+}
+B5a7aa9:L5a7aa9:{bud-=2;NFSU2_TR(0x5a7aa9);
+w4(R+8,u32(u32(r4(R+8))-u32(u32(0x2ull))));
+w1(F+6,u8((r4(R+8))==(u32(0x0ull))));
+}
+B5a7aac:{NFSU2_TR(0x5a7aac);
+if(r1(F+6)){{[[clang::musttail]] return blk_5a7aef(ARGS);}}
+}
+B5a7aae:L5a7aae:{bud-=3;NFSU2_TR(0x5a7aae);
+u8 U[8];
+__builtin_memmove((U+0),(G+0),4);
+w1(F+11,sborrow<u32>(r4(U+0),u32(0x17ull)));
+w4(U+4,u32(u32(r4(U+0))-u32(u32(0x17ull))));
+w1(F+7,u8(s32(r4(U+4))<s32(u32(0x0ull))));
+w1(F+6,u8((r4(U+4))==(u32(0x0ull))));
+}
+B5a7ab1:{NFSU2_TR(0x5a7ab1);
+{u32 ea_=u32(u32(8224060u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a7ab7:{NFSU2_TR(0x5a7ab7);
+u8 U[1];
+w1(U+0,u8((r1(F+11))==(r1(F+7))));
+if(r1(U+0)){{__builtin_memcpy(R+518,F+6,1);[[clang::musttail]] return blk_5a7ac1(ARGS);}}
+}
+B5a7ab9:L5a7ab9:{bud-=3;NFSU2_TR(0x5a7ab9);
+__asm__ volatile(".byte 0xdd,0xd8":::"memory");
+}
+B5a7abb:{NFSU2_TR(0x5a7abb);
+{u32 ea_=u32((r4(G+0)*4u)+r4(G+4)+u32(64u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a7abf:{NFSU2_TR(0x5a7abf);
+{[[clang::musttail]] return blk_5a7adc(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a7ac1(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a7ac1:L5a7ac1:{bud-=1;NFSU2_TR(0x5a7ac1);
+u8 U[1];
+w1(U+0,u8(!(r1(F+6))));
+if(r1(U+0)){{[[clang::musttail]] return blk_5a7ace(ARGS);}}
+}
+B5a7ac3:L5a7ac3:{bud-=3;NFSU2_TR(0x5a7ac3);
+__asm__ volatile(".byte 0xdd,0xd8":::"memory");
+}
+B5a7ac5:{NFSU2_TR(0x5a7ac5);
+{u32 ea_=u32((r4(R+24)*4u)+r4(G+4)+u32(156u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a7acc:{NFSU2_TR(0x5a7acc);
+{[[clang::musttail]] return blk_5a7adc(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a7ace(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a7ace:L5a7ace:{bud-=2;NFSU2_TR(0x5a7ace);
+u8 U[8];
+__builtin_memmove((U+0),(G+0),4);
+w4(U+4,u32(u32(r4(U+0))-u32(u32(0x18ull))));
+w1(F+6,u8((r4(U+4))==(u32(0x0ull))));
+}
+B5a7ad1:{NFSU2_TR(0x5a7ad1);
+u8 U[1];
+w1(U+0,u8(!(r1(F+6))));
+if(r1(U+0)){{[[clang::musttail]] return blk_5a7adc(ARGS);}}
+}
+B5a7ad3:L5a7ad3:{bud-=2;NFSU2_TR(0x5a7ad3);
+__asm__ volatile(".byte 0xdd,0xd8":::"memory");
+}
+B5a7ad5:{NFSU2_TR(0x5a7ad5);
+{u32 ea_=u32((r4(R+24)*4u)+r4(G+4)+u32(192u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+{[[clang::musttail]] return blk_5a7adc(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a7adc(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a7adc:L5a7adc:{bud-=5;NFSU2_TR(0x5a7adc);
+{u32 ea_=u32(r4(G+16)+u32(24u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a7ae0:{NFSU2_TR(0x5a7ae0);
+__asm__ volatile(".byte 0xd8,0xd9":::"memory");
+}
+B5a7ae2:{NFSU2_TR(0x5a7ae2);
+{u32 ax_;__asm__ volatile(".byte 0xdf,0xe0":"=a"(ax_)::"memory");w2(G+0,u16(ax_));}
+}
+B5a7ae4:{NFSU2_TR(0x5a7ae4);
+u8 U[1];
+w1(U+0,u8(u32(r1(G+1))&u32(u8(0x41ull))));
+w1(F+6,u8((r1(U+0))==(u8(0x0ull))));
+}
+B5a7ae7:{NFSU2_TR(0x5a7ae7);
+if(r1(F+6)){{[[clang::musttail]] return blk_5a7b30(ARGS);}}
+}
+B5a7ae9:L5a7ae9:{bud-=2;NFSU2_TR(0x5a7ae9);
+{u32 ea_=u32(r4(G+16)+u32(24u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+}
+B5a7aed:{NFSU2_TR(0x5a7aed);
+{[[clang::musttail]] return blk_5a7b32(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a7aef(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a7aef:L5a7aef:{bud-=3;NFSU2_TR(0x5a7aef);
+u8 U[8];
+__builtin_memmove((U+0),(G+0),4);
+w1(F+11,sborrow<u32>(r4(U+0),u32(0x17ull)));
+w4(U+4,u32(u32(r4(U+0))-u32(u32(0x17ull))));
+w1(F+7,u8(s32(r4(U+4))<s32(u32(0x0ull))));
+w1(F+6,u8((r4(U+4))==(u32(0x0ull))));
+}
+B5a7af2:{NFSU2_TR(0x5a7af2);
+{u32 ea_=u32(u32(8224060u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a7af8:{NFSU2_TR(0x5a7af8);
+u8 U[1];
+w1(U+0,u8((r1(F+11))==(r1(F+7))));
+if(r1(U+0)){{__builtin_memcpy(R+518,F+6,1);[[clang::musttail]] return blk_5a7b02(ARGS);}}
+}
+B5a7afa:L5a7afa:{bud-=3;NFSU2_TR(0x5a7afa);
+__asm__ volatile(".byte 0xdd,0xd8":::"memory");
+}
+B5a7afc:{NFSU2_TR(0x5a7afc);
+{u32 ea_=u32((r4(G+0)*4u)+r4(G+4)+u32(64u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a7b00:{NFSU2_TR(0x5a7b00);
+{[[clang::musttail]] return blk_5a7b1d(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a7b02(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a7b02:L5a7b02:{bud-=1;NFSU2_TR(0x5a7b02);
+u8 U[1];
+w1(U+0,u8(!(r1(F+6))));
+if(r1(U+0)){{[[clang::musttail]] return blk_5a7b0f(ARGS);}}
+}
+B5a7b04:L5a7b04:{bud-=3;NFSU2_TR(0x5a7b04);
+__asm__ volatile(".byte 0xdd,0xd8":::"memory");
+}
+B5a7b06:{NFSU2_TR(0x5a7b06);
+{u32 ea_=u32((r4(R+24)*4u)+r4(G+4)+u32(156u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a7b0d:{NFSU2_TR(0x5a7b0d);
+{[[clang::musttail]] return blk_5a7b1d(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a7b0f(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a7b0f:L5a7b0f:{bud-=2;NFSU2_TR(0x5a7b0f);
+u8 U[8];
+__builtin_memmove((U+0),(G+0),4);
+w4(U+4,u32(u32(r4(U+0))-u32(u32(0x18ull))));
+w1(F+6,u8((r4(U+4))==(u32(0x0ull))));
+}
+B5a7b12:{NFSU2_TR(0x5a7b12);
+u8 U[1];
+w1(U+0,u8(!(r1(F+6))));
+if(r1(U+0)){{[[clang::musttail]] return blk_5a7b1d(ARGS);}}
+}
+B5a7b14:L5a7b14:{bud-=2;NFSU2_TR(0x5a7b14);
+__asm__ volatile(".byte 0xdd,0xd8":::"memory");
+}
+B5a7b16:{NFSU2_TR(0x5a7b16);
+{u32 ea_=u32((r4(R+24)*4u)+r4(G+4)+u32(192u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+{[[clang::musttail]] return blk_5a7b1d(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a7b1d(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+514,F+2,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a7b1d:L5a7b1d:{bud-=5;NFSU2_TR(0x5a7b1d);
+{u32 ea_=u32(r4(G+16)+u32(24u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a7b21:{NFSU2_TR(0x5a7b21);
+__asm__ volatile(".byte 0xd8,0xd9":::"memory");
+}
+B5a7b23:{NFSU2_TR(0x5a7b23);
+{u32 ax_;__asm__ volatile(".byte 0xdf,0xe0":"=a"(ax_)::"memory");w2(G+0,u16(ax_));}
+}
+B5a7b25:{NFSU2_TR(0x5a7b25);
+u8 U[4];
+w1(U+3,u8(u32(r1(G+1))&u32(u8(0x5ull))));
+w1(U+0,u8(u32(r1(U+3))&u32(u8(0xffull))));
+w1(U+1,u8(__builtin_popcountll(u64(r1(U+0)))));
+w1(U+2,u8(u32(r1(U+1))&u32(u8(0x1ull))));
+w1(F+2,u8((r1(U+2))==(u8(0x0ull))));
+}
+B5a7b28:{NFSU2_TR(0x5a7b28);
+u8 U[1];
+w1(U+0,u8(!(r1(F+2))));
+if(r1(U+0)){{[[clang::musttail]] return blk_5a7b30(ARGS);}}
+}
+B5a7b2a:L5a7b2a:{bud-=2;NFSU2_TR(0x5a7b2a);
+{u32 ea_=u32(r4(G+16)+u32(24u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+}
+B5a7b2e:{NFSU2_TR(0x5a7b2e);
+{[[clang::musttail]] return blk_5a7b32(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a7b30(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a7b30:L5a7b30:{bud-=1;NFSU2_TR(0x5a7b30);
+__asm__ volatile(".byte 0xdd,0xd8":::"memory");
+{[[clang::musttail]] return blk_5a7b32(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a7b32(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a7b32:L5a7b32:{bud-=3;NFSU2_TR(0x5a7b32);
+w4(R+28,u32(u32(r4(R+28))+u32(u32(0x1ull))));
+}
+B5a7b33:{NFSU2_TR(0x5a7b33);
+u8 U[8];
+__builtin_memmove((U+0),(R+28),4);
+w1(F+11,sborrow<u32>(r4(U+0),u32(0x2ull)));
+w4(U+4,u32(u32(r4(U+0))-u32(u32(0x2ull))));
+w1(F+7,u8(s32(r4(U+4))<s32(u32(0x0ull))));
+}
+B5a7b36:{NFSU2_TR(0x5a7b36);
+u8 U[1];
+w1(U+0,u8((r1(F+11))!=(r1(F+7))));
+if(r1(U+0)){{if(__builtin_expect(bud<=0,0)){EXIT(0x5a7a90u);}[[clang::musttail]] return blk_5a7a90(ARGS);}}
+}
+B5a7b3c:L5a7b3c:{bud-=6;NFSU2_TR(0x5a7b3c);
+{u32 ea_=u32(r4(G+16)+u32(24u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a7b40:{NFSU2_TR(0x5a7b40);
+u8 U[4];
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+__builtin_memmove((R+28),(U+0),4);
+}
+B5a7b41:{NFSU2_TR(0x5a7b41);
+u8 U[4];
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+__builtin_memmove((R+24),(U+0),4);
+}
+B5a7b42:{NFSU2_TR(0x5a7b42);
+u8 U[4];
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+__builtin_memmove((R+12),(U+0),4);
+}
+B5a7b43:{NFSU2_TR(0x5a7b43);
+u8 U[6];
+w1(F+0,carry<u32>(r4(G+16),u32(0x8ull)));
+w1(F+11,scarry<u32>(r4(G+16),u32(0x8ull)));
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x8ull))));
+w1(F+7,u8(s32(r4(G+16))<s32(u32(0x0ull))));
+w1(F+6,u8((r4(G+16))==(u32(0x0ull))));
+w4(U+0,u32(u32(r4(G+16))&u32(u32(0xffull))));
+w1(U+4,u8(__builtin_popcountll(u64(r4(U+0)))));
+w1(U+5,u8(u32(r1(U+4))&u32(u8(0x1ull))));
+w1(F+2,u8((r1(U+5))==(u8(0x0ull))));
+}
+B5a7b46:{NFSU2_TR(0x5a7b46);
+__builtin_memmove((R+644),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x8ull))));
+{u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a7b80(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a7b80:L5a7b80:{bud-=19;NFSU2_TR(0x5a7b80);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x20ull))));
+}
+B5a7b83:{NFSU2_TR(0x5a7b83);
+u8 U[4];
+__builtin_memmove((U+0),(R+24),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7b84:{NFSU2_TR(0x5a7b84);
+u8 U[4];
+__builtin_memmove((U+0),(R+28),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7b85:{NFSU2_TR(0x5a7b85);
+__builtin_memmove((R+28),(G+4),4);
+}
+B5a7b87:{NFSU2_TR(0x5a7b87);
+u8 U[4];
+__builtin_memmove((U+0),gp(u32(r4(R+28))),4);
+__builtin_memmove((G+0),(U+0),4);
+}
+B5a7b89:{NFSU2_TR(0x5a7b89);
+__builtin_memmove((G+4),gp(0x8a1ccc),4);
+}
+B5a7b8f:{NFSU2_TR(0x5a7b8f);
+u8 U[24];
+w8(U+0,u64(s64(s32(r4(G+0)))));
+w8(U+8,u64(s64(s32(u32(0x890ull)))));
+w8(U+16,u64(u64(r8(U+0))*u64(r8(U+8))));
+w4(G+0,u32(r8(U+16)));
+}
+B5a7b95:{NFSU2_TR(0x5a7b95);
+u8 U[16];
+w4(U+0,u32(u32(u32(0x1ecull))+u32(r4(G+0))));
+w4(U+4,u32(u32(r4(G+4))*u32(u32(0x1ull))));
+w4(U+8,u32(u32(r4(U+0))+u32(r4(U+4))));
+__builtin_memmove((U+12),gp(u32(r4(U+8))),4);
+__builtin_memmove((R+8),(U+12),4);
+}
+B5a7b9c:{NFSU2_TR(0x5a7b9c);
+u8 U[12];
+w4(U+0,u32(u32(u32(0x110ull))+u32(r4(G+0))));
+w4(U+4,u32(u32(r4(G+4))*u32(u32(0x1ull))));
+w4(U+8,u32(u32(r4(U+0))+u32(r4(U+4))));
+__builtin_memmove((R+24),(U+8),4);
+}
+B5a7ba3:{NFSU2_TR(0x5a7ba3);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0x54cull))));
+__builtin_memmove((U+4),gp(u32(r4(U+0))),4);
+__builtin_memmove((G+0),(U+4),4);
+}
+B5a7ba9:{NFSU2_TR(0x5a7ba9);
+u8 U[4];
+w4(U+0,u32(u32(u32(0x18ull))+u32(r4(G+16))));
+__builtin_memmove((G+4),(U+0),4);
+}
+B5a7bad:{NFSU2_TR(0x5a7bad);
+u8 U[4];
+__builtin_memmove((U+0),(G+4),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7bae:{NFSU2_TR(0x5a7bae);
+u8 U[8];
+w4(U+0,u32(u32(u32(0xcull))+u32(r4(G+16))));
+__builtin_memmove((U+4),(R+8),4);
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a7bb2:{NFSU2_TR(0x5a7bb2);
+u8 U[4];
+w4(U+0,u32(u32(u32(0xcull))+u32(r4(G+16))));
+__builtin_memmove((R+8),(U+0),4);
+}
+B5a7bb6:{NFSU2_TR(0x5a7bb6);
+u8 U[4];
+__builtin_memmove((U+0),(R+8),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7bb7:{NFSU2_TR(0x5a7bb7);
+u8 U[4];
+w4(U+0,u32(0x13ull));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7bb9:{NFSU2_TR(0x5a7bb9);
+__builtin_memmove((G+4),(R+28),4);
+}
+B5a7bbb:{NFSU2_TR(0x5a7bbb);
+u8 U[8];
+w4(U+0,u32(u32(u32(0x24ull))+u32(r4(G+16))));
+__builtin_memmove((U+4),(G+0),4);
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a7bbf:{NFSU2_TR(0x5a7bbf);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),u32(0x5a7bc4ull));
+{if(__builtin_expect(bud<=0,0)){EXIT(0x59b160u);}[[clang::musttail]] return blk_59b160(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a7bc4(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a7bc4:L5a7bc4:{bud-=11;NFSU2_TR(0x5a7bc4);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0xe0ull))));
+__builtin_memmove((U+4),gp(u32(r4(U+0))),4);
+__builtin_memmove((G+0),(U+4),4);
+}
+B5a7bca:{NFSU2_TR(0x5a7bca);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0x550ull))));
+__builtin_memmove((U+4),gp(u32(r4(U+0))),4);
+__builtin_memmove((G+4),(U+4),4);
+}
+B5a7bd0:{NFSU2_TR(0x5a7bd0);
+u8 U[4];
+w4(U+0,u32(u32(u32(0x1cull))+u32(r4(G+16))));
+__builtin_memmove((R+8),(U+0),4);
+}
+B5a7bd4:{NFSU2_TR(0x5a7bd4);
+u8 U[8];
+w4(U+0,u32(u32(u32(0xcull))+u32(r4(G+16))));
+__builtin_memmove((U+4),(G+0),4);
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a7bd8:{NFSU2_TR(0x5a7bd8);
+u8 U[4];
+__builtin_memmove((U+0),(R+8),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7bd9:{NFSU2_TR(0x5a7bd9);
+u8 U[4];
+w4(U+0,u32(u32(u32(0x10ull))+u32(r4(G+16))));
+__builtin_memmove((G+0),(U+0),4);
+}
+B5a7bdd:{NFSU2_TR(0x5a7bdd);
+u8 U[4];
+__builtin_memmove((U+0),(G+0),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7bde:{NFSU2_TR(0x5a7bde);
+u8 U[8];
+w4(U+0,u32(u32(u32(0x24ull))+u32(r4(G+16))));
+__builtin_memmove((U+4),(G+4),4);
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a7be2:{NFSU2_TR(0x5a7be2);
+u8 U[4];
+w4(U+0,u32(0x13ull));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7be4:{NFSU2_TR(0x5a7be4);
+__builtin_memmove((G+4),(R+28),4);
+}
+B5a7be6:{NFSU2_TR(0x5a7be6);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),u32(0x5a7bebull));
+{if(__builtin_expect(bud<=0,0)){EXIT(0x59b160u);}[[clang::musttail]] return blk_59b160(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a7beb(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a7beb:L5a7beb:{bud-=11;NFSU2_TR(0x5a7beb);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0xfcull))));
+__builtin_memmove((U+4),gp(u32(r4(U+0))),4);
+__builtin_memmove((G+4),(U+4),4);
+}
+B5a7bf1:{NFSU2_TR(0x5a7bf1);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0x56cull))));
+__builtin_memmove((U+4),gp(u32(r4(U+0))),4);
+__builtin_memmove((R+8),(U+4),4);
+}
+B5a7bf7:{NFSU2_TR(0x5a7bf7);
+u8 U[8];
+w4(U+0,u32(u32(u32(0x10ull))+u32(r4(G+16))));
+__builtin_memmove((U+4),(G+4),4);
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a7bfb:{NFSU2_TR(0x5a7bfb);
+u8 U[4];
+w4(U+0,u32(u32(u32(0x20ull))+u32(r4(G+16))));
+__builtin_memmove((G+0),(U+0),4);
+}
+B5a7bff:{NFSU2_TR(0x5a7bff);
+u8 U[4];
+__builtin_memmove((U+0),(G+0),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7c00:{NFSU2_TR(0x5a7c00);
+u8 U[4];
+w4(U+0,u32(u32(u32(0x14ull))+u32(r4(G+16))));
+__builtin_memmove((G+4),(U+0),4);
+}
+B5a7c04:{NFSU2_TR(0x5a7c04);
+u8 U[4];
+__builtin_memmove((U+0),(G+4),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7c05:{NFSU2_TR(0x5a7c05);
+u8 U[4];
+w4(U+0,u32(0x14ull));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7c07:{NFSU2_TR(0x5a7c07);
+__builtin_memmove((G+4),(R+28),4);
+}
+B5a7c09:{NFSU2_TR(0x5a7c09);
+u8 U[8];
+w4(U+0,u32(u32(u32(0x2cull))+u32(r4(G+16))));
+__builtin_memmove((U+4),(R+8),4);
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a7c0d:{NFSU2_TR(0x5a7c0d);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),u32(0x5a7c12ull));
+{if(__builtin_expect(bud<=0,0)){EXIT(0x59b160u);}[[clang::musttail]] return blk_59b160(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a7c12(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a7c12:L5a7c12:{bud-=11;NFSU2_TR(0x5a7c12);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0x100ull))));
+__builtin_memmove((U+4),gp(u32(r4(U+0))),4);
+__builtin_memmove((R+8),(U+4),4);
+}
+B5a7c18:{NFSU2_TR(0x5a7c18);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0x570ull))));
+__builtin_memmove((U+4),gp(u32(r4(U+0))),4);
+__builtin_memmove((G+0),(U+4),4);
+}
+B5a7c1e:{NFSU2_TR(0x5a7c1e);
+u8 U[4];
+w4(U+0,u32(u32(u32(0x24ull))+u32(r4(G+16))));
+__builtin_memmove((G+4),(U+0),4);
+}
+B5a7c22:{NFSU2_TR(0x5a7c22);
+u8 U[4];
+__builtin_memmove((U+0),(G+4),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7c23:{NFSU2_TR(0x5a7c23);
+u8 U[8];
+w4(U+0,u32(u32(u32(0x18ull))+u32(r4(G+16))));
+__builtin_memmove((U+4),(R+8),4);
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a7c27:{NFSU2_TR(0x5a7c27);
+u8 U[4];
+w4(U+0,u32(u32(u32(0x18ull))+u32(r4(G+16))));
+__builtin_memmove((R+8),(U+0),4);
+}
+B5a7c2b:{NFSU2_TR(0x5a7c2b);
+u8 U[4];
+__builtin_memmove((U+0),(R+8),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7c2c:{NFSU2_TR(0x5a7c2c);
+u8 U[4];
+w4(U+0,u32(0x14ull));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7c2e:{NFSU2_TR(0x5a7c2e);
+__builtin_memmove((G+4),(R+28),4);
+}
+B5a7c30:{NFSU2_TR(0x5a7c30);
+u8 U[8];
+w4(U+0,u32(u32(u32(0x30ull))+u32(r4(G+16))));
+__builtin_memmove((U+4),(G+0),4);
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a7c34:{NFSU2_TR(0x5a7c34);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),u32(0x5a7c39ull));
+{if(__builtin_expect(bud<=0,0)){EXIT(0x59b160u);}[[clang::musttail]] return blk_59b160(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a7c39(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a7c39:L5a7c39:{bud-=9;NFSU2_TR(0x5a7c39);
+u8 U[8];
+w4(U+0,u32(u32(u32(0x2cull))+u32(r4(G+16))));
+__builtin_memmove((U+4),gp(u32(r4(U+0))),4);
+__builtin_memmove((R+8),(U+4),4);
+}
+B5a7c3d:{NFSU2_TR(0x5a7c3d);
+u8 U[5];
+w4(U+0,u32(u32(u32(0x34ull))+u32(r4(G+16))));
+__builtin_memmove((U+4),gp(u32(r4(U+0))),1);
+__builtin_memmove((G+4),(U+4),1);
+}
+B5a7c41:{NFSU2_TR(0x5a7c41);
+w4(G+0,u32(u32(r4(G+0))^u32(r4(G+0))));
+}
+B5a7c43:{NFSU2_TR(0x5a7c43);
+u8 U[8];
+__builtin_memmove((U+0),(R+8),4);
+w4(U+4,u32(u32(r4(U+0))-u32(u32(0x13ull))));
+w1(F+6,u8((r4(U+4))==(u32(0x0ull))));
+}
+B5a7c46:{NFSU2_TR(0x5a7c46);
+u8 U[1];
+w1(U+0,u8(!(r1(F+6))));
+__builtin_memmove((G+0),(U+0),1);
+}
+B5a7c49:{NFSU2_TR(0x5a7c49);
+u8 U[1];
+w1(U+0,u8(u32(r1(G+4))&u32(r1(G+4))));
+w1(F+6,u8((r1(U+0))==(u8(0x0ull))));
+}
+B5a7c4b:{NFSU2_TR(0x5a7c4b);
+u8 U[4];
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+__builtin_memmove((R+28),(U+0),4);
+}
+B5a7c4c:{NFSU2_TR(0x5a7c4c);
+u8 U[4];
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+__builtin_memmove((R+24),(U+0),4);
+}
+B5a7c4d:{NFSU2_TR(0x5a7c4d);
+if(r1(F+6)){{[[clang::musttail]] return blk_5a7c7d(ARGS);}}
+}
+B5a7c4f:L5a7c4f:{bud-=12;NFSU2_TR(0x5a7c4f);
+{u32 ea_=u32((r4(G+0)*8u)+r4(G+16)+u32(4u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a7c53:{NFSU2_TR(0x5a7c53);
+u8 U[8];
+w4(U+0,u32(u32(u32(0x30ull))+u32(r4(G+16))));
+__builtin_memmove((U+4),gp(u32(r4(U+0))),4);
+__builtin_memmove((G+4),(U+4),4);
+}
+B5a7c57:{NFSU2_TR(0x5a7c57);
+{u32 ea_=u32((r4(G+0)*8u)+r4(G+16));__asm__ volatile(".byte 0xd8,0x00"::"a"(ea_):"memory");}
+}
+B5a7c5b:{NFSU2_TR(0x5a7c5b);
+u8 U[8];
+w4(U+0,u32(u32(u32(0x34ull))+u32(r4(G+16))));
+__builtin_memmove((U+4),gp(u32(r4(U+0))),4);
+__builtin_memmove((R+8),(U+4),4);
+}
+B5a7c5f:{NFSU2_TR(0x5a7c5f);
+{u32 ea_=u32(u32(7881312u));__asm__ volatile(".byte 0xd8,0x08"::"a"(ea_):"memory");}
+}
+B5a7c65:{NFSU2_TR(0x5a7c65);
+{u32 ea_=u32(r4(G+4));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+}
+B5a7c67:{NFSU2_TR(0x5a7c67);
+{u32 ea_=u32((r4(G+0)*8u)+r4(G+16)+u32(20u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a7c6b:{NFSU2_TR(0x5a7c6b);
+{u32 ea_=u32((r4(G+0)*8u)+r4(G+16)+u32(16u));__asm__ volatile(".byte 0xd8,0x00"::"a"(ea_):"memory");}
+}
+B5a7c6f:{NFSU2_TR(0x5a7c6f);
+{u32 ea_=u32(u32(7881312u));__asm__ volatile(".byte 0xd8,0x08"::"a"(ea_):"memory");}
+}
+B5a7c75:{NFSU2_TR(0x5a7c75);
+{u32 ea_=u32(r4(R+8));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+}
+B5a7c77:{NFSU2_TR(0x5a7c77);
+u8 U[6];
+w1(F+0,carry<u32>(r4(G+16),u32(0x20ull)));
+w1(F+11,scarry<u32>(r4(G+16),u32(0x20ull)));
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x20ull))));
+w1(F+7,u8(s32(r4(G+16))<s32(u32(0x0ull))));
+w1(F+6,u8((r4(G+16))==(u32(0x0ull))));
+w4(U+0,u32(u32(r4(G+16))&u32(u32(0xffull))));
+w1(U+4,u8(__builtin_popcountll(u64(r4(U+0)))));
+w1(U+5,u8(u32(r1(U+4))&u32(u8(0x1ull))));
+w1(F+2,u8((r1(U+5))==(u8(0x0ull))));
+}
+B5a7c7a:{NFSU2_TR(0x5a7c7a);
+__builtin_memmove((R+644),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x14ull))));
+{u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a7c7d(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a7c7d:L5a7c7d:{bud-=11;NFSU2_TR(0x5a7c7d);
+u8 U[8];
+w4(U+0,u32(u32(u32(0x28ull))+u32(r4(G+16))));
+__builtin_memmove((U+4),gp(u32(r4(U+0))),4);
+__builtin_memmove((G+4),(U+4),4);
+}
+B5a7c81:{NFSU2_TR(0x5a7c81);
+u8 U[8];
+w4(U+0,u32(u32(r4(G+0))*u32(u32(0x2ull))));
+w4(U+4,u32(u32(r4(G+4))+u32(r4(U+0))));
+__builtin_memmove((G+0),(U+4),4);
+}
+B5a7c84:{NFSU2_TR(0x5a7c84);
+u8 U[8];
+w4(U+0,u32(u32(u32(0x30ull))+u32(r4(G+16))));
+__builtin_memmove((U+4),gp(u32(r4(U+0))),4);
+__builtin_memmove((G+4),(U+4),4);
+}
+B5a7c88:{NFSU2_TR(0x5a7c88);
+u8 U[4];
+w4(U+0,u32(u32(u32(0x2ull))&u32(u32(0x1full))));
+w4(G+0,shl<u32>(r4(G+0),u64(r4(U+0))));
+}
+B5a7c8b:{NFSU2_TR(0x5a7c8b);
+u8 U[12];
+w4(U+0,u32(u32(r4(G+0))*u32(u32(0x1ull))));
+w4(U+4,u32(u32(r4(G+16))+u32(r4(U+0))));
+__builtin_memmove((U+8),gp(u32(r4(U+4))),4);
+__builtin_memmove((R+8),(U+8),4);
+}
+B5a7c8f:{NFSU2_TR(0x5a7c8f);
+u8 U[4];
+__builtin_memmove((U+0),(R+8),4);
+s4(u32(r4(G+4)),r4(U+0));
+}
+B5a7c91:{NFSU2_TR(0x5a7c91);
+u8 U[16];
+w4(U+0,u32(u32(u32(0x10ull))+u32(r4(G+16))));
+w4(U+4,u32(u32(r4(G+0))*u32(u32(0x1ull))));
+w4(U+8,u32(u32(r4(U+0))+u32(r4(U+4))));
+__builtin_memmove((U+12),gp(u32(r4(U+8))),4);
+__builtin_memmove((R+8),(U+12),4);
+}
+B5a7c95:{NFSU2_TR(0x5a7c95);
+u8 U[8];
+w4(U+0,u32(u32(u32(0x34ull))+u32(r4(G+16))));
+__builtin_memmove((U+4),gp(u32(r4(U+0))),4);
+__builtin_memmove((G+0),(U+4),4);
+}
+B5a7c99:{NFSU2_TR(0x5a7c99);
+u8 U[4];
+__builtin_memmove((U+0),(R+8),4);
+s4(u32(r4(G+0)),r4(U+0));
+}
+B5a7c9b:{NFSU2_TR(0x5a7c9b);
+u8 U[6];
+w1(F+0,carry<u32>(r4(G+16),u32(0x20ull)));
+w1(F+11,scarry<u32>(r4(G+16),u32(0x20ull)));
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x20ull))));
+w1(F+7,u8(s32(r4(G+16))<s32(u32(0x0ull))));
+w1(F+6,u8((r4(G+16))==(u32(0x0ull))));
+w4(U+0,u32(u32(r4(G+16))&u32(u32(0xffull))));
+w1(U+4,u8(__builtin_popcountll(u64(r4(U+0)))));
+w1(U+5,u8(u32(r1(U+4))&u32(u8(0x1ull))));
+w1(F+2,u8((r1(U+5))==(u8(0x0ull))));
+}
+B5a7c9e:{NFSU2_TR(0x5a7c9e);
+__builtin_memmove((R+644),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x14ull))));
+{u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a7cb0(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a7cb0:L5a7cb0:{bud-=12;NFSU2_TR(0x5a7cb0);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x20ull))));
+}
+B5a7cb3:{NFSU2_TR(0x5a7cb3);
+u8 U[4];
+__builtin_memmove((U+0),(R+12),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7cb4:{NFSU2_TR(0x5a7cb4);
+__builtin_memmove((R+12),(G+4),4);
+}
+B5a7cb6:{NFSU2_TR(0x5a7cb6);
+u8 U[4];
+__builtin_memmove((U+0),gp(u32(r4(R+12))),4);
+__builtin_memmove((G+0),(U+0),4);
+}
+B5a7cb8:{NFSU2_TR(0x5a7cb8);
+__builtin_memmove((G+4),gp(0x8a1ccc),4);
+}
+B5a7cbe:{NFSU2_TR(0x5a7cbe);
+u8 U[24];
+w8(U+0,u64(s64(s32(r4(G+0)))));
+w8(U+8,u64(s64(s32(u32(0x890ull)))));
+w8(U+16,u64(u64(r8(U+0))*u64(r8(U+8))));
+w4(G+0,u32(r8(U+16)));
+}
+B5a7cc4:{NFSU2_TR(0x5a7cc4);
+u8 U[4];
+__builtin_memmove((U+0),(R+24),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7cc5:{NFSU2_TR(0x5a7cc5);
+u8 U[12];
+w4(U+0,u32(u32(u32(0x110ull))+u32(r4(G+0))));
+w4(U+4,u32(u32(r4(G+4))*u32(u32(0x1ull))));
+w4(U+8,u32(u32(r4(U+0))+u32(r4(U+4))));
+__builtin_memmove((G+0),(U+8),4);
+}
+B5a7ccc:{NFSU2_TR(0x5a7ccc);
+u8 U[4];
+__builtin_memmove((U+0),(R+28),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7ccd:{NFSU2_TR(0x5a7ccd);
+u8 U[4];
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x5c8ull))));
+__builtin_memmove((R+28),(U+0),4);
+}
+B5a7cd3:{NFSU2_TR(0x5a7cd3);
+w4(R+24,u32(u32(r4(R+24))^u32(r4(R+24))));
+}
+B5a7cd5:{NFSU2_TR(0x5a7cd5);
+{[[clang::musttail]] return blk_5a7ce0(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a7ce0(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a7ce0:L5a7ce0:{bud-=11;NFSU2_TR(0x5a7ce0);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+28))+u32(u32(0xfffffbb0ull))));
+__builtin_memmove((U+4),gp(u32(r4(U+0))),4);
+__builtin_memmove((R+8),(U+4),4);
+}
+B5a7ce6:{NFSU2_TR(0x5a7ce6);
+u8 U[12];
+w4(U+0,u32(u32(u32(0xcull))+u32(r4(G+16))));
+w4(U+4,u32(u32(r4(R+24))*u32(u32(0x1ull))));
+w4(U+8,u32(u32(r4(U+0))+u32(r4(U+4))));
+__builtin_memmove((G+0),(U+8),4);
+}
+B5a7cea:{NFSU2_TR(0x5a7cea);
+u8 U[12];
+w4(U+0,u32(u32(u32(0x1cull))+u32(r4(G+16))));
+w4(U+4,u32(u32(r4(R+24))*u32(u32(0x1ull))));
+w4(U+8,u32(u32(r4(U+0))+u32(r4(U+4))));
+__builtin_memmove((G+4),(U+8),4);
+}
+B5a7cee:{NFSU2_TR(0x5a7cee);
+u8 U[4];
+__builtin_memmove((U+0),(G+4),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7cef:{NFSU2_TR(0x5a7cef);
+u8 U[4];
+__builtin_memmove((U+0),(R+8),4);
+s4(u32(r4(G+0)),r4(U+0));
+}
+B5a7cf1:{NFSU2_TR(0x5a7cf1);
+u8 U[4];
+__builtin_memmove((U+0),gp(u32(r4(R+28))),4);
+__builtin_memmove((R+8),(U+0),4);
+}
+B5a7cf3:{NFSU2_TR(0x5a7cf3);
+u8 U[4];
+__builtin_memmove((U+0),(G+0),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7cf4:{NFSU2_TR(0x5a7cf4);
+u8 U[4];
+__builtin_memmove((U+0),(R+8),4);
+s4(u32(r4(G+4)),r4(U+0));
+}
+B5a7cf6:{NFSU2_TR(0x5a7cf6);
+u8 U[4];
+w4(U+0,u32(0x1ull));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7cf8:{NFSU2_TR(0x5a7cf8);
+__builtin_memmove((G+4),(R+12),4);
+}
+B5a7cfa:{NFSU2_TR(0x5a7cfa);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),u32(0x5a7cffull));
+{if(__builtin_expect(bud<=0,0)){EXIT(0x59b160u);}[[clang::musttail]] return blk_59b160(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a7cff(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a7cff:L5a7cff:{bud-=11;NFSU2_TR(0x5a7cff);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+28))+u32(u32(0xfffffbd0ull))));
+__builtin_memmove((U+4),gp(u32(r4(U+0))),4);
+__builtin_memmove((G+4),(U+4),4);
+}
+B5a7d05:{NFSU2_TR(0x5a7d05);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+28))+u32(u32(0x20ull))));
+__builtin_memmove((U+4),gp(u32(r4(U+0))),4);
+__builtin_memmove((R+8),(U+4),4);
+}
+B5a7d08:{NFSU2_TR(0x5a7d08);
+u8 U[12];
+w4(U+0,u32(u32(u32(0x14ull))+u32(r4(G+16))));
+w4(U+4,u32(u32(r4(R+24))*u32(u32(0x1ull))));
+w4(U+8,u32(u32(r4(U+0))+u32(r4(U+4))));
+__builtin_memmove((G+0),(U+8),4);
+}
+B5a7d0c:{NFSU2_TR(0x5a7d0c);
+u8 U[4];
+__builtin_memmove((U+0),(G+4),4);
+s4(u32(r4(G+0)),r4(U+0));
+}
+B5a7d0e:{NFSU2_TR(0x5a7d0e);
+u8 U[12];
+w4(U+0,u32(u32(u32(0x24ull))+u32(r4(G+16))));
+w4(U+4,u32(u32(r4(R+24))*u32(u32(0x1ull))));
+w4(U+8,u32(u32(r4(U+0))+u32(r4(U+4))));
+__builtin_memmove((G+4),(U+8),4);
+}
+B5a7d12:{NFSU2_TR(0x5a7d12);
+u8 U[4];
+__builtin_memmove((U+0),(G+4),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7d13:{NFSU2_TR(0x5a7d13);
+u8 U[4];
+__builtin_memmove((U+0),(G+0),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7d14:{NFSU2_TR(0x5a7d14);
+u8 U[4];
+__builtin_memmove((U+0),(R+8),4);
+s4(u32(r4(G+4)),r4(U+0));
+}
+B5a7d16:{NFSU2_TR(0x5a7d16);
+u8 U[4];
+w4(U+0,u32(0x5ull));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7d18:{NFSU2_TR(0x5a7d18);
+__builtin_memmove((G+4),(R+12),4);
+}
+B5a7d1a:{NFSU2_TR(0x5a7d1a);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),u32(0x5a7d1full));
+{if(__builtin_expect(bud<=0,0)){EXIT(0x59b160u);}[[clang::musttail]] return blk_59b160(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a7d1f(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a7d1f:L5a7d1f:{bud-=4;NFSU2_TR(0x5a7d1f);
+w4(R+24,u32(u32(r4(R+24))+u32(u32(0x4ull))));
+}
+B5a7d22:{NFSU2_TR(0x5a7d22);
+w4(R+28,u32(u32(r4(R+28))+u32(u32(0x4ull))));
+}
+B5a7d25:{NFSU2_TR(0x5a7d25);
+u8 U[8];
+__builtin_memmove((U+0),(R+24),4);
+w1(F+11,sborrow<u32>(r4(U+0),u32(0x8ull)));
+w4(U+4,u32(u32(r4(U+0))-u32(u32(0x8ull))));
+w1(F+7,u8(s32(r4(U+4))<s32(u32(0x0ull))));
+}
+B5a7d28:{NFSU2_TR(0x5a7d28);
+u8 U[1];
+w1(U+0,u8((r1(F+11))!=(r1(F+7))));
+if(r1(U+0)){{if(__builtin_expect(bud<=0,0)){EXIT(0x5a7ce0u);}[[clang::musttail]] return blk_5a7ce0(ARGS);}}
+}
+B5a7d2a:L5a7d2a:{bud-=10;NFSU2_TR(0x5a7d2a);
+u8 U[8];
+w4(U+0,u32(u32(u32(0x30ull))+u32(r4(G+16))));
+__builtin_memmove((U+4),gp(u32(r4(U+0))),4);
+__builtin_memmove((R+8),(U+4),4);
+}
+B5a7d2e:{NFSU2_TR(0x5a7d2e);
+u8 U[5];
+w4(U+0,u32(u32(u32(0x38ull))+u32(r4(G+16))));
+__builtin_memmove((U+4),gp(u32(r4(U+0))),1);
+__builtin_memmove((G+4),(U+4),1);
+}
+B5a7d32:{NFSU2_TR(0x5a7d32);
+w4(G+0,u32(u32(r4(G+0))^u32(r4(G+0))));
+}
+B5a7d34:{NFSU2_TR(0x5a7d34);
+u8 U[8];
+__builtin_memmove((U+0),(R+8),4);
+w4(U+4,u32(u32(r4(U+0))-u32(u32(0x1ull))));
+w1(F+6,u8((r4(U+4))==(u32(0x0ull))));
+}
+B5a7d37:{NFSU2_TR(0x5a7d37);
+u8 U[4];
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+__builtin_memmove((R+28),(U+0),4);
+}
+B5a7d38:{NFSU2_TR(0x5a7d38);
+u8 U[1];
+w1(U+0,u8(!(r1(F+6))));
+__builtin_memmove((G+0),(U+0),1);
+}
+B5a7d3b:{NFSU2_TR(0x5a7d3b);
+u8 U[1];
+w1(U+0,u8(u32(r1(G+4))&u32(r1(G+4))));
+w1(F+6,u8((r1(U+0))==(u8(0x0ull))));
+}
+B5a7d3d:{NFSU2_TR(0x5a7d3d);
+u8 U[4];
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+__builtin_memmove((R+24),(U+0),4);
+}
+B5a7d3e:{NFSU2_TR(0x5a7d3e);
+u8 U[4];
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+__builtin_memmove((R+12),(U+0),4);
+}
+B5a7d3f:{NFSU2_TR(0x5a7d3f);
+if(r1(F+6)){{[[clang::musttail]] return blk_5a7d6f(ARGS);}}
+}
+B5a7d41:L5a7d41:{bud-=12;NFSU2_TR(0x5a7d41);
+{u32 ea_=u32((r4(G+0)*8u)+r4(G+16)+u32(4u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a7d45:{NFSU2_TR(0x5a7d45);
+u8 U[8];
+w4(U+0,u32(u32(u32(0x30ull))+u32(r4(G+16))));
+__builtin_memmove((U+4),gp(u32(r4(U+0))),4);
+__builtin_memmove((G+4),(U+4),4);
+}
+B5a7d49:{NFSU2_TR(0x5a7d49);
+{u32 ea_=u32((r4(G+0)*8u)+r4(G+16));__asm__ volatile(".byte 0xd8,0x00"::"a"(ea_):"memory");}
+}
+B5a7d4d:{NFSU2_TR(0x5a7d4d);
+u8 U[8];
+w4(U+0,u32(u32(u32(0x34ull))+u32(r4(G+16))));
+__builtin_memmove((U+4),gp(u32(r4(U+0))),4);
+__builtin_memmove((R+8),(U+4),4);
+}
+B5a7d51:{NFSU2_TR(0x5a7d51);
+{u32 ea_=u32(u32(7881312u));__asm__ volatile(".byte 0xd8,0x08"::"a"(ea_):"memory");}
+}
+B5a7d57:{NFSU2_TR(0x5a7d57);
+{u32 ea_=u32(r4(G+4));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+}
+B5a7d59:{NFSU2_TR(0x5a7d59);
+{u32 ea_=u32((r4(G+0)*8u)+r4(G+16)+u32(20u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a7d5d:{NFSU2_TR(0x5a7d5d);
+{u32 ea_=u32((r4(G+0)*8u)+r4(G+16)+u32(16u));__asm__ volatile(".byte 0xd8,0x00"::"a"(ea_):"memory");}
+}
+B5a7d61:{NFSU2_TR(0x5a7d61);
+{u32 ea_=u32(u32(7881312u));__asm__ volatile(".byte 0xd8,0x08"::"a"(ea_):"memory");}
+}
+B5a7d67:{NFSU2_TR(0x5a7d67);
+{u32 ea_=u32(r4(R+8));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+}
+B5a7d69:{NFSU2_TR(0x5a7d69);
+u8 U[6];
+w1(F+0,carry<u32>(r4(G+16),u32(0x20ull)));
+w1(F+11,scarry<u32>(r4(G+16),u32(0x20ull)));
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x20ull))));
+w1(F+7,u8(s32(r4(G+16))<s32(u32(0x0ull))));
+w1(F+6,u8((r4(G+16))==(u32(0x0ull))));
+w4(U+0,u32(u32(r4(G+16))&u32(u32(0xffull))));
+w1(U+4,u8(__builtin_popcountll(u64(r4(U+0)))));
+w1(U+5,u8(u32(r1(U+4))&u32(u8(0x1ull))));
+w1(F+2,u8((r1(U+5))==(u8(0x0ull))));
+}
+B5a7d6c:{NFSU2_TR(0x5a7d6c);
+__builtin_memmove((R+644),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x14ull))));
+{u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a7d6f(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a7d6f:L5a7d6f:{bud-=11;NFSU2_TR(0x5a7d6f);
+u8 U[8];
+w4(U+0,u32(u32(u32(0x28ull))+u32(r4(G+16))));
+__builtin_memmove((U+4),gp(u32(r4(U+0))),4);
+__builtin_memmove((G+4),(U+4),4);
+}
+B5a7d73:{NFSU2_TR(0x5a7d73);
+u8 U[8];
+w4(U+0,u32(u32(r4(G+0))*u32(u32(0x2ull))));
+w4(U+4,u32(u32(r4(G+4))+u32(r4(U+0))));
+__builtin_memmove((G+0),(U+4),4);
+}
+B5a7d76:{NFSU2_TR(0x5a7d76);
+u8 U[8];
+w4(U+0,u32(u32(u32(0x30ull))+u32(r4(G+16))));
+__builtin_memmove((U+4),gp(u32(r4(U+0))),4);
+__builtin_memmove((G+4),(U+4),4);
+}
+B5a7d7a:{NFSU2_TR(0x5a7d7a);
+u8 U[4];
+w4(U+0,u32(u32(u32(0x2ull))&u32(u32(0x1full))));
+w4(G+0,shl<u32>(r4(G+0),u64(r4(U+0))));
+}
+B5a7d7d:{NFSU2_TR(0x5a7d7d);
+u8 U[12];
+w4(U+0,u32(u32(r4(G+0))*u32(u32(0x1ull))));
+w4(U+4,u32(u32(r4(G+16))+u32(r4(U+0))));
+__builtin_memmove((U+8),gp(u32(r4(U+4))),4);
+__builtin_memmove((R+8),(U+8),4);
+}
+B5a7d81:{NFSU2_TR(0x5a7d81);
+u8 U[4];
+__builtin_memmove((U+0),(R+8),4);
+s4(u32(r4(G+4)),r4(U+0));
+}
+B5a7d83:{NFSU2_TR(0x5a7d83);
+u8 U[16];
+w4(U+0,u32(u32(u32(0x10ull))+u32(r4(G+16))));
+w4(U+4,u32(u32(r4(G+0))*u32(u32(0x1ull))));
+w4(U+8,u32(u32(r4(U+0))+u32(r4(U+4))));
+__builtin_memmove((U+12),gp(u32(r4(U+8))),4);
+__builtin_memmove((R+8),(U+12),4);
+}
+B5a7d87:{NFSU2_TR(0x5a7d87);
+u8 U[8];
+w4(U+0,u32(u32(u32(0x34ull))+u32(r4(G+16))));
+__builtin_memmove((U+4),gp(u32(r4(U+0))),4);
+__builtin_memmove((G+0),(U+4),4);
+}
+B5a7d8b:{NFSU2_TR(0x5a7d8b);
+u8 U[4];
+__builtin_memmove((U+0),(R+8),4);
+s4(u32(r4(G+0)),r4(U+0));
+}
+B5a7d8d:{NFSU2_TR(0x5a7d8d);
+u8 U[6];
+w1(F+0,carry<u32>(r4(G+16),u32(0x20ull)));
+w1(F+11,scarry<u32>(r4(G+16),u32(0x20ull)));
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x20ull))));
+w1(F+7,u8(s32(r4(G+16))<s32(u32(0x0ull))));
+w1(F+6,u8((r4(G+16))==(u32(0x0ull))));
+w4(U+0,u32(u32(r4(G+16))&u32(u32(0xffull))));
+w1(U+4,u8(__builtin_popcountll(u64(r4(U+0)))));
+w1(U+5,u8(u32(r1(U+4))&u32(u8(0x1ull))));
+w1(F+2,u8((r1(U+5))==(u8(0x0ull))));
+}
+B5a7d90:{NFSU2_TR(0x5a7d90);
+__builtin_memmove((R+644),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x14ull))));
+{u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a7da0(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a7da0:L5a7da0:{bud-=8;NFSU2_TR(0x5a7da0);
+u8 U[4];
+__builtin_memmove((U+0),(G+4),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7da1:{NFSU2_TR(0x5a7da1);
+u8 U[4];
+__builtin_memmove((U+0),(R+24),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7da2:{NFSU2_TR(0x5a7da2);
+__builtin_memmove((R+24),(G+4),4);
+}
+B5a7da4:{NFSU2_TR(0x5a7da4);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0xe4ull))));
+__builtin_memmove((U+4),gp(u32(r4(U+0))),4);
+__builtin_memmove((G+0),(U+4),4);
+}
+B5a7daa:{NFSU2_TR(0x5a7daa);
+u8 U[4];
+w4(U+0,u32(u32(r4(G+0))&u32(r4(G+0))));
+w1(F+6,u8((r4(U+0))==(u32(0x0ull))));
+}
+B5a7dac:{NFSU2_TR(0x5a7dac);
+u8 U[4];
+__builtin_memmove((U+0),(R+28),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7dad:{NFSU2_TR(0x5a7dad);
+u8 U[8];
+w4(U+0,u32(u32(u32(0x8ull))+u32(r4(G+16))));
+w4(U+4,u32(0x0ull));
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a7db5:{NFSU2_TR(0x5a7db5);
+u8 U[1];
+w1(U+0,u8(!(r1(F+6))));
+if(r1(U+0)){{[[clang::musttail]] return blk_5a7dd8(ARGS);}}
+}
+B5a7db7:L5a7db7:{bud-=9;NFSU2_TR(0x5a7db7);
+u8 U[4];
+__builtin_memmove((U+0),gp(u32(r4(R+24))),4);
+__builtin_memmove((R+8),(U+0),4);
+}
+B5a7db9:{NFSU2_TR(0x5a7db9);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0x8ull))));
+__builtin_memmove((U+4),gp(u32(r4(U+0))),4);
+__builtin_memmove((G+0),(U+4),4);
+}
+B5a7dbc:{NFSU2_TR(0x5a7dbc);
+u8 U[24];
+w8(U+0,u64(s64(s32(r4(R+8)))));
+w8(U+8,u64(s64(s32(u32(0x890ull)))));
+w8(U+16,u64(u64(r8(U+0))*u64(r8(U+8))));
+w4(R+8,u32(r8(U+16)));
+}
+B5a7dc2:{NFSU2_TR(0x5a7dc2);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0xcull))));
+__builtin_memmove((U+4),gp(u32(r4(U+0))),4);
+__builtin_memmove((G+4),(U+4),4);
+}
+B5a7dc5:{NFSU2_TR(0x5a7dc5);
+u8 U[4];
+__builtin_memmove((U+0),(G+0),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7dc6:{NFSU2_TR(0x5a7dc6);
+__builtin_memmove((G+0),gp(0x8a1ccc),4);
+}
+B5a7dcb:{NFSU2_TR(0x5a7dcb);
+u8 U[4];
+__builtin_memmove((U+0),(G+4),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7dcc:{NFSU2_TR(0x5a7dcc);
+u8 U[12];
+w4(U+0,u32(u32(u32(0x110ull))+u32(r4(R+8))));
+w4(U+4,u32(u32(r4(G+0))*u32(u32(0x1ull))));
+w4(U+8,u32(u32(r4(U+0))+u32(r4(U+4))));
+__builtin_memmove((G+4),(U+8),4);
+}
+B5a7dd3:{NFSU2_TR(0x5a7dd3);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),u32(0x5a7dd8ull));
+{if(__builtin_expect(bud<=0,0)){EXIT(0x599d90u);}[[clang::musttail]] return blk_599d90(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a7dd8(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a7dd8:L5a7dd8:{bud-=9;NFSU2_TR(0x5a7dd8);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0xe4ull))));
+__builtin_memmove((U+4),gp(u32(r4(U+0))),4);
+__builtin_memmove((R+8),(U+4),4);
+}
+B5a7dde:{NFSU2_TR(0x5a7dde);
+u8 U[4];
+__builtin_memmove((U+0),(R+12),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7ddf:{NFSU2_TR(0x5a7ddf);
+u8 U[4];
+__builtin_memmove((U+0),(R+20),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7de0:{NFSU2_TR(0x5a7de0);
+u8 U[8];
+w4(U+0,u32(u32(u32(0x18ull))+u32(r4(G+16))));
+__builtin_memmove((U+4),gp(u32(r4(U+0))),4);
+__builtin_memmove((R+20),(U+4),4);
+}
+B5a7de4:{NFSU2_TR(0x5a7de4);
+w4(R+8,u32(u32(r4(R+8))+u32(u32(0x1ull))));
+}
+B5a7de5:{NFSU2_TR(0x5a7de5);
+u8 U[4];
+w4(U+0,u32(u32(r4(R+20))+u32(u32(0xffffffffull))));
+__builtin_memmove((G+0),(U+0),4);
+}
+B5a7de8:{NFSU2_TR(0x5a7de8);
+u8 U[14];
+__builtin_memmove((U+6),(G+0),4);
+w1(F+0,u8((r4(U+6))<(u32(0x16ull))));
+w1(F+11,sborrow<u32>(r4(U+6),u32(0x16ull)));
+w4(U+10,u32(u32(r4(U+6))-u32(u32(0x16ull))));
+w1(F+7,u8(s32(r4(U+10))<s32(u32(0x0ull))));
+w1(F+6,u8((r4(U+10))==(u32(0x0ull))));
+w4(U+0,u32(u32(r4(U+10))&u32(u32(0xffull))));
+w1(U+4,u8(__builtin_popcountll(u64(r4(U+0)))));
+w1(U+5,u8(u32(r1(U+4))&u32(u8(0x1ull))));
+w1(F+2,u8((r1(U+5))==(u8(0x0ull))));
+}
+B5a7deb:{NFSU2_TR(0x5a7deb);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0xe4ull))));
+__builtin_memmove((U+4),(R+8),4);
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a7df1:{NFSU2_TR(0x5a7df1);
+u8 U[2];
+w1(U+0,u8((r1(F+0))||(r1(F+6))));
+w1(U+1,u8(!(r1(U+0))));
+if(r1(U+1)){{[[clang::musttail]] return blk_5a7ead(ARGS);}}
+}
+B5a7df7:L5a7df7:{bud-=2;NFSU2_TR(0x5a7df7);
+u8 U[5];
+w4(U+0,u32(u32(r4(G+0))+u32(u32(0x5a7f14ull))));
+__builtin_memmove((U+4),gp(u32(r4(U+0))),1);
+w4(G+4,u32(r1(U+4)));
+}
+B5a7dfe:{NFSU2_TR(0x5a7dfe);
+u8 U[12];
+w4(U+0,u32(u32(r4(G+4))*u32(u32(0x4ull))));
+w4(U+4,u32(u32(u32(0x5a7f00ull))+u32(r4(U+0))));
+__builtin_memmove((U+8),gp(u32(r4(U+4))),4);
+{u32 t_=u32(r4(U+8));TAIL_DYNAMIC(t_);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a7e05(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a7e05:L5a7e05:{bud-=3;NFSU2_TR(0x5a7e05);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0xcull))));
+__builtin_memmove((U+4),gp(u32(r4(U+0))),4);
+__builtin_memmove((R+28),(U+4),4);
+}
+B5a7e08:{NFSU2_TR(0x5a7e08);
+w4(R+12,u32(u32(r4(R+12))^u32(r4(R+12))));
+}
+B5a7e0a:{NFSU2_TR(0x5a7e0a);
+__builtin_memmove((R+12),(R+12),4);
+{[[clang::musttail]] return blk_5a7e10(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a7e10(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a7e10:L5a7e10:{bud-=5;NFSU2_TR(0x5a7e10);
+u8 U[4];
+__builtin_memmove((U+0),(R+12),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7e11:{NFSU2_TR(0x5a7e11);
+u8 U[4];
+__builtin_memmove((U+0),(R+20),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7e12:{NFSU2_TR(0x5a7e12);
+u8 U[4];
+__builtin_memmove((U+0),(R+28),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7e13:{NFSU2_TR(0x5a7e13);
+__builtin_memmove((G+4),(R+24),4);
+}
+B5a7e15:{NFSU2_TR(0x5a7e15);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),u32(0x5a7e1aull));
+{if(__builtin_expect(bud<=0,0)){EXIT(0x59b200u);}[[clang::musttail]] return blk_59b200(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a7e1a(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+519,F+7,1);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a7e1a:L5a7e1a:{bud-=6;NFSU2_TR(0x5a7e1a);
+{u32 ea_=u32(r4(G+16)+u32(16u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a7e1e:{NFSU2_TR(0x5a7e1e);
+{u32 ea_=u32(r4(G+0));__asm__ volatile(".byte 0xd8,0x00"::"a"(ea_):"memory");}
+}
+B5a7e20:{NFSU2_TR(0x5a7e20);
+w4(R+12,u32(u32(r4(R+12))+u32(u32(0x1ull))));
+}
+B5a7e21:{NFSU2_TR(0x5a7e21);
+u8 U[8];
+__builtin_memmove((U+0),(R+12),4);
+w1(F+11,sborrow<u32>(r4(U+0),u32(0x2ull)));
+w4(U+4,u32(u32(r4(U+0))-u32(u32(0x2ull))));
+w1(F+7,u8(s32(r4(U+4))<s32(u32(0x0ull))));
+}
+B5a7e24:{NFSU2_TR(0x5a7e24);
+{u32 ea_=u32(r4(G+16)+u32(16u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+}
+B5a7e28:{NFSU2_TR(0x5a7e28);
+u8 U[1];
+w1(U+0,u8((r1(F+11))!=(r1(F+7))));
+if(r1(U+0)){{if(__builtin_expect(bud<=0,0)){EXIT(0x5a7e10u);}[[clang::musttail]] return blk_5a7e10(ARGS);}}
+}
+B5a7e2a:L5a7e2a:{bud-=4;NFSU2_TR(0x5a7e2a);
+{u32 ea_=u32(r4(G+16)+u32(16u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a7e2e:{NFSU2_TR(0x5a7e2e);
+{u32 ea_=u32(u32(7881312u));__asm__ volatile(".byte 0xd8,0x08"::"a"(ea_):"memory");}
+}
+B5a7e34:{NFSU2_TR(0x5a7e34);
+{u32 ea_=u32(r4(G+16)+u32(16u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+}
+B5a7e38:{NFSU2_TR(0x5a7e38);
+{[[clang::musttail]] return blk_5a7ec4(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a7e3d(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a7e3d:L5a7e3d:{bud-=7;NFSU2_TR(0x5a7e3d);
+u8 U[8];
+w4(U+0,u32(u32(u32(0x1cull))+u32(r4(G+16))));
+__builtin_memmove((U+4),gp(u32(r4(U+0))),4);
+__builtin_memmove((R+12),(U+4),4);
+}
+B5a7e41:{NFSU2_TR(0x5a7e41);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0xcull))));
+__builtin_memmove((U+4),gp(u32(r4(U+0))),4);
+__builtin_memmove((R+28),(U+4),4);
+}
+B5a7e44:{NFSU2_TR(0x5a7e44);
+u8 U[4];
+__builtin_memmove((U+0),(R+12),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7e45:{NFSU2_TR(0x5a7e45);
+u8 U[4];
+__builtin_memmove((U+0),(R+20),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7e46:{NFSU2_TR(0x5a7e46);
+u8 U[4];
+__builtin_memmove((U+0),(R+28),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7e47:{NFSU2_TR(0x5a7e47);
+__builtin_memmove((G+4),(R+24),4);
+}
+B5a7e49:{NFSU2_TR(0x5a7e49);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),u32(0x5a7e4eull));
+{if(__builtin_expect(bud<=0,0)){EXIT(0x59b200u);}[[clang::musttail]] return blk_59b200(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a7e4e(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a7e4e:L5a7e4e:{bud-=4;NFSU2_TR(0x5a7e4e);
+{u32 ea_=u32(r4(G+0));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a7e50:{NFSU2_TR(0x5a7e50);
+{u32 ea_=u32((r4(R+12)*4u)+r4(R+28)+u32(548u));__asm__ volatile(".byte 0xd8,0x20"::"a"(ea_):"memory");}
+}
+B5a7e57:{NFSU2_TR(0x5a7e57);
+{u32 ea_=u32(r4(G+16)+u32(16u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+}
+B5a7e5b:{NFSU2_TR(0x5a7e5b);
+{[[clang::musttail]] return blk_5a7ec4(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a7e5d(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a7e5d:L5a7e5d:{bud-=6;NFSU2_TR(0x5a7e5d);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0xcull))));
+__builtin_memmove((U+4),gp(u32(r4(U+0))),4);
+__builtin_memmove((R+28),(U+4),4);
+}
+B5a7e60:{NFSU2_TR(0x5a7e60);
+u8 U[4];
+w4(U+0,u32(0x0ull));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7e62:{NFSU2_TR(0x5a7e62);
+u8 U[4];
+__builtin_memmove((U+0),(R+20),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7e63:{NFSU2_TR(0x5a7e63);
+u8 U[4];
+__builtin_memmove((U+0),(R+28),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7e64:{NFSU2_TR(0x5a7e64);
+__builtin_memmove((G+4),(R+24),4);
+}
+B5a7e66:{NFSU2_TR(0x5a7e66);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),u32(0x5a7e6bull));
+{if(__builtin_expect(bud<=0,0)){EXIT(0x59b200u);}[[clang::musttail]] return blk_59b200(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a7e6b(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a7e6b:L5a7e6b:{bud-=3;NFSU2_TR(0x5a7e6b);
+u8 U[4];
+__builtin_memmove((U+0),gp(u32(r4(G+0))),4);
+__builtin_memmove((R+8),(U+0),4);
+}
+B5a7e6d:{NFSU2_TR(0x5a7e6d);
+u8 U[8];
+w4(U+0,u32(u32(u32(0x10ull))+u32(r4(G+16))));
+__builtin_memmove((U+4),(R+8),4);
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a7e71:{NFSU2_TR(0x5a7e71);
+{[[clang::musttail]] return blk_5a7ec4(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a7e73(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a7e73:L5a7e73:{bud-=6;NFSU2_TR(0x5a7e73);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0xcull))));
+__builtin_memmove((U+4),gp(u32(r4(U+0))),4);
+__builtin_memmove((R+28),(U+4),4);
+}
+B5a7e76:{NFSU2_TR(0x5a7e76);
+u8 U[4];
+w4(U+0,u32(0x0ull));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7e78:{NFSU2_TR(0x5a7e78);
+u8 U[4];
+__builtin_memmove((U+0),(R+20),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7e79:{NFSU2_TR(0x5a7e79);
+u8 U[4];
+__builtin_memmove((U+0),(R+28),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7e7a:{NFSU2_TR(0x5a7e7a);
+__builtin_memmove((G+4),(R+24),4);
+}
+B5a7e7c:{NFSU2_TR(0x5a7e7c);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),u32(0x5a7e81ull));
+{if(__builtin_expect(bud<=0,0)){EXIT(0x59b200u);}[[clang::musttail]] return blk_59b200(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a7e81(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a7e81:L5a7e81:{bud-=10;NFSU2_TR(0x5a7e81);
+{u32 ea_=u32(r4(G+0));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a7e83:{NFSU2_TR(0x5a7e83);
+u8 U[4];
+__builtin_memmove((U+0),gp(u32(r4(R+24))),4);
+__builtin_memmove((G+0),(U+0),4);
+}
+B5a7e85:{NFSU2_TR(0x5a7e85);
+__builtin_memmove((G+4),gp(0x8a1ccc),4);
+}
+B5a7e8b:{NFSU2_TR(0x5a7e8b);
+u8 U[24];
+w8(U+0,u64(s64(s32(r4(G+0)))));
+w8(U+8,u64(s64(s32(u32(0x890ull)))));
+w8(U+16,u64(u64(r8(U+0))*u64(r8(U+8))));
+w4(G+0,u32(r8(U+16)));
+}
+B5a7e91:{NFSU2_TR(0x5a7e91);
+u8 U[4];
+w4(U+0,u32(0x0ull));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7e93:{NFSU2_TR(0x5a7e93);
+u8 U[12];
+w4(U+0,u32(u32(u32(0x110ull))+u32(r4(G+0))));
+w4(U+4,u32(u32(r4(G+4))*u32(u32(0x1ull))));
+w4(U+8,u32(u32(r4(U+0))+u32(r4(U+4))));
+__builtin_memmove((R+8),(U+8),4);
+}
+B5a7e9a:{NFSU2_TR(0x5a7e9a);
+u8 U[4];
+__builtin_memmove((U+0),(R+20),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7e9b:{NFSU2_TR(0x5a7e9b);
+u8 U[4];
+__builtin_memmove((U+0),(R+8),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7e9c:{NFSU2_TR(0x5a7e9c);
+__builtin_memmove((G+4),(R+24),4);
+}
+B5a7e9e:{NFSU2_TR(0x5a7e9e);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),u32(0x5a7ea3ull));
+{if(__builtin_expect(bud<=0,0)){EXIT(0x59b200u);}[[clang::musttail]] return blk_59b200(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a7ea3(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a7ea3:L5a7ea3:{bud-=4;NFSU2_TR(0x5a7ea3);
+{u32 ea_=u32(r4(G+0));__asm__ volatile(".byte 0xd8,0x20"::"a"(ea_):"memory");}
+}
+B5a7ea5:{NFSU2_TR(0x5a7ea5);
+__asm__ volatile(".byte 0xd9,0xe0":::"memory");
+}
+B5a7ea7:{NFSU2_TR(0x5a7ea7);
+{u32 ea_=u32(r4(G+16)+u32(16u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+}
+B5a7eab:{NFSU2_TR(0x5a7eab);
+{[[clang::musttail]] return blk_5a7ec4(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a7ead(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a7ead:L5a7ead:{bud-=7;NFSU2_TR(0x5a7ead);
+u8 U[8];
+w4(U+0,u32(u32(u32(0x1cull))+u32(r4(G+16))));
+__builtin_memmove((U+4),gp(u32(r4(U+0))),4);
+__builtin_memmove((G+0),(U+4),4);
+}
+B5a7eb1:{NFSU2_TR(0x5a7eb1);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0xcull))));
+__builtin_memmove((U+4),gp(u32(r4(U+0))),4);
+__builtin_memmove((R+28),(U+4),4);
+}
+B5a7eb4:{NFSU2_TR(0x5a7eb4);
+u8 U[4];
+__builtin_memmove((U+0),(G+0),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7eb5:{NFSU2_TR(0x5a7eb5);
+u8 U[4];
+__builtin_memmove((U+0),(R+20),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7eb6:{NFSU2_TR(0x5a7eb6);
+u8 U[4];
+__builtin_memmove((U+0),(R+28),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7eb7:{NFSU2_TR(0x5a7eb7);
+__builtin_memmove((G+4),(R+24),4);
+}
+B5a7eb9:{NFSU2_TR(0x5a7eb9);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),u32(0x5a7ebeull));
+{if(__builtin_expect(bud<=0,0)){EXIT(0x59b200u);}[[clang::musttail]] return blk_59b200(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a7ebe(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a7ebe:L5a7ebe:{bud-=2;NFSU2_TR(0x5a7ebe);
+u8 U[4];
+__builtin_memmove((U+0),gp(u32(r4(G+0))),4);
+__builtin_memmove((G+4),(U+0),4);
+}
+B5a7ec0:{NFSU2_TR(0x5a7ec0);
+u8 U[8];
+w4(U+0,u32(u32(u32(0x10ull))+u32(r4(G+16))));
+__builtin_memmove((U+4),(G+4),4);
+s4(u32(r4(U+0)),r4(U+4));
+{[[clang::musttail]] return blk_5a7ec4(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a7ec4(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a7ec4:L5a7ec4:{bud-=7;NFSU2_TR(0x5a7ec4);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0xe4ull))));
+__builtin_memmove((U+4),gp(u32(r4(U+0))),4);
+__builtin_memmove((G+0),(U+4),4);
+}
+B5a7eca:{NFSU2_TR(0x5a7eca);
+w4(G+0,u32(u32(r4(G+0))-u32(u32(0x1ull))));
+}
+B5a7ecb:{NFSU2_TR(0x5a7ecb);
+u8 U[10];
+w1(F+0,u8(0x0ull));
+w1(F+11,u8(0x0ull));
+w4(U+6,u32(u32(r4(G+0))&u32(r4(G+0))));
+w1(F+7,u8(s32(r4(U+6))<s32(u32(0x0ull))));
+w1(F+6,u8((r4(U+6))==(u32(0x0ull))));
+w4(U+0,u32(u32(r4(U+6))&u32(u32(0xffull))));
+w1(U+4,u8(__builtin_popcountll(u64(r4(U+0)))));
+w1(U+5,u8(u32(r1(U+4))&u32(u8(0x1ull))));
+w1(F+2,u8((r1(U+5))==(u8(0x0ull))));
+}
+B5a7ecd:{NFSU2_TR(0x5a7ecd);
+u8 U[4];
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+__builtin_memmove((R+20),(U+0),4);
+}
+B5a7ece:{NFSU2_TR(0x5a7ece);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0xe4ull))));
+__builtin_memmove((U+4),(G+0),4);
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a7ed4:{NFSU2_TR(0x5a7ed4);
+u8 U[4];
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+__builtin_memmove((R+12),(U+0),4);
+}
+B5a7ed5:{NFSU2_TR(0x5a7ed5);
+u8 U[1];
+w1(U+0,u8(!(r1(F+6))));
+if(r1(U+0)){{__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);[[clang::musttail]] return blk_5a7ef6(ARGS);}}
+}
+B5a7ed7:L5a7ed7:{bud-=8;NFSU2_TR(0x5a7ed7);
+u8 U[4];
+__builtin_memmove((U+0),gp(u32(r4(R+24))),4);
+__builtin_memmove((G+0),(U+0),4);
+}
+B5a7ed9:{NFSU2_TR(0x5a7ed9);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0x8ull))));
+__builtin_memmove((U+4),gp(u32(r4(U+0))),4);
+__builtin_memmove((R+8),(U+4),4);
+}
+B5a7edc:{NFSU2_TR(0x5a7edc);
+u8 U[24];
+w8(U+0,u64(s64(s32(r4(G+0)))));
+w8(U+8,u64(s64(s32(u32(0x890ull)))));
+w8(U+16,u64(u64(r8(U+0))*u64(r8(U+8))));
+w4(G+0,u32(r8(U+16)));
+}
+B5a7ee2:{NFSU2_TR(0x5a7ee2);
+__builtin_memmove((G+4),gp(0x8a1ccc),4);
+}
+B5a7ee8:{NFSU2_TR(0x5a7ee8);
+u8 U[4];
+__builtin_memmove((U+0),(R+8),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7ee9:{NFSU2_TR(0x5a7ee9);
+u8 U[4];
+__builtin_memmove((U+0),(R+28),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7eea:{NFSU2_TR(0x5a7eea);
+u8 U[12];
+w4(U+0,u32(u32(u32(0x110ull))+u32(r4(G+0))));
+w4(U+4,u32(u32(r4(G+4))*u32(u32(0x1ull))));
+w4(U+8,u32(u32(r4(U+0))+u32(r4(U+4))));
+__builtin_memmove((G+4),(U+8),4);
+}
+B5a7ef1:{NFSU2_TR(0x5a7ef1);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),u32(0x5a7ef6ull));
+{if(__builtin_expect(bud<=0,0)){EXIT(0x5997e0u);}[[clang::musttail]] return blk_5997e0(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a7ef6(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a7ef6:L5a7ef6:{bud-=5;NFSU2_TR(0x5a7ef6);
+{u32 ea_=u32(r4(G+16)+u32(8u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a7efa:{NFSU2_TR(0x5a7efa);
+u8 U[4];
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+__builtin_memmove((R+28),(U+0),4);
+}
+B5a7efb:{NFSU2_TR(0x5a7efb);
+u8 U[4];
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+__builtin_memmove((R+24),(U+0),4);
+}
+B5a7efc:{NFSU2_TR(0x5a7efc);
+u8 U[4];
+__builtin_memmove((U+0),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+__builtin_memmove((G+4),(U+0),4);
+}
+B5a7efd:{NFSU2_TR(0x5a7efd);
+__builtin_memmove((R+644),gp(u32(r4(G+16))),4);
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
+w4(G+16,u32(u32(r4(G+16))+u32(u32(0x8ull))));
+{u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a7f30(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a7f30:L5a7f30:{bud-=21;NFSU2_TR(0x5a7f30);
+u8 U[4];
+w4(U+0,u32(0xffffffffull));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7f32:{NFSU2_TR(0x5a7f32);
+u8 U[4];
+w4(U+0,u32(0x778e68ull));
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7f37:{NFSU2_TR(0x5a7f37);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+272))+u32(u32(0x0ull))));
+__builtin_memmove((U+4),gp(u32(r4(U+0))),4);
+__builtin_memmove((G+0),(U+4),4);
+}
+B5a7f3d:{NFSU2_TR(0x5a7f3d);
+u8 U[4];
+__builtin_memmove((U+0),(G+0),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7f3e:{NFSU2_TR(0x5a7f3e);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+272))+u32(u32(0x0ull))));
+__builtin_memmove((U+4),(G+16),4);
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a7f45:{NFSU2_TR(0x5a7f45);
+u8 U[4];
+__builtin_memmove((U+0),(G+4),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7f46:{NFSU2_TR(0x5a7f46);
+u8 U[4];
+__builtin_memmove((U+0),(R+24),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7f47:{NFSU2_TR(0x5a7f47);
+__builtin_memmove((R+24),(G+4),4);
+}
+B5a7f49:{NFSU2_TR(0x5a7f49);
+u8 U[4];
+__builtin_memmove((U+0),(R+28),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7f4a:{NFSU2_TR(0x5a7f4a);
+u8 U[8];
+w4(U+0,u32(u32(u32(0x8ull))+u32(r4(G+16))));
+__builtin_memmove((U+4),(R+24),4);
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a7f4e:{NFSU2_TR(0x5a7f4e);
+u8 U[8];
+w4(U+0,u32(u32(u32(0x1cull))+u32(r4(G+16))));
+__builtin_memmove((U+4),gp(u32(r4(U+0))),4);
+__builtin_memmove((G+0),(U+4),4);
+}
+B5a7f52:{NFSU2_TR(0x5a7f52);
+w4(R+28,u32(u32(r4(R+28))^u32(r4(R+28))));
+}
+B5a7f54:{NFSU2_TR(0x5a7f54);
+u8 U[4];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0x30ull))));
+__builtin_memmove((G+4),(U+0),4);
+}
+B5a7f57:{NFSU2_TR(0x5a7f57);
+u8 U[4];
+__builtin_memmove((U+0),(G+4),4);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),r4(U+0));
+}
+B5a7f58:{NFSU2_TR(0x5a7f58);
+u8 U[8];
+w4(U+0,u32(u32(u32(0x18ull))+u32(r4(G+16))));
+__builtin_memmove((U+4),(R+28),4);
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a7f5c:{NFSU2_TR(0x5a7f5c);
+u8 U[4];
+w4(U+0,u32(0x7a20c4ull));
+s4(u32(r4(R+24)),r4(U+0));
+}
+B5a7f62:{NFSU2_TR(0x5a7f62);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0x14ull))));
+__builtin_memmove((U+4),(G+0),4);
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a7f65:{NFSU2_TR(0x5a7f65);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0x20ull))));
+__builtin_memmove((U+4),(R+28),4);
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a7f68:{NFSU2_TR(0x5a7f68);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0x24ull))));
+__builtin_memmove((U+4),(R+28),4);
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a7f6b:{NFSU2_TR(0x5a7f6b);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0x28ull))));
+__builtin_memmove((U+4),(R+28),4);
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a7f6e:{NFSU2_TR(0x5a7f6e);
+w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
+s4(u32(r4(G+16)),u32(0x5a7f73ull));
+{if(__builtin_expect(bud<=0,0)){EXIT(0x43c780u);}[[clang::musttail]] return blk_43c780(ARGS);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 blk_5a7f73(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
+u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;
+alignas(4) u8 G[32];alignas(16) u8 F[32];
+w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
+#define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
+#define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
+#define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
+#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
+B5a7f73:L5a7f73:{bud-=26;NFSU2_TR(0x5a7f73);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0x70ull))));
+__builtin_memmove((U+4),(R+28),4);
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a7f76:{NFSU2_TR(0x5a7f76);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0x74ull))));
+__builtin_memmove((U+4),(R+28),4);
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a7f79:{NFSU2_TR(0x5a7f79);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0x78ull))));
+__builtin_memmove((U+4),(R+28),4);
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a7f7c:{NFSU2_TR(0x5a7f7c);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0x80ull))));
+__builtin_memmove((U+4),(R+28),4);
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a7f82:{NFSU2_TR(0x5a7f82);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0x84ull))));
+__builtin_memmove((U+4),(R+28),4);
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a7f88:{NFSU2_TR(0x5a7f88);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0x88ull))));
+__builtin_memmove((U+4),(R+28),4);
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a7f8e:{NFSU2_TR(0x5a7f8e);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0x90ull))));
+__builtin_memmove((U+4),(R+28),4);
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a7f94:{NFSU2_TR(0x5a7f94);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0xa0ull))));
+__builtin_memmove((U+4),(R+28),4);
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a7f9a:{NFSU2_TR(0x5a7f9a);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0xa4ull))));
+__builtin_memmove((U+4),(R+28),4);
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a7fa0:{NFSU2_TR(0x5a7fa0);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0xa8ull))));
+__builtin_memmove((U+4),(R+28),4);
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a7fa6:{NFSU2_TR(0x5a7fa6);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0xb0ull))));
+__builtin_memmove((U+4),(R+28),4);
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a7fac:{NFSU2_TR(0x5a7fac);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0xb4ull))));
+__builtin_memmove((U+4),(R+28),4);
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a7fb2:{NFSU2_TR(0x5a7fb2);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0xb8ull))));
+__builtin_memmove((U+4),(R+28),4);
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a7fb8:{NFSU2_TR(0x5a7fb8);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0xc0ull))));
+__builtin_memmove((U+4),(R+28),4);
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a7fbe:{NFSU2_TR(0x5a7fbe);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0xc4ull))));
+__builtin_memmove((U+4),(R+28),4);
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a7fc4:{NFSU2_TR(0x5a7fc4);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0xc8ull))));
+__builtin_memmove((U+4),(R+28),4);
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a7fca:{NFSU2_TR(0x5a7fca);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0x110ull))));
+__builtin_memmove((U+4),(R+28),4);
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a7fd0:{NFSU2_TR(0x5a7fd0);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0x114ull))));
+__builtin_memmove((U+4),(R+28),4);
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a7fd6:{NFSU2_TR(0x5a7fd6);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0x118ull))));
+__builtin_memmove((U+4),(R+28),4);
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a7fdc:{NFSU2_TR(0x5a7fdc);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0x120ull))));
+__builtin_memmove((U+4),(R+28),4);
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a7fe2:{NFSU2_TR(0x5a7fe2);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0x124ull))));
+__builtin_memmove((U+4),(R+28),4);
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a7fe8:{NFSU2_TR(0x5a7fe8);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0x128ull))));
+__builtin_memmove((U+4),(R+28),4);
+s4(u32(r4(U+0)),r4(U+4));
+}
+B5a7fee:{NFSU2_TR(0x5a7fee);
+{u32 ea_=u32(r4(R+24)+u32(276u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a7ff4:{NFSU2_TR(0x5a7ff4);
+{u32 ea_=u32(r4(R+24)+u32(280u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+}
+B5a7ffa:{NFSU2_TR(0x5a7ffa);
+__builtin_memmove((R+8),(R+28),4);
+}
+B5a7ffc:{NFSU2_TR(0x5a7ffc);
+u8 U[8];
+w4(U+0,u32(u32(r4(R+24))+u32(u32(0x130ull))));
+__builtin_memmove((U+4),(R+8),4);
+s4(u32(r4(U+0)),r4(U+4));
+{EXIT(0x5a8002u);}
+}
+
+XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
+FLT:SPILL_OUT();fast_fault(c,fm,fpc);
+#undef ARGS
+#undef SPILL_OUT
+#undef SPILL_IN
+#undef TAIL_DYNAMIC
+#undef NFSU2_FAULT
+}
+PN u32 ent_5a7(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){switch(c.pc){
+case 0x5a712d:[[clang::musttail]] return blk_5a712d(c,a4,a0,a1,bud);
+case 0x5a7140:[[clang::musttail]] return blk_5a7140(c,a4,a0,a1,bud);
+case 0x5a7155:[[clang::musttail]] return blk_5a7155(c,a4,a0,a1,bud);
+case 0x5a71b6:[[clang::musttail]] return blk_5a71b6(c,a4,a0,a1,bud);
+case 0x5a71c0:[[clang::musttail]] return blk_5a71c0(c,a4,a0,a1,bud);
+case 0x5a71d9:[[clang::musttail]] return blk_5a71d9(c,a4,a0,a1,bud);
+case 0x5a71f5:[[clang::musttail]] return blk_5a71f5(c,a4,a0,a1,bud);
+case 0x5a71ff:[[clang::musttail]] return blk_5a71ff(c,a4,a0,a1,bud);
+case 0x5a7220:[[clang::musttail]] return blk_5a7220(c,a4,a0,a1,bud);
+case 0x5a7265:[[clang::musttail]] return blk_5a7265(c,a4,a0,a1,bud);
+case 0x5a7355:[[clang::musttail]] return blk_5a7355(c,a4,a0,a1,bud);
+case 0x5a7360:[[clang::musttail]] return blk_5a7360(c,a4,a0,a1,bud);
+case 0x5a7375:[[clang::musttail]] return blk_5a7375(c,a4,a0,a1,bud);
+case 0x5a7490:[[clang::musttail]] return blk_5a7490(c,a4,a0,a1,bud);
+case 0x5a74a0:[[clang::musttail]] return blk_5a74a0(c,a4,a0,a1,bud);
+case 0x5a74b8:[[clang::musttail]] return blk_5a74b8(c,a4,a0,a1,bud);
+case 0x5a751d:[[clang::musttail]] return blk_5a751d(c,a4,a0,a1,bud);
+case 0x5a7530:[[clang::musttail]] return blk_5a7530(c,a4,a0,a1,bud);
+case 0x5a75e4:[[clang::musttail]] return blk_5a75e4(c,a4,a0,a1,bud);
+case 0x5a7692:[[clang::musttail]] return blk_5a7692(c,a4,a0,a1,bud);
+case 0x5a76d1:[[clang::musttail]] return blk_5a76d1(c,a4,a0,a1,bud);
+case 0x5a76e3:[[clang::musttail]] return blk_5a76e3(c,a4,a0,a1,bud);
+case 0x5a7744:[[clang::musttail]] return blk_5a7744(c,a4,a0,a1,bud);
+case 0x5a7750:[[clang::musttail]] return blk_5a7750(c,a4,a0,a1,bud);
+case 0x5a776f:[[clang::musttail]] return blk_5a776f(c,a4,a0,a1,bud);
+case 0x5a7771:[[clang::musttail]] return blk_5a7771(c,a4,a0,a1,bud);
+case 0x5a7790:[[clang::musttail]] return blk_5a7790(c,a4,a0,a1,bud);
+case 0x5a77a8:[[clang::musttail]] return blk_5a77a8(c,a4,a0,a1,bud);
+case 0x5a77c0:[[clang::musttail]] return blk_5a77c0(c,a4,a0,a1,bud);
+case 0x5a77df:[[clang::musttail]] return blk_5a77df(c,a4,a0,a1,bud);
+case 0x5a77e1:[[clang::musttail]] return blk_5a77e1(c,a4,a0,a1,bud);
+case 0x5a7800:[[clang::musttail]] return blk_5a7800(c,a4,a0,a1,bud);
+case 0x5a7818:[[clang::musttail]] return blk_5a7818(c,a4,a0,a1,bud);
+case 0x5a7830:[[clang::musttail]] return blk_5a7830(c,a4,a0,a1,bud);
+case 0x5a784e:[[clang::musttail]] return blk_5a784e(c,a4,a0,a1,bud);
+case 0x5a7850:[[clang::musttail]] return blk_5a7850(c,a4,a0,a1,bud);
+case 0x5a786f:[[clang::musttail]] return blk_5a786f(c,a4,a0,a1,bud);
+case 0x5a7887:[[clang::musttail]] return blk_5a7887(c,a4,a0,a1,bud);
+case 0x5a7890:[[clang::musttail]] return blk_5a7890(c,a4,a0,a1,bud);
+case 0x5a78c2:[[clang::musttail]] return blk_5a78c2(c,a4,a0,a1,bud);
+case 0x5a78e0:[[clang::musttail]] return blk_5a78e0(c,a4,a0,a1,bud);
+case 0x5a7930:[[clang::musttail]] return blk_5a7930(c,a4,a0,a1,bud);
+case 0x5a7970:[[clang::musttail]] return blk_5a7970(c,a4,a0,a1,bud);
+case 0x5a79b5:[[clang::musttail]] return blk_5a79b5(c,a4,a0,a1,bud);
+case 0x5a79b7:[[clang::musttail]] return blk_5a79b7(c,a4,a0,a1,bud);
+case 0x5a79bf:[[clang::musttail]] return blk_5a79bf(c,a4,a0,a1,bud);
+case 0x5a79c1:[[clang::musttail]] return blk_5a79c1(c,a4,a0,a1,bud);
+case 0x5a79cc:[[clang::musttail]] return blk_5a79cc(c,a4,a0,a1,bud);
+case 0x5a79ce:[[clang::musttail]] return blk_5a79ce(c,a4,a0,a1,bud);
+case 0x5a79f0:[[clang::musttail]] return blk_5a79f0(c,a4,a0,a1,bud);
+case 0x5a7a17:[[clang::musttail]] return blk_5a7a17(c,a4,a0,a1,bud);
+case 0x5a7a25:[[clang::musttail]] return blk_5a7a25(c,a4,a0,a1,bud);
+case 0x5a7a37:[[clang::musttail]] return blk_5a7a37(c,a4,a0,a1,bud);
+case 0x5a7a49:[[clang::musttail]] return blk_5a7a49(c,a4,a0,a1,bud);
+case 0x5a7a5b:[[clang::musttail]] return blk_5a7a5b(c,a4,a0,a1,bud);
+case 0x5a7a5f:[[clang::musttail]] return blk_5a7a5f(c,a4,a0,a1,bud);
+case 0x5a7a78:[[clang::musttail]] return blk_5a7a78(c,a4,a0,a1,bud);
+case 0x5a7a80:[[clang::musttail]] return blk_5a7a80(c,a4,a0,a1,bud);
+case 0x5a7a90:[[clang::musttail]] return blk_5a7a90(c,a4,a0,a1,bud);
+case 0x5a7ac1:[[clang::musttail]] return blk_5a7ac1(c,a4,a0,a1,bud);
+case 0x5a7ace:[[clang::musttail]] return blk_5a7ace(c,a4,a0,a1,bud);
+case 0x5a7adc:[[clang::musttail]] return blk_5a7adc(c,a4,a0,a1,bud);
+case 0x5a7aef:[[clang::musttail]] return blk_5a7aef(c,a4,a0,a1,bud);
+case 0x5a7b02:[[clang::musttail]] return blk_5a7b02(c,a4,a0,a1,bud);
+case 0x5a7b0f:[[clang::musttail]] return blk_5a7b0f(c,a4,a0,a1,bud);
+case 0x5a7b1d:[[clang::musttail]] return blk_5a7b1d(c,a4,a0,a1,bud);
+case 0x5a7b30:[[clang::musttail]] return blk_5a7b30(c,a4,a0,a1,bud);
+case 0x5a7b32:[[clang::musttail]] return blk_5a7b32(c,a4,a0,a1,bud);
+case 0x5a7b80:[[clang::musttail]] return blk_5a7b80(c,a4,a0,a1,bud);
+case 0x5a7bc4:[[clang::musttail]] return blk_5a7bc4(c,a4,a0,a1,bud);
+case 0x5a7beb:[[clang::musttail]] return blk_5a7beb(c,a4,a0,a1,bud);
+case 0x5a7c12:[[clang::musttail]] return blk_5a7c12(c,a4,a0,a1,bud);
+case 0x5a7c39:[[clang::musttail]] return blk_5a7c39(c,a4,a0,a1,bud);
+case 0x5a7c7d:[[clang::musttail]] return blk_5a7c7d(c,a4,a0,a1,bud);
+case 0x5a7cb0:[[clang::musttail]] return blk_5a7cb0(c,a4,a0,a1,bud);
+case 0x5a7ce0:[[clang::musttail]] return blk_5a7ce0(c,a4,a0,a1,bud);
+case 0x5a7cff:[[clang::musttail]] return blk_5a7cff(c,a4,a0,a1,bud);
+case 0x5a7d1f:[[clang::musttail]] return blk_5a7d1f(c,a4,a0,a1,bud);
+case 0x5a7d6f:[[clang::musttail]] return blk_5a7d6f(c,a4,a0,a1,bud);
+case 0x5a7da0:[[clang::musttail]] return blk_5a7da0(c,a4,a0,a1,bud);
+case 0x5a7dd8:[[clang::musttail]] return blk_5a7dd8(c,a4,a0,a1,bud);
+case 0x5a7e05:[[clang::musttail]] return blk_5a7e05(c,a4,a0,a1,bud);
+case 0x5a7e10:[[clang::musttail]] return blk_5a7e10(c,a4,a0,a1,bud);
+case 0x5a7e1a:[[clang::musttail]] return blk_5a7e1a(c,a4,a0,a1,bud);
+case 0x5a7e3d:[[clang::musttail]] return blk_5a7e3d(c,a4,a0,a1,bud);
+case 0x5a7e4e:[[clang::musttail]] return blk_5a7e4e(c,a4,a0,a1,bud);
+case 0x5a7e5d:[[clang::musttail]] return blk_5a7e5d(c,a4,a0,a1,bud);
+case 0x5a7e6b:[[clang::musttail]] return blk_5a7e6b(c,a4,a0,a1,bud);
+case 0x5a7e73:[[clang::musttail]] return blk_5a7e73(c,a4,a0,a1,bud);
+case 0x5a7e81:[[clang::musttail]] return blk_5a7e81(c,a4,a0,a1,bud);
+case 0x5a7ea3:[[clang::musttail]] return blk_5a7ea3(c,a4,a0,a1,bud);
+case 0x5a7ead:[[clang::musttail]] return blk_5a7ead(c,a4,a0,a1,bud);
+case 0x5a7ebe:[[clang::musttail]] return blk_5a7ebe(c,a4,a0,a1,bud);
+case 0x5a7ec4:[[clang::musttail]] return blk_5a7ec4(c,a4,a0,a1,bud);
+case 0x5a7ef6:[[clang::musttail]] return blk_5a7ef6(c,a4,a0,a1,bud);
+case 0x5a7f30:[[clang::musttail]] return blk_5a7f30(c,a4,a0,a1,bud);
+case 0x5a7f73:[[clang::musttail]] return blk_5a7f73(c,a4,a0,a1,bud);
+default:missing_instruction(c.pc);}}
+u32 page_5a7(Cpu& c){u8* R=c.regs.data();return ent_5a7(c,r4(R+16),r4(R+0),r4(R+4),REG_BUDGET);}
+#undef EXIT
+}

@@ -1,0 +1,9 @@
+fast_platform 1 0.142358
+fast_dynamic 1 21.1027
+fast_dynamic_boot 0 0
+fast_widescreen 1 0.160425
+fast_widescreen_scaled 1 0.0886969
+fast_seh 1 0.119479
+fast_resources 1 0.126884
+---
+fast_dynamic_boot

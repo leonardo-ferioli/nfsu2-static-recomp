@@ -12,6 +12,8 @@
 #include <vector>
 
 namespace nfsu2raw {
+// A block of the guest image held as data inside the program (see tools/embed_image.py).
+struct EmbeddedImageBlock{uint32_t base,size;const uint8_t* data;};
 class NativePlatform {
 public:
     // Tests and diagnostics: guest data blocks come from exported memory files.
@@ -20,6 +22,9 @@ public:
     // SHA-256 and every mapped block have been checked. No original game bytes are shipped with the program.
     struct FromExecutable{};
     NativePlatform(Cpu&,const std::filesystem::path& game_directory,FromExecutable);
+    // The guest image comes from data held in the program itself: SPEED2.EXE is not read. Every block is still checked against its SHA-256.
+    struct FromEmbedded{const EmbeddedImageBlock* blocks;unsigned count;};
+    NativePlatform(Cpu&,const std::filesystem::path& game_directory,FromEmbedded);
     ~NativePlatform();
     bool dispatch(Cpu&);
     void run(uint64_t budget,const std::filesystem::path& trace);
