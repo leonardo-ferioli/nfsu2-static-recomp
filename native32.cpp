@@ -89,6 +89,7 @@ LONG CALLBACK native_fault_guard(EXCEPTION_POINTERS* e){
         HANDLE file=CreateFileA(crash_report_path.c_str(),FILE_APPEND_DATA,FILE_SHARE_READ,nullptr,OPEN_ALWAYS,FILE_ATTRIBUTE_NORMAL,nullptr);
         if(file!=INVALID_HANDLE_VALUE){WriteFile(file,text,DWORD(std::max(n,0)),&written,nullptr);CloseHandle(file);}
     }
+    if(current_platform)current_platform->finish_d3d9_recorder();   // best effort: a crash still leaves a closed trace
     ClipCursor(nullptr);
     ExitProcess(1);
 }
@@ -776,7 +777,7 @@ bool NativePlatform::dispatch(Cpu& c){
     const uint64_t light_started=(profiling && !profiling_full && route.id)?profile_clock():0;
     D3d9Recorder* const recorder=d3d9_recorder_ptr.load(std::memory_order_relaxed);
     const bool recording=recorder && &c==&main_cpu;
-    if(recording){if(!std::strcmp(resolved_name,"ExitProcess") || !std::strcmp(resolved_name,"TerminateProcess"))recorder->finish();else recorder->before(uint32_t(target),original_sp);}
+    if(recording){if(!std::strcmp(resolved_name,"ExitProcess") || !std::strcmp(resolved_name,"TerminateProcess"))recorder->finish();else if(!std::strcmp(resolved_name,"PostQuitMessage") || !std::strcmp(resolved_name,"DestroyWindow"))recorder->checkpoint();else recorder->before(uint32_t(target),original_sp);}
     invoke_native32(&frame);const DWORD guest_error=__readfsdword(0x34);
     if(recording){if(route.d3d_create && frame.eax)recorder->created_d3d9(frame.eax);recorder->after(uint32_t(target),original_sp,frame.eax,c.instructions);}invalidate_native_memory();s4(teb+0x34,guest_error);
     if(light_started)light_ticks[route.id].fetch_add(profile_clock()-light_started,std::memory_order_relaxed);
@@ -939,6 +940,7 @@ uint32_t NativePlatform::call_guest(uint32_t address,uint32_t ecx,uint32_t edx,s
 uint32_t NativePlatform::window_callback(unsigned slot,std::initializer_list<uint32_t> args){
     uint32_t address;{std::lock_guard lock(state_mutex);address=slot<window_proc_count?window_procs[slot]:0;}
     if(!address){record("CALLBACK FAULT window procedure slot has no guest target");return 0;}
+    if(auto* recorder=d3d9_recorder_ptr.load(std::memory_order_relaxed)){const uint32_t message=args.size()>1?*(args.begin()+1):0;if(message==WM_CLOSE||message==WM_DESTROY||message==WM_QUIT)recorder->checkpoint();}   // the window is closing: flush what is recorded
     return callback(address,args);
 }
 std::string NativePlatform::set_d3d9_recorder(const RecorderOptions& options){

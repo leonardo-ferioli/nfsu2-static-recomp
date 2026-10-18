@@ -30,7 +30,8 @@ enum Op : uint8_t {
     op_truncated,                                 // the size limit was reached: later data blobs are missing
     op_window_begin,                              // window index, frame: state and draw calls are recorded from here (a state snapshot follows)
     op_window_end,                                // window index, frame, draws, reference images
-    op_end
+    op_end,
+    op_checkpoint                                 // frame, complete windows so far: written and flushed at every window close, so a killed game still leaves a valid trace
 };
 
 struct Blob { uint64_t offset = 0; uint32_t size = 0; };

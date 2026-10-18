@@ -231,7 +231,7 @@ struct Replayer {
             device.draw_up(w[0], w[1], {reinterpret_cast<const std::byte*>(data.data()), data.size()}, w[2]);
             break;
         }
-        case op_reference_image: case op_truncated: case op_window_begin: case op_window_end: case op_end: break;
+        case op_reference_image: case op_truncated: case op_window_begin: case op_window_end: case op_end: case op_checkpoint: break;
         case op_unknown_call: ++stats.unsupported; break;
         default: ++stats.unsupported; break;
         }

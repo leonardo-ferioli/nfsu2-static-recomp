@@ -74,6 +74,7 @@ public:
     void set_vsync(bool on){vsync_on=on;}
     // Records the game's Direct3D 9 calls and data (d3d9_recorder.hpp). Turns the state cache off (the trace should hold every call). Returns an error text, empty on success.
     std::string set_d3d9_recorder(const RecorderOptions& options);
+    void finish_d3d9_recorder(){if(auto* r=d3d9_recorder_ptr.load())r->finish();}
     void register_dynamic_region(uint32_t base,uint32_t size);
     uint64_t dynamic_instructions_decoded() const{auto* d=dynamic.load();return d?d->decoded_count():0;}
 private:

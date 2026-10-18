@@ -38,6 +38,8 @@ public:
     // then the stdcall arguments). `before` runs ahead of the call (data that the call invalidates), `after` once it returned.
     void before(uint32_t target, uint32_t sp);
     void after(uint32_t target, uint32_t sp, uint32_t eax, uint64_t main_thread_instructions);
+    // Everything written so far reaches the disk (the game is closing its window, a console event arrived...).
+    void checkpoint();
     void finish();
 private:
     struct Impl;

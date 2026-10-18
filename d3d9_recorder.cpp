@@ -43,6 +43,15 @@ uint32_t declaration_size(uint32_t address) {   // D3DVERTEXELEMENT9 array up to
 }
 }  // namespace
 
+namespace {
+std::atomic<D3d9Recorder*> g_console_recorder{nullptr};
+BOOL WINAPI console_event(DWORD type) {   // Ctrl+C, Ctrl+Break, the console being closed, logoff, shutdown: leave a complete trace, then let Windows do its default
+    if (D3d9Recorder* r = g_console_recorder.load()) r->finish();
+    (void)type;
+    return FALSE;
+}
+}  // namespace
+
 struct D3d9Recorder::Impl {
     RecorderOptions options;
     TraceWriter writer;
@@ -68,6 +77,7 @@ struct D3d9Recorder::Impl {
     std::FILE* log = nullptr;
     ULONGLONG started = 0, last_beat = 0;
     std::atomic<bool> open_pending{false}, stop_poller{false};
+    std::recursive_mutex io_mutex;   // the writer is used by the game thread and, at the end, by console-event and exit paths
     bool finished = false;
     std::thread poller;
     std::mutex log_mutex;
@@ -184,6 +194,7 @@ struct D3d9Recorder::Impl {
     void close_window() {
         if (!active) return;
         writer.record(op_window_end, {uint32_t(window_index), uint32_t(frame), uint32_t(window_draws), uint32_t(window_images)});
+        writer.record(op_checkpoint, {uint32_t(frame), uint32_t(window_index + 1)});
         char text[600];
         const uint64_t frames_in_window = frame > window_start ? frame - window_start : 1;
         std::snprintf(text, sizeof text, "WINDOW %llu CLOSED at frame %llu: frames %llu..%llu, %llu draws (%.0f per frame), last viewport %ux%u, %llu reference images [%s]", (unsigned long long)window_index, (unsigned long long)frame,
@@ -295,6 +306,7 @@ D3d9Recorder::D3d9Recorder(const RecorderOptions& options) : impl_(new Impl) {
     impl_->options = options;
     ok_ = impl_->writer.open(options.directory, options.max_blob_mb * 1048576ull, error_);
     if (ok_) DeleteFileA((options.directory / "START").string().c_str());   // a START file left from an earlier run must not trigger this one
+    if (ok_) { g_console_recorder.store(this); SetConsoleCtrlHandler(console_event, TRUE); }
     if (ok_) impl_->poller = std::thread([this] { impl_->poll_loop(); });
     if (ok_) {
         impl_->log = std::fopen((options.directory / "recorder.log").string().c_str(), "w");
@@ -303,12 +315,22 @@ D3d9Recorder::D3d9Recorder(const RecorderOptions& options) : impl_(new Impl) {
     }
 }
 
-D3d9Recorder::~D3d9Recorder() { finish(); if (impl_ && impl_->poller.joinable()) { impl_->stop_poller.store(true); impl_->poller.join(); } }
+D3d9Recorder::~D3d9Recorder() { g_console_recorder.store(nullptr); finish(); if (impl_ && impl_->poller.joinable()) { impl_->stop_poller.store(true); impl_->poller.join(); } }
 
-void D3d9Recorder::created_d3d9(uint32_t object) { impl_->d3d9_object = object; }
+
+void D3d9Recorder::created_d3d9(uint32_t object) { std::lock_guard<std::recursive_mutex> lock(impl_->io_mutex); impl_->d3d9_object = object; }
+
+void D3d9Recorder::checkpoint() {
+    if (!impl_) return;
+    std::lock_guard<std::recursive_mutex> lock(impl_->io_mutex);
+    if (!impl_->writer.is_open()) return;
+    if (impl_->active) impl_->note("checkpoint (the game is closing or a console event arrived): the window in progress is incomplete");
+    impl_->writer.flush();
+}
 
 void D3d9Recorder::before(uint32_t target, uint32_t sp) {
     Impl& r = *impl_;
+    std::lock_guard<std::recursive_mutex> lock(r.io_mutex);
     if (!ok_ || !r.writer.is_open()) return;
     const uint32_t* a = reinterpret_cast<const uint32_t*>(uintptr_t(sp + 4));
     bool known;
@@ -349,6 +371,7 @@ void D3d9Recorder::before(uint32_t target, uint32_t sp) {
 
 void D3d9Recorder::after(uint32_t target, uint32_t sp, uint32_t eax, uint64_t instructions) {
     Impl& r = *impl_;
+    std::lock_guard<std::recursive_mutex> lock(r.io_mutex);
     if (!ok_ || !r.writer.is_open()) return;
     const uint32_t* a = reinterpret_cast<const uint32_t*>(uintptr_t(sp + 4));
     r.instructions = instructions;
@@ -525,7 +548,9 @@ void D3d9Recorder::after(uint32_t target, uint32_t sp, uint32_t eax, uint64_t in
 }
 
 void D3d9Recorder::finish() {
-    if (!impl_ || !impl_->writer.is_open() || impl_->finished) return;
+    if (!impl_) return;
+    std::lock_guard<std::recursive_mutex> lock(impl_->io_mutex);
+    if (!impl_->writer.is_open() || impl_->finished) return;
     Impl& r = *impl_;
     r.finished = true;
     r.stop_poller.store(true);
