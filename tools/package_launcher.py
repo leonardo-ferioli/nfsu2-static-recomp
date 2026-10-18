@@ -42,6 +42,8 @@ INI = """; NFS Underground 2 - NUE - launcher configuration. Every line is optio
 ; Performance report: every 5 s logs/native_trace.log gets the fps, the time spent inside each Direct3D call per frame, call counts,
 ; the state cache hit rate and memory. Costs a little speed; use it to find out what limits the frame rate (same as --profile).
 ;profile=off
+; Frame rate only: every 5 s logs/native_trace.log gets the fps and the frame-time percentiles (median, 99th, worst). Costs almost nothing, unlike profile (same as --fps-log).
+;fps_log=off
 ; Specification used to interpret code the game generates at run time (see README.txt, "Third-party component").
 ; Default: sleigh\\x86.sla next to the launcher; its SHA-256 is verified at start.
 ;sleigh_spec=sleigh\\x86.sla

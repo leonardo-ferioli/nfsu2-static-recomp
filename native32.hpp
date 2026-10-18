@@ -65,6 +65,8 @@ public:
     // Present with the display's vertical sync (IDirect3D9::CreateDevice/Reset presentation parameters whose interval is
     // IMMEDIATE are changed to ONE): no tearing, at the price of whole-refresh frame times when a frame is late.
     void set_vsync(bool on){vsync_on=on;}
+    // Logs the frame rate and frame-time percentiles every 5 s to the trace log (one QueryPerformanceCounter per frame; no sampling).
+    void set_fps_log(bool on){fps_log_on=on;}
     void register_dynamic_region(uint32_t base,uint32_t size);
     uint64_t dynamic_instructions_decoded() const{auto* d=dynamic.load();return d?d->decoded_count():0;}
 private:
@@ -93,7 +95,7 @@ private:
     std::map<uint32_t,std::string> dynamic_names;
     std::map<uint32_t,unsigned> input_objects;
     std::atomic<unsigned> frame_limit{0};
-    std::atomic<bool> state_cache_on{false},vsync_on{false};
+    std::atomic<bool> state_cache_on{false},vsync_on{false},fps_log_on{false};
     std::atomic<uint32_t> input_bloom{0};  // one bit per (address>>4)&31 of every DirectInput object ever created: a clear bit means 'not one'
     uint32_t window_procs[window_proc_slots]={};unsigned window_proc_count=0;
     uint32_t exception_filter=0;
@@ -114,6 +116,7 @@ private:
     uintptr_t resolve_uncached(uint32_t token);
     void profile_native_call(Cpu& c,uint32_t target,const char* import_name,uint64_t ticks);
     void limit_frame_rate(unsigned frames_per_second);
+    void fps_frame();
     void* exception_guard=nullptr;
     void prepare(Cpu&);
     void initialize_cpu(Cpu&,uint32_t stack,uint32_t teb);

@@ -66,7 +66,7 @@ struct Config {
     unsigned log_max_kb = 1024, log_keep = 3, watchdog_seconds = 0;
     uint64_t max_instructions = 0;  // 0: unlimited
     WidescreenSettings widescreen;
-    bool dialogs = true, verify_only = false, info = false, help = false, version = false, trace = true, state_cache = true, vsync = false, profile = false;
+    bool dialogs = true, verify_only = false, info = false, help = false, version = false, trace = true, state_cache = true, vsync = false, profile = false, fps_log = false;
 };
 
 std::string trim(std::string s) {
@@ -296,6 +296,7 @@ void apply_setting(Config& config, const std::string& key, const std::string& va
     else if (key == "state_cache") config.state_cache = parse_bool(value, true);
     else if (key == "vsync") config.vsync = parse_bool(value, false);
     else if (key == "profile") config.profile = parse_bool(value, false);
+    else if (key == "fps_log") config.fps_log = parse_bool(value, false);
     else if (key == "trace") config.trace = parse_bool(value, true);
     else throw std::runtime_error(origin + ": unknown key " + key);
 }
@@ -344,6 +345,7 @@ const char* usage_text =
     "  --fps-limit N        limita los fotogramas por segundo (0 = sin limite; -1 = tasa del monitor; -2 = el doble; por defecto 60)\n"
     "  --no-state-cache     no omite las llamadas de estado de Direct3D que repiten el valor actual\n"
     "  --vsync              fuerza la sincronizacion vertical (evita el desgarro de imagen)\n"
+    "  --fps-log            cada 5 s anota en logs/native_trace.log los fps y los tiempos de fotograma (casi sin costo; sin --profile)\n"
     "  --profile            cada 5 s anota en logs/native_trace.log fps, tiempo dentro de Direct3D y otros datos de rendimiento\n"
     "  --no-widescreen      desactiva el parche de pantalla ancha (resolucion original 640x480)\n"
     "  --width N --height N resolucion de pantalla ancha; con estas opciones se usa siempre, aunque haya otra guardada\n"
@@ -380,6 +382,7 @@ Config parse_arguments(int argc, char** argv) {
         else if (arg == "--no-state-cache") overrides["state_cache"] = "off";
         else if (arg == "--vsync") overrides["vsync"] = "on";
         else if (arg == "--profile") overrides["profile"] = "on";
+        else if (arg == "--fps-log") overrides["fps_log"] = "on";
         else if (arg == "--no-widescreen") widescreen_overrides.emplace_back("enabled", "off");
         else if (arg == "--width") { widescreen_overrides.emplace_back("width", value()); widescreen_overrides.emplace_back("force_resolution", "on"); given_size = true; }
         else if (arg == "--height") { widescreen_overrides.emplace_back("height", value()); widescreen_overrides.emplace_back("force_resolution", "on"); given_size = true; }
@@ -515,6 +518,7 @@ static int launcher_main(int argc, char** argv) {
         platform.set_frame_limit(fps_cap);
         platform.set_state_cache(config.state_cache);
         platform.set_vsync(config.vsync);
+        platform.set_fps_log(config.fps_log);
         logger.info(config.vsync ? "vertical sync: forced on" : "vertical sync: as the game asks");
         logger.info(config.state_cache ? "Direct3D state cache: on" : "Direct3D state cache: off");
         logger.info(fps_cap ? "frame-rate cap: " + std::to_string(fps_cap) + " fps" : std::string("frame-rate cap: off"));
