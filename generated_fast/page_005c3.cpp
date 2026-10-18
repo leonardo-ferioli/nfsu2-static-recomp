@@ -1559,7 +1559,7 @@ B5c315a:{NFSU2_TR(0x5c315a);
 w4(R+0,u32(u32(r4(R+0))-u32(r4(R+8))));
 }
 B5c315c:{NFSU2_TR(0x5c315c);
-{u32 ea_=u32(r4(MODV+272));__asm__ volatile(".byte 0xda,0x08"::"a"(ea_):"memory");}
+{u32 ea_=u32(r4(MODV+280));__asm__ volatile(".byte 0xda,0x08"::"a"(ea_):"memory");}
 }
 B5c3162:{NFSU2_TR(0x5c3162);
 u8 U[4];

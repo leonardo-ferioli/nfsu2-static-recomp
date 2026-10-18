@@ -245,6 +245,12 @@ def interface_anchoring(s):
         raise ValueError("the interface quad routine moved")
     for name, address in loads.items():
         s.hook(name, address, address + s.lengths[address])
+    # The routine that draws one interface object: a list of quads (the letters of a text, the slices of an image) at [ECX+18h].
+    batch = P.get("53 55 56 57 6A 00 8B F9 E8 ? ? ? ? 8B 77 18 8D 5F 18", count=1)
+    if batch != 0x51a5d0:
+        raise ValueError("the interface object routine moved")
+    s.hook("fe_batch_begin", batch, mode="before")
+    s.hook("fe_batch_end", 0x51a634, mode="before")    # its RET
     s.data_pointer("fe_scale_y", 0x5c508d + 2)   # FMUL float ptr [0x79ac14]: the vertical factor, next to the horizontal one
 
 

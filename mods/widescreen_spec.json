@@ -193,6 +193,14 @@
    "default": 0
   },
   {
+   "name": "hook_fe_batch_begin",
+   "default": 0
+  },
+  {
+   "name": "hook_fe_batch_end",
+   "default": 0
+  },
+  {
    "name": "hook_fov",
    "default": 0
   },
@@ -878,6 +886,20 @@
    "begin": 5299606,
    "end": 5299609,
    "mode": "replace",
+   "pop": 0
+  },
+  {
+   "name": "fe_batch_begin",
+   "begin": 5350864,
+   "end": null,
+   "mode": "before",
+   "pop": 0
+  },
+  {
+   "name": "fe_batch_end",
+   "begin": 5350964,
+   "end": null,
+   "mode": "before",
    "pop": 0
   },
   {

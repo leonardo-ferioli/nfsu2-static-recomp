@@ -4834,7 +4834,7 @@ __builtin_memmove((R+0),(U+4),4);
 }
 B4a888a:{NFSU2_TR(0x4a888a);
 u8 U[4];
-__builtin_memmove((U+0),(MODV+308),4);
+__builtin_memmove((U+0),(MODV+316),4);
 w4(R+16,u32(u32(r4(R+16))-u32(u32(0x4ull))));
 s4(u32(r4(R+16)),r4(U+0));
 }
@@ -5136,7 +5136,7 @@ __builtin_memmove((R+0),(U+4),4);
 }
 B4a895a:{NFSU2_TR(0x4a895a);
 u8 U[4];
-__builtin_memmove((U+0),(MODV+312),4);
+__builtin_memmove((U+0),(MODV+320),4);
 w4(R+16,u32(u32(r4(R+16))-u32(u32(0x4ull))));
 s4(u32(r4(R+16)),r4(U+0));
 }
@@ -5960,7 +5960,7 @@ __builtin_memmove((R+0),(U+4),4);
 }
 B4a8b73:{NFSU2_TR(0x4a8b73);
 u8 U[4];
-__builtin_memmove((U+0),(MODV+320),4);
+__builtin_memmove((U+0),(MODV+328),4);
 w4(R+16,u32(u32(r4(R+16))-u32(u32(0x4ull))));
 s4(u32(r4(R+16)),r4(U+0));
 }
@@ -6515,7 +6515,7 @@ TAIL_STATIC(0x551de0u,551);
 }
 B4a8cea:L4a8cea:{c.instructions+=5;NFSU2_TR(0x4a8cea);
 u8 U[4];
-__builtin_memmove((U+0),(MODV+316),4);
+__builtin_memmove((U+0),(MODV+324),4);
 w4(R+16,u32(u32(r4(R+16))-u32(u32(0x4ull))));
 s4(u32(r4(R+16)),r4(U+0));
 }

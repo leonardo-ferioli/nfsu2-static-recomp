@@ -2309,7 +2309,7 @@ s4(u32(r4(U+0)),r4(U+4));
 B5c7266:{NFSU2_TR(0x5c7266);
 u8 U[8];
 w4(U+0,u32(u32(u32(0x30ull))+u32(r4(R+16))));
-__builtin_memmove((U+4),(MODV+256),4);
+__builtin_memmove((U+4),(MODV+264),4);
 s4(u32(r4(U+0)),r4(U+4));
 }
 B5c726e:{NFSU2_TR(0x5c726e);
@@ -2321,13 +2321,13 @@ s4(u32(r4(U+0)),r4(U+4));
 B5c7276:{NFSU2_TR(0x5c7276);
 u8 U[8];
 w4(U+0,u32(u32(u32(0x40ull))+u32(r4(R+16))));
-__builtin_memmove((U+4),(MODV+260),4);
+__builtin_memmove((U+4),(MODV+268),4);
 s4(u32(r4(U+0)),r4(U+4));
 }
 B5c727e:{NFSU2_TR(0x5c727e);
 u8 U[8];
 w4(U+0,u32(u32(u32(0x44ull))+u32(r4(R+16))));
-__builtin_memmove((U+4),(MODV+264),4);
+__builtin_memmove((U+4),(MODV+272),4);
 s4(u32(r4(U+0)),r4(U+4));
 }
 B5c7286:{NFSU2_TR(0x5c7286);
@@ -2339,7 +2339,7 @@ s4(u32(r4(U+0)),r4(U+4));
 B5c728e:{NFSU2_TR(0x5c728e);
 u8 U[8];
 w4(U+0,u32(u32(u32(0x54ull))+u32(r4(R+16))));
-__builtin_memmove((U+4),(MODV+268),4);
+__builtin_memmove((U+4),(MODV+276),4);
 s4(u32(r4(U+0)),r4(U+4));
 }
 B5c7296:{NFSU2_TR(0x5c7296);
@@ -6175,7 +6175,7 @@ s4(u32(r4(R+16)),u32(0x5c7ce5ull));
 {u32 t_=u32(r4(U+8));TAIL_DYNAMIC(t_);}
 }
 B5c7ce5:L5c7ce5:{c.instructions+=33;NFSU2_TR(0x5c7ce5);
-if(mod_hook_table[42]){SPILL();c.pc=0x5c7ce5u;mod_hook_table[42](c);SPILL();if(c.pc!=0x5c7ce5u){TAIL_DYNAMIC(c.pc);}goto B5c7ced;}
+if(mod_hook_table[44]){SPILL();c.pc=0x5c7ce5u;mod_hook_table[44](c);SPILL();if(c.pc!=0x5c7ce5u){TAIL_DYNAMIC(c.pc);}goto B5c7ced;}
 {u32 ea_=u32(r4(R+16)+u32(12u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
 }
 B5c7ce9:{NFSU2_TR(0x5c7ce9);
@@ -6209,7 +6209,7 @@ B5c7cff:{NFSU2_TR(0x5c7cff);
 {u32 ea_=u32(r4(R+16)+u32(12u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
 }
 B5c7d03:{NFSU2_TR(0x5c7d03);
-if(mod_hook_table[43]){SPILL();c.pc=0x5c7d03u;mod_hook_table[43](c);SPILL();if(c.pc!=0x5c7d03u){TAIL_DYNAMIC(c.pc);}goto B5c7d0b;}
+if(mod_hook_table[45]){SPILL();c.pc=0x5c7d03u;mod_hook_table[45](c);SPILL();if(c.pc!=0x5c7d03u){TAIL_DYNAMIC(c.pc);}goto B5c7d0b;}
 u8 U[8];
 w4(U+0,u32(u32(u32(0x38ull))+u32(r4(R+16))));
 __builtin_memmove((U+4),(R+0),4);
@@ -7135,7 +7135,7 @@ w4(U+4,u32(u32(r4(U+0))-u32(u32(0x1ull))));
 w1(R+518,u8((r4(U+4))==(u32(0x0ull))));
 }
 B5c7f53:{NFSU2_TR(0x5c7f53);
-if(mod_hook_table[41]){SPILL();c.pc=0x5c7f53u;mod_hook_table[41](c);SPILL();if(c.pc!=0x5c7f53u){TAIL_DYNAMIC(c.pc);}goto B5c7f59;}
+if(mod_hook_table[43]){SPILL();c.pc=0x5c7f53u;mod_hook_table[43](c);SPILL();if(c.pc!=0x5c7f53u){TAIL_DYNAMIC(c.pc);}goto B5c7f59;}
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x58ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
@@ -7151,7 +7151,7 @@ w4(U+4,u32(0x3f800000ull));
 s4(u32(r4(U+0)),r4(U+4));
 }
 B5c7f61:{NFSU2_TR(0x5c7f61);
-if(r4(MODV+196)){goto B5c7f64;}
+if(r4(MODV+204)){goto B5c7f64;}
 {u32 ea_=u32(r4(R+0)+u32(20u));__asm__ volatile(".byte 0xda,0x30"::"a"(ea_):"memory");}
 }
 B5c7f64:{NFSU2_TR(0x5c7f64);
@@ -7312,7 +7312,7 @@ __builtin_memmove((U+4),(R+8),4);
 s4(u32(r4(U+0)),r4(U+4));
 }
 B5c7fe8:{NFSU2_TR(0x5c7fe8);
-{u32 ea_=u32(r4(MODV+200));__asm__ volatile(".byte 0xd8,0x38"::"a"(ea_):"memory");}
+{u32 ea_=u32(r4(MODV+208));__asm__ volatile(".byte 0xd8,0x38"::"a"(ea_):"memory");}
 }
 B5c7fee:{NFSU2_TR(0x5c7fee);
 {u32 ea_=u32(r4(R+16)+u32(28u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
@@ -7324,7 +7324,7 @@ B5c7ff6:{NFSU2_TR(0x5c7ff6);
 {u32 ea_=u32(r4(R+16)+u32(40u));__asm__ volatile(".byte 0xd8,0x08"::"a"(ea_):"memory");}
 }
 B5c7ffa:{NFSU2_TR(0x5c7ffa);
-{u32 ea_=u32(r4(MODV+204));__asm__ volatile(".byte 0xd8,0x08"::"a"(ea_):"memory");}
+{u32 ea_=u32(r4(MODV+212));__asm__ volatile(".byte 0xd8,0x08"::"a"(ea_):"memory");}
 TAIL_STATIC(0x5c8000u,5c8);
 }
 XIT:NFSU2_TR_EXIT(0x5c7,nx);return nx;

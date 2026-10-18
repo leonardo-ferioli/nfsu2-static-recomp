@@ -194,6 +194,32 @@ int main(int argc, char** argv) {
             asm volatile("fninit");
             call_hook(c, "fe_line_bx");
             close_to(pop_x87(), 760 + (width - cx) * k, "line end point moves with its zone");
+            // An interface object draws a list of quads: one decision for the whole list, from the box around all of them. The third quad's own
+            // zone is the middle (x 300..330) but the object's box (100..330) is in the left zone, so all three move left together.
+            {
+                alignas(16) uint32_t memory[256];
+                std::memset(memory, 0, sizeof memory);
+                const uint32_t batch = uint32_t(uintptr_t(memory)), head = batch + 0x18;
+                uint32_t node[3];
+                for (int n = 0; n < 3; ++n) node[n] = batch + 0x40 + 0x60 * n;
+                u32_at(head) = node[0];
+                for (int n = 0; n < 3; ++n) u32_at(node[n]) = n < 2 ? node[n + 1] : head;
+                const float boxes[3][4] = {{100, 140, 20, 40}, {150, 190, 20, 40}, {300, 330, 20, 40}};   // x0, x1, y0, y1
+                for (int n = 0; n < 3; ++n)
+                    for (int corner = 0; corner < 4; ++corner) {
+                        f32_at(node[n] + 0x10 + 0x10 * corner) = (corner & 1) ? boxes[n][1] : boxes[n][0];
+                        f32_at(node[n] + 0x10 + 0x10 * corner + 4) = (corner & 2) ? boxes[n][3] : boxes[n][2];
+                    }
+                wr<4>(c, 4, batch);
+                call_hook(c, "fe_batch_begin");
+                for (int n = 0; n < 3; ++n) {
+                    wr<4>(c, 24, node[n] + 0x10);
+                    asm volatile("fninit");
+                    call_hook(c, "fe_quad_x0");
+                    close_to(pop_x87(), boxes[n][0] + (0 - cx) * k, "every quad of an object moves with the object's zone (quad " + std::to_string(n) + ")");
+                }
+                call_hook(c, "fe_batch_end");
+            }
             // outside a race nothing is scaled; a full-height 4:3 backdrop is widened to the whole screen
             i32_at(address_of("game_state")) = 0;
             close_to(load("fe_quad_x0", float(cx - 320), float(cx + 320), 0, float(height)), cx + (-320) * (width / 640.0), "backdrop is widened to the full width");
