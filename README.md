@@ -95,6 +95,13 @@ second; the main thread is the bottleneck (translated code plus roughly 58,000 D
 Direct3D state cache exist. Races ran at 27–43 fps in the last user measurements; 60 fps is not reached. A memory report was
 added to the profiler (`NFSU2_PROFILE=1`) because the long-term target is a **2 GB process budget**.
 
+Latest measurement (user's race, 2496×1664): the main thread is ~95% busy, about half of it inside Direct3D 9 / the driver
+(roughly 20,000 guest→Windows calls per frame, of which texture AddRef/Release alone are ~13,000). The guest→Windows bridge itself costs
+about 60 ns per call, so the time is in Direct3D, not in the bridge. Changes made from that: the state cache now also covers textures,
+shaders, vertex declaration, streams, indices and shader constants (`d3d_shadow.hpp`, unit-tested); the process opts out of Windows 11
+efficiency-core/timer-resolution throttling and asks hybrid-graphics laptops for the fast GPU; `--profile` reports the time spent in each
+Direct3D call per frame so that the next step (e.g. a render thread) is chosen from numbers.
+
 ## Repository layout
 
 | Path | Contents |

@@ -9,6 +9,7 @@
 #include <dinput.h>
 #include <cstddef>
 #include "native32.hpp"
+#include "d3d_shadow.hpp"
 #include <algorithm>
 #include <iomanip>
 #include <sstream>
@@ -127,6 +128,7 @@ bool profile_enabled(){static const bool on=GetEnvironmentVariableA("NFSU2_PROFI
 bool profile_full(){static const bool on=[]{char v[16];return GetEnvironmentVariableA("NFSU2_PROFILE",v,sizeof(v))&&!std::strcmp(v,"full");}();return on;}
 constexpr unsigned light_slots=8192;
 std::atomic<uint64_t> light_counts[light_slots];
+std::atomic<uint64_t> light_ticks[light_slots];      // time spent inside each native target (light profile; QueryPerformanceCounter ticks)
 std::string light_labels[light_slots];      // written under profile_mutex when a route is created
 uint32_t light_targets[light_slots];       // native address behind each slot
 std::atomic<uint32_t> light_next{1},light_present{0};
@@ -163,8 +165,28 @@ struct ProfileThreadScope{
     ProfileThreadScope(Cpu* cpu,uint32_t entry){if(profile_enabled())info=profile_register_thread(cpu,entry);}
     ~ProfileThreadScope(){if(!info)return;std::lock_guard lock(profile_mutex);info->alive=false;info->cpu=nullptr;my_thread_profile=nullptr;}
 };
+// Bindings and constants of the device (d3d_shadow.hpp); the call targets that matter are found by hashing, filled in when the device is known.
+DeviceShadow device_shadow;
+uint32_t bind_hash_target[64];uint8_t bind_hash_kind[64];
 void clear_state_cache(){
     std::memset(cached_render_state,0,sizeof(cached_render_state));std::memset(cached_sampler_state,0,sizeof(cached_sampler_state));std::memset(cached_stage_state,0,sizeof(cached_stage_state));
+    device_shadow.clear();
+}
+inline uint32_t guest_u32(uint32_t address){uint32_t v;std::memcpy(&v,reinterpret_cast<const void*>(uintptr_t(address)),4);return v;}
+void register_bind_targets(uint32_t vtable){
+    std::memset(bind_hash_target,0,sizeof(bind_hash_target));
+    for(unsigned i=0;i<bind_slot_count;++i){
+        const uint32_t target=guest_u32(vtable+bind_slot_numbers[i]*4);
+        if(!target)continue;
+        unsigned at=(target*2654435761u)>>26;
+        while(bind_hash_target[at] && bind_hash_target[at]!=target)at=(at+1)&63;
+        bind_hash_target[at]=target;bind_hash_kind[at]=bind_slot_kinds[i];
+    }
+}
+inline uint8_t bind_kind_of(uint32_t target){
+    unsigned at=(target*2654435761u)>>26;
+    for(unsigned n=0;n<64;++n,at=(at+1)&63){if(bind_hash_target[at]==target)return bind_hash_kind[at];if(!bind_hash_target[at])return BindNone;}
+    return BindNone;
 }
 // Cached slot and argument count of a device state method: 1 render state, 2 texture stage state, 3 sampler state.
 uint64_t* state_slot(unsigned kind,uint32_t first,uint32_t second){
@@ -546,7 +568,7 @@ bool NativePlatform::dispatch(Cpu& c){
     // Device state cache: a state call that would set what the device already holds returns S_OK without calling Windows.
     // State blocks keep it honest: while one is being recorded the calls are not applied (neither skipped nor remembered), and
     // applying one changes the device's state out of sight (the cache is emptied).
-    unsigned state_kind=0;
+    unsigned state_kind=0;uint8_t bind_kind=BindNone;uint32_t bind_args[4]={};
     if(state_cache_on.load(std::memory_order_relaxed) && state_target[0].load(std::memory_order_relaxed) && &c==&main_cpu && !state_cache_disabled.load(std::memory_order_relaxed)){
         const uint32_t t=uint32_t(target);
         const bool recording=state_recording.load(std::memory_order_relaxed);
@@ -556,6 +578,11 @@ bool NativePlatform::dispatch(Cpu& c){
         else if(t==state_reset_target[0].load(std::memory_order_relaxed) || t==state_reset_target[1].load(std::memory_order_relaxed))clear_state_cache();   // Release, Reset
         else if(t==state_reset_target[3].load(std::memory_order_relaxed))state_recording=true;                                                              // BeginStateBlock
         else if(state_apply_target.load(std::memory_order_relaxed)==t)clear_state_cache();                                                                   // IDirect3DStateBlock9::Apply
+        else if(!recording)bind_kind=bind_kind_of(t);
+        if(bind_kind){
+            for(unsigned i=0;i<bind_argument_count(bind_kind);++i)bind_args[i]=g4(original_sp+8+4*i);
+            if(const unsigned pop=device_shadow.redundant(bind_kind,bind_args)){state_cache_hits.fetch_add(1,std::memory_order_relaxed);returned(c,0,pop);return true;}
+        }
         if(state_kind){
             const uint32_t first=g4(original_sp+8),second=g4(original_sp+12);
             const uint32_t value=state_kind==1?second:g4(original_sp+16);
@@ -731,7 +758,9 @@ bool NativePlatform::dispatch(Cpu& c){
     {const uint32_t last_error=g4(teb+0x34);asm volatile("movl %0,%%fs:0x34"::"r"(last_error):"memory");}   // what SetLastError does
     const bool profiling=profile_enabled(),profiling_full=profiling&&profile_full();const uint64_t started=profiling_full?profile_clock():0;
     const char* profile_name=resolved_name;
+    const uint64_t light_started=(profiling && !profiling_full && route.id)?profile_clock():0;
     invoke_native32(&frame);const DWORD guest_error=__readfsdword(0x34);invalidate_native_memory();s4(teb+0x34,guest_error);
+    if(light_started)light_ticks[route.id].fetch_add(profile_clock()-light_started,std::memory_order_relaxed);
     const unsigned limit=frame_limit.load(std::memory_order_relaxed);
     if((profiling && !profiling_full) || limit || state_cache_on.load(std::memory_order_relaxed) || vsync_on.load(std::memory_order_relaxed)){
         if(route.id)light_counts[route.id].fetch_add(1,std::memory_order_relaxed);
@@ -750,7 +779,7 @@ bool NativePlatform::dispatch(Cpu& c){
                 if(device){
                     light_device=device;
                     const uint32_t vtable=g4(device);
-                    state_target[0]=g4(vtable+57*4);state_target[1]=g4(vtable+67*4);state_target[2]=g4(vtable+69*4);
+                    state_target[0]=g4(vtable+57*4);state_target[1]=g4(vtable+67*4);state_target[2]=g4(vtable+69*4);register_bind_targets(vtable);
                     state_reset_target[0]=g4(vtable+2*4);state_reset_target[1]=g4(vtable+16*4);
                     state_reset_target[2]=g4(vtable+59*4);state_reset_target[3]=g4(vtable+60*4);state_reset_target[4]=g4(vtable+61*4);
                     light_present.store(g4(vtable+17*4));
@@ -796,6 +825,7 @@ bool NativePlatform::dispatch(Cpu& c){
         const uint32_t value=state_kind==1?second:g4(original_sp+16);
         if(uint64_t* slot=state_kind==1?state_slot(1,first,0):state_slot(state_kind,first,second))*slot=frame.eax==0?(0x100000000ull|value):0;
     }
+    if(bind_kind)device_shadow.remember(bind_kind,bind_args,frame.eax);
     if(enum_index!=UINT_MAX){wm<4>(c,original_sp+4+enum_index*4,enumeration.address);wm<4>(c,original_sp+4+(enum_index+1)*4,enumeration.reference);}
     if(input_out && int32_t(frame.eax)>=0){auto created=uint32_t(m<4>(c,input_out));if(created){std::lock_guard lock(state_mutex);input_objects[created]=input_kind;input_bloom|=1u<<((created>>4)&31);}}
     if(existing_input && trace_input()){
@@ -1113,6 +1143,7 @@ void NativePlatform::run(uint64_t budget,const std::filesystem::path& log){
         const bool light=!profile_full();
         uint64_t window_start=profile_clock(),last_instructions=main_cpu.instructions,last_process=process_cpu_100ns(),last_thread=thread_cpu_100ns(main_handle),last_present=0;
         std::vector<uint64_t> last_counts(light_slots,0);
+        std::vector<uint64_t> last_ticks(light_slots,0);
         while(!stopping){
             std::this_thread::sleep_for(std::chrono::milliseconds(2));
             const uint32_t pc=main_cpu.pc;
@@ -1144,6 +1175,9 @@ void NativePlatform::run(uint64_t budget,const std::filesystem::path& log){
             const unsigned used=std::min<uint32_t>(light_next.load(),light_slots);
             for(unsigned i=1;i<used;++i){const uint64_t value=light_counts[i].load(std::memory_order_relaxed),delta=value-last_counts[i];last_counts[i]=value;total_calls+=delta;if(delta)top.push_back({delta,i});}
             std::sort(top.rbegin(),top.rend());
+            uint64_t total_ticks=0;std::vector<std::pair<uint64_t,unsigned>> slow;
+            for(unsigned i=1;i<used;++i){const uint64_t value=light_ticks[i].load(std::memory_order_relaxed),delta=value-last_ticks[i];last_ticks[i]=value;total_ticks+=delta;if(delta)slow.push_back({delta,i});}
+            std::sort(slow.rbegin(),slow.rend());
             {
                 std::lock_guard lock(profile_mutex);
                 const double outside=100.0*double(profile_native_samples)/double(std::max<uint64_t>(profile_sample_total,1));
@@ -1155,6 +1189,14 @@ void NativePlatform::run(uint64_t budget,const std::filesystem::path& log){
                     std::string object_method;if(!method)object_method=d3d9_object_method_name(slot_target);
                     text<<"\nPROFILE   "<<(method?std::string("IDirect3DDevice9::")+method:!object_method.empty()?object_method:light_labels[top[i].second])<<" calls/s="<<double(top[i].first)/seconds<<" per-frame="
                         <<(light_present.load()&&present_calls>last_present?double(top[i].first)/double(present_calls-last_present):0.0);
+                }
+                text<<"\nPROFILE   time inside Windows/Direct3D calls: "<<std::setprecision(1)<<1000.0*double(total_ticks)/double(frequency)/seconds<<" ms per second of wall time ("<<100.0*double(total_ticks)/double(frequency)/seconds<<"% of one thread); per frame:";
+                for(size_t i=0;i<slow.size()&&i<12;++i){
+                    const uint32_t slot_target=light_targets[slow[i].second];
+                    const char* method=d3d9_method_name(light_device,slot_target);
+                    std::string object_method;if(!method)object_method=d3d9_object_method_name(slot_target);
+                    text<<"\nPROFILE     "<<(method?std::string("IDirect3DDevice9::")+method:!object_method.empty()?object_method:light_labels[slow[i].second])<<" "<<std::setprecision(2)
+                        <<(present_calls>last_present?1000.0*double(slow[i].first)/double(frequency)/double(present_calls-last_present):0.0)<<" ms/frame ("<<std::setprecision(1)<<100.0*double(slow[i].first)/double(frequency)/seconds<<"% of wall time)";
                 }
                 std::vector<std::pair<uint64_t,uint32_t>> hot;
                 for(const auto& entry:profile_samples)hot.push_back({entry.second,entry.first});

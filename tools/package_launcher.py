@@ -39,6 +39,9 @@ INI = """; NFSU2 static launcher configuration. Every line is optional; lines st
 ; Vertical sync: off = as the game asks (it asks for none, so frames can tear into horizontal lines); on = Present waits for the
 ; display refresh. With vsync a late frame is shown for a whole extra refresh (30 fps steps below 60), so try both.
 ;vsync=off
+; Performance report: every 5 s logs/native_trace.log gets the fps, the time spent inside each Direct3D call per frame, call counts,
+; the state cache hit rate and memory. Costs a little speed; use it to find out what limits the frame rate (same as --profile).
+;profile=off
 ; Specification used to interpret code the game generates at run time (see README.txt, "Third-party component").
 ; Default: sleigh\\x86.sla next to the launcher; its SHA-256 is verified at start.
 ;sleigh_spec=sleigh\\x86.sla
