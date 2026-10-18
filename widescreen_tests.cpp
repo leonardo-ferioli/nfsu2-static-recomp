@@ -56,6 +56,7 @@ int main(int argc, char** argv) {
         s.fmv_mode = 1;
         s.language = "";
         s.console_gamma = true;
+        s.fe_scale = 0.8f;   // the interface is drawn at 80%: elements keep their zones (anchoring)
         // The settings folder is documents\NFS Underground 2; only the file's presence matters, so use a custom folder.
         s.custom_user_directory = "nfsu2_widescreen_test_files";
         const std::string description = install_widescreen(s);
@@ -136,6 +137,41 @@ int main(int argc, char** argv) {
         wr<4>(c, 8, bits(55.0f));
         call_hook(c, "hud");
         close_to(*reinterpret_cast<float*>(frame + 0x60), 1234.0, "unlisted HUD element stays");
+
+        // Interface anchoring at FEScale 0.8: a rigid move per element by (pivot - centre) * (1/s - 1) according to its zone; elements that
+        // fill the screen keep filling it. The space is hud-width x height virtual units, from the factors the game multiplies with.
+        {
+            const double width = 2.0 / f32_at(address_of("hud_scale_x")), height = 2.0 / f32_at(address_of("fe_scale_y"));
+            const double k = 1.0 / 0.8 - 1.0, cx = width / 2.0, cy = height / 2.0;
+            alignas(16) float quad[16];
+            auto load = [&](const char* hook, float x_lo, float x_hi, float y_lo, float y_hi, int corner, bool y) {
+                const float xs[4] = {x_lo, x_hi, x_lo, x_hi}, ys[4] = {y_lo, y_lo, y_hi, y_hi};
+                for (int i = 0; i < 4; ++i) { quad[4 * i] = xs[i]; quad[4 * i + 1] = ys[i]; }
+                wr<4>(c, 24, uint32_t(uintptr_t(quad)));
+                asm volatile("fninit");
+                call_hook(c, hook);
+                (void)corner; (void)y;
+                return double(pop_x87());
+            };
+            // right and bottom zone: x 700..760, y 400..450
+            close_to(load("fe_quad_x0", 700, 760, 400, 450, 0, false), 700 + (width - cx) * k, "right-zone element moves outwards (x, corner 0)");
+            close_to(load("fe_quad_x1", 700, 760, 400, 450, 1, false), 760 + (width - cx) * k, "right-zone element moves rigidly (x, corner 1)");
+            close_to(load("fe_quad_y0", 700, 760, 400, 450, 0, true), 400 + (height - cy) * k, "bottom-zone element moves outwards (y)");
+            // left zone
+            close_to(load("fe_quad_x0", 20, 80, 20, 60, 0, false), 20 + (0 - cx) * k, "left-zone element moves outwards");
+            close_to(load("fe_quad_y0", 20, 80, 20, 60, 0, true), 20 + (0 - cy) * k, "top-zone element moves outwards");
+            // centre: unchanged
+            close_to(load("fe_quad_x0", 380, 470, 200, 280, 0, false), 380, "centre element stays");
+            // an element that fills the width keeps filling it
+            close_to(load("fe_quad_x0", 0, float(width), 0, 100, 0, false), cx + (0 - cx) / 0.8, "full-width element keeps filling the screen");
+            // line segments: end points at EBX / EBP, translation only
+            float a[2] = {700, 400}, b[2] = {760, 450};
+            wr<4>(c, 12, uint32_t(uintptr_t(a)));
+            wr<4>(c, 20, uint32_t(uintptr_t(b)));
+            asm volatile("fninit");
+            call_hook(c, "fe_line_bx");
+            close_to(pop_x87(), 760 + (width - cx) * k, "line end point moves with its zone");
+        }
 
         // Menu texts follow the last input device: with a gamepad ("Xbox" texts) a known string is replaced, an unknown one is not.
         static const char continue_text[] = "Continue";

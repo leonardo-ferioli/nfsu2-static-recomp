@@ -1685,7 +1685,7 @@ TAIL_STATIC(0x5bb1c0u,5bb);
 B5cc0f5:L5cc0f5:{c.instructions+=10;NFSU2_TR(0x5cc0f5);
 u8 U[8];
 w4(U+0,u32(u32(u32(0x30ull))+u32(r4(R+16))));
-__builtin_memmove((U+4),(MODV+184),4);
+__builtin_memmove((U+4),(MODV+232),4);
 s4(u32(r4(U+0)),r4(U+4));
 }
 B5cc0fd:{NFSU2_TR(0x5cc0fd);
@@ -1697,7 +1697,7 @@ s4(u32(r4(U+0)),r4(U+4));
 B5cc105:{NFSU2_TR(0x5cc105);
 u8 U[8];
 w4(U+0,u32(u32(u32(0x40ull))+u32(r4(R+16))));
-__builtin_memmove((U+4),(MODV+176),4);
+__builtin_memmove((U+4),(MODV+224),4);
 s4(u32(r4(U+0)),r4(U+4));
 }
 B5cc10d:{NFSU2_TR(0x5cc10d);
@@ -1709,7 +1709,7 @@ s4(u32(r4(U+0)),r4(U+4));
 B5cc115:{NFSU2_TR(0x5cc115);
 u8 U[8];
 w4(U+0,u32(u32(u32(0x50ull))+u32(r4(R+16))));
-__builtin_memmove((U+4),(MODV+180),4);
+__builtin_memmove((U+4),(MODV+228),4);
 s4(u32(r4(U+0)),r4(U+4));
 }
 B5cc11d:{NFSU2_TR(0x5cc11d);
@@ -1721,7 +1721,7 @@ s4(u32(r4(U+0)),r4(U+4));
 B5cc125:{NFSU2_TR(0x5cc125);
 u8 U[8];
 w4(U+0,u32(u32(u32(0x60ull))+u32(r4(R+16))));
-__builtin_memmove((U+4),(MODV+188),4);
+__builtin_memmove((U+4),(MODV+236),4);
 s4(u32(r4(U+0)),r4(U+4));
 }
 B5cc12d:{NFSU2_TR(0x5cc12d);

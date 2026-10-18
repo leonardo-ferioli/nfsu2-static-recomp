@@ -145,6 +145,54 @@
    "default": 0
   },
   {
+   "name": "hook_fe_quad_x0",
+   "default": 0
+  },
+  {
+   "name": "hook_fe_quad_y0",
+   "default": 0
+  },
+  {
+   "name": "hook_fe_quad_x1",
+   "default": 0
+  },
+  {
+   "name": "hook_fe_quad_y1",
+   "default": 0
+  },
+  {
+   "name": "hook_fe_quad_x2",
+   "default": 0
+  },
+  {
+   "name": "hook_fe_quad_y2",
+   "default": 0
+  },
+  {
+   "name": "hook_fe_quad_x3",
+   "default": 0
+  },
+  {
+   "name": "hook_fe_quad_y3",
+   "default": 0
+  },
+  {
+   "name": "hook_fe_line_ax",
+   "default": 0
+  },
+  {
+   "name": "hook_fe_line_ay",
+   "default": 0
+  },
+  {
+   "name": "hook_fe_line_bx",
+   "default": 0
+  },
+  {
+   "name": "hook_fe_line_by",
+   "default": 0
+  },
+  {
    "name": "hook_fov",
    "default": 0
   },
@@ -749,6 +797,90 @@
    "pop": 0
   },
   {
+   "name": "fe_quad_x0",
+   "begin": 6049907,
+   "end": 6049909,
+   "mode": "replace",
+   "pop": 0
+  },
+  {
+   "name": "fe_quad_y0",
+   "begin": 6049930,
+   "end": 6049933,
+   "mode": "replace",
+   "pop": 0
+  },
+  {
+   "name": "fe_quad_x1",
+   "begin": 6049970,
+   "end": 6049973,
+   "mode": "replace",
+   "pop": 0
+  },
+  {
+   "name": "fe_quad_y1",
+   "begin": 6050014,
+   "end": 6050017,
+   "mode": "replace",
+   "pop": 0
+  },
+  {
+   "name": "fe_quad_x2",
+   "begin": 6050091,
+   "end": 6050094,
+   "mode": "replace",
+   "pop": 0
+  },
+  {
+   "name": "fe_quad_y2",
+   "begin": 6050135,
+   "end": 6050138,
+   "mode": "replace",
+   "pop": 0
+  },
+  {
+   "name": "fe_quad_x3",
+   "begin": 6050212,
+   "end": 6050215,
+   "mode": "replace",
+   "pop": 0
+  },
+  {
+   "name": "fe_quad_y3",
+   "begin": 6050259,
+   "end": 6050262,
+   "mode": "replace",
+   "pop": 0
+  },
+  {
+   "name": "fe_line_ax",
+   "begin": 5299498,
+   "end": 5299500,
+   "mode": "replace",
+   "pop": 0
+  },
+  {
+   "name": "fe_line_ay",
+   "begin": 5299558,
+   "end": 5299561,
+   "mode": "replace",
+   "pop": 0
+  },
+  {
+   "name": "fe_line_bx",
+   "begin": 5299583,
+   "end": 5299586,
+   "mode": "replace",
+   "pop": 0
+  },
+  {
+   "name": "fe_line_by",
+   "begin": 5299606,
+   "end": 5299609,
+   "mode": "replace",
+   "pop": 0
+  },
+  {
    "name": "fov",
    "begin": 6061907,
    "end": 6061913,
@@ -963,6 +1095,11 @@
    "name": "movie_crash_resume",
    "address": 5466572,
    "byte": 5466572
+  },
+  {
+   "name": "fe_scale_y",
+   "address": 7973908,
+   "byte": 6049935
   },
   {
    "name": "hud_scale_x",

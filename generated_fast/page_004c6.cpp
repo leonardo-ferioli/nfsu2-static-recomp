@@ -4434,7 +4434,7 @@ s4(u32(r4(R+16)),u32(0x4c6753ull));
 TAIL_STATIC(0x4a9d60u,4a9);
 }
 B4c6753:L4c6753:{c.instructions+=31;NFSU2_TR(0x4c6753);
-if(mod_hook_table[34]){SPILL();c.pc=0x4c6753u;mod_hook_table[34](c);SPILL();if(c.pc!=0x4c6753u){TAIL_DYNAMIC(c.pc);}goto B4c6759;}
+if(mod_hook_table[46]){SPILL();c.pc=0x4c6753u;mod_hook_table[46](c);SPILL();if(c.pc!=0x4c6753u){TAIL_DYNAMIC(c.pc);}goto B4c6759;}
 {u32 ea_=u32(r4(R+24)+u32(72u));__asm__ volatile(".byte 0xd9,0x10"::"a"(ea_):"memory");}
 }
 B4c6756:{NFSU2_TR(0x4c6756);

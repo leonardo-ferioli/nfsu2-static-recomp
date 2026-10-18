@@ -23,6 +23,7 @@ std::string install_widescreen(const WidescreenSettings& settings) {
     mods::install_resolution(settings);
     mods::install_rendering(settings);
     mods::install_frontend_scale(settings);
+    mods::install_interface_anchoring(settings);
     mods::install_input(settings);
     mods::install_nos_trail(settings);
     mods::install_gamma(settings);
