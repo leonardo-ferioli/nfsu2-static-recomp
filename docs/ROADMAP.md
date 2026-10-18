@@ -2,6 +2,16 @@
 
 Ordered by dependency, not by date. "Decision" marks things that are deliberately still open.
 
+## Principle: fidelity first
+
+The native experience is kept. By default the game is the original one: its interface, fonts, icons, colours and animations are the ones
+in its own data, not replaced.
+
+- **Adapting to the screen is part of the port**, not a change of style: placement and anchoring, sharp scaling, safe areas.
+- **Touch controls** are needed where there is no controller or keyboard; they use the game's own look (its icons and palette).
+- **Everything else is optional and off by default**: rescaled textures, replacement fonts, any visual enhancement.
+- Each change is judged by one question: does the player still get the original game, only on a modern screen or device?
+
 ## 0. Make the CPU side portable (feasibility first)
 
 The fast backend only works on an x86-32 host with the guest image mapped at the same addresses. A general port needs:
