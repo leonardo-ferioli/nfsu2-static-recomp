@@ -433,20 +433,22 @@ uintptr_t NativePlatform::resolve_uncached(uint32_t token){
 void NativePlatform::fps_frame(){
     // Once per Present of the game's device when the fps log is on: the time between presents, summarised every 5 seconds.
     static const uint64_t frequency=[]{LARGE_INTEGER f;QueryPerformanceFrequency(&f);return uint64_t(f.QuadPart);}();
-    thread_local uint64_t last=0,window_start=0;thread_local std::vector<uint32_t> micros;
+    thread_local uint64_t last=0,window_start=0,cpu_at_start=0;thread_local std::vector<uint32_t> micros;
     const uint64_t now=profile_clock();
     if(last)micros.push_back(uint32_t(std::min<uint64_t>((now-last)*1000000ull/frequency,0xffffffffull)));
     last=now;
-    if(!window_start)window_start=now;
+    if(!window_start){window_start=now;cpu_at_start=thread_cpu_100ns(GetCurrentThread());}
     if(now-window_start<5*frequency || micros.empty())return;
     std::vector<uint32_t> sorted(micros);std::sort(sorted.begin(),sorted.end());
     const size_t n=sorted.size();uint64_t total=0;size_t slow=0;for(uint32_t t:sorted){total+=t;if(t>20000)++slow;}
     const double seconds=double(now-window_start)/double(frequency),p99=sorted[std::min(n-1,size_t(double(n)*0.99))]/1000.0;
+    const uint64_t cpu_now=thread_cpu_100ns(GetCurrentThread());
+    const double busy=100.0*double(cpu_now-cpu_at_start)/1e7/seconds;
     std::ostringstream text;
     text<<"FPS "<<std::fixed<<std::setprecision(1)<<double(n)/seconds<<" over "<<seconds<<"s: frame time average "<<double(total)/double(n)/1000.0<<" ms, median "<<sorted[n/2]/1000.0
-        <<" ms, 99th percentile "<<p99<<" ms (1% low "<<(p99>0?1000.0/p99:0.0)<<" fps), worst "<<sorted.back()/1000.0<<" ms, frames over 20 ms: "<<100.0*double(slow)/double(n)<<"%";
+        <<" ms, 99th percentile "<<p99<<" ms (1% low "<<(p99>0?1000.0/p99:0.0)<<" fps), worst "<<sorted.back()/1000.0<<" ms, frames over 20 ms: "<<100.0*double(slow)/double(n)<<"%, main-thread CPU busy "<<busy<<"% (near 100: the CPU is the limit; much lower: it waits for the GPU or vsync)";
     record(text.str());
-    micros.clear();window_start=now;
+    micros.clear();window_start=now;cpu_at_start=cpu_now;
 }
 void NativePlatform::limit_frame_rate(unsigned frames_per_second){
     // Waits so that frames are at least 1/fps apart: a sleep for the bulk, a short spin for the last millisecond. A frame
