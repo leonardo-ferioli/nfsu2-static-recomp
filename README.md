@@ -1,4 +1,6 @@
-# NFSU2 Static Recompilation
+# NFS Underground 2 - NUE
+
+*(formerly "NFSU2 Static Recompilation")*
 
 A static recompilation of **Need for Speed: Underground 2** (PC, v1.2) that is being built as the foundation of a
 **multi-platform port** — Windows today; Linux, Android and Apple platforms by design.
