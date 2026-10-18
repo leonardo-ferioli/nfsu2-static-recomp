@@ -53,6 +53,9 @@ INI = """; NFSU2 static launcher configuration. Every line is optional; lines st
 ; The options menu also lists common resolutions your monitor lacks (marked "(scaled)"); choosing one draws the game at that size
 ; in a borderless window scaled to the screen, aspect ratio kept. off = only the monitor's own resolutions.
 ;extra_resolutions=on
+; Every listed resolution (the monitor's own modes included) is drawn at its size in a borderless window scaled to the screen,
+; aspect ratio kept, so all of them behave the same. off = monitor modes use real fullscreen.
+;scaled_resolutions=on
 
 ; The sections below keep the names and keys of the mod's own configuration file; values and meanings are the mod's.
 [MAIN]

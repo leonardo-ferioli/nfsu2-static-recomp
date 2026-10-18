@@ -182,6 +182,7 @@ void apply_widescreen_setting(Config& config, const std::string& section, const 
         else if (key == "height") w.height = int(integer(0, 16384));
         else if (key == "extra_resolutions") w.extra_resolutions = flag();
         else if (key == "force_resolution") w.force_resolution = flag();
+        else if (key == "scaled_resolutions") w.scale_all_resolutions = flag();
         else if (key == "windowed") w.windowed_mode = int(integer(0, 5));
         else throw std::runtime_error(origin + ": unknown key " + key);
     } else if (section == "main") {
