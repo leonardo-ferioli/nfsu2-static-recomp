@@ -33,10 +33,11 @@ The goal is not "make it run on my PC" but a **portable core with explicit bound
  |  time/threads | settings storage                                   |
  +------+-------------------------------------------------------------+
         |  implemented by interchangeable backends
-   Windows: native D3D9 (today)     bgfx (Vulkan | OpenGL ES | Metal | D3D11/12)     own backends where profiling demands
+   today: native D3D9 pass-through (temporary bridge)     end state: bgfx only (Vulkan | OpenGL ES | Metal | D3D11/12)
 ```
 
-- The graphics boundary is kept at Direct3D 9 level so any backend can implement it without the game noticing.
+- The graphics boundary is kept at Direct3D 9 level (our own semantics layer, then a small GPU interface, then **bgfx only**; the native
+  Direct3D 9 pass-through is a temporary bridge that is removed once bgfx reaches parity).
 - **bgfx** (BSD-2-Clause) is the chosen first cross-platform renderer: it offers Vulkan, OpenGL ES 3 and Metal behind one API, so an
   Android player can pick Vulkan or OpenGL ES in the game and iPhone runs on Metal. Nothing is integrated yet; the choice is to be
   validated with a measured spike. Rationale and alternatives (The Forge, SDL_gpu, DXVK/MoltenVK, own backends) are in
