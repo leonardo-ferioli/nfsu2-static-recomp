@@ -20,11 +20,11 @@ data game (pc)/
 binaries/
 SPEED2.EXE
 *.bin
+!export/memory_*.bin
 *.lzc
 *.bun
 
-# Verbatim dumps and databases of the game's executable (the export is regenerated from your own copy with tools/export.ps1)
-export/memory_*.bin
+# Ghidra project of the game's executable (contains the program; kept out)
 analysis/
 
 # Machine- and session-specific records

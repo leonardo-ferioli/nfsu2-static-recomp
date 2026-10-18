@@ -102,7 +102,7 @@ added to the profiler (`NFSU2_PROFILE=1`) because the long-term target is a **2 
 | `native32.*`, `launcher.cpp`, `dynamic_code.*` | Windows boundary, product launcher, run-time P-code interpreter |
 | `mods*.{hpp,cpp,inc}` | The native widescreen fix and its patch-point runtime |
 | `third_party/` | SLEIGH engine and `x86.sla` (Apache-2.0), widescreen fix notices |
-| `generated/`, `generated_fast/`, `export/` | Translation output and the instruction export — **derived from the proprietary executable** (see below) |
+| `generated/`, `generated_fast/`, `export/` | Translation output, the instruction export and section dumps — **derived from / copies of parts of the proprietary executable** (see below) |
 | `docs/` | Roadmap and the (Spanish) development log |
 
 ## Building and running
@@ -117,8 +117,8 @@ then build with CMake (`build.ps1` shows the exact configuration), then run
 
 This project is not affiliated with or endorsed by Electronic Arts. It contains no game assets and no game executable.
 The generated C++ and the instruction export in this repository are **mechanical translations derived from the proprietary
-`SPEED2.EXE`**; this repository is a private working backup, and those directories must be removed (they can be regenerated
-from your own copy) before any public release. A license for the original code in this repository has not been chosen yet.
+`SPEED2.EXE`**, and `export/memory_*.bin` are **verbatim dumps of its sections**; this repository is a private working backup,
+and those files and directories must be removed (they can be regenerated from your own copy) before any public release. A license for the original code in this repository has not been chosen yet.
 
 ## Credits
 
