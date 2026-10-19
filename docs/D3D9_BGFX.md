@@ -32,6 +32,10 @@ cmake --build build_nue32 --target nue_d3d9_dll
 * **Verified without the game**: the replay tool drives the dll through real COM calls with the recorded traces (`NUE_D3D9_DLL=<path> nue_replay <trace> --native
   --frames N`): the same images as the direct path (menu mean error 1.06, loading 0.92), 0 unsupported records, in the 64-bit build and in the 32-bit build run
   from a 32-bit process. **Not verified**: the game itself (nobody ran it with this dll yet): expect to look at `nue_d3d9.log` first.
+* **Floating point state**: the real runtime forces the x87 control word to `0x007F` (single precision, every exception masked) in `CreateDevice`/`Reset` unless
+  `D3DCREATE_FPU_PRESERVE` is given (then it only masks invalid-operation, zero-divide, overflow and underflow), and leaves it that way. The dll does the same
+  (`apply_d3d9_fpu_mode`): the recompiled game unmasks exceptions itself and crashed with `0xc0000090` (`fdivrs` in translated code) one second after
+  `CreateDevice` when the dll left them unmasked.
 * Not offered through COM (the game does not use them in any capture): volume textures, queries, `UpdateSurface/UpdateTexture`, `ColorFill`, `DrawPrimitive`
   (non-UP), `DrawIndexedPrimitiveUP`, patches, additional swap chains, multiple devices, `GetRenderTargetData` of anything but the back buffer. Fixed-function
   lighting is not implemented (see the coverage table). Display-mode changes for fullscreen are not done: the frame is scaled to the game's window.
