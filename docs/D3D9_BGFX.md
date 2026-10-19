@@ -66,7 +66,7 @@ Tested = replayed from real captures of the game (`captures/menu`, `captures/loa
 | `StretchRect`, `Clear` (full, rectangles, viewport), depth/stencil clear | implemented (copy, or a draw when sizes differ) |
 | Queries, `GetRenderTargetData`, `UpdateSurface`, `ColorFill`, volume textures, `DrawPrimitive` (non-UP), `DrawIndexedPrimitiveUP`, `SetScissorRect`, `SetLight/SetMaterial`, clip planes | not in `d3d9::Device` yet (the game does not use them) |
 | Lost device / `Reset` | `reset` resizes; the lost-device protocol is not implemented |
-| Backends: bgfx Direct3D 11 | working (all measurements below); Vulkan: **runs and draws but the picture is wrong** (first visible divergence at the first scene draw of `captures/menu`; cause not found: the SPIR-V is handed to bgfx as is and no validation layer was available); Direct3D 12, OpenGL(ES), Metal: not written (the shader path emits GLSL/MSL, the container for them is not written) |
+| Backends: bgfx Direct3D 11 and Vulkan | both working with the same fidelity (loading capture, mean MAE 0.99 on both) and speed (Vulkan 6.6 ms per frame with the render thread); the Vulkan path hands our SPIR-V to bgfx as is, with the vertex input locations renumbered to the position in the container's attribute list (bgfx binds by position, not by attribute number) and a depth-format fallback (24-bit depth is missing on some Vulkan drivers). Direct3D 12, OpenGL(ES), Metal: not written (the shader path emits GLSL/MSL, the container for them is not written) |
 
 ## Shader path
 
@@ -115,6 +115,8 @@ build_nue/nue_replay.exe <trace> --bgfx d3d11 --frames 3 --out dir   # renders, 
 build_nue/nue_replay.exe <trace> --bench --bgfx d3d11 --mt --loops 3 --window 0 --shader-cache cache_dir   # frame time, layer/adapter/GPU profile
 build_nue/nue_replay.exe <trace> --native --frames 3 --out dir       # the same trace on the real Direct3D 9 (ground truth, tool only)
 build_nue/nue_replay.exe <trace> --bgfx d3d11 --frames 1 --draws 0-1108 ...   # only draws 0..1108: bisect a difference against --native
+# debugging aids (environment variables of the replay tool): NUE_RECENT_DRAWS=<frame> NUE_RECENT_COUNT=<n> (the last draws with their gpu ids), NUE_SKIP_DRAWS=a-b,
+# NUE_MEAN_TEX=<gpu texture>:<first>-<last> (+ NUE_SAVE_TEX=<prefix> to save it), NUE_DUMP_GLSL=<dir> (translated shaders as GLSL), NUE_LOG_PASSES, NUE_FRAME_DRAWS
 python tools/bmp_compare_crop.py ref.bmp ours.bmp out.png x y w h   # reference | ours | amplified difference
 python tools/bmp_diff_grid.py ref.bmp ours.bmp                        # where the images disagree
 python tools/d3d9_trace_census.py <trace>                             # what a trace asks of a translator
@@ -135,6 +137,7 @@ none of it). A "frame" is one game frame: 1500-1700 draws and ~50k recorded call
 | menu window 0, D3D11, one thread | 11.2 ms | 13.3 ms | bgfx::frame() runs the backend inline (4.5 ms) |
 | menu window 0, D3D11, render thread (`--mt`) | 6.4 ms | 7.9 ms | CPU 4.5 ms, GPU 6.4 ms per frame |
 | menu window 3 (975 draws), D3D11 one thread | 4.8 ms | 10 ms | |
+| menu window 0, Vulkan, render thread | 6.6 ms | 8.0 ms | GPU 4.6 ms |
 | loading window 0, D3D11 `--mt` | 6.5 ms | 7.7 ms | one run had a stretch of ~16 ms frames (GPU clock of the integrated part; not reproduced) |
 
 So the translator itself fits a 60 fps budget (16.6 ms) with room to spare on this machine; the game's own CPU work is not included. Shader translation
@@ -152,4 +155,3 @@ chain of the game rendered 4x too large and the bloom washed the image out (load
 
 * The first frame of every recording window differs more (2-3) because the state accumulated before the window was not recorded.
 * Multisampling of the game's back buffer is not reproduced (edges differ by one pixel; the comparison masks edges).
-* Vulkan: see the coverage table.
