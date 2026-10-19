@@ -76,6 +76,29 @@ std::vector<uint32_t> passthrough_ps(int what) {   // ps_1_1: r0 = v0 (what 0), 
     return t;
 }
 
+// ---- shader model 2/3 pass-throughs and HLSL test cases (compiled with the Direct3D 9 profiles of d3dcompiler_47)
+const char* kPassVs3 = R"(
+struct VIn { float4 p : POSITION; float4 c0 : COLOR0; float4 c1 : COLOR1; float4 t0 : TEXCOORD0; float4 t1 : TEXCOORD1; float4 t2 : TEXCOORD2; float4 t3 : TEXCOORD3; };
+struct VOut { float4 p : POSITION; float4 c0 : COLOR0; float4 c1 : COLOR1; float4 t0 : TEXCOORD0; float4 t1 : TEXCOORD1; float4 t2 : TEXCOORD2; float4 t3 : TEXCOORD3; };
+VOut main(VIn i) { VOut o; o.p = i.p; o.c0 = i.c0; o.c1 = i.c1; o.t0 = i.t0; o.t1 = i.t1; o.t2 = i.t2; o.t3 = i.t3; return o; }
+)";
+const char* kPassPs3[3] = {   // the colour, texture coordinate 0 and texture coordinate 1 written as the colour
+    "struct PIn { float4 c0 : COLOR0; float4 c1 : COLOR1; float4 t0 : TEXCOORD0; float4 t1 : TEXCOORD1; };\nfloat4 main(PIn i) : COLOR { return i.c0 + i.c1 * 0.0 + i.t0 * 0.0 + i.t1 * 0.0; }\n",
+    "struct PIn { float4 c0 : COLOR0; float4 c1 : COLOR1; float4 t0 : TEXCOORD0; float4 t1 : TEXCOORD1; };\nfloat4 main(PIn i) : COLOR { return i.t0 + i.c0 * 0.0 + i.c1 * 0.0 + i.t1 * 0.0; }\n",
+    "struct PIn { float4 c0 : COLOR0; float4 c1 : COLOR1; float4 t0 : TEXCOORD0; float4 t1 : TEXCOORD1; };\nfloat4 main(PIn i) : COLOR { return i.t1 + i.c0 * 0.0 + i.c1 * 0.0 + i.t0 * 0.0; }\n",
+};
+
+bool compile_hlsl(const std::string& source, const char* profile, unsigned flags, std::vector<uint32_t>& tokens, std::string& error) {
+    Com<ID3DBlob> code, errors;
+    if (FAILED(D3DCompile(source.data(), source.size(), "case", nullptr, nullptr, "main", profile, flags, 0, &code, &errors))) {
+        error = errors.p ? std::string(static_cast<const char*>(errors->GetBufferPointer())) : "D3DCompile failed";
+        return false;
+    }
+    tokens.resize(code->GetBufferSize() / 4);
+    std::memcpy(tokens.data(), code->GetBufferPointer(), tokens.size() * 4);
+    return true;
+}
+
 // ---- test data
 struct Scene {
     float vertices[4][64];       // sixteen float4 vertex registers (v0 = position; the pass-through VS uses v0..v6), as a triangle strip
@@ -166,6 +189,9 @@ struct D9 {
         }
         dev->SetVertexShaderConstantF(0, scene.vs_constants, vs_consts);
         dev->SetPixelShaderConstantF(0, scene.ps_constants, ps_consts);
+        { BOOL bools[16]; for (int i = 0; i < 16; ++i) bools[i] = ib_bool[i] != 0.0f ? TRUE : FALSE;
+          dev->SetVertexShaderConstantI(0, &ib_int[0][0], 16); dev->SetPixelShaderConstantI(0, &ib_int[0][0], 16);
+          dev->SetVertexShaderConstantB(0, bools, 16); dev->SetPixelShaderConstantB(0, bools, 16); }
         dev->Clear(0, nullptr, D3DCLEAR_TARGET, 0x00000000, 1.0f, 0);
         dev->BeginScene();
         dev->SetVertexDeclaration(decl);
@@ -225,7 +251,11 @@ struct D11 {
         std::vector<D3D11_INPUT_ELEMENT_DESC> layout;
         for (const VertexInput& in : vs.inputs) {
             D3D11_INPUT_ELEMENT_DESC e{};
-            e.SemanticName = "TEXCOORD"; e.SemanticIndex = in.attribute; e.Format = DXGI_FORMAT_R32G32B32A32_FLOAT; e.AlignedByteOffset = in.reg * 16;
+            {   // the semantic names the cross-compiler gives to bgfx attribute numbers (nue::shader::cross_compile)
+                static const char* const names[] = {"POSITION", "NORMAL", "TANGENT", "BITANGENT", "COLOR", "COLOR", "COLOR", "COLOR", "BLENDINDICES", "BLENDWEIGHT"};
+                static const unsigned indices[] = {0, 0, 0, 0, 0, 1, 2, 3, 0, 0};
+                if (in.attribute < 10) { e.SemanticName = names[in.attribute]; e.SemanticIndex = indices[in.attribute]; } else { e.SemanticName = "TEXCOORD"; e.SemanticIndex = in.attribute - 10; }
+            } e.Format = DXGI_FORMAT_R32G32B32A32_FLOAT; e.AlignedByteOffset = in.reg * 16;
             e.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
             layout.push_back(e);
             if (std::getenv("EQUIV_HLSL")) std::printf("input reg %u attribute %u offset %u\n", unsigned(in.reg), unsigned(in.attribute), unsigned(e.AlignedByteOffset));
@@ -332,21 +362,44 @@ int main(int argc, char** argv) {
 
     std::vector<fs::path> files;
     for (auto& e : fs::directory_iterator(argv[1])) if (e.is_regular_file()) files.push_back(e.path());
+    const char* only = std::getenv("EQUIV_ONLY");   // substring filter on the file name
     std::sort(files.begin(), files.end());
 
     const auto vs_pass = passthrough_vs();
     Program vs_pass_program; std::string error;
     decode(vs_pass, vs_pass_program, error);
-    std::vector<std::pair<unsigned, unsigned>> pass_inputs = {{0, 0}, {1, 10}, {2, 10 | (1 << 8)}, {3, 5}, {4, 5 | (1 << 8)}, {5, 5 | (2 << 8)}, {6, 5 | (3 << 8)}};
+    std::vector<uint32_t> vs3_pass, ps3_pass[3];
+    Program vs3_pass_program;
+    if (!compile_hlsl(kPassVs3, "vs_3_0", 0, vs3_pass, error) || !decode(vs3_pass, vs3_pass_program, error)) { std::printf("vs_3_0 pass-through: %s\n", error.c_str()); return 4; }
+    for (int k = 0; k < 3; ++k) if (!compile_hlsl(kPassPs3[k], "ps_3_0", 0, ps3_pass[k], error)) { std::printf("ps_3_0 pass-through: %s\n", error.c_str()); return 4; }
+    auto vertex_inputs = [](const Program& program) {   // the registers the vertex shader declares, read from the scene's vertex data by register number
+        std::vector<std::pair<unsigned, unsigned>> inputs;
+        for (const Instruction& in : program.code) if (in.opcode == op_dcl && in.dst.type == RegType::input) inputs.push_back({in.dst.index, in.dcl_usage | (in.dcl_index << 8)});
+        return inputs;
+    };
 
     int tests = 0, failed = 0;
     for (auto& file : files) {
-        const auto bytes = read_file(file);
-        std::vector<uint32_t> tokens(bytes.size() / 4);
-        std::memcpy(tokens.data(), bytes.data(), tokens.size() * 4);
+        if (only && file.filename().string().find(only) == std::string::npos) continue;
+        std::vector<uint32_t> tokens;
+        if (file.extension() == ".hlsl") {   // name.<profile>.hlsl; a first line "// flags: prefer_flow | avoid_flow" selects the compiler's flow-control mode
+            const auto bytes = read_file(file);
+            const std::string source(bytes.begin(), bytes.end());
+            const std::string profile = fs::path(file.stem()).extension().string().substr(1);
+            unsigned flags = 0;
+            if (source.rfind("// flags: prefer_flow", 0) == 0) flags = D3DCOMPILE_PREFER_FLOW_CONTROL;
+            if (source.rfind("// flags: avoid_flow", 0) == 0) flags = D3DCOMPILE_AVOID_FLOW_CONTROL;
+            std::string ce;
+            if (!compile_hlsl(source, profile.c_str(), flags, tokens, ce)) { std::printf("%-34s HLSL compile failed: %s\n", file.filename().string().c_str(), ce.c_str()); ++failed; continue; }
+        } else {
+            const auto bytes = read_file(file);
+            tokens.resize(bytes.size() / 4);
+            std::memcpy(tokens.data(), bytes.data(), tokens.size() * 4);
+        }
         Program program;
         if (!decode(tokens, program, error)) { std::printf("%-34s decode failed: %s\n", file.filename().string().c_str(), error.c_str()); ++failed; continue; }
         const bool is_ps = program.stage == Stage::pixel;
+        if (std::getenv("EQUIV_DIS")) std::printf("---- %s\n%s\n", file.filename().string().c_str(), disassemble(program).c_str());
         // variants: pixel shader behind the pass-through VS; vertex shader in front of a pass-through PS writing v0, t0 and t1
         const int variants = is_ps ? 1 : 3;
         for (int variant = 0; variant < variants; ++variant) {
@@ -355,21 +408,19 @@ int main(int argc, char** argv) {
                 make_scene(scene, uint32_t(seed * 7919 + variant));
                 Image truth, translated;
                 std::string e9, e11;
-                const std::vector<uint32_t>& vs = is_ps ? vs_pass : tokens;
-                const std::vector<uint32_t> ps_pass = is_ps ? std::vector<uint32_t>() : passthrough_ps(variant);
+                const bool model3 = program.major >= 3;   // shader model 3 pairs only with shader model 3
+                const std::vector<uint32_t>& vs = is_ps ? (model3 ? vs3_pass : vs_pass) : tokens;
+                const std::vector<uint32_t> ps_pass = is_ps ? std::vector<uint32_t>() : (model3 ? ps3_pass[variant] : passthrough_ps(variant));
                 const std::vector<uint32_t>& ps = is_ps ? tokens : ps_pass;
-                std::vector<std::pair<unsigned, unsigned>> inputs = pass_inputs;
-                if (!is_ps) {   // the shader's own declarations decide which registers exist; they read the scene's vertex data by register number
-                    inputs.clear();
-                    for (const Instruction& in : program.code) if (in.opcode == op_dcl && in.dst.type == RegType::input) inputs.push_back({in.dst.index, in.dcl_usage | (in.dcl_index << 8)});
-                }
+                const Program& vs_decoded = is_ps ? (model3 ? vs3_pass_program : vs_pass_program) : program;
+                const std::vector<std::pair<unsigned, unsigned>> inputs = vertex_inputs(vs_decoded);   // the shader's own declarations decide which registers exist
                 ++tests;
                 Program ps_program;
                 if (!decode(ps, ps_program, e11)) { std::printf("internal: ps decode %s\n", e11.c_str()); return 4; }
                 const bool ok9 = d9.render(vs, ps, inputs, scene, 96, is_ps ? (program.major >= 2 ? 32 : 8) : 8, truth, e9);
                 // The scene's vertex data is laid out with the pass-through VS's register numbers (position 0, colours 1-2, texcoords 3-6); game vertex
                 // shaders use their own, so their inputs are read from the same offsets by register number (float4 each).
-                const bool ok11 = d11.render(is_ps ? vs_pass_program : program, is_ps ? program : ps_program, scene, translated, e11);
+                const bool ok11 = d11.render(vs_decoded, is_ps ? program : ps_program, scene, translated, e11);
                 const std::string label = file.stem().string() + (is_ps ? "" : (variant == 0 ? " [v0]" : variant == 1 ? " [t0]" : " [t1]")) + " seed " + std::to_string(seed);
                 if (!ok9 || !ok11) { std::printf("%-44s SETUP %s%s%s\n", label.c_str(), ok9 ? "" : ("D3D9: " + e9).c_str(), ok9 ? "" : " ", ok11 ? "" : ("D3D11: " + e11).c_str()); ++failed; continue; }
                 const Diff d = compare(truth, translated, 2);
