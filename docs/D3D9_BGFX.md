@@ -58,7 +58,7 @@ Tested = replayed from real captures of the game (`captures/menu`, `captures/loa
 | Render states: Z, blend (incl. separate alpha), alpha test, cull, fill, colour mask, stencil (one side), scissor flag, depth bias, fog, texture factor | implemented; two-sided stencil, clip planes, point sprites, multisample masks: not |
 | Sampler states: filters, addressing, anisotropy | implemented; LOD bias, `MAXMIPLEVEL`, border colour: **not applied** (bgfx has no per-sampler control) |
 | State blocks (Begin/End/Apply, recorded not applied) | implemented, exercised |
-| Programmable pipeline: vertex shaders 1.x, pixel shaders 1.x-2.0 | implemented, exercised (45 shaders of the game). Shader models 2.0-3.0 control flow (`if`, `loop`, `rep`, `call`, predication), `sincos`, `pow`, `nrm`, `lit`, `texldl`, integer/bool constants: **not implemented** |
+| Programmable pipeline: vertex and pixel shaders 1.x, 2.0, 2.x, 3.0 (control flow `if`/`else`/`rep`/`loop`/`break`, relative addressing, `sincos`, `pow`, `nrm`, `lit`, `texldl`/`texldb`/`texldp`, `dsx`/`dsy`, `texkill`, integer/boolean constants, `vPos`, `vFace`) | implemented; shader model 1.x exercised by the game (45 shaders); models 2/3 validated against the real Direct3D 9 with 33 HLSL cases (`spike/shader_spike/sm_cases`, 126 renders, 0 failures). **Not tested**: `call`/`callnz`/`ret` subroutines, predication (`setp` + `(p0)`), depth output (`oDepth`), multiple render targets, vertex texture fetch |
 | Relative addressing of constants (`c[a0.x]`) in vertex shaders | implemented, exercised |
 | Fixed function: transform, vertex colours, texture coordinates with transform matrices, texture-stage combiners (all `D3DTOP_*` but bump/premodulate), specular add, vertex fog | implemented; exercised only by two simple draws per frame. **Lighting and materials, texture-coordinate generation, vertex blending, point sprites: not implemented** |
 | Fog: vertex fog with programmable and fixed pipelines | implemented; table (pixel) fog with a vertex shader: **not** |
@@ -66,7 +66,7 @@ Tested = replayed from real captures of the game (`captures/menu`, `captures/loa
 | `StretchRect`, `Clear` (full, rectangles, viewport), depth/stencil clear | implemented (copy, or a draw when sizes differ) |
 | Queries, `GetRenderTargetData`, `UpdateSurface`, `ColorFill`, volume textures, `DrawPrimitive` (non-UP), `DrawIndexedPrimitiveUP`, `SetScissorRect`, `SetLight/SetMaterial`, clip planes | not in `d3d9::Device` yet (the game does not use them) |
 | Lost device / `Reset` | `reset` resizes; the lost-device protocol is not implemented |
-| Backends: bgfx Direct3D 11 | working; Vulkan: shader container produced, **not run yet**; Direct3D 12, OpenGL(ES), Metal: not written (the shader path emits GLSL/MSL, the container for them is not written) |
+| Backends: bgfx Direct3D 11 | working (all measurements below); Vulkan: **runs and draws but the picture is wrong** (first visible divergence at the first scene draw of `captures/menu`; cause not found: the SPIR-V is handed to bgfx as is and no validation layer was available); Direct3D 12, OpenGL(ES), Metal: not written (the shader path emits GLSL/MSL, the container for them is not written) |
 
 ## Shader path
 
@@ -109,9 +109,10 @@ file says so. So far nothing was copied: the design of the fixed-function genera
 ## Tools and how to verify
 
 ```
-cmake -S nue_d3d9 -B build_nue -G Ninja -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang && cmake --build build_nue
+cmake -S nue_d3d9 -B build_nue -G Ninja -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang -DCMAKE_BUILD_TYPE=RelWithDebInfo && cmake --build build_nue   # always measure an optimised build
 build_nue/nue_replay.exe <trace> --null --twice            # headless: statistics + deterministic call hash (run twice: identical)
 build_nue/nue_replay.exe <trace> --bgfx d3d11 --frames 3 --out dir   # renders, saves ours_*.bmp / diff_*.bmp, prints MAE and p99.9 outside edges
+build_nue/nue_replay.exe <trace> --bench --bgfx d3d11 --mt --loops 3 --window 0 --shader-cache cache_dir   # frame time, layer/adapter/GPU profile
 build_nue/nue_replay.exe <trace> --native --frames 3 --out dir       # the same trace on the real Direct3D 9 (ground truth, tool only)
 build_nue/nue_replay.exe <trace> --bgfx d3d11 --frames 1 --draws 0-1108 ...   # only draws 0..1108: bisect a difference against --native
 python tools/bmp_compare_crop.py ref.bmp ours.bmp out.png x y w h   # reference | ours | amplified difference
@@ -124,4 +125,31 @@ within one pixel of a gradient above 32 in the reference). Thresholds are **not 
 
 ## Measurements
 
-See the end of this file (updated as the work goes on).
+Machine: AMD Radeon (integrated), Windows 11, Direct3D 11 through bgfx, offscreen backbuffer 1280x720, optimised build (RelWithDebInfo). Scenes: the
+recorded in-race windows of `captures/menu` and `captures/loading`, replayed from memory (`--bench`, trace decoding included: the real game would add
+none of it). A "frame" is one game frame: 1500-1700 draws and ~50k recorded calls.
+
+| Scene / mode | mean | p99 | notes |
+|---|---|---|---|
+| menu window 0, null GPU (layer only) | 5.2 ms | 6.1 ms | layer ~1.3 us per draw |
+| menu window 0, D3D11, one thread | 11.2 ms | 13.3 ms | bgfx::frame() runs the backend inline (4.5 ms) |
+| menu window 0, D3D11, render thread (`--mt`) | 6.4 ms | 7.9 ms | CPU 4.5 ms, GPU 6.4 ms per frame |
+| menu window 3 (975 draws), D3D11 one thread | 4.8 ms | 10 ms | |
+| loading window 0, D3D11 `--mt` | 6.5 ms | 7.7 ms | one run had a stretch of ~16 ms frames (GPU clock of the integrated part; not reproduced) |
+
+So the translator itself fits a 60 fps budget (16.6 ms) with room to spare on this machine; the game's own CPU work is not included. Shader translation
+cold cost: 25 programs = ~1 s of the Direct3D compiler (about 20 ms per program), which is a stall the first time a program is used; the disk cache
+(`BgfxOptions::shader_cache_dir`) removes it from the second run. Process memory of the benchmark: ~870 MB, most of it the cached trace window.
+
+Image fidelity (mean absolute error 0-255 against the recorded reference images, Direct3D 11): all 24 reference frames of `captures/menu` have a mean of
+**1.06** (typical frame 0.6-0.8, the first frame of each recording window 2.6-3.4 because the game state before the window was not recorded); the 15 frames
+of `captures/loading` (three windows) have a mean of **0.99** (typical 0.4-0.9, first frame of a window up to 3.0, one 2.2). The native Direct3D 9 replay of
+the same traces sits at 0.6-0.9, which is the floor of the method (the reference images come from a multisampled back buffer, ours is not multisampled).
+Bug history that mattered: setting render target 0 must reset the viewport to the whole target (Direct3D 9 behaviour); without it the post-processing
+chain of the game rendered 4x too large and the bloom washed the image out (loading frame 1829 went from MAE 32 to 0.94, the menu from 4.3 to 0.7).
+
+## Known differences
+
+* The first frame of every recording window differs more (2-3) because the state accumulated before the window was not recorded.
+* Multisampling of the game's back buffer is not reproduced (edges differ by one pixel; the comparison masks edges).
+* Vulkan: see the coverage table.
