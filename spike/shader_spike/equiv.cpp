@@ -106,6 +106,9 @@ void make_scene(Scene& s, uint32_t seed) {
 
 struct Image { std::vector<uint8_t> bgra = std::vector<uint8_t>(W * H * 4); };
 
+int ib_int[16][4] = {{3, 0, 1, 0}, {2, 0, 1, 0}, {4, 1, 2, 0}};
+float ib_bool[16] = {1, 0, 1, 0};
+
 // ---- Direct3D 9 (ground truth)
 struct D9 {
     HWND hwnd = nullptr;
@@ -229,19 +232,20 @@ struct D11 {
         }
         Com<ID3D11InputLayout> il;
         if (FAILED(dev->CreateInputLayout(layout.data(), UINT(layout.size()), vs_code->GetBufferPointer(), vs_code->GetBufferSize(), &il))) { error = "CreateInputLayout"; return false; }
-        // constant buffers: { float4 u_fix; float4 c[N]; }
-        auto make_buffer = [&](const float* constants, uint32_t count, const float fix[4], Com<ID3D11Buffer>& buffer) {
-            std::vector<float> data((1 + count) * 4);
-            std::memcpy(data.data(), fix, 16);
-            std::memcpy(data.data() + 4, constants, size_t(count) * 16);
+        // constant buffers: { float4 u_fix0; float4 u_fix1; float4 c[N]; [float4 ib[32]: integer then boolean registers] }
+        auto make_buffer = [&](const float* constants, uint32_t count, const float fix[8], uint32_t ib_registers, Com<ID3D11Buffer>& buffer) {
+            std::vector<float> data((2 + count + ib_registers) * 4);
+            std::memcpy(data.data(), fix, 32);
+            std::memcpy(data.data() + 8, constants, size_t(count) * 16);
+            if (ib_registers) { for (uint32_t i = 0; i < 16; ++i) for (int k = 0; k < 4; ++k) data[(2 + count + i) * 4 + k] = ib_int[i][k]; for (uint32_t i = 0; i < 16; ++i) data[(2 + count + 16 + i) * 4] = ib_bool[i]; }
             D3D11_BUFFER_DESC bd{}; bd.ByteWidth = UINT(data.size() * 4); bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER; bd.Usage = D3D11_USAGE_IMMUTABLE;
             D3D11_SUBRESOURCE_DATA init{data.data(), 0, 0};
             return SUCCEEDED(dev->CreateBuffer(&bd, &init, &buffer));
         };
         const char* fx = std::getenv("EQUIV_FIX"); const float fs = fx ? float(std::atof(fx)) : -1.0f;
-        const float fix[4] = {-fs / W, fs / H, 0.0f, 0.0f}, zero[4] = {};
+        const float fix[8] = {1.0f, 1.0f, -fs / W, fs / H, 1.0f, 0.0f, 0.0f, 0.0f}, zero[8] = {};
         Com<ID3D11Buffer> vs_cb, ps_cb;
-        if (!make_buffer(scene.vs_constants, vs.constant_registers, fix, vs_cb) || !make_buffer(scene.ps_constants, ps.constant_registers, zero, ps_cb)) { error = "CreateBuffer"; return false; }
+        if (!make_buffer(scene.vs_constants, vs.constant_registers, fix, vs.int_bool_registers, vs_cb) || !make_buffer(scene.ps_constants, ps.constant_registers, zero, ps.int_bool_registers, ps_cb)) { error = "CreateBuffer"; return false; }
         D3D11_BUFFER_DESC vbd{}; vbd.ByteWidth = sizeof(scene.vertices); vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER; vbd.Usage = D3D11_USAGE_IMMUTABLE;
         D3D11_SUBRESOURCE_DATA vinit{scene.vertices, 0, 0};
         Com<ID3D11Buffer> vb;

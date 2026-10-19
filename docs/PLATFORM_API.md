@@ -335,11 +335,7 @@ we can write the container ourselves at run time.
 (GLSL, MSL, HLSL, SPIR-V): four back-ends instead of one plus a library; every FF/bytecode feature is then implemented four times. (C) Ship
 precompiled game shaders: they are game data. (D) Translate to GLSL only and use ANGLE-like layers for the rest: no Metal/Vulkan story.
 
-**References and licences (nothing copied without a decision).** DXVK's `d3d9` front-end (*dxso*, the D3D9 bytecode → SPIR-V compiler): licence
-**zlib** (checked: the `LICENSE` file is the zlib/libpng licence), so adaptation is permitted with notices; it is nonetheless a **reference**:
-our IR also serves the fixed-function generator, so we write our own. Wine's `d3d9`/`wined3d`: **LGPL-2.1** (not checked in detail): read-only
-reference, nothing copied (an LGPL component inside a statically linked game binary would impose relinking obligations). Mesa's Gallium Nine:
-MIT (not checked): reference. SPIRV-Cross: Apache-2.0 (checked). SPIRV-Headers/Tools licences: to be checked when they enter `third_party/`.
+**Reuse.** Code from public projects (DXVK d3d9, Wine d3d9, SPIRV-Cross, Mesa Gallium Nine, other open-source Direct3D 9 layers) may be copied and adapted wherever it saves time or gives a better result; the original header stays on a file copied as is, and `docs/D3D9_BGFX.md` says where code came from. SPIRV-Cross (Apache-2.0) is already used as a library (vendored by bgfx).
 
 **Spike S1 (first work item of Phase 2, runs without a GPU).**
 1. From the first recorded trace: how many distinct vertex/pixel programs, which shader models, instruction mix, constant registers actually used,

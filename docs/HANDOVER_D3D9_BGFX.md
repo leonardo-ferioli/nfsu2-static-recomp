@@ -5,7 +5,7 @@ Branch `claude/platform-api-5da14e` (worktree `.claude/worktrees/platform-api-5d
 shader translator must become a **general, standalone Direct3D 9 translator** (other games of the same engine family will use it): own folder,
 own CMake target and tests, no dependency on the guest, `NativePlatform`, the mods or NFSU2 addresses; the guest-COM facade stays outside as thin glue.
 Also pending in the docs: a coverage table (what D3D9 is implemented and tested, what is not) and a comparison with DXVK d3d9 (Vulkan only, zlib
-licence) and Wine d3d9, with the rule "study, do not copy without checking the licence".
+licence) and Wine d3d9 (code may be reused: the user lifted the licence gate).
 
 ## Done (committed)
 
