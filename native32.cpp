@@ -114,8 +114,27 @@ std::string digest(const std::vector<uint8_t>& b){
     uint8_t sha[32];if(BCryptHash(BCRYPT_SHA256_ALG_HANDLE,nullptr,0,const_cast<uint8_t*>(b.data()),ULONG(b.size()),sha,32)<0)throw Fault("cannot hash guest image");
     std::ostringstream s;for(auto n:sha)s<<std::hex<<std::setw(2)<<std::setfill('0')<<unsigned(n);return s.str();
 }
+// ---- optional d3d9.dll next to the launcher (nue_d3d9: Direct3D 9 on bgfx, nue_d3d9/dll) ---------------------------------------
+// Like DXVK: a d3d9.dll in the launcher's folder replaces the system's for the guest's Direct3D 9 imports (the guest then talks to its COM objects through the
+// same native bridge). It is trusted like a system library for the "is this a native target" check below. NFSU2_SYSTEM_D3D9=1 ignores it.
+HMODULE d3d9_override_module(){
+    static const HMODULE module=[]()->HMODULE{
+        if(GetEnvironmentVariableA("NFSU2_SYSTEM_D3D9",nullptr,0))return nullptr;
+        wchar_t exe[32768];const DWORD n=GetModuleFileNameW(nullptr,exe,32768);if(!n||n>=32768)return nullptr;
+        std::wstring path(exe,n);const size_t slash=path.find_last_of(L"\\/");if(slash==std::wstring::npos)return nullptr;
+        path.resize(slash+1);path+=L"d3d9.dll";
+        if(GetFileAttributesW(path.c_str())==INVALID_FILE_ATTRIBUTES)return nullptr;
+        return LoadLibraryExW(path.c_str(),nullptr,LOAD_LIBRARY_SEARCH_DLL_LOAD_DIR|LOAD_LIBRARY_SEARCH_SYSTEM32);
+    }();
+    return module;
+}
+HMODULE load_import_library(const char* dll){
+    if(!_stricmp(dll,"d3d9.dll"))if(HMODULE override=d3d9_override_module())return override;
+    return LoadLibraryExA(dll,nullptr,LOAD_LIBRARY_SEARCH_SYSTEM32);
+}
 bool system_code(uint32_t a){
     MEMORY_BASIC_INFORMATION m{};if(!VirtualQuery(reinterpret_cast<void*>(uintptr_t(a)),&m,sizeof(m)) || m.Type!=MEM_IMAGE)return false;
+    if(m.AllocationBase && m.AllocationBase==static_cast<void*>(d3d9_override_module()) && (m.Protect&(PAGE_EXECUTE|PAGE_EXECUTE_READ|PAGE_EXECUTE_READWRITE|PAGE_EXECUTE_WRITECOPY)))return true;
     if(!(m.Protect&(PAGE_EXECUTE|PAGE_EXECUTE_READ|PAGE_EXECUTE_READWRITE|PAGE_EXECUTE_WRITECOPY)))return false;
     wchar_t file[32768],root[MAX_PATH];
     DWORD n=GetModuleFileNameW(static_cast<HMODULE>(m.AllocationBase),file,32768),r=GetWindowsDirectoryW(root,MAX_PATH);
@@ -424,7 +443,7 @@ uintptr_t NativePlatform::resolve(uint32_t token){
 uintptr_t NativePlatform::resolve_uncached(uint32_t token){
     {std::lock_guard lock(state_mutex);if(auto found=targets.find(token);found!=targets.end())return found->second;}
     for(const auto& i:imports)if(i.token==token){
-        auto module=LoadLibraryExA(i.dll,nullptr,LOAD_LIBRARY_SEARCH_SYSTEM32);
+        auto module=load_import_library(i.dll);
         if(!module)throw Fault(std::string("missing system import library ")+i.dll);
         auto fn=GetProcAddress(module,i.name[0]=='#'?MAKEINTRESOURCEA(std::stoi(i.name+1)):i.name);
         if(!fn)throw Fault(std::string("missing system import ")+i.dll+"!"+i.name);
@@ -643,7 +662,7 @@ bool NativePlatform::dispatch(Cpu& c){
         const char* file=reinterpret_cast<const char*>(uintptr_t(argument(c,0)));
         const auto local=std::filesystem::absolute(file);
         if(std::filesystem::is_regular_file(local))throw Fault("game-local x86 module requires separate analysis before native loading: "+local.string());
-        SetLastError(uint32_t(m<4>(c,teb+0x34)));auto module=LoadLibraryExA(file,nullptr,LOAD_LIBRARY_SEARCH_SYSTEM32);DWORD error=GetLastError();wm<4>(c,teb+0x34,error);returned(c,uint32_t(uintptr_t(module)),1);return true;
+        SetLastError(uint32_t(m<4>(c,teb+0x34)));auto module=load_import_library(file);DWORD error=GetLastError();wm<4>(c,teb+0x34,error);returned(c,uint32_t(uintptr_t(module)),1);return true;
     }
     if(name=="RtlUnwind" || name=="RaiseException" || name=="UnhandledExceptionFilter")return exception_import(c,name,guest_return);
     if(name=="VirtualProtect" || name=="VirtualAlloc"){

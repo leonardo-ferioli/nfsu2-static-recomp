@@ -7,6 +7,35 @@ It was written for Need for Speed: Underground 2 and is meant for other Direct3D
 
 Status: **a real frame is rendered** (see "Measurements"). Not everything of Direct3D 9 is implemented: the coverage table says what is and is not.
 
+## Using it in the game: the drop-in `d3d9.dll`
+
+`nue_d3d9/dll/` implements the COM objects of Direct3D 9 (`IDirect3D9`, `IDirect3DDevice9`, textures, surfaces, buffers, declarations, shaders, state
+blocks, swap chain) on top of the layer and the bgfx adapter, and exports `Direct3DCreate9` and the `D3DPERF_*` stubs, so it works the way DXVK does: **put
+`d3d9.dll` in the folder of the program that uses Direct3D 9**. Capability questions (adapter name, display modes, `CheckDeviceFormat`, multisample support,
+`GetDeviceCaps`) are answered by the system's real Direct3D 9, which is loaded from the Windows folder and never asked to create a device, so the game takes the
+decisions it takes with the real driver; the device and everything it draws are ours.
+
+```
+# 32-bit (the game is x86): static C runtime, no redistributable needed; the result is build_nue32\d3d9.dll (about 5 MB)
+cmake -S nue_d3d9 -B build_nue32 -G Ninja -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang -DCMAKE_BUILD_TYPE=Release "-DCMAKE_CXX_FLAGS=-m32 -msse4.2" "-DCMAKE_C_FLAGS=-m32 -msse4.2" -DNUE_STATIC_CRT=ON
+cmake --build build_nue32 --target nue_d3d9_dll
+# 64-bit (tests only): cmake --build build_nue_rel --target nue_d3d9_dll
+```
+
+* **The recompiled launcher** (`nfsu2_launcher.exe`): copy `d3d9.dll` next to it. `native32.cpp` loads it instead of the system's for the guest's `d3d9.dll`
+  imports (and trusts its code like a system library in the "native target" check); without the file nothing changes, and `NFSU2_SYSTEM_D3D9=1` ignores it.
+  The guest's own calls are untouched: they go through the same bridge into our COM objects.
+* **The original game** (`SPEED2.EXE`): copy `d3d9.dll` next to the executable (Windows looks in the application folder first).
+* Optional `nue_d3d9.ini` next to the dll (see `nue_d3d9/dll/nue_d3d9.ini.sample`): `renderer=d3d11|vulkan`, `vsync`, `render_thread`, `log`, `shader_cache`.
+  Log: `nue_d3d9.log` next to the dll (device creation, resets, and at exit what the game asked for that the translator cannot do). To go back to the
+  system's Direct3D 9 delete the file.
+* **Verified without the game**: the replay tool drives the dll through real COM calls with the recorded traces (`NUE_D3D9_DLL=<path> nue_replay <trace> --native
+  --frames N`): the same images as the direct path (menu mean error 1.06, loading 0.92), 0 unsupported records, in the 64-bit build and in the 32-bit build run
+  from a 32-bit process. **Not verified**: the game itself (nobody ran it with this dll yet): expect to look at `nue_d3d9.log` first.
+* Not offered through COM (the game does not use them in any capture): volume textures, queries, `UpdateSurface/UpdateTexture`, `ColorFill`, `DrawPrimitive`
+  (non-UP), `DrawIndexedPrimitiveUP`, patches, additional swap chains, multiple devices, `GetRenderTargetData` of anything but the back buffer. Fixed-function
+  lighting is not implemented (see the coverage table). Display-mode changes for fullscreen are not done: the frame is scaled to the game's window.
+
 ## Layers
 
 ```
