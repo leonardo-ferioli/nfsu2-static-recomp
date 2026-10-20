@@ -214,6 +214,18 @@ addressing, LOD bias 0, no sRGB and no auto-generated mips in any capture; turni
   A texture sampled by a draw before any data reached its top level is logged once (`sampled by a draw before any data was uploaded to it`).
 * **Profile line** (every 3 s): `profile: inside the Direct3D 9 dll X ms per frame (Y% of wall time), N calls per frame; most expensive: ...` shows how much of the frame the dll itself takes; the rest of the frame is the game.
 
+## Finding missing textures in the live game
+
+* **F11** writes `nue_textures_N.txt` next to the dll (and a screenshot of that same frame): one line per texture the next frame's draws sample, with id, size, format, levels, pool and usage, the mip levels that
+  have data, a hash of level 0 (equal hashes = same picture; a changed hash = the game updated it), uploads (and how many came after the texture was first used), `NO-DATA`, `ALL-ZERO`, `MIPS-MISSING`,
+  `SYSTEM-MEMORY-ONLY`, `SAMPLED-BEFORE-RENDERED-THIS-FRAME` / `SAMPLED-BUT-NEVER-RENDERED` for render-target textures, and the first draw (number inside the frame, stage, pixel shader id) that used it.
+* **F10** (or `mark_missing_textures=1`) draws every sampled texture that has no data as a magenta / black checker; the audit counts those draws.
+* **F12** screenshot of the game's back buffer.
+* A level that is locked again returns what it held (a copy kept in system memory, up to `texture_copy_mb`), like the managed pool of the real runtime; before, a lock without `DISCARD` returned zeros, so a game that
+  changed part of a level wrote the rest back as black. `UpdateTexture` (system memory -> default pool) is implemented.
+* `nue_window_test <d3d9.dll>` checks the window behaviour with windows that are never shown: the dll creates no window, leaves the game's style and position alone, follows resizes and moves, and keeps the game's
+  back buffer size through `Reset`.
+
 ## Known differences
 
 * The first frame of every recording window differs more (2-3) because the state accumulated before the window was not recorded.
