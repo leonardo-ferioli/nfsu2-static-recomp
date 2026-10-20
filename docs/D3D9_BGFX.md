@@ -239,6 +239,14 @@ addressing, LOD bias 0, no sRGB and no auto-generated mips in any capture; turni
   (not white); the spot factor is not capped at 1 inside the inner cone.
 * Not covered by the tests: vertex blending, point sprites, bump-map operations, projected texture coordinates (`D3DTTFF_PROJECTED`), user clip planes, the indexed user-pointer draw, volume textures.
 
+## The garage car (what the live game did that a replay cannot)
+
+Replaying the garage capture (`captures\garage`, the native Direct3D 9 as reference) through the layer, through the COM dll, in 32 and 64 bits gives the same picture as the real runtime (car crop MAE 1.2, logo, headlights, windshield reflection present),
+so the shaders, states, formats and cube sampling are right for what the game sends. The live game looked flat (dark glass and headlights, matte paint) because its environment cube map was empty: the game builds the 256x256 cube from six 2D textures by
+locking them again (`Lock` without `DISCARD`) and copying their pixels, and a lock used to return zeros for a texture that already held data (the trace records only what was written, so no replay can show this). A lock now returns what the texture holds
+(`texture_copy_mb`), `nue_format_test` checks that a Lock after Unlock returns what was written, and `NUE_DEBUG_ZERO_CUBES=1` shows the replay with empty cube maps (it looks like the live picture).
+Also found with `nue_defaults_test` (device state right after CreateDevice and Reset, real runtime against the dll): `Reset` did not return the state to its defaults and the state the dll reports with `Get*State` differed from the real defaults; both fixed.
+
 ## Known differences
 
 * The first frame of every recording window differs more (2-3) because the state accumulated before the window was not recorded.
