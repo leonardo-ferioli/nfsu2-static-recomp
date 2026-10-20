@@ -201,6 +201,19 @@ without (still 78 fps); `msaa=4` halves the extra cost.
 Texture filtering was checked at the same time and is right: the game uses anisotropic filtering (min/mag = 3, 16 samples) with linear mips, wrap/clamp
 addressing, LOD bias 0, no sRGB and no auto-generated mips in any capture; turning anisotropy off doubles the error (1.7 vs 0.9), so it is applied.
 
+## Window size, resource limits and the audit in `nue_d3d9.log`
+
+* **Output size.** The back buffer is never stretched to the window: the adapter draws it fitted into the part of the window that is visible on its monitor, keeping the aspect ratio
+  (`nue/window_fit.hpp`, `fit_aspect`: equal aspect fills, otherwise letterbox / pillarbox, centred). The facade passes the visible part of the client area (`ClientToScreen` clipped to the monitor)
+  to `Gpu::set_visible_area`. The game's own HWND is respected; the launcher's scaled-window mode (a "virtual" resolution the monitor does not list, such as windowed 1280x720) uses the same function
+  for the window it creates, so it fits the desktop instead of being sized from the desktop height only.
+* **bgfx handle limits** are compile-time: the defaults (4096 textures, vertex buffers and index buffers; 128 frame buffers; 64 vertex layouts) are raised in `CMakeLists.txt` (16384 / 16384 / 16384 / 1024 / 1024).
+  Every bgfx creation is checked with `bgfx::isValid`; a failure is counted and logged (`bgfx could not create: ...`, with the handle usage), and the draws that need the object are skipped (counted in `draws skipped`).
+* **Periodic audit** (first after 120 presents, then every 600): `audit: textures: N alive (...), created, failed; sampled-before-upload; never uploaded; partly uploaded; locked now; buffer failures; uploads`, the eight
+  most common (format, size, levels) groups with how many are complete / partial / empty, and `audit: bgfx handles in use / limit` (textures, buffers, frame buffers, layouts, programs, shaders, uniforms, memory).
+  A texture sampled by a draw before any data reached its top level is logged once (`sampled by a draw before any data was uploaded to it`).
+* **Profile line** (every 3 s): `profile: inside the Direct3D 9 dll X ms per frame (Y% of wall time), N calls per frame; most expensive: ...` shows how much of the frame the dll itself takes; the rest of the frame is the game.
+
 ## Known differences
 
 * The first frame of every recording window differs more (2-3) because the state accumulated before the window was not recorded.
