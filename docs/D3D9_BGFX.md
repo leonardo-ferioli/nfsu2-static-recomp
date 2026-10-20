@@ -258,6 +258,15 @@ ative_trace.log.
 Numbers measured in a race of the real game (nue_d3d9.log, 8x MSAA, window 1280x720): 17,078 calls per frame cost 3.65 ms inside the dll (8 % of a 42-65 ms frame); Present takes 0.06 ms (the game thread never waits for the render thread); the GPU takes 12-13 ms and
 the render thread 4-5 ms per frame, in parallel. Replay of the loading capture: 1661 draws per frame, layer 1.5 us and adapter 0.8 us per draw; GPU 6.5 ms with msaa off, 7.9 with 2x, 12.3 with 4x and with 8x.
 
+### What the live race log showed (render_thread=0, msaa=off)
+
+With `render_thread=0` bgfx has no render thread: the whole backend (4-5 ms of Direct3D 11 submission) runs on the game thread inside `Present`, so `Present` shows 4.9 ms per frame, "inside the dll" doubles (3.65 -> 8.2 ms), the render
+thread stats read 0 (there is none: its busy time is the Present time) and the GPU frame span equals the frame (it runs from the first to the last timestamp of a frame and includes the gaps before the commands arrive).
+`render_thread=1` (the default) gives Present 0.1 ms. The timeline now prints the GPU engine's real busy share from the operating system's counters (`GPU 3D engine really busy`), the time in `bgfx::frame()`, and `StateBlock9::Apply` is timed like every other call.
+Measured on the loading capture (replay, same machine): GPU busy 5.1 ms per frame at full speed and 6.9 ms when the game is the bottleneck at 45 ms per frame (the GPU runs at lower clocks when its duty cycle is low: with bgfx's own frame span 7.5 -> 10.0 ms at msaa off and 14.1 -> 19.7 ms at 8x).
+The render thread priority and ideal processor (`render_thread_priority`, `render_thread_cpu`, or the environment variables NUE_RENDER_THREAD_PRIORITY / NUE_RENDER_THREAD_CPU) made no measurable difference to the replay's main thread (22.5 / 22.3 / 22.7 / 21.7 / 22.7 ms per frame for default / lowest / above / cpu 14 / cpu 6).
+`NUE_BENCH_PACE_MS=N` makes the replay tools present one frame every N ms (a game that is the bottleneck) to measure the GPU side under that duty cycle.
+
 ## Known differences
 
 * The first frame of every recording window differs more (2-3) because the state accumulated before the window was not recorded.
