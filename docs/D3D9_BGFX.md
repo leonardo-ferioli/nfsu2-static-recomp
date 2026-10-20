@@ -27,7 +27,7 @@ cmake --build build_nue32 --target nue_d3d9_dll
   The guest's own calls are untouched: they go through the same bridge into our COM objects.
 * **The original game** (`SPEED2.EXE`): copy `d3d9.dll` next to the executable (Windows looks in the application folder first).
 * **F12** saves the frame just presented (the game's back buffer, before scaling to the window) as `nue_screenshot_N.bmp` next to the dll, to compare images.
-* Optional `nue_d3d9.ini` next to the dll (see `nue_d3d9/dll/nue_d3d9.ini.sample`): `renderer=d3d11|vulkan`, `vsync`, `render_thread`, `log`, `shader_cache`.
+* Optional `nue_d3d9.ini` next to the dll (see `nue_d3d9/dll/nue_d3d9.ini.sample`): `renderer=d3d11|vulkan`, `vsync`, `render_thread`, `worker_thread` (see "Worker-thread mode"), `log`, `shader_cache`.
   Log: `nue_d3d9.log` next to the dll (device creation, resets, and at exit what the game asked for that the translator cannot do). To go back to the
   system's Direct3D 9 delete the file.
 * **Verified without the game**: the replay tool drives the dll through real COM calls with the recorded traces (`NUE_D3D9_DLL=<path> nue_replay <trace> --native
@@ -266,6 +266,45 @@ thread stats read 0 (there is none: its busy time is the Present time) and the G
 Measured on the loading capture (replay, same machine): GPU busy 5.1 ms per frame at full speed and 6.9 ms when the game is the bottleneck at 45 ms per frame (the GPU runs at lower clocks when its duty cycle is low: with bgfx's own frame span 7.5 -> 10.0 ms at msaa off and 14.1 -> 19.7 ms at 8x).
 The render thread priority and ideal processor (`render_thread_priority`, `render_thread_cpu`, or the environment variables NUE_RENDER_THREAD_PRIORITY / NUE_RENDER_THREAD_CPU) made no measurable difference to the replay's main thread (22.5 / 22.3 / 22.7 / 21.7 / 22.7 ms per frame for default / lowest / above / cpu 14 / cpu 6).
 `NUE_BENCH_PACE_MS=N` makes the replay tools present one frame every N ms (a game that is the bottleneck) to measure the GPU side under that duty cycle.
+
+## Worker-thread mode (`worker_thread=1`)
+
+`nue_d3d9.ini` `worker_thread=1` (or `NUE_WORKER_THREAD=1`; default 0) puts the translator and the bgfx calls on a thread of their own, as DXVK's
+command-stream thread does: the game thread only records each call into a queue (`nue_d3d9/dll/threaded.cpp`, `ThreadedLayer`, a `d3d9::Layer` in
+front of the real one), and the worker replays the queue on the real layer and the adapter. The worker also creates and destroys the adapter and the
+layer, because bgfx must be called from the thread that started it (bgfx keeps its own render thread behind that).
+
+* Queue: a chain of 1 MB blocks, one writer and one reader, calls as small fixed records (draw data and shader constants copied inline, larger payloads
+  as a heap block); the worker sees new calls every 32 calls and at once at `Present` and whenever the game thread waits. Repeated render, sampler and
+  stage states (the layer ignores them anyway) are not queued.
+* Answered on the game thread without waiting: creation (ids of the queue, mapped to the layer's ids by the worker; unknown formats are still refused at
+  once), buffer locks (memory of the game's side: a fresh block, or a copy of the buffer kept once a lock needed its contents, up to `worker_copy_mb`;
+  unlock sends the written range), texture locks of levels without data or with DISCARD (a fresh block sent at unlock), `TestCooperativeLevel`.
+* Waiting for the worker (after everything queued before is done): texture locks of levels that hold data (the game then writes into the layer's own
+  memory), the first lock that reads a buffer, `Get*ShaderConstant*`, `Reset`, back buffer and depth surfaces, `GetRenderTargetData`, F12, the audits
+  and the release of the device. Messages sent to the game's window during such a wait are answered (DXGI may send them from the worker).
+* Back-pressure: `Present` waits until the worker has finished the previous frame. The log gets the worker's busy time in each `timeline:` line and, at the
+  end, how many times the game thread had to wait outside `Present` and why.
+
+Measured with the COM bench (`NUE_D3D9_DLL=<dll> nue_replay <capture> --bench --bgfx com --loops 3 --window 0`, `NUE_MSAA=1`, hidden window, same
+machine as above; mean of three runs each). "Replaying thread CPU" is the CPU time of the thread that plays the game's part, per frame; it includes
+the replay tool's own trace decoding (about half of it in worker mode, which the game does not have):
+
+| Capture | build | replaying thread CPU, off -> on | frame mean, off -> on |
+|---|---|---|---|
+| menu | 64-bit | 6.83 -> 5.09 ms | 6.85 -> 5.12 ms |
+| menu | 32-bit | 7.06 -> 5.02 ms | 7.07 -> 5.06 ms |
+| loading | 64-bit | 6.51 -> 4.57 ms | 6.82 -> 6.12 ms (GPU bound) |
+| loading | 32-bit | 6.73 -> 4.57 ms | 6.90 -> 6.08 ms (GPU bound) |
+| garage | 64-bit | 1.81 -> 1.36 ms | 4.05 -> 3.99 ms (GPU bound) |
+| garage | 32-bit | 1.78 -> 1.10 ms | 5.46 -> 5.43 ms (GPU bound) |
+
+The worker is busy 4.3-4.5 ms per frame on loading (translator + bgfx calls, its waits for the render thread included), so with the worker the game
+thread's share of the dll drops from ~2.5-3.5 ms to ~1.1 ms per frame (COM entry points ~0.7 ms + queueing ~0.4 ms, from `--sample`). Images: the
+`--native` COM replays of menu, loading and garage give the same error for every compared frame with the mode off and on (mean 1.057 / 0.920 / 0.702,
+32 and 64 bit), and `nue_state_test`, `nue_format_test`, `nue_window_test`, `nue_defaults_test`, `nue_tests` pass with it on. **Not verified**: the game
+itself. Replays never read locked data back, so the waits for texture locks of levels with data (34 in 240 garage frames) and for buffer copies (none in
+the captures) are what to look at in the live log (`worker thread:` line at the end) before making it the default.
 
 ## Known differences
 
