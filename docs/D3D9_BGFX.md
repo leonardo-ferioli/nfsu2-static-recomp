@@ -247,6 +247,17 @@ locking them again (`Lock` without `DISCARD`) and copying their pixels, and a lo
 (`texture_copy_mb`), `nue_format_test` checks that a Lock after Unlock returns what was written, and `NUE_DEBUG_ZERO_CUBES=1` shows the replay with empty cube maps (it looks like the live picture).
 Also found with `nue_defaults_test` (device state right after CreateDevice and Reset, real runtime against the dll): `Reset` did not return the state to its defaults and the state the dll reports with `Get*State` differed from the real defaults; both fixed.
 
+## Where the time of a live frame goes (`timeline:` in nue_d3d9.log)
+
+Every 3 s the log has a `timeline:` line with the frame as the game thread lives it: wall time per frame = game code outside the dll + time inside the dll (of which waiting for the render thread), the share of the wall time the game
+thread was running on a CPU (`CPU busy`: ~100 % means CPU bound, the game thread never waits for anything), how long the render thread was busy and how long it waited for the game thread, the GPU time, the cores the whole process used, and a
+measured core speed (a fixed chain of integer operations timed in the heartbeat; 100 % = the best seen since the start, a later 80 % means the cores run 20 % slower than then: the operating system reports the rated clock all the time on this machine).
+`threads:` lines list the game thread and the threads that appeared while bgfx started, with their priority. Compare with the same scene on the system runtime: `NFSU2_SYSTEM_D3D9=1` makes the launcher ignore the dll; `--profile` of the launcher writes the main thread's
+time inside Windows and instructions per second to logs
+ative_trace.log.
+Numbers measured in a race of the real game (nue_d3d9.log, 8x MSAA, window 1280x720): 17,078 calls per frame cost 3.65 ms inside the dll (8 % of a 42-65 ms frame); Present takes 0.06 ms (the game thread never waits for the render thread); the GPU takes 12-13 ms and
+the render thread 4-5 ms per frame, in parallel. Replay of the loading capture: 1661 draws per frame, layer 1.5 us and adapter 0.8 us per draw; GPU 6.5 ms with msaa off, 7.9 with 2x, 12.3 with 4x and with 8x.
+
 ## Known differences
 
 * The first frame of every recording window differs more (2-3) because the state accumulated before the window was not recorded.
