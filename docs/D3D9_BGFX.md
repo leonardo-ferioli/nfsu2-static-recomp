@@ -226,6 +226,19 @@ addressing, LOD bias 0, no sRGB and no auto-generated mips in any capture; turni
 * `nue_window_test <d3d9.dll>` checks the window behaviour with windows that are never shown: the dll creates no window, leaves the game's style and position alone, follows resizes and moves, and keeps the game's
   back buffer size through `Reset`.
 
+## Ground-truth tests against the system runtime
+
+`nue_format_test <d3d9.dll>` and `nue_state_test <d3d9.dll> [filter]` run the same Direct3D 9 calls on a window that is never shown through the dll and through the system `d3d9.dll`, and compare the pixels.
+
+* **Formats** (8x8, two mip levels, Lock/Unlock, point sampling, colour and alpha): A8R8G8B8, X8R8G8B8, R5G6B5, X1R5G5B5, A1R5G5B5, A4R4G4B4, A8, L8, A8L8, V8U8, Q8W8V8U8, A2R10G10B10, G16R16, DXT1/3/5 all match.
+  Found and fixed by it: R5G6B5 came out with red and blue swapped (now decoded on the CPU), V8U8 / Q8W8V8U8 were read as unsigned (now signed RGBA8: V8U8 reads as (u, v, 1, 1)), G16R16 had blue 0 instead of 1.
+* **States** (110 cases): alpha test (8 functions), 13 blend factor / operation pairs, depth bias and slope-scaled depth bias, cull modes and windings, colour write masks, every texture-stage operation as stage 0 and as stage 1 after a modulate,
+  alpha operations, texture-factor and complement / alpha-replicate arguments, the temporary register, texture transforms, texture coordinate generation (camera-space normal, position, reflection vector with a cube map; sphere map) and
+  fixed-function lighting (directional, point with attenuation and range, spot cones, specular with local / infinite viewer, several lights, colour material sources) all match.
+  Found and fixed by it: texture transforms and coordinate generation do not apply to pre-transformed (XYZRHW) vertices in the real runtime; coordinate generation and lighting did not exist; when the vertex has no colour the material colour is the source
+  (not white); the spot factor is not capped at 1 inside the inner cone.
+* Not covered by the tests: vertex blending, point sprites, bump-map operations, projected texture coordinates (`D3DTTFF_PROJECTED`), user clip planes, the indexed user-pointer draw, volume textures.
+
 ## Known differences
 
 * The first frame of every recording window differs more (2-3) because the state accumulated before the window was not recorded.
