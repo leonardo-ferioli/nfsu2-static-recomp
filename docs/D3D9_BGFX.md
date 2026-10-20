@@ -26,6 +26,7 @@ cmake --build build_nue32 --target nue_d3d9_dll
   imports (and trusts its code like a system library in the "native target" check); without the file nothing changes, and `NFSU2_SYSTEM_D3D9=1` ignores it.
   The guest's own calls are untouched: they go through the same bridge into our COM objects.
 * **The original game** (`SPEED2.EXE`): copy `d3d9.dll` next to the executable (Windows looks in the application folder first).
+* **F12** saves the frame just presented (the game's back buffer, before scaling to the window) as `nue_screenshot_N.bmp` next to the dll, to compare images.
 * Optional `nue_d3d9.ini` next to the dll (see `nue_d3d9/dll/nue_d3d9.ini.sample`): `renderer=d3d11|vulkan`, `vsync`, `render_thread`, `log`, `shader_cache`.
   Log: `nue_d3d9.log` next to the dll (device creation, resets, and at exit what the game asked for that the translator cannot do). To go back to the
   system's Direct3D 9 delete the file.
@@ -184,7 +185,24 @@ the same traces sits at 0.6-0.9, which is the floor of the method (the reference
 Bug history that mattered: setting render target 0 must reset the viewport to the whole target (Direct3D 9 behaviour); without it the post-processing
 chain of the game rendered 4x too large and the bloom washed the image out (loading frame 1829 went from MAE 32 to 0.94, the menu from 4.3 to 0.7).
 
+## Multisampling
+
+The game asks for a multisampled back buffer (`D3DMULTISAMPLE_NONMASKABLE` with a quality level, as the recorder's reference images say). Without it cars and
+every silhouette were jagged and shimmered. The layer now maps the request to a sample count (`samples_for`): type 2..16 = that count; NONMASKABLE: quality
+0-1 = 2 samples, 2-3 = 4, 4 and above = 8, and an unknown quality (the recorded traces do not keep it) = 8; the real AMD runtime here offers 8 quality levels.
+The adapter makes the back buffer, the automatic depth surface and any render target or depth surface with the same multisample type multisampled
+(`BGFX_TEXTURE_RT_MSAA_Xn`; they must all agree or bgfx cannot make the framebuffer), and bgfx resolves when the texture is sampled or copied
+(`StretchRect` of the back buffer = the resolve). `nue_d3d9.log` says "multisample: requested type T quality Q -> N samples"; `msaa=` in `nue_d3d9.ini`
+forces 1 (off), 2, 4 or 8. Measured on the car frame of `captures/loading` (frame 1829, crop of the car): error on the edge band 3.68 (no MSAA), 2.75 (2x),
+2.36 (4x), **2.28 (8x)**; whole-image mean error of the three loading windows 0.99 -> **0.75**, of the four menu windows 1.06 -> **0.81**; the real system
+Direct3D 9 without multisampling scores 0.95 on the same trace. Cost: 8x on an integrated Radeon at 1280x720 is about 12.7 ms of GPU time against 7.0 ms
+without (still 78 fps); `msaa=4` halves the extra cost.
+
+Texture filtering was checked at the same time and is right: the game uses anisotropic filtering (min/mag = 3, 16 samples) with linear mips, wrap/clamp
+addressing, LOD bias 0, no sRGB and no auto-generated mips in any capture; turning anisotropy off doubles the error (1.7 vs 0.9), so it is applied.
+
 ## Known differences
 
 * The first frame of every recording window differs more (2-3) because the state accumulated before the window was not recorded.
-* Multisampling of the game's back buffer is not reproduced (edges differ by one pixel; the comparison masks edges).
+
+Note for measurements: a `d3d9.dll` placed next to `nue_replay.exe` is loaded by `--native` instead of the system's (that is the whole point of the dll). For the real Direct3D 9 as ground truth, run a copy of the tool from a folder that does not have the dll.
