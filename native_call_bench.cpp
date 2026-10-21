@@ -2,6 +2,7 @@
 // a cheap import is called repeatedly through its import-table slot and the time per call is reported.
 // Usage: fast_native_bench <export dir> <game dir>
 #include "native32.hpp"
+#include "bench_sampler.hpp"
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
 #include <windows.h>
@@ -17,7 +18,8 @@ int main(int argc,char** argv){try{
     const uint32_t sp=uint32_t(r<4>(c,16)),stop=0xdead0000;
     struct Probe{const char* name;uint32_t iat;uint32_t args;};
     for(const Probe& probe:{Probe{"GetCurrentProcessId",7876720,0},Probe{"GetCurrentThreadId",7877120,0},Probe{"TlsGetValue",7877296,1}}){
-        const unsigned calls=std::getenv("NFSU2_PROFILE")?12000000u:200000u;
+        const unsigned calls=std::getenv("NFSU2_PROFILE")||std::getenv("NFSU2_BENCH_SAMPLE")?3000000u:200000u;
+        BenchSampler sampler(probe.name);
         const auto started=std::chrono::steady_clock::now();
         for(unsigned i=0;i<calls;++i){
             wr<4>(c,16,sp);wm<4>(c,sp,stop);if(probe.args)wm<4>(c,sp+4,0);
@@ -40,6 +42,25 @@ int main(int argc,char** argv){try{
         }
         const double seconds=std::chrono::duration<double>(std::chrono::steady_clock::now()-started).count();
         std::cout<<"direct system address (COM-style): "<<seconds/calls*1e9<<" ns per guest->native call\n";
+    }
+    // Translated code calling Windows: the game's wrappers 0x6f55dd / 0x6f55e8 (ADD ECX,4; PUSH ECX; CALL [EnterCriticalSection /
+    // LeaveCriticalSection]; RET), each entered from the dispatch loop (NativePlatform::execute). The speed layer makes the inner call
+    // from the translated code itself (NFSU2_SPEED_NATIVE_CALLS=0 for the plain path).
+    {
+        c.map(0,0x1000);const uint32_t block=c.memory.back().base;
+        auto* section=reinterpret_cast<CRITICAL_SECTION*>(c.pointer(block+4,sizeof(CRITICAL_SECTION)));InitializeCriticalSection(section);
+        const unsigned calls=1000000;
+        BenchSampler sampler("guest wrappers");
+        const auto started=std::chrono::steady_clock::now();
+        for(unsigned i=0;i<calls;++i){
+            for(const uint32_t wrapper:{0x6f55ddu,0x6f55e8u}){
+                wr<4>(c,16,sp);wm<4>(c,sp,stop);wr<4>(c,4,block);c.pc=wrapper;
+                p.execute(c,stop,1000);
+            }
+        }
+        const double seconds=std::chrono::duration<double>(std::chrono::steady_clock::now()-started).count();
+        DeleteCriticalSection(section);
+        std::cout<<"translated wrapper -> EnterCriticalSection/LeaveCriticalSection: "<<seconds/(2.0*calls)*1e9<<" ns per guest call (loop + translated code + native call)\n";
     }
     // The game's own memcpy (0x401000, REP MOVSD/MOVSB): translated string instructions are P-code loops.
     {

@@ -24,6 +24,7 @@
 #include <thread>
 #include <vector>
 #include "native32.hpp"
+#include "speed.hpp"
 #include "mods_widescreen.hpp"
 #include "platform/services.hpp"
 
@@ -68,6 +69,7 @@ struct Config {
     unsigned log_max_kb = 1024, log_keep = 3, watchdog_seconds = 0;
     uint64_t max_instructions = 0;  // 0: unlimited
     WidescreenSettings widescreen;
+    SpeedSettings speed;   // [SPEED]: the speed layer's switches (speed.hpp)
     bool dialogs = true, verify_only = false, info = false, help = false, version = false, trace = true, state_cache = true, vsync = false, profile = false;
 };
 
@@ -334,6 +336,16 @@ void load_ini(const fs::path& file, Config& config, bool explicit_file) {
             apply_widescreen_setting(config, section, key, value, file.string() + ":" + std::to_string(number));
             continue;
         }
+        if (section == "speed") {
+            const std::string origin = file.string() + ":" + std::to_string(number);
+            value = trim(value.substr(0, value.find(';')));
+            if (key == "native_calls") config.speed.native_calls = parse_bool(value, true);
+            else if (key == "predict") config.speed.predict = parse_bool(value, true);
+            else if (key == "lookups") config.speed.lookups = parse_bool(value, true);
+            else if (key == "enabled") { const bool on = parse_bool(value, true); config.speed.native_calls = config.speed.predict = config.speed.lookups = on; }
+            else throw std::runtime_error(origin + ": unknown key " + key);
+            continue;
+        }
         if (!section.empty() && section != "launcher") continue;  // other sections belong to future components
         apply_setting(config, key, value, base, file.string() + ":" + std::to_string(number));
     }
@@ -356,6 +368,7 @@ const char* usage_text =
     "  --record-capture-every N  una imagen de referencia cada N fotogramas de la ventana (por defecto 30; 0 = ninguna)\n"
     "  --record-start-frame N    abre la primera ventana en el fotograma N en lugar de esperar a F9\n"
     "  --record-max-mb N    tope en MB de los datos grabados (texturas, vertices, shaders; por defecto 3072)\n"
+    "  --no-speed           apaga la capa de velocidad (llamadas nativas directas, retornos predichos, busquedas con cache; ver [SPEED])\n"
     "  --profile            cada 5 s anota en logs/native_trace.log fps, tiempo dentro de Direct3D y otros datos de rendimiento\n"
     "  --no-widescreen      desactiva el parche de pantalla ancha (resolucion original 640x480)\n"
     "  --width N --height N resolucion de pantalla ancha; con estas opciones se usa siempre, aunque haya otra guardada\n"
@@ -370,7 +383,7 @@ Config parse_arguments(int argc, char** argv) {
     fs::path ini_override;
     std::map<std::string, std::string> overrides;
     std::vector<std::pair<std::string, std::string>> widescreen_overrides;   // key, value in [widescreen]
-    bool windowed_requested = false, given_size = false;
+    bool windowed_requested = false, given_size = false, no_speed = false;
     for (int i = 1; i < argc; ++i) {
         const std::string arg = argv[i];
         auto value = [&]() -> std::string {
@@ -397,6 +410,7 @@ Config parse_arguments(int argc, char** argv) {
         else if (arg == "--no-state-cache") overrides["state_cache"] = "off";
         else if (arg == "--vsync") overrides["vsync"] = "on";
         else if (arg == "--profile") overrides["profile"] = "on";
+        else if (arg == "--no-speed") no_speed = true;
         else if (arg == "--no-widescreen") widescreen_overrides.emplace_back("enabled", "off");
         else if (arg == "--width") { widescreen_overrides.emplace_back("width", value()); widescreen_overrides.emplace_back("force_resolution", "on"); given_size = true; }
         else if (arg == "--height") { widescreen_overrides.emplace_back("height", value()); widescreen_overrides.emplace_back("force_resolution", "on"); given_size = true; }
@@ -416,6 +430,7 @@ Config parse_arguments(int argc, char** argv) {
     // Command-line values win over the file; relative paths there are relative to the working directory.
     for (const auto& [key, value] : overrides) apply_setting(config, key, value, fs::current_path(), "command line");
     for (const auto& [key, value] : widescreen_overrides) apply_widescreen_setting(config, "widescreen", key, value, "command line");
+    if (no_speed) config.speed.native_calls = config.speed.predict = config.speed.lookups = false;
     return config;
 }
 
@@ -524,9 +539,16 @@ static int launcher_main(int argc, char** argv) {
 
     if (config.profile) SetEnvironmentVariableA("NFSU2_PROFILE", "1");
     apply_performance_hints();
+    speed_settings() = config.speed;   // the platform applies them (NFSU2_SPEED_* in the environment still override)
     Cpu cpu;
     try {
         NativePlatform platform(cpu, game, NativePlatform::FromEmbedded{embedded_image_blocks, embedded_image_block_count});
+        {
+            const SpeedSettings& speed = speed_settings();
+            auto onoff = [](bool b) { return b ? "on" : "off"; };
+            logger.info(std::string("speed layer: native calls ") + onoff(speed.native_calls) + ", predicted returns " + onoff(speed.predict) +
+                        ", cached lookups " + onoff(speed.lookups));
+        }
         platform.set_dynamic_code_specification(sleigh_spec);
         const unsigned fps_cap = widescreen_effective_fps_limit(config.widescreen);
         platform.set_frame_limit(fps_cap);

@@ -28,6 +28,10 @@ public:
     NativePlatform(Cpu&,const std::filesystem::path& game_directory,FromEmbedded);
     ~NativePlatform();
     bool dispatch(Cpu&);
+    // Speed layer: g_native_hook (speed.hpp), installed while a platform exists and the native_calls switch is on.
+    static bool translated_native_call(Cpu&);
+    // Runs translated code on `c` from its pc until it reaches `stop` (the dispatch loop; benchmarks use it directly).
+    uint32_t execute(Cpu&,uint32_t stop,uint64_t budget);
     void run(uint64_t budget,const std::filesystem::path& trace);
     using NativeHook=std::function<uint32_t(Cpu&)>;
     uint32_t callback(uint32_t address,std::initializer_list<uint32_t> arguments);
@@ -139,9 +143,14 @@ private:
     void build_exception_context(Cpu&,uint32_t context,uint32_t eip,uint32_t esp);
     void finish_with_context(Cpu&,uint32_t context);
     void purge_dead_exceptions(Cpu&);
-    uint32_t execute(Cpu&,uint32_t stop,uint64_t budget);
     uintptr_t resolve(uint32_t token);
     void record(const std::string&);
     bool first_native_call(uint32_t target,uint32_t guest_return,bool result);
+    // Speed layer: the call of a target without special treatment (see dispatch); false leaves it to the general path.
+    bool plain_call(Cpu&,uint32_t target,const char* dll,const char* resolved_name);
+    void record_plain_call(Cpu&,uint32_t target,const char* dll,const char* resolved_name,uint32_t guest_return,bool result,uint32_t eax,uint32_t popped);
+    void raise_callback_fault();
+    bool dispatch_route(Cpu&);
+    void report_dynamic_code(uint64_t total,uint64_t decoded,uint32_t pc);
 };
 }

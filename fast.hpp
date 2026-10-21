@@ -59,6 +59,8 @@ NFSU2_AI double f64(u64 v){return std::bit_cast<double>(v);}
 NFSU2_AI u32 b32(float v){return std::bit_cast<u32>(v);}
 NFSU2_AI u64 b64(double v){return std::bit_cast<u64>(v);}
 
+// N bytes of guest memory as an asm operand: a passed-through x87 instruction names exactly what it reads or writes (speed layer).
+template<unsigned N> struct XM {u8 b[N];};
 // x87 80-bit helpers: the same instruction sequences as the reference float_op, minus its string dispatch.
 struct X80 {u8 b[10];};
 NFSU2_AI X80 x80(const void* p){X80 x;__builtin_memcpy(&x,p,10);return x;}
