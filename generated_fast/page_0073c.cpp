@@ -25,21 +25,44 @@ PN u32 blk_73c048(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
 PN u32 blk_73c051(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
 PN u32 blk_73c05f(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
 PN u32 blk_73c082(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_73c08f(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
 PN u32 blk_73c0c5(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
 PN u32 blk_73c0ce(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_73c0d5(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_73c104(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
 PN u32 blk_73c134(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
 PN u32 blk_73c162(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_73c16d(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
 PN u32 blk_73c1a3(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
 PN u32 blk_73c1d7(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_73c1e8(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
 PN u32 blk_73c21e(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
 PN u32 blk_73c259(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_73c26a(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
 PN u32 blk_73c2a0(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
 PN u32 blk_73c2db(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_73c2ec(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
 PN u32 blk_73c322(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
 PN u32 blk_73c35d(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_73c368(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
 PN u32 blk_73c39e(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
 PN u32 blk_73c3d9(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_73c3ea(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_73c406(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_73c40c(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_73c41b(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_73c42a(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_73c436(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_73c43e(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_73c444(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_73c464(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_73c484(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
 PN u32 blk_73c488(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_73c48c(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_73c494(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_73c49c(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_73c4a4(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_73c4ac(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
 PN u32 blk_73c4b0(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
 PN u32 blk_73c4b2(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
 PN u32 blk_73c4b8(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
@@ -179,32 +202,9 @@ PN u32 blk_73c000(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
 PN u32 blk_73c00f(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
 PN u32 blk_73c017(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
 PN u32 blk_73c074(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
-PN u32 blk_73c08f(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
 PN u32 blk_73c095(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
-PN u32 blk_73c0d5(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
-PN u32 blk_73c104(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
-PN u32 blk_73c16d(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
-PN u32 blk_73c1e8(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
-PN u32 blk_73c26a(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
-PN u32 blk_73c2ec(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
-PN u32 blk_73c368(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
-PN u32 blk_73c3ea(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
-PN u32 blk_73c406(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
-PN u32 blk_73c40c(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
-PN u32 blk_73c41b(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
-PN u32 blk_73c42a(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
-PN u32 blk_73c436(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
-PN u32 blk_73c43e(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
-PN u32 blk_73c444(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
 PN u32 blk_73c44d(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
-PN u32 blk_73c464(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
 PN u32 blk_73c46d(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
-PN u32 blk_73c484(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
-PN u32 blk_73c48c(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
-PN u32 blk_73c494(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
-PN u32 blk_73c49c(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
-PN u32 blk_73c4a4(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
-PN u32 blk_73c4ac(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
 PN u32 blk_73c4db(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
 PN u32 blk_73c52e(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
 PN u32 blk_73c76b(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
@@ -605,7 +605,7 @@ u8 U[12];
 w4(U+0,u32(u32(r4(G+0))*u32(u32(0x4ull))));
 w4(U+4,u32(u32(u32(0x73c5acull))+u32(r4(U+0))));
 __builtin_memmove((U+8),gp(u32(r4(U+4))),4);
-{u32 t_=u32(r4(U+8));TAIL_PRED(t_,);}
+{u32 t_=u32(r4(U+8));TAIL_PRED(t_,switch(t__){case 0x73c4b2u:[[clang::musttail]] return blk_73c4b2(ARGS);case 0x73c08fu:[[clang::musttail]] return blk_73c08f(ARGS);case 0x73c0d5u:[[clang::musttail]] return blk_73c0d5(ARGS);case 0x73c3eau:[[clang::musttail]] return blk_73c3ea(ARGS);case 0x73c464u:[[clang::musttail]] return blk_73c464(ARGS);case 0x73c444u:[[clang::musttail]] return blk_73c444(ARGS);case 0x73c104u:[[clang::musttail]] return blk_73c104(ARGS);case 0x73c16du:[[clang::musttail]] return blk_73c16d(ARGS);case 0x73c1e8u:[[clang::musttail]] return blk_73c1e8(ARGS);case 0x73c26au:[[clang::musttail]] return blk_73c26a(ARGS);case 0x73c2ecu:[[clang::musttail]] return blk_73c2ec(ARGS);case 0x73c368u:[[clang::musttail]] return blk_73c368(ARGS);case 0x73c406u:[[clang::musttail]] return blk_73c406(ARGS);case 0x73c40cu:[[clang::musttail]] return blk_73c40c(ARGS);case 0x73c41bu:[[clang::musttail]] return blk_73c41b(ARGS);case 0x73c42au:[[clang::musttail]] return blk_73c42a(ARGS);case 0x73c436u:[[clang::musttail]] return blk_73c436(ARGS);case 0x73c43eu:[[clang::musttail]] return blk_73c43e(ARGS);case 0x73c484u:[[clang::musttail]] return blk_73c484(ARGS);case 0x73c48cu:[[clang::musttail]] return blk_73c48c(ARGS);case 0x73c494u:[[clang::musttail]] return blk_73c494(ARGS);case 0x73c49cu:[[clang::musttail]] return blk_73c49c(ARGS);case 0x73c4a4u:[[clang::musttail]] return blk_73c4a4(ARGS);case 0x73c4acu:[[clang::musttail]] return blk_73c4ac(ARGS);default:break;});}
 }
 
 XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
@@ -861,7 +861,7 @@ u8 U[12];
 w4(U+0,u32(u32(r4(G+0))*u32(u32(0x4ull))));
 w4(U+4,u32(u32(u32(0x73c5c4ull))+u32(r4(U+0))));
 __builtin_memmove((U+8),gp(u32(r4(U+4))),4);
-{u32 t_=u32(r4(U+8));TAIL_PRED(t_,);}
+{u32 t_=u32(r4(U+8));TAIL_PRED(t_,switch(t__){case 0x73c4b2u:[[clang::musttail]] return blk_73c4b2(ARGS);case 0x73c104u:[[clang::musttail]] return blk_73c104(ARGS);case 0x73c16du:[[clang::musttail]] return blk_73c16d(ARGS);case 0x73c1e8u:[[clang::musttail]] return blk_73c1e8(ARGS);case 0x73c26au:[[clang::musttail]] return blk_73c26a(ARGS);case 0x73c2ecu:[[clang::musttail]] return blk_73c2ec(ARGS);case 0x73c368u:[[clang::musttail]] return blk_73c368(ARGS);case 0x73c406u:[[clang::musttail]] return blk_73c406(ARGS);case 0x73c40cu:[[clang::musttail]] return blk_73c40c(ARGS);case 0x73c41bu:[[clang::musttail]] return blk_73c41b(ARGS);case 0x73c42au:[[clang::musttail]] return blk_73c42a(ARGS);case 0x73c436u:[[clang::musttail]] return blk_73c436(ARGS);case 0x73c43eu:[[clang::musttail]] return blk_73c43e(ARGS);case 0x73c484u:[[clang::musttail]] return blk_73c484(ARGS);case 0x73c48cu:[[clang::musttail]] return blk_73c48c(ARGS);case 0x73c494u:[[clang::musttail]] return blk_73c494(ARGS);case 0x73c49cu:[[clang::musttail]] return blk_73c49c(ARGS);case 0x73c4a4u:[[clang::musttail]] return blk_73c4a4(ARGS);case 0x73c4acu:[[clang::musttail]] return blk_73c4ac(ARGS);default:break;});}
 }
 
 XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
@@ -2217,7 +2217,7 @@ u8 U[12];
 w4(U+0,u32(u32(r4(G+0))*u32(u32(0x4ull))));
 w4(U+4,u32(u32(u32(0x73c5e0ull))+u32(r4(U+0))));
 __builtin_memmove((U+8),gp(u32(r4(U+4))),4);
-{u32 t_=u32(r4(U+8));TAIL_PRED(t_,);}
+{u32 t_=u32(r4(U+8));TAIL_PRED(t_,switch(t__){case 0x73c4b2u:[[clang::musttail]] return blk_73c4b2(ARGS);case 0x73c406u:[[clang::musttail]] return blk_73c406(ARGS);case 0x73c40cu:[[clang::musttail]] return blk_73c40c(ARGS);case 0x73c41bu:[[clang::musttail]] return blk_73c41b(ARGS);case 0x73c42au:[[clang::musttail]] return blk_73c42a(ARGS);case 0x73c436u:[[clang::musttail]] return blk_73c436(ARGS);case 0x73c43eu:[[clang::musttail]] return blk_73c43e(ARGS);case 0x73c484u:[[clang::musttail]] return blk_73c484(ARGS);case 0x73c48cu:[[clang::musttail]] return blk_73c48c(ARGS);case 0x73c494u:[[clang::musttail]] return blk_73c494(ARGS);case 0x73c49cu:[[clang::musttail]] return blk_73c49c(ARGS);case 0x73c4a4u:[[clang::musttail]] return blk_73c4a4(ARGS);case 0x73c4acu:[[clang::musttail]] return blk_73c4ac(ARGS);default:break;});}
 }
 
 XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
@@ -2527,7 +2527,7 @@ u8 U[12];
 w4(U+0,u32(u32(r4(G+4))*u32(u32(0x4ull))));
 w4(U+4,u32(u32(u32(0x73c5fcull))+u32(r4(U+0))));
 __builtin_memmove((U+8),gp(u32(r4(U+4))),4);
-{u32 t_=u32(r4(U+8));TAIL_PRED(t_,);}
+{u32 t_=u32(r4(U+8));TAIL_PRED(t_,switch(t__){case 0x73c4b2u:[[clang::musttail]] return blk_73c4b2(ARGS);case 0x73c484u:[[clang::musttail]] return blk_73c484(ARGS);case 0x73c48cu:[[clang::musttail]] return blk_73c48c(ARGS);case 0x73c494u:[[clang::musttail]] return blk_73c494(ARGS);case 0x73c49cu:[[clang::musttail]] return blk_73c49c(ARGS);case 0x73c4a4u:[[clang::musttail]] return blk_73c4a4(ARGS);case 0x73c4acu:[[clang::musttail]] return blk_73c4ac(ARGS);default:break;});}
 }
 
 XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
@@ -2624,7 +2624,7 @@ u8 U[12];
 w4(U+0,u32(u32(r4(G+4))*u32(u32(0x4ull))));
 w4(U+4,u32(u32(u32(0x73c618ull))+u32(r4(U+0))));
 __builtin_memmove((U+8),gp(u32(r4(U+4))),4);
-{u32 t_=u32(r4(U+8));TAIL_PRED(t_,);}
+{u32 t_=u32(r4(U+8));TAIL_PRED(t_,switch(t__){case 0x73c4b2u:[[clang::musttail]] return blk_73c4b2(ARGS);case 0x73c484u:[[clang::musttail]] return blk_73c484(ARGS);case 0x73c48cu:[[clang::musttail]] return blk_73c48c(ARGS);case 0x73c494u:[[clang::musttail]] return blk_73c494(ARGS);case 0x73c49cu:[[clang::musttail]] return blk_73c49c(ARGS);case 0x73c4a4u:[[clang::musttail]] return blk_73c4a4(ARGS);case 0x73c4acu:[[clang::musttail]] return blk_73c4ac(ARGS);default:break;});}
 }
 
 XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
