@@ -275,7 +275,8 @@ front of the real one), and the worker replays the queue on the real layer and t
 layer, because bgfx must be called from the thread that started it (bgfx keeps its own render thread behind that).
 
 * Queue: a chain of 1 MB blocks, one writer and one reader, calls as small fixed records (draw data and shader constants copied inline, larger payloads
-  as a heap block); the worker sees new calls every 32 calls and at once at `Present` and whenever the game thread waits. Repeated render, sampler and
+  as a heap block); the worker sees new calls every 32 calls and at once at `Present` and whenever the game thread waits; a sleeping worker is woken only every 2048 calls
+  (and at `Present`, at a wait, at a new block): in a live race waking it every 32 calls cost 2.4 % of the game thread in `SetEvent`, now 0.1 %. Repeated render, sampler and
   stage states (the layer ignores them anyway) are not queued.
 * Answered on the game thread without waiting: creation (ids of the queue, mapped to the layer's ids by the worker; unknown formats are still refused at
   once), buffer locks (memory of the game's side: a fresh block, or a copy of the buffer kept once a lock needed its contents, up to `worker_copy_mb`;
