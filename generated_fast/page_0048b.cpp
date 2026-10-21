@@ -3,6 +3,7 @@ namespace nfsu2raw {
 #define EXIT(T) do{nx=u32(T);goto XIT;}while(0)
 PN u32 ent_dispatch(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
 PN u32 ent_native(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 ent_missing(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
 PN u32 blk_4012b0(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
 PN u32 blk_401650(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
 PN u32 blk_4022c0(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
@@ -12556,7 +12557,7 @@ case 0x48be2d:[[clang::musttail]] return blk_48be2d(c,a4,a0,a1,bud);
 case 0x48be52:[[clang::musttail]] return blk_48be52(c,a4,a0,a1,bud);
 case 0x48be6b:[[clang::musttail]] return blk_48be6b(c,a4,a0,a1,bud);
 case 0x48be81:[[clang::musttail]] return blk_48be81(c,a4,a0,a1,bud);
-default:missing_instruction(c.pc);}}
+default:[[clang::musttail]] return ent_missing(c,a4,a0,a1,bud);}}
 u32 page_48b(Cpu& c){u8* R=c.regs.data();return ent_48b(c,r4(R+16),r4(R+0),r4(R+4),REG_BUDGET);}
 #undef EXIT
 }
