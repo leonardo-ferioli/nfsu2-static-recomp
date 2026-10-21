@@ -18,6 +18,7 @@ import io
 import json
 import re
 import sys
+import time
 
 ROOT = Path(__file__).resolve().parents[1]
 CT = {1: "u8", 2: "u16", 4: "u32", 8: "u64"}
@@ -845,7 +846,15 @@ def emit_page(page, insns, live_out=None):
 
 def write_if_changed(path, text):
     if not path.exists() or path.read_text(encoding="utf-8") != text:
-        path.write_text(text, encoding="utf-8", newline="\n")
+        # Windows sometimes refuses to reopen a file for a moment (a scanner or indexer holding it): EINVAL / permission errors.
+        for attempt in range(20):
+            try:
+                path.write_text(text, encoding="utf-8", newline="\n")
+                return
+            except OSError:
+                if attempt == 19:
+                    raise
+                time.sleep(0.25 * (attempt + 1))
 
 
 def main():
@@ -977,10 +986,13 @@ def main():
         if regs:
             for p in sorted(pages):
                 f.write(f"PN u32 ent_{p:x}({regs.declare_args()});\n")
+            # The default of every dispatch switch is a tail call too: a plain call there (missing_instruction is cdecl) made each
+            # switch save and restore XMM4-7 (regcall callee-saved) on every dynamic transfer.
+            f.write(f"__attribute__((noinline)) PN u32 ent_missing({regs.declare_args()}){{missing_instruction(c.pc);}}\n")
             f.write(f"PN u32 ent_dispatch({regs.declare_args()}){{switch(c.pc>>12){{\n")
             for p in sorted(pages):
                 f.write(f"case 0x{p:x}:[[clang::musttail]] return ent_{p:x}({regs.arg_names()});\n")
-            f.write("default:missing_instruction(c.pc);}}\n")
+            f.write(f"default:[[clang::musttail]] return ent_missing({regs.arg_names()});}}}}\n")
             # Speed layer (speed.hpp): a dynamic transfer outside the image, made from translated code through g_native_hook; when the
             # hook declines (or after a call that returns outside the image) this returns to the dispatch loop like XIT does.
             lo, hi = min(pages), max(pages)

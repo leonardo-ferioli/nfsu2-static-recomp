@@ -345,6 +345,7 @@ def emit_page_regs(GF, RegEmitter, prog, page, insns, live_out):
     head = ['#include "fast_regs.hpp"', "namespace nfsu2raw {", "#define EXIT(T) do{nx=u32(T);goto XIT;}while(0)"]
     head.append("PN u32 ent_dispatch(%s);" % declare_args())
     head.append("PN u32 ent_native(%s);" % declare_args())
+    head.append("PN u32 ent_missing(%s);" % declare_args())   # the switch default, a tail call (see dispatch.cpp)
     for t in sorted(referenced):
         head.append("PN u32 blk_%x(%s);" % (t, declare_args()))
     own = sorted(i.addr for i in insns if i.addr in prog.blocks)
@@ -355,7 +356,7 @@ def emit_page_regs(GF, RegEmitter, prog, page, insns, live_out):
     ent = ["PN u32 ent_%x(%s){switch(c.pc){" % (page, declare_args())]
     for a in own:
         ent.append(f"case 0x{a:x}:[[clang::musttail]] return blk_{a:x}({arg_names()});")
-    ent.append("default:missing_instruction(c.pc);}}")
+    ent.append(f"default:[[clang::musttail]] return ent_missing({arg_names()});}}}}")
     wrapper = (f"u32 page_{page:x}(Cpu& c){{u8* R=c.regs.data();return ent_{page:x}("
                + ",".join("c" if t == "c" else "REG_BUDGET" if t == "bud" else f"r4(R+{4 * t})" for t in ORDER) + ");}")
     return "\n".join(head) + "\n" + "".join(pieces) + "\n".join(ent) + "\n" + wrapper + "\n#undef EXIT\n}\n"

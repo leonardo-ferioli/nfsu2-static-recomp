@@ -147,7 +147,7 @@ private:
     void record(const std::string&);
     bool first_native_call(uint32_t target,uint32_t guest_return,bool result);
     // Speed layer: the call of a target without special treatment (see dispatch); false leaves it to the general path.
-    bool plain_call(Cpu&,uint32_t target,const char* dll,const char* resolved_name);
+    bool plain_call(Cpu&,uint32_t target,const char* dll,const char* resolved_name,uint32_t profile_id);
     void record_plain_call(Cpu&,uint32_t target,const char* dll,const char* resolved_name,uint32_t guest_return,bool result,uint32_t eax,uint32_t popped);
     void raise_callback_fault();
     bool dispatch_route(Cpu&);

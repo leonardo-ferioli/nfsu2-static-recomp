@@ -57,7 +57,8 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 4 AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${FAST_DI
     endforeach()
     target_compile_definitions(nfsu2_fast_trace PRIVATE NFSU2_DIFF_TRACE=1)
     add_executable(speed_fast runner.cpp)
-    target_link_libraries(speed_fast PRIVATE nfsu2_fast)
+    target_link_libraries(speed_fast PRIVATE nfsu2_fast psapi)
+    target_link_options(speed_fast PRIVATE "-Wl,/MAP:$<TARGET_FILE_DIR:speed_fast>/speed_fast.map")
     # Product launcher: reads the user's SPEED2.EXE at run time (no game bytes inside the program).
     add_executable(dynamic_decode_dump EXCLUDE_FROM_ALL dynamic_decode_dump.cpp)
     target_link_libraries(dynamic_decode_dump PRIVATE nfsu2_fast)

@@ -552,22 +552,29 @@ __attribute__((noinline,cold)) void NativePlatform::raise_callback_fault(){
 }
 [[noreturn]] __attribute__((noinline,cold)) static void plain_stack_fault(){throw Fault("guest stack pointer is outside its stack during a native call");}
 [[noreturn]] __attribute__((noinline,cold)) static void plain_teb_fault(){throw Fault("unrecognized Windows x86 stack allocation layout");}
-bool NativePlatform::plain_call(Cpu& c,uint32_t target,const char* dll,const char* resolved_name){
+bool NativePlatform::plain_call(Cpu& c,uint32_t target,const char* dll,const char* resolved_name,uint32_t profile_id){
     auto g4=[](uint32_t address){uint32_t v;std::memcpy(&v,reinterpret_cast<const void*>(uintptr_t(address)),4);return v;};
     auto s4=[](uint32_t address,uint32_t v){std::memcpy(reinterpret_cast<void*>(uintptr_t(address)),&v,4);};
     const uint32_t original_sp=uint32_t(r<4>(c,16));
     const uint32_t teb=uint32_t(r<4>(c,0x110));
     const uint32_t guest_stack_base=g4(teb+4),guest_stack_limit=g4(teb+8);
     if(original_sp<guest_stack_limit || original_sp>guest_stack_base-8)plain_stack_fault();
-    // A DirectInput object (the first argument of its methods) needs the general path.
-    if(input_bloom.load(std::memory_order_relaxed)&(1u<<((g4(original_sp+4)>>4)&31)))return false;
+    // A DirectInput object (the first argument of its methods) needs the general path, and so does the device's own Release
+    // (it empties the state cache; a d3d9.dll may use the same Release for all its objects).
+    const uint32_t object=g4(original_sp+4);
+    if(input_bloom.load(std::memory_order_relaxed)&(1u<<((object>>4)&31)))return false;
+    if(object==light_device && target==state_reset_target[0].load(std::memory_order_relaxed))return false;
     const uint32_t guest_return=g4(original_sp);
     if(!seen_call(target,guest_return,false))record_plain_call(c,target,dll,resolved_name,guest_return,false,0,0);
     thread_local bool verified_teb=false;
     if(!verified_teb){ULONG_PTR low,high;GetCurrentThreadStackLimits(&low,&high);if(low!=__readfsdword(0xe0c))plain_teb_fault();verified_teb=true;}
     NativeFrame frame{target,original_sp+4,0,0,0,0,guest_stack_base,guest_stack_limit};
     {const uint32_t last_error=g4(teb+0x34);asm volatile("movl %0,%%fs:0x34"::"r"(last_error):"memory");}   // what SetLastError does
+    // The light profile (route id) counts and times the call like the general path; the full profile never comes here.
+    if(profile_id && my_thread_profile)my_thread_profile->native=last_native_name;
+    const uint64_t light_started=profile_id?profile_clock():0;
     invoke_native32(&frame);const DWORD guest_error=__readfsdword(0x34);
+    if(profile_id){light_ticks[profile_id].fetch_add(profile_clock()-light_started,std::memory_order_relaxed);light_counts[profile_id].fetch_add(1,std::memory_order_relaxed);}
     invalidate_native_memory();s4(teb+0x34,guest_error);
     uint32_t result_eax=frame.eax,result_edx=frame.edx,result_ecx=frame.ecx,after=frame.after;asm volatile("":"+r"(result_edx),"+r"(result_ecx));
     if(!seen_call(target,guest_return,true))record_plain_call(c,target,dll,resolved_name,guest_return,true,result_eax,after-original_sp);
@@ -612,7 +619,7 @@ bool NativePlatform::dispatch(Cpu& c){
            && route.resolve_generation==resolve_generation.load(std::memory_order_relaxed) && route.dynamic_generation==dynamic_generation.load(std::memory_order_relaxed)
            && !d3d9_recorder_ptr.load(std::memory_order_relaxed)){
             last_native_name=route.label;
-            if(plain_call(c,uint32_t(route.target),route.imported?route.imported->dll:"Windows",route.resolved_name))return true;
+            if(plain_call(c,uint32_t(route.target),route.imported?route.imported->dll:"Windows",route.resolved_name,route.id))return true;
         }
     }
     return dispatch_route(c);
@@ -661,15 +668,20 @@ __attribute__((noinline)) bool NativePlatform::dispatch_route(Cpu& c){
         if(route.plain_generation!=generation){
             const uint32_t t=uint32_t(route.target);
             auto is=[t](const std::atomic<uint32_t>& a){return a.load(std::memory_order_relaxed)==t;};
-            route.plain=!route.special && !route.d3d_create && !profile_enabled() && !(light_d3d9 && !light_device)
+            route.plain=!route.special && !route.d3d_create && !profile_full() && !(light_d3d9 && !light_device)
                 && !is(state_target[0]) && !is(state_target[1]) && !is(state_target[2])
-                && !is(state_reset_target[0]) && !is(state_reset_target[1]) && !is(state_reset_target[2]) && !is(state_reset_target[3]) && !is(state_reset_target[4])
+                && !is(state_reset_target[1]) && !is(state_reset_target[2]) && !is(state_reset_target[3]) && !is(state_reset_target[4])
                 && !is(state_apply_target) && !is(light_create_device_target) && !is(light_present) && bind_kind_of(t)==BindNone;
+            // The light profile learns the vertex buffer, index buffer and texture vtables from CreateVertexBuffer/IndexBuffer/Texture.
+            if(route.plain && profile_enabled() && light_device){
+                const uint32_t vtable=guest_u32(light_device);
+                route.plain=t!=guest_u32(vtable+23*4) && t!=guest_u32(vtable+26*4) && t!=guest_u32(vtable+27*4);
+            }
             route.plain_generation=generation;
         }
         if(route.plain && !d3d9_recorder_ptr.load(std::memory_order_relaxed)){
             last_native_name=route.label;
-            if(plain_call(c,uint32_t(route.target),route.imported?route.imported->dll:"Windows",route.resolved_name))return true;
+            if(plain_call(c,uint32_t(route.target),route.imported?route.imported->dll:"Windows",route.resolved_name,route.id))return true;
         }
     }
     const Import* imported=route.imported;const uintptr_t target=route.target;const char* resolved_name=route.resolved_name;const bool special=route.special;
@@ -700,7 +712,9 @@ __attribute__((noinline)) bool NativePlatform::dispatch_route(Cpu& c){
         if(t==state_target[0].load(std::memory_order_relaxed)){if(!recording)state_kind=1;}
         else if(t==state_target[1].load(std::memory_order_relaxed)){if(!recording)state_kind=2;}
         else if(t==state_target[2].load(std::memory_order_relaxed)){if(!recording)state_kind=3;}
-        else if(t==state_reset_target[0].load(std::memory_order_relaxed) || t==state_reset_target[1].load(std::memory_order_relaxed))clear_state_cache();   // Release, Reset
+        // Release of the device itself, Reset. A d3d9.dll may share one Release for all its objects (nue_d3d9 does): only the
+        // device's own Release empties the cache (it used to be emptied on every texture Release, ~8,000 times a frame).
+        else if((t==state_reset_target[0].load(std::memory_order_relaxed) && g4(original_sp+4)==light_device) || t==state_reset_target[1].load(std::memory_order_relaxed))clear_state_cache();
         else if(t==state_reset_target[3].load(std::memory_order_relaxed))state_recording=true;                                                              // BeginStateBlock
         else if(state_apply_target.load(std::memory_order_relaxed)==t)clear_state_cache();                                                                   // IDirect3DStateBlock9::Apply
         else if(!recording)bind_kind=bind_kind_of(t);

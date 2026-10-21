@@ -22,6 +22,14 @@ Not switchable at run time (code shape, verified by the differential tests; comp
   memory it reads or writes (an asm `m` / `=m` operand of that size) instead of clobbering all memory, and register forms clobber
   nothing, so guest registers cached in host registers are not stored and reloaded around every FPU instruction. 80-bit stores,
   FLDENV/FNSTENV/FRSTOR/FNSAVE and BCD forms keep the full barrier. `--x87-operands clobber` gives the old code.
+* **Dispatch switches without register saves** (generator): the default case of `ent_dispatch` and of every page's `ent_XXX` is a
+  tail call to `ent_missing` (noinline) instead of a plain call to `missing_instruction`; the plain call made each switch save and
+  restore XMM4-7 (regcall's callee-saved set) and two registers on every dynamic transfer (every RET and indirect call).
+* **State cache fix** (bridge, always on): the device state cache was emptied on every `Release` whose target was the device's
+  `Release`. Our d3d9.dll's AddRef/Release are one folded function for all its COM classes (identical code, linker ICF), so every
+  texture Release (~7,800 per frame in a race) wiped ~15 KB of cached state: 7.8 % of the game thread in `memset` in the
+  2026-10-20 race profile, and a cache that rarely hit. Now only the device's own Release (first argument == the device) empties
+  it; the shadow's guarantee is unchanged because the dll, like Direct3D 9, holds a reference to every bound object.
 * **Bridge cleanups** (always on, same behaviour): the common path of `NativePlatform::dispatch` no longer compares strings, reads
   guarded statics or takes a 64-bit locked add on every call (`invalidate_native_memory` is a plain 32-bit bump; the device state
   cache counters are main-thread plain increments; the first-call trace bitmap check is inline); results are read with two 32-bit
@@ -46,7 +54,17 @@ Not switchable at run time (code shape, verified by the differential tests; comp
 | guest -> native call, COM-style direct address (`fast_native_bench`) | 150 ns | 57 ns |
 | guest -> native call through an IAT token | 167 ns | 69-76 ns |
 | translated wrapper -> EnterCriticalSection/LeaveCriticalSection, entered from the loop | ~235 ns (layer off) | 150 ns |
-| game hash routine (`speed_fast --bench-hash`), JDLZ (`fast_resource_tests`) | 2080-2115 / 1256 M instr/s | same |
+| game hash routine (`speed_fast --bench-hash`: calls and returns) | 2100-2110 M instr/s | 2257-2289 M instr/s (+8 %, the switch fix) |
+| JDLZ decompressor (`fast_resource_tests`), x87 routine (`fast_native_bench`) | 1262-1270 / ~1000-1100 M instr/s | same |
+
+The 2026-10-20 race profile (old launcher, `--profile`, ~11 fps under the profiler): of the game thread, the bridge plus the
+`memset` above ~25 %, dynamic transfers ~10 %, the statically linked D3DX effect code (0x650000-0x66ffff) ~14 %, other game
+code the rest; ~33,000 native calls per frame. The light profile now takes the plain path too (counted and timed the same way),
+so a `--profile` run measures what a normal run does.
+
+Tried and dropped: a per-CPU return-address cache (each CALL records its return block, RET jumps there). On x86-32 the five
+regcall argument registers leave none for an indirect tail call, and clang cannot fold it into a memory operand ("ran out of
+registers during register allocation").
 
 A race makes ~28,000 native calls per frame (the Oct 17 profile: 16,000 of them texture AddRef/Release from the D3DX effect code),
 so the bridge alone is ~2.5 ms per frame less on this machine.
