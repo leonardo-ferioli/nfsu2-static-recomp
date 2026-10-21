@@ -429,15 +429,21 @@ void NativePlatform::record(const std::string& text){
 }
 // One bit per (call site, direction) hashed into a shared bitmap: a site seen before costs one relaxed load, no lock and no
 // thread-local access. A collision can hide a first-use record of the diagnostic trace; it never changes behaviour.
-std::atomic<uint8_t> seen_call_bits[1u<<20];
-inline std::atomic<uint8_t>& seen_call_cell(uint32_t target,uint32_t guest_return){return seen_call_bits[(((target*2654435761u)^(guest_return*40503u))>>12)&((1u<<20)-1)];}
+// Two bits per slot, 131,072 slots in 32 KiB: it stays in the cache (a 1 MiB byte table cost two cache misses per call in the game).
+std::atomic<uint32_t> seen_call_words[1u<<13];
+inline unsigned seen_call_slot(uint32_t target,uint32_t guest_return){return ((target*2654435761u)^(guest_return*40503u))>>15;}   // 17 bits
+inline uint32_t seen_call_bit(unsigned slot,bool result){return 1u<<((slot&15)*2+(result?1:0));}
 // The common case (a site seen before) inline in the caller; the first time goes to first_native_call.
-inline bool seen_call(uint32_t target,uint32_t guest_return,bool result){return (seen_call_cell(target,guest_return).load(std::memory_order_relaxed)&(result?2:1))!=0;}
+inline bool seen_call(uint32_t target,uint32_t guest_return,bool result){
+    const unsigned slot=seen_call_slot(target,guest_return);
+    return (seen_call_words[slot>>4].load(std::memory_order_relaxed)&seen_call_bit(slot,result))!=0;
+}
 bool NativePlatform::first_native_call(uint32_t target,uint32_t guest_return,bool result){
-    const unsigned bit=result?2:1;
-    std::atomic<uint8_t>& cell=seen_call_cell(target,guest_return);
+    const unsigned slot=seen_call_slot(target,guest_return);
+    const uint32_t bit=seen_call_bit(slot,result);
+    std::atomic<uint32_t>& cell=seen_call_words[slot>>4];
     if(cell.load(std::memory_order_relaxed)&bit)return false;
-    cell.fetch_or(uint8_t(bit),std::memory_order_relaxed);
+    cell.fetch_or(bit,std::memory_order_relaxed);
     bool first=false;
     {
         std::lock_guard guard(log_mutex);

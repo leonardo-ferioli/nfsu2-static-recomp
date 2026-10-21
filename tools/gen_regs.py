@@ -157,8 +157,10 @@ class Program:
         leaders |= {a + self.lengths[a] for a in self.nop_insns if a in self.lengths}
         # Every aligned 32-bit word of the program image that points into the code (vtables, callback tables, SEH and
         # switch tables): a dynamic transfer can only enter a function body at a leader.
+        self.image = []   # (base, bytes) of the program image, for the jump tables of BRANCHIND (table_targets)
         for block in manifest["memory"]:
             data = (Path(export_dir) / block["file"]).read_bytes()
+            self.image.append((block["start"], data))
             words = struct.unpack_from(f"<{len(data) // 4}I", data)
             leaders |= {w for w in words if TEXT_LO <= w < TEXT_HI}
         leaders |= {f["entry"] for f in manifest["functions"] if not f.get("external")}
@@ -176,6 +178,28 @@ class Program:
         if missing:
             raise ValueError("mod patch points without a block entry: " + ", ".join(hex(a) for a in missing))
         self.predict_returns(manifest)
+
+    def table_targets(self, ins, limit=256):
+        """Blocks named by a jump table that an indirect JMP reads (JMP [base+reg*4]): the code addresses stored from each image
+        constant of the instruction onwards, until the first word that is not one. Only a prediction (the dispatch switch stays the
+        fallback), so a table read too far or too short costs time, not correctness."""
+        out = []
+        for op in ins.ops:
+            for node in op[2:]:
+                if not (node and node[0] == "const" and node[2] == 4):
+                    continue
+                base = int(node[1], 16)
+                for start, data in self.image:
+                    if start <= base < start + len(data) - 3:
+                        at = base - start
+                        while at + 4 <= len(data) and len(out) < limit:
+                            w = struct.unpack_from("<I", data, at)[0]
+                            if not TEXT_LO <= w < TEXT_HI:
+                                break
+                            if w in self.blocks and w not in out:
+                                out.append(w)
+                            at += 4
+        return out
 
     def predict_returns(self, manifest):
         """Likely targets of each RETURN: the return sites of the direct calls to the function that holds it, plus those of the
@@ -275,12 +299,18 @@ def make(GF):
             return "".join(out)
 
         def dynamic_transfer(self, name, ins):
-            """TAIL_PRED(target, predicted blocks, return site after a native call): see emit_function."""
+            """TAIL_PRED(target, predicted blocks): see emit_function. A RETURN tries the return sites of the callers of its
+            function; an indirect JMP through a jump table of the image switches on the table's blocks."""
             pred = ""
             if name == "RETURN" and PREDICT_MAX:
                 for t in self.prog.ret_candidates.get(ins.addr, [])[:PREDICT_MAX]:
                     self.referenced.add(t)
                     pred += f"if(t__==0x{t:x}u)[[clang::musttail]] return blk_{t:x}(ARGS);"
+            elif name == "BRANCHIND" and PREDICT_MAX:
+                cases = self.prog.table_targets(ins)
+                if cases:
+                    self.referenced.update(cases)
+                    pred = "switch(t__){" + "".join(f"case 0x{t:x}u:[[clang::musttail]] return blk_{t:x}(ARGS);" for t in cases) + "default:break;}"
             return f"TAIL_PRED(t_,{pred});"
 
         def exit_code(self, target):

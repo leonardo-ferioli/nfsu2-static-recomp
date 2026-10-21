@@ -30,6 +30,17 @@ Not switchable at run time (code shape, verified by the differential tests; comp
   texture Release (~7,800 per frame in a race) wiped ~15 KB of cached state: 7.8 % of the game thread in `memset` in the
   2026-10-20 race profile, and a cache that rarely hit. Now only the device's own Release (first argument == the device) empties
   it; the shadow's guarantee is unchanged because the dll, like Direct3D 9, holds a reference to every bound object.
+* **Cached state calls** (native calls switch): the device's state and binding methods (SetRenderState, SetTextureStageState,
+  SetSamplerState, SetTexture, streams, indices, shaders, declarations, constants, the UP draws: ~16,000 calls per frame) get the
+  state-cache test in the front of `dispatch` (`cached_call`); a repeated value returns at once, anything else is a plain call
+  followed by the same cache update. Before, all of them took the full general path.
+* **Jump tables** (predict switch, generator): an indirect JMP that reads a table of the image (`JMP [base+reg*4]`) switches on
+  the blocks stored there (read from the image at generation time) before the dispatch switch. The statically linked D3DX effect
+  code applies each effect state through such a switch.
+* **Callbacks** (always on): `call_guest` (mods, window procedures, enumerations) clears only `guest_register_span` bytes of the
+  register file instead of 16 KiB (1,170 -> 800 ns per callback).
+* **Code layout** (build): `tools/hot_order.py` turns race profiles into `tools/hot_order.txt`, the linker places those functions
+  first (`-ffunction-sections`, lld `/order`). Same code; `-DSPEED_ORDER_FILE=` builds without it.
 * **Bridge cleanups** (always on, same behaviour): the common path of `NativePlatform::dispatch` no longer compares strings, reads
   guarded statics or takes a 64-bit locked add on every call (`invalidate_native_memory` is a plain 32-bit bump; the device state
   cache counters are main-thread plain increments; the first-call trace bitmap check is inline); results are read with two 32-bit
@@ -61,6 +72,12 @@ The 2026-10-20 race profile (old launcher, `--profile`, ~11 fps under the profil
 `memset` above ~25 %, dynamic transfers ~10 %, the statically linked D3DX effect code (0x650000-0x66ffff) ~14 %, other game
 code the rest; ~33,000 native calls per frame. The light profile now takes the plain path too (counted and timed the same way),
 so a `--profile` run measures what a normal run does.
+
+Live result (user's machine, race, 1920x1080 back buffer, worker-thread dll): game code outside the dll per frame ~41 ms before ->
+~30 ms (26-36) with the first speed layer build; under `--profile` 85-103 ms -> 27-44 ms (the profiler's per-call cost went with
+the bridge). Guest code ran at ~465 M instructions/s in the race (was ~197); the game executes ~17 M guest instructions per frame.
+
+Also tried: `-march=x86-64-v3` for the 32-bit build (AVX2/BMI2): slower (hash -20 %, x87 routine -13 %), not used.
 
 Tried and dropped: a per-CPU return-address cache (each CALL records its return block, RET jumps there). On x86-32 the five
 regcall argument registers leave none for an indirect tail call, and clang cannot fold it into a memory operand ("ran out of
