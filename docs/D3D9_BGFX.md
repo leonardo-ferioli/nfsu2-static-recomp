@@ -280,9 +280,12 @@ layer, because bgfx must be called from the thread that started it (bgfx keeps i
   stage states (the layer ignores them anyway) are not queued.
 * Answered on the game thread without waiting: creation (ids of the queue, mapped to the layer's ids by the worker; unknown formats are still refused at
   once), buffer locks (memory of the game's side: a fresh block, or a copy of the buffer kept once a lock needed its contents, up to `worker_copy_mb`;
-  unlock sends the written range), texture locks of levels without data or with DISCARD (a fresh block sent at unlock), `TestCooperativeLevel`.
-* Waiting for the worker (after everything queued before is done): texture locks of levels that hold data (the game then writes into the layer's own
-  memory), the first lock that reads a buffer, `Get*ShaderConstant*`, `Reset`, back buffer and depth surfaces, `GetRenderTargetData`, F12, the audits
+  unlock sends the written range), texture locks of levels without data or with DISCARD (a fresh block sent at unlock), texture locks of levels that
+  hold data once that level has a copy here (the level as the game sees it, read once from the worker and kept up to date with every write, within
+  `worker_copy_mb`; served with the pitch of the whole level, as the real runtime does; unlock sends the locked part), `TestCooperativeLevel`.
+* Waiting for the worker (after everything queued before is done): the first lock that reads a texture level or a buffer (to make its copy), texture
+  locks of levels that hold data when the copies are over the budget or the texture has automatic mipmaps (the game then writes into the layer's own
+  memory), `Get*ShaderConstant*`, `Reset`, back buffer and depth surfaces, `GetRenderTargetData`, F12, the audits
   and the release of the device. Messages sent to the game's window during such a wait are answered (DXGI may send them from the worker).
 * Back-pressure: `Present` waits until the worker has finished the previous frame. Every 3 s the log gets a `worker thread:` line (next to `timeline:`):
   the worker's busy time per frame, the wait in `Present`, and how many times (and how long) the game thread waited outside `Present` and why; the
@@ -307,6 +310,28 @@ thread's share of the dll drops from ~2.5-3.5 ms to ~1.1 ms per frame (COM entry
 32 and 64 bit), and `nue_state_test`, `nue_format_test`, `nue_window_test`, `nue_defaults_test`, `nue_tests` pass with it on. **Not verified**: the game
 itself. Replays never read locked data back, so the waits for texture locks of levels with data (34 in 240 garage frames) and for buffer copies (none in
 the captures) are what to look at in the live log (`worker thread:` line at the end) before making it the default.
+
+First live race with the mode on (launcher with the faster bridge of the fps work, msaa off): 22.7-36.7 fps, typical 28-30 (bgfx without the worker
+~18, the system Direct3D 9 ~23); inside the dll 0.2 ms per frame (was ~8); the worker busy 1.2-3.5 ms per frame; the game thread waited for the worker
+outside `Present` 124-360 times per 3 s (0.3-0.8 ms per frame), all of them texture locks of levels that hold data. Those locks are now served from the
+copies described above: only the first lock of each level waits.
+
+## Hitches: `spike:` lines and the shader program list
+
+Every frame `Present` hands its numbers to `note_frame` (`nue_d3d9/dll/spikes.cpp`, always on, a copy of a few counters per frame). A frame slower than
+max(2.5 x the median of the last 64 frames, 40 ms) gets one `spike:` line: wall time, game code outside the dll, time inside the dll with the three
+slowest calls, waits for the worker outside `Present` and why, the worker's busy time, `bgfx::frame()`, render thread and GPU time, draws, resources
+created and destroyed (from the COM calls), and the translator's counters of that frame (UP draws, dynamic vertex bytes, buffer and texture uploads,
+textures created, new programs with their time, shader builds and compiler time), ending with the biggest part ("mostly ..."). At most 30 lines per
+10 s; every 10 s with spikes a `spikes:` line counts them by cause.
+
+New shader programs: the translator times each one (shader translation + the adapter's program, which includes the shader compiler when the disk cache
+does not have it; the driver's own shader creation happens on bgfx's render thread at the next frame) and logs the ones of 2 ms or more (`new shader
+program ... in frame N`). In the live race the number of programs grew during the race (37 -> 39 -> 44): programs made at their first draw, in the
+middle of the race. The dll now keeps a list of the programs made from the game's shaders (`nue_programs.txt` in the shader cache folder:
+`LayerOptions::program_list`): in the next run, a listed program is made as soon as the game has created both of its shaders, which it does while
+loading. Measured with the captures through the dll: the first run lists 33 programs (about 2-2.5 ms each in the translator), every later run makes
+the 33 ahead in 25-35 ms at load and none at a draw; images identical.
 
 ## Known differences
 
