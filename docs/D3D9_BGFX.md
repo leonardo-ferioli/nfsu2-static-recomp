@@ -283,8 +283,9 @@ layer, because bgfx must be called from the thread that started it (bgfx keeps i
 * Waiting for the worker (after everything queued before is done): texture locks of levels that hold data (the game then writes into the layer's own
   memory), the first lock that reads a buffer, `Get*ShaderConstant*`, `Reset`, back buffer and depth surfaces, `GetRenderTargetData`, F12, the audits
   and the release of the device. Messages sent to the game's window during such a wait are answered (DXGI may send them from the worker).
-* Back-pressure: `Present` waits until the worker has finished the previous frame. The log gets the worker's busy time in each `timeline:` line and, at the
-  end, how many times the game thread had to wait outside `Present` and why.
+* Back-pressure: `Present` waits until the worker has finished the previous frame. Every 3 s the log gets a `worker thread:` line (next to `timeline:`):
+  the worker's busy time per frame, the wait in `Present`, and how many times (and how long) the game thread waited outside `Present` and why; the
+  totals again when the device is released. On the loading capture: ~3 waits per frame, all texture locks of levels with data, 0.65 ms per frame.
 
 Measured with the COM bench (`NUE_D3D9_DLL=<dll> nue_replay <capture> --bench --bgfx com --loops 3 --window 0`, `NUE_MSAA=1`, hidden window, same
 machine as above; mean of three runs each). "Replaying thread CPU" is the CPU time of the thread that plays the game's part, per frame; it includes
