@@ -2,8 +2,40 @@
 namespace nfsu2raw {
 #define EXIT(T) do{nx=u32(T);goto XIT;}while(0)
 PN u32 ent_dispatch(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 ent_native(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
 PN u32 blk_43dc00(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
 PN u32 blk_43dcc0(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_49589f(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_4958c5(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_4958e5(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_49efa7(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_4b3133(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_4b378d(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_4b3953(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_4b3ac3(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_4b429b(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_4b4304(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_4b6580(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_4b65f5(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_4b66c9(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_4b6854(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_4b68b9(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_4b7293(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_4b72dc(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_4b804b(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_4b9f7a(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_4ba2fd(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_4ba9f0(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_4bbd2d(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_4bbd59(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_4bfb73(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_4bfc03(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_4bfda3(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_4dbb3a(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_4dbc13(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_4dbcec(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_4dbdc5(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_4e9d7d(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
 PN u32 blk_505450(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
 PN u32 blk_50cd00(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
 PN u32 blk_517720(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
@@ -96,14 +128,17 @@ PN u32 blk_51e689(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
 PN u32 blk_51e6a4(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
 PN u32 blk_51e6d1(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
 PN u32 blk_51e6eb(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_51e6f9(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
 PN u32 blk_51e710(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
 PN u32 blk_51e72e(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
 PN u32 blk_51e74b(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
 PN u32 blk_51e752(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_51e769(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
 PN u32 blk_51e780(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
 PN u32 blk_51e79e(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
 PN u32 blk_51e7bb(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
 PN u32 blk_51e7c2(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_51e7d9(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
 PN u32 blk_51e7f0(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
 PN u32 blk_51e80e(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
 PN u32 blk_51e82b(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
@@ -191,6 +226,9 @@ PN u32 blk_51efa3(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
 PN u32 blk_51efbc(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
 PN u32 blk_51efbf(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
 PN u32 blk_51f001(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_51f387(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_522cab(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
+PN u32 blk_556266(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
 PN u32 blk_51e001(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
 PN u32 blk_51e020(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
 PN u32 blk_51e03d(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
@@ -237,15 +275,12 @@ PN u32 blk_51e6b0(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
 PN u32 blk_51e6cb(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
 PN u32 blk_51e6e8(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
 PN u32 blk_51e6f0(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
-PN u32 blk_51e6f9(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
 PN u32 blk_51e71a(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
 PN u32 blk_51e741(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
 PN u32 blk_51e760(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
-PN u32 blk_51e769(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
 PN u32 blk_51e78a(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
 PN u32 blk_51e7b1(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
 PN u32 blk_51e7d0(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
-PN u32 blk_51e7d9(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
 PN u32 blk_51e7fa(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
 PN u32 blk_51e821(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
 PN u32 blk_51e840(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud);
@@ -307,7 +342,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e001:L51e001:{bud-=3;NFSU2_TR(0x51e001);
 u8 U[5];
@@ -334,6 +370,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e00d(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -343,10 +380,11 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e00d:L51e00d:{bud-=2;NFSU2_TR(0x51e00d);
-{u32 ea_=u32(r4(G+4)+u32(4u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+{u32 ea_=u32(r4(G+4)+u32(4u));const XM<4>& m_=*static_cast<const XM<4>*>(gp(ea_));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_),"m"(m_));}
 }
 B51e010:{NFSU2_TR(0x51e010);
 u8 U[4];
@@ -361,6 +399,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e012(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -370,10 +409,11 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e012:L51e012:{bud-=4;NFSU2_TR(0x51e012);
-{u32 ea_=u32(r4(G+0)+u32(52u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+{u32 ea_=u32(r4(G+0)+u32(52u));u32& m_=*static_cast<u32*>(gp(ea_));__asm__ volatile(".byte 0xd9,0x18":"=m"(m_):"a"(ea_));}
 }
 B51e015:{NFSU2_TR(0x51e015);
 u8 U[8];
@@ -391,7 +431,7 @@ B51e019:{NFSU2_TR(0x51e019);
 __builtin_memmove((R+644),gp(u32(r4(G+16))),4);
 w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
 w4(G+16,u32(u32(r4(G+16))+u32(u32(0xcull))));
-{u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
+{u32 t_=u32(r4(R+644));TAIL_PRED(t_,if(t__==0x4b65f5u)[[clang::musttail]] return blk_4b65f5(ARGS);if(t__==0x4b7293u)[[clang::musttail]] return blk_4b7293(ARGS);if(t__==0x4b72dcu)[[clang::musttail]] return blk_4b72dc(ARGS);if(t__==0x4b804bu)[[clang::musttail]] return blk_4b804b(ARGS););}
 }
 
 XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
@@ -400,6 +440,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e020(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -409,7 +450,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e020:L51e020:{bud-=6;NFSU2_TR(0x51e020);
 u8 U[4];
@@ -468,6 +510,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e033(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -477,7 +520,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e033:L51e033:{bud-=2;NFSU2_TR(0x51e033);
 u8 U[4];
@@ -497,6 +541,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e03d(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -506,7 +551,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e03d:L51e03d:{bud-=4;NFSU2_TR(0x51e03d);
 u8 U[8];
@@ -552,6 +598,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e050(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -561,7 +608,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e050:L51e050:{bud-=2;NFSU2_TR(0x51e050);
 u8 U[4];
@@ -603,6 +651,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e063(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -612,7 +661,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e063:L51e063:{bud-=2;NFSU2_TR(0x51e063);
 u8 U[8];
@@ -634,6 +684,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e06d(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -643,7 +694,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e06d:L51e06d:{bud-=1;NFSU2_TR(0x51e06d);
 u8 U[8];
@@ -659,6 +711,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e074(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -668,7 +721,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e074:L51e074:{bud-=1;NFSU2_TR(0x51e074);
 u8 U[4];
@@ -684,6 +738,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e075(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -693,7 +748,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e075:L51e075:{bud-=5;NFSU2_TR(0x51e075);
 u8 U[8];
@@ -758,6 +814,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e08b(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -767,7 +824,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e08b:L51e08b:{bud-=1;NFSU2_TR(0x51e08b);
 u8 U[6];
@@ -789,6 +847,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e08e(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -798,12 +857,13 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e08e:L51e08e:{bud-=1;NFSU2_TR(0x51e08e);
 __builtin_memmove((R+644),gp(u32(r4(G+16))),4);
 w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
-{u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
+{u32 t_=u32(r4(R+644));TAIL_PRED(t_,);}
 }
 
 XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
@@ -812,6 +872,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e090(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -821,7 +882,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e090:L51e090:{bud-=20;NFSU2_TR(0x51e090);
 __builtin_memmove((G+0),(G+4),4);
@@ -950,6 +1012,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e0d9(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -959,10 +1022,11 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e0d9:L51e0d9:{bud-=2;NFSU2_TR(0x51e0d9);
-{u32 ea_=u32(r4(G+4)+u32(4u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+{u32 ea_=u32(r4(G+4)+u32(4u));const XM<4>& m_=*static_cast<const XM<4>*>(gp(ea_));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_),"m"(m_));}
 }
 B51e0dc:{NFSU2_TR(0x51e0dc);
 u8 U[4];
@@ -977,6 +1041,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e0de(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -986,10 +1051,11 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e0de:L51e0de:{bud-=3;NFSU2_TR(0x51e0de);
-{u32 ea_=u32(r4(G+0)+u32(52u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+{u32 ea_=u32(r4(G+0)+u32(52u));u32& m_=*static_cast<u32*>(gp(ea_));__asm__ volatile(".byte 0xd9,0x18":"=m"(m_):"a"(ea_));}
 }
 B51e0e1:{NFSU2_TR(0x51e0e1);
 u8 U[8];
@@ -1001,7 +1067,7 @@ B51e0e4:{NFSU2_TR(0x51e0e4);
 __builtin_memmove((R+644),gp(u32(r4(G+16))),4);
 w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
 w4(G+16,u32(u32(r4(G+16))+u32(u32(0x8ull))));
-{u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
+{u32 t_=u32(r4(R+644));TAIL_PRED(t_,if(t__==0x4dbb3au)[[clang::musttail]] return blk_4dbb3a(ARGS);if(t__==0x4dbc13u)[[clang::musttail]] return blk_4dbc13(ARGS);if(t__==0x4dbcecu)[[clang::musttail]] return blk_4dbcec(ARGS);if(t__==0x4dbdc5u)[[clang::musttail]] return blk_4dbdc5(ARGS););}
 }
 
 XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
@@ -1010,6 +1076,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e0f0(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -1019,7 +1086,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e0f0:L51e0f0:{bud-=9;NFSU2_TR(0x51e0f0);
 u8 U[4];
@@ -1078,6 +1146,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e104(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -1087,7 +1156,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e104:L51e104:{bud-=4;NFSU2_TR(0x51e104);
 u8 U[8];
@@ -1121,6 +1191,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e10e(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -1130,10 +1201,11 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e10e:L51e10e:{bud-=2;NFSU2_TR(0x51e10e);
-{u32 ea_=u32(r4(R+24)+u32(32u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+{u32 ea_=u32(r4(R+24)+u32(32u));const XM<4>& m_=*static_cast<const XM<4>*>(gp(ea_));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_),"m"(m_));}
 }
 B51e111:{NFSU2_TR(0x51e111);
 w4(G+16,u32(u32(r4(G+16))-u32(u32(0x8ull))));
@@ -1146,6 +1218,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e114(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -1155,10 +1228,11 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e114:L51e114:{bud-=1;NFSU2_TR(0x51e114);
-{u32 ea_=u32(r4(R+24)+u32(16u));__asm__ volatile(".byte 0xd8,0x28"::"a"(ea_):"memory");}
+{u32 ea_=u32(r4(R+24)+u32(16u));const XM<4>& m_=*static_cast<const XM<4>*>(gp(ea_));__asm__ volatile(".byte 0xd8,0x28"::"a"(ea_),"m"(m_));}
 {[[clang::musttail]] return blk_51e117(ARGS);}
 }
 
@@ -1168,6 +1242,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e117(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -1177,10 +1252,11 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e117:L51e117:{bud-=1;NFSU2_TR(0x51e117);
-{u32 ea_=u32(r4(G+16)+u32(4u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+{u32 ea_=u32(r4(G+16)+u32(4u));u32& m_=*static_cast<u32*>(gp(ea_));__asm__ volatile(".byte 0xd9,0x18":"=m"(m_):"a"(ea_));}
 {[[clang::musttail]] return blk_51e11b(ARGS);}
 }
 
@@ -1190,6 +1266,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e11b(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -1199,10 +1276,11 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e11b:L51e11b:{bud-=1;NFSU2_TR(0x51e11b);
-{u32 ea_=u32(r4(R+24)+u32(28u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+{u32 ea_=u32(r4(R+24)+u32(28u));const XM<4>& m_=*static_cast<const XM<4>*>(gp(ea_));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_),"m"(m_));}
 {[[clang::musttail]] return blk_51e11e(ARGS);}
 }
 
@@ -1212,6 +1290,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e11e(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -1221,10 +1300,11 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e11e:L51e11e:{bud-=1;NFSU2_TR(0x51e11e);
-{u32 ea_=u32(r4(R+24)+u32(12u));__asm__ volatile(".byte 0xd8,0x28"::"a"(ea_):"memory");}
+{u32 ea_=u32(r4(R+24)+u32(12u));const XM<4>& m_=*static_cast<const XM<4>*>(gp(ea_));__asm__ volatile(".byte 0xd8,0x28"::"a"(ea_),"m"(m_));}
 {[[clang::musttail]] return blk_51e121(ARGS);}
 }
 
@@ -1234,6 +1314,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e121(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -1243,10 +1324,11 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e121:L51e121:{bud-=3;NFSU2_TR(0x51e121);
-{u32 ea_=u32(r4(G+16));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+{u32 ea_=u32(r4(G+16));u32& m_=*static_cast<u32*>(gp(ea_));__asm__ volatile(".byte 0xd9,0x18":"=m"(m_):"a"(ea_));}
 }
 B51e124:{NFSU2_TR(0x51e124);
 u8 U[4];
@@ -1266,6 +1348,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e12a(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -1275,7 +1358,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e12a:L51e12a:{bud-=1;NFSU2_TR(0x51e12a);
 u8 U[6];
@@ -1297,6 +1381,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e12d(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -1306,7 +1391,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e12d:L51e12d:{bud-=2;NFSU2_TR(0x51e12d);
 u8 U[4];
@@ -1317,7 +1403,7 @@ __builtin_memmove((R+24),(U+0),4);
 B51e12e:{NFSU2_TR(0x51e12e);
 __builtin_memmove((R+644),gp(u32(r4(G+16))),4);
 w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
-{u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
+{u32 t_=u32(r4(R+644));TAIL_PRED(t_,);}
 }
 
 XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
@@ -1326,6 +1412,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e130(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -1335,7 +1422,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e130:L51e130:{bud-=6;NFSU2_TR(0x51e130);
 u8 U[4];
@@ -1394,6 +1482,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e143(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -1403,7 +1492,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e143:L51e143:{bud-=2;NFSU2_TR(0x51e143);
 u8 U[4];
@@ -1423,6 +1513,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e14d(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -1432,7 +1523,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e14d:L51e14d:{bud-=4;NFSU2_TR(0x51e14d);
 u8 U[8];
@@ -1478,6 +1570,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e160(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -1487,7 +1580,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e160:L51e160:{bud-=2;NFSU2_TR(0x51e160);
 u8 U[4];
@@ -1529,6 +1623,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e173(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -1538,7 +1633,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e173:L51e173:{bud-=2;NFSU2_TR(0x51e173);
 u8 U[8];
@@ -1560,6 +1656,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e17d(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -1569,7 +1666,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e17d:L51e17d:{bud-=1;NFSU2_TR(0x51e17d);
 u8 U[8];
@@ -1585,6 +1683,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e184(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -1594,7 +1693,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e184:L51e184:{bud-=1;NFSU2_TR(0x51e184);
 u8 U[4];
@@ -1610,6 +1710,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e185(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -1619,7 +1720,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e185:L51e185:{bud-=5;NFSU2_TR(0x51e185);
 u8 U[8];
@@ -1684,6 +1786,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e19b(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -1693,7 +1796,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e19b:L51e19b:{bud-=1;NFSU2_TR(0x51e19b);
 u8 U[6];
@@ -1715,6 +1819,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e19e(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -1724,13 +1829,14 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e19e:L51e19e:{bud-=1;NFSU2_TR(0x51e19e);
 __builtin_memmove((R+644),gp(u32(r4(G+16))),4);
 w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
 w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
-{u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
+{u32 t_=u32(r4(R+644));TAIL_PRED(t_,);}
 }
 
 XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
@@ -1739,6 +1845,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e1b0(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -1748,7 +1855,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e1b0:L51e1b0:{bud-=23;NFSU2_TR(0x51e1b0);
 __builtin_memmove((G+0),(G+4),4);
@@ -1895,6 +2003,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e200(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -1904,10 +2013,11 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e200:L51e200:{bud-=2;NFSU2_TR(0x51e200);
-{u32 ea_=u32(r4(G+4)+u32(4u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+{u32 ea_=u32(r4(G+4)+u32(4u));const XM<4>& m_=*static_cast<const XM<4>*>(gp(ea_));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_),"m"(m_));}
 }
 B51e203:{NFSU2_TR(0x51e203);
 u8 U[4];
@@ -1922,6 +2032,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e205(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -1931,10 +2042,11 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e205:L51e205:{bud-=3;NFSU2_TR(0x51e205);
-{u32 ea_=u32(r4(G+0)+u32(56u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+{u32 ea_=u32(r4(G+0)+u32(56u));u32& m_=*static_cast<u32*>(gp(ea_));__asm__ volatile(".byte 0xd9,0x18":"=m"(m_):"a"(ea_));}
 }
 B51e208:{NFSU2_TR(0x51e208);
 u8 U[8];
@@ -1956,6 +2068,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e20f(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -1965,10 +2078,11 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e20f:L51e20f:{bud-=3;NFSU2_TR(0x51e20f);
-{u32 ea_=u32(r4(G+4)+u32(4u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+{u32 ea_=u32(r4(G+4)+u32(4u));const XM<4>& m_=*static_cast<const XM<4>*>(gp(ea_));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_),"m"(m_));}
 }
 B51e212:{NFSU2_TR(0x51e212);
 u8 U[4];
@@ -1989,6 +2103,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e218(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -1998,10 +2113,11 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e218:L51e218:{bud-=2;NFSU2_TR(0x51e218);
-{u32 ea_=u32(r4(G+0)+u32(64u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+{u32 ea_=u32(r4(G+0)+u32(64u));u32& m_=*static_cast<u32*>(gp(ea_));__asm__ volatile(".byte 0xd9,0x18":"=m"(m_):"a"(ea_));}
 }
 B51e21b:{NFSU2_TR(0x51e21b);
 u8 U[8];
@@ -2017,6 +2133,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e21e(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -2026,10 +2143,11 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e21e:L51e21e:{bud-=2;NFSU2_TR(0x51e21e);
-{u32 ea_=u32(r4(G+4)+u32(4u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+{u32 ea_=u32(r4(G+4)+u32(4u));const XM<4>& m_=*static_cast<const XM<4>*>(gp(ea_));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_),"m"(m_));}
 }
 B51e221:{NFSU2_TR(0x51e221);
 u8 U[4];
@@ -2044,6 +2162,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e223(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -2053,10 +2172,11 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e223:L51e223:{bud-=4;NFSU2_TR(0x51e223);
-{u32 ea_=u32(r4(G+0)+u32(72u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+{u32 ea_=u32(r4(G+0)+u32(72u));u32& m_=*static_cast<u32*>(gp(ea_));__asm__ volatile(".byte 0xd9,0x18":"=m"(m_):"a"(ea_));}
 }
 B51e226:{NFSU2_TR(0x51e226);
 u8 U[8];
@@ -2074,7 +2194,7 @@ B51e22a:{NFSU2_TR(0x51e22a);
 __builtin_memmove((R+644),gp(u32(r4(G+16))),4);
 w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
 w4(G+16,u32(u32(r4(G+16))+u32(u32(0x14ull))));
-{u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
+{u32 t_=u32(r4(R+644));TAIL_PRED(t_,if(t__==0x4bfb73u)[[clang::musttail]] return blk_4bfb73(ARGS);if(t__==0x4bfc03u)[[clang::musttail]] return blk_4bfc03(ARGS);if(t__==0x4bfda3u)[[clang::musttail]] return blk_4bfda3(ARGS);if(t__==0x4e9d7du)[[clang::musttail]] return blk_4e9d7d(ARGS););}
 }
 
 XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
@@ -2083,6 +2203,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e230(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -2092,7 +2213,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e230:L51e230:{bud-=14;NFSU2_TR(0x51e230);
 u8 U[8];
@@ -2178,6 +2300,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e253(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -2187,7 +2310,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e253:L51e253:{bud-=7;NFSU2_TR(0x51e253);
 u8 U[6];
@@ -2231,7 +2355,7 @@ B51e264:{NFSU2_TR(0x51e264);
 __builtin_memmove((R+644),gp(u32(r4(G+16))),4);
 w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
 w4(G+16,u32(u32(r4(G+16))+u32(u32(0x14ull))));
-{u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
+{u32 t_=u32(r4(R+644));TAIL_PRED(t_,if(t__==0x4b3133u)[[clang::musttail]] return blk_4b3133(ARGS);if(t__==0x4b378du)[[clang::musttail]] return blk_4b378d(ARGS);if(t__==0x4b3953u)[[clang::musttail]] return blk_4b3953(ARGS);if(t__==0x4b3ac3u)[[clang::musttail]] return blk_4b3ac3(ARGS););}
 }
 
 XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
@@ -2240,6 +2364,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e270(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -2249,7 +2374,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e270:L51e270:{bud-=10;NFSU2_TR(0x51e270);
 u8 U[4];
@@ -2328,6 +2454,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e290(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -2337,7 +2464,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e290:L51e290:{bud-=2;NFSU2_TR(0x51e290);
 u8 U[4];
@@ -2357,6 +2485,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e29a(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -2366,7 +2495,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e29a:L51e29a:{bud-=4;NFSU2_TR(0x51e29a);
 u8 U[8];
@@ -2413,6 +2543,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e2ad(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -2422,7 +2553,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e2ad:L51e2ad:{bud-=2;NFSU2_TR(0x51e2ad);
 u8 U[8];
@@ -2465,6 +2597,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e2c0(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -2474,7 +2607,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e2c0:L51e2c0:{bud-=2;NFSU2_TR(0x51e2c0);
 u8 U[8];
@@ -2496,6 +2630,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e2c6(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -2505,7 +2640,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e2c6:L51e2c6:{bud-=1;NFSU2_TR(0x51e2c6);
 u8 U[8];
@@ -2521,6 +2657,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e2c9(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -2530,7 +2667,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e2c9:L51e2c9:{bud-=3;NFSU2_TR(0x51e2c9);
 u8 U[8];
@@ -2572,6 +2710,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e2e0(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -2581,7 +2720,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e2e0:L51e2e0:{bud-=2;NFSU2_TR(0x51e2e0);
 u8 U[4];
@@ -2601,6 +2741,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e2ea(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -2610,7 +2751,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e2ea:L51e2ea:{bud-=4;NFSU2_TR(0x51e2ea);
 u8 U[8];
@@ -2657,6 +2799,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e2fd(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -2666,7 +2809,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e2fd:L51e2fd:{bud-=2;NFSU2_TR(0x51e2fd);
 u8 U[8];
@@ -2709,6 +2853,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e310(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -2718,7 +2863,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e310:L51e310:{bud-=2;NFSU2_TR(0x51e310);
 u8 U[8];
@@ -2740,6 +2886,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e316(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -2749,7 +2896,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e316:L51e316:{bud-=1;NFSU2_TR(0x51e316);
 u8 U[8];
@@ -2765,6 +2913,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e319(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -2774,7 +2923,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e319:L51e319:{bud-=3;NFSU2_TR(0x51e319);
 u8 U[8];
@@ -2816,6 +2966,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e330(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -2825,7 +2976,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e330:L51e330:{bud-=2;NFSU2_TR(0x51e330);
 u8 U[4];
@@ -2845,6 +2997,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e33a(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -2854,7 +3007,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e33a:L51e33a:{bud-=4;NFSU2_TR(0x51e33a);
 u8 U[8];
@@ -2901,6 +3055,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e34d(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -2910,7 +3065,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e34d:L51e34d:{bud-=2;NFSU2_TR(0x51e34d);
 u8 U[8];
@@ -2953,6 +3109,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e360(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -2962,7 +3119,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e360:L51e360:{bud-=2;NFSU2_TR(0x51e360);
 u8 U[8];
@@ -2984,6 +3142,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e366(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -2993,7 +3152,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e366:L51e366:{bud-=1;NFSU2_TR(0x51e366);
 u8 U[8];
@@ -3009,6 +3169,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e369(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -3018,7 +3179,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e369:L51e369:{bud-=3;NFSU2_TR(0x51e369);
 u8 U[8];
@@ -3060,6 +3222,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e380(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -3069,7 +3232,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e380:L51e380:{bud-=2;NFSU2_TR(0x51e380);
 u8 U[4];
@@ -3089,6 +3253,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e38a(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -3098,7 +3263,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e38a:L51e38a:{bud-=4;NFSU2_TR(0x51e38a);
 u8 U[8];
@@ -3145,6 +3311,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e39d(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -3154,7 +3321,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e39d:L51e39d:{bud-=2;NFSU2_TR(0x51e39d);
 u8 U[8];
@@ -3197,6 +3365,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e3b0(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -3206,7 +3375,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e3b0:L51e3b0:{bud-=2;NFSU2_TR(0x51e3b0);
 u8 U[8];
@@ -3228,6 +3398,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e3b6(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -3237,7 +3408,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e3b6:L51e3b6:{bud-=1;NFSU2_TR(0x51e3b6);
 u8 U[8];
@@ -3253,6 +3425,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e3b9(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -3262,7 +3435,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e3b9:L51e3b9:{bud-=7;NFSU2_TR(0x51e3b9);
 u8 U[8];
@@ -3340,6 +3514,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e3d1(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -3349,7 +3524,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e3d1:L51e3d1:{bud-=1;NFSU2_TR(0x51e3d1);
 u8 U[6];
@@ -3371,6 +3547,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e3d4(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -3380,12 +3557,13 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e3d4:L51e3d4:{bud-=1;NFSU2_TR(0x51e3d4);
 __builtin_memmove((R+644),gp(u32(r4(G+16))),4);
 w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
-{u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
+{u32 t_=u32(r4(R+644));TAIL_PRED(t_,if(t__==0x51e6f9u)[[clang::musttail]] return blk_51e6f9(ARGS););}
 }
 
 XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
@@ -3394,6 +3572,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e3e0(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -3403,7 +3582,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e3e0:L51e3e0:{bud-=10;NFSU2_TR(0x51e3e0);
 u8 U[4];
@@ -3482,6 +3662,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e400(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -3491,7 +3672,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e400:L51e400:{bud-=2;NFSU2_TR(0x51e400);
 u8 U[4];
@@ -3511,6 +3693,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e40a(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -3520,7 +3703,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e40a:L51e40a:{bud-=4;NFSU2_TR(0x51e40a);
 u8 U[8];
@@ -3567,6 +3751,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e41d(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -3576,7 +3761,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e41d:L51e41d:{bud-=2;NFSU2_TR(0x51e41d);
 u8 U[8];
@@ -3619,6 +3805,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e430(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -3628,7 +3815,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e430:L51e430:{bud-=2;NFSU2_TR(0x51e430);
 u8 U[8];
@@ -3650,6 +3838,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e436(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -3659,7 +3848,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e436:L51e436:{bud-=1;NFSU2_TR(0x51e436);
 u8 U[8];
@@ -3675,6 +3865,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e439(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -3684,7 +3875,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e439:L51e439:{bud-=3;NFSU2_TR(0x51e439);
 u8 U[8];
@@ -3726,6 +3918,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e450(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -3735,7 +3928,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e450:L51e450:{bud-=2;NFSU2_TR(0x51e450);
 u8 U[4];
@@ -3755,6 +3949,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e45a(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -3764,7 +3959,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e45a:L51e45a:{bud-=4;NFSU2_TR(0x51e45a);
 u8 U[8];
@@ -3811,6 +4007,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e46d(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -3820,7 +4017,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e46d:L51e46d:{bud-=2;NFSU2_TR(0x51e46d);
 u8 U[8];
@@ -3863,6 +4061,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e480(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -3872,7 +4071,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e480:L51e480:{bud-=2;NFSU2_TR(0x51e480);
 u8 U[8];
@@ -3894,6 +4094,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e486(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -3903,7 +4104,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e486:L51e486:{bud-=1;NFSU2_TR(0x51e486);
 u8 U[8];
@@ -3919,6 +4121,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e489(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -3928,7 +4131,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e489:L51e489:{bud-=3;NFSU2_TR(0x51e489);
 u8 U[8];
@@ -3970,6 +4174,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e4a0(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -3979,7 +4184,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e4a0:L51e4a0:{bud-=2;NFSU2_TR(0x51e4a0);
 u8 U[4];
@@ -3999,6 +4205,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e4aa(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -4008,7 +4215,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e4aa:L51e4aa:{bud-=4;NFSU2_TR(0x51e4aa);
 u8 U[8];
@@ -4055,6 +4263,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e4bd(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -4064,7 +4273,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e4bd:L51e4bd:{bud-=2;NFSU2_TR(0x51e4bd);
 u8 U[8];
@@ -4107,6 +4317,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e4d0(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -4116,7 +4327,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e4d0:L51e4d0:{bud-=2;NFSU2_TR(0x51e4d0);
 u8 U[8];
@@ -4138,6 +4350,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e4d6(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -4147,7 +4360,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e4d6:L51e4d6:{bud-=1;NFSU2_TR(0x51e4d6);
 u8 U[8];
@@ -4163,6 +4377,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e4d9(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -4172,7 +4387,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e4d9:L51e4d9:{bud-=3;NFSU2_TR(0x51e4d9);
 u8 U[8];
@@ -4214,6 +4430,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e4f0(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -4223,7 +4440,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e4f0:L51e4f0:{bud-=2;NFSU2_TR(0x51e4f0);
 u8 U[4];
@@ -4243,6 +4461,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e4fa(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -4252,7 +4471,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e4fa:L51e4fa:{bud-=4;NFSU2_TR(0x51e4fa);
 u8 U[8];
@@ -4299,6 +4519,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e50d(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -4308,7 +4529,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e50d:L51e50d:{bud-=2;NFSU2_TR(0x51e50d);
 u8 U[8];
@@ -4351,6 +4573,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e520(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -4360,7 +4583,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e520:L51e520:{bud-=2;NFSU2_TR(0x51e520);
 u8 U[8];
@@ -4382,6 +4606,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e526(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -4391,7 +4616,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e526:L51e526:{bud-=1;NFSU2_TR(0x51e526);
 u8 U[8];
@@ -4407,6 +4633,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e529(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -4416,7 +4643,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e529:L51e529:{bud-=7;NFSU2_TR(0x51e529);
 u8 U[8];
@@ -4494,6 +4722,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e541(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -4503,7 +4732,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e541:L51e541:{bud-=1;NFSU2_TR(0x51e541);
 u8 U[6];
@@ -4525,6 +4755,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e544(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -4534,12 +4765,13 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e544:L51e544:{bud-=1;NFSU2_TR(0x51e544);
 __builtin_memmove((R+644),gp(u32(r4(G+16))),4);
 w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
-{u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
+{u32 t_=u32(r4(R+644));TAIL_PRED(t_,if(t__==0x51e769u)[[clang::musttail]] return blk_51e769(ARGS););}
 }
 
 XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
@@ -4548,6 +4780,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e550(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -4557,7 +4790,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e550:L51e550:{bud-=9;NFSU2_TR(0x51e550);
 u8 U[4];
@@ -4627,6 +4861,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e566(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -4636,7 +4871,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e566:L51e566:{bud-=2;NFSU2_TR(0x51e566);
 u8 U[4];
@@ -4656,6 +4892,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e570(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -4665,7 +4902,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e570:L51e570:{bud-=4;NFSU2_TR(0x51e570);
 u8 U[8];
@@ -4712,6 +4950,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e583(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -4721,7 +4960,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e583:L51e583:{bud-=2;NFSU2_TR(0x51e583);
 u8 U[8];
@@ -4764,6 +5004,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e596(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -4773,7 +5014,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e596:L51e596:{bud-=2;NFSU2_TR(0x51e596);
 u8 U[8];
@@ -4795,6 +5037,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e59c(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -4804,7 +5047,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e59c:L51e59c:{bud-=1;NFSU2_TR(0x51e59c);
 u8 U[8];
@@ -4820,6 +5064,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e59f(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -4829,7 +5074,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e59f:L51e59f:{bud-=3;NFSU2_TR(0x51e59f);
 u8 U[8];
@@ -4872,6 +5118,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e5b0(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -4881,7 +5128,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e5b0:L51e5b0:{bud-=2;NFSU2_TR(0x51e5b0);
 u8 U[4];
@@ -4901,6 +5149,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e5ba(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -4910,7 +5159,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e5ba:L51e5ba:{bud-=4;NFSU2_TR(0x51e5ba);
 u8 U[8];
@@ -4957,6 +5207,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e5cd(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -4966,7 +5217,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e5cd:L51e5cd:{bud-=2;NFSU2_TR(0x51e5cd);
 u8 U[8];
@@ -5009,6 +5261,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e5e0(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -5018,7 +5271,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e5e0:L51e5e0:{bud-=2;NFSU2_TR(0x51e5e0);
 u8 U[8];
@@ -5040,6 +5294,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e5e6(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -5049,7 +5304,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e5e6:L51e5e6:{bud-=1;NFSU2_TR(0x51e5e6);
 u8 U[8];
@@ -5065,6 +5321,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e5e9(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -5074,7 +5331,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e5e9:L51e5e9:{bud-=3;NFSU2_TR(0x51e5e9);
 u8 U[8];
@@ -5116,6 +5374,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e600(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -5125,7 +5384,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e600:L51e600:{bud-=2;NFSU2_TR(0x51e600);
 u8 U[4];
@@ -5145,6 +5405,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e60a(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -5154,7 +5415,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e60a:L51e60a:{bud-=4;NFSU2_TR(0x51e60a);
 u8 U[8];
@@ -5201,6 +5463,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e61d(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -5210,7 +5473,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e61d:L51e61d:{bud-=2;NFSU2_TR(0x51e61d);
 u8 U[8];
@@ -5253,6 +5517,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e630(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -5262,7 +5527,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e630:L51e630:{bud-=2;NFSU2_TR(0x51e630);
 u8 U[8];
@@ -5284,6 +5550,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e636(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -5293,7 +5560,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e636:L51e636:{bud-=1;NFSU2_TR(0x51e636);
 u8 U[8];
@@ -5309,6 +5577,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e639(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -5318,7 +5587,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e639:L51e639:{bud-=3;NFSU2_TR(0x51e639);
 u8 U[8];
@@ -5360,6 +5630,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e650(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -5369,7 +5640,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e650:L51e650:{bud-=2;NFSU2_TR(0x51e650);
 u8 U[4];
@@ -5389,6 +5661,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e65a(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -5398,7 +5671,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e65a:L51e65a:{bud-=4;NFSU2_TR(0x51e65a);
 u8 U[8];
@@ -5445,6 +5719,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e66d(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -5454,7 +5729,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e66d:L51e66d:{bud-=2;NFSU2_TR(0x51e66d);
 u8 U[8];
@@ -5497,6 +5773,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e680(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -5506,7 +5783,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e680:L51e680:{bud-=2;NFSU2_TR(0x51e680);
 u8 U[8];
@@ -5528,6 +5806,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e686(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -5537,7 +5816,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e686:L51e686:{bud-=1;NFSU2_TR(0x51e686);
 u8 U[8];
@@ -5553,6 +5833,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e689(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -5562,7 +5843,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e689:L51e689:{bud-=7;NFSU2_TR(0x51e689);
 u8 U[8];
@@ -5640,6 +5922,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e6a1(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -5649,7 +5932,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e6a1:L51e6a1:{bud-=1;NFSU2_TR(0x51e6a1);
 u8 U[6];
@@ -5671,6 +5955,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e6a4(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -5680,12 +5965,13 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e6a4:L51e6a4:{bud-=1;NFSU2_TR(0x51e6a4);
 __builtin_memmove((R+644),gp(u32(r4(G+16))),4);
 w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
-{u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
+{u32 t_=u32(r4(R+644));TAIL_PRED(t_,if(t__==0x51e7d9u)[[clang::musttail]] return blk_51e7d9(ARGS);if(t__==0x522cabu)[[clang::musttail]] return blk_522cab(ARGS););}
 }
 
 XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
@@ -5694,6 +5980,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e6b0(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -5703,7 +5990,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e6b0:L51e6b0:{bud-=3;NFSU2_TR(0x51e6b0);
 u8 U[8];
@@ -5757,6 +6045,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e6cb(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -5766,7 +6055,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e6cb:L51e6cb:{bud-=2;NFSU2_TR(0x51e6cb);
 u8 U[6];
@@ -5784,7 +6074,7 @@ B51e6ce:{NFSU2_TR(0x51e6ce);
 __builtin_memmove((R+644),gp(u32(r4(G+16))),4);
 w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
 w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
-{u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
+{u32 t_=u32(r4(R+644));TAIL_PRED(t_,);}
 }
 
 XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
@@ -5793,6 +6083,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e6d1(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -5802,7 +6093,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e6d1:L51e6d1:{bud-=2;NFSU2_TR(0x51e6d1);
 u8 U[10];
@@ -5857,6 +6149,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e6e8(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -5866,7 +6159,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e6e8:L51e6e8:{bud-=1;NFSU2_TR(0x51e6e8);
 u8 U[6];
@@ -5888,6 +6182,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e6eb(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -5897,13 +6192,14 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e6eb:L51e6eb:{bud-=1;NFSU2_TR(0x51e6eb);
 __builtin_memmove((R+644),gp(u32(r4(G+16))),4);
 w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
 w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
-{u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
+{u32 t_=u32(r4(R+644));TAIL_PRED(t_,);}
 }
 
 XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
@@ -5912,6 +6208,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e6f0(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -5921,7 +6218,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e6f0:L51e6f0:{bud-=4;NFSU2_TR(0x51e6f0);
 u8 U[4];
@@ -5950,6 +6248,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e6f9(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -5959,7 +6258,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e6f9:L51e6f9:{bud-=3;NFSU2_TR(0x51e6f9);
 u8 U[8];
@@ -6013,6 +6313,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e710(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -6022,7 +6323,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e710:L51e710:{bud-=2;NFSU2_TR(0x51e710);
 u8 U[4];
@@ -6042,6 +6344,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e71a(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -6051,7 +6354,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e71a:L51e71a:{bud-=4;NFSU2_TR(0x51e71a);
 u8 U[8];
@@ -6109,7 +6413,7 @@ __builtin_memmove((R+24),(U+0),4);
 B51e72d:{NFSU2_TR(0x51e72d);
 __builtin_memmove((R+644),gp(u32(r4(G+16))),4);
 w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
-{u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
+{u32 t_=u32(r4(R+644));TAIL_PRED(t_,);}
 }
 
 XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
@@ -6118,6 +6422,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e72e(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -6127,7 +6432,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e72e:L51e72e:{bud-=2;NFSU2_TR(0x51e72e);
 u8 U[10];
@@ -6183,6 +6489,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e741(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -6192,7 +6499,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e741:L51e741:{bud-=2;NFSU2_TR(0x51e741);
 u8 U[8];
@@ -6214,6 +6522,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e74b(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -6223,7 +6532,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e74b:L51e74b:{bud-=1;NFSU2_TR(0x51e74b);
 u8 U[8];
@@ -6239,6 +6549,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e752(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -6248,7 +6559,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e752:L51e752:{bud-=3;NFSU2_TR(0x51e752);
 u8 U[4];
@@ -6265,7 +6577,7 @@ __builtin_memmove((R+24),(U+0),4);
 B51e754:{NFSU2_TR(0x51e754);
 __builtin_memmove((R+644),gp(u32(r4(G+16))),4);
 w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
-{u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
+{u32 t_=u32(r4(R+644));TAIL_PRED(t_,);}
 }
 
 XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
@@ -6274,6 +6586,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e760(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -6283,7 +6596,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e760:L51e760:{bud-=4;NFSU2_TR(0x51e760);
 u8 U[4];
@@ -6312,6 +6626,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e769(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -6321,7 +6636,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e769:L51e769:{bud-=3;NFSU2_TR(0x51e769);
 u8 U[8];
@@ -6375,6 +6691,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e780(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -6384,7 +6701,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e780:L51e780:{bud-=2;NFSU2_TR(0x51e780);
 u8 U[4];
@@ -6404,6 +6722,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e78a(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -6413,7 +6732,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e78a:L51e78a:{bud-=4;NFSU2_TR(0x51e78a);
 u8 U[8];
@@ -6471,7 +6791,7 @@ __builtin_memmove((R+24),(U+0),4);
 B51e79d:{NFSU2_TR(0x51e79d);
 __builtin_memmove((R+644),gp(u32(r4(G+16))),4);
 w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
-{u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
+{u32 t_=u32(r4(R+644));TAIL_PRED(t_,);}
 }
 
 XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
@@ -6480,6 +6800,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e79e(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -6489,7 +6810,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e79e:L51e79e:{bud-=2;NFSU2_TR(0x51e79e);
 u8 U[10];
@@ -6545,6 +6867,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e7b1(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -6554,7 +6877,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e7b1:L51e7b1:{bud-=2;NFSU2_TR(0x51e7b1);
 u8 U[8];
@@ -6576,6 +6900,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e7bb(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -6585,7 +6910,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e7bb:L51e7bb:{bud-=1;NFSU2_TR(0x51e7bb);
 u8 U[8];
@@ -6601,6 +6927,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e7c2(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -6610,7 +6937,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e7c2:L51e7c2:{bud-=3;NFSU2_TR(0x51e7c2);
 u8 U[4];
@@ -6627,7 +6955,7 @@ __builtin_memmove((R+24),(U+0),4);
 B51e7c4:{NFSU2_TR(0x51e7c4);
 __builtin_memmove((R+644),gp(u32(r4(G+16))),4);
 w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
-{u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
+{u32 t_=u32(r4(R+644));TAIL_PRED(t_,);}
 }
 
 XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
@@ -6636,6 +6964,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e7d0(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -6645,7 +6974,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e7d0:L51e7d0:{bud-=4;NFSU2_TR(0x51e7d0);
 u8 U[4];
@@ -6674,6 +7004,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e7d9(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -6683,7 +7014,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e7d9:L51e7d9:{bud-=3;NFSU2_TR(0x51e7d9);
 u8 U[8];
@@ -6737,6 +7069,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e7f0(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -6746,7 +7079,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e7f0:L51e7f0:{bud-=2;NFSU2_TR(0x51e7f0);
 u8 U[4];
@@ -6766,6 +7100,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e7fa(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -6775,7 +7110,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e7fa:L51e7fa:{bud-=4;NFSU2_TR(0x51e7fa);
 u8 U[8];
@@ -6833,7 +7169,7 @@ __builtin_memmove((R+24),(U+0),4);
 B51e80d:{NFSU2_TR(0x51e80d);
 __builtin_memmove((R+644),gp(u32(r4(G+16))),4);
 w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
-{u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
+{u32 t_=u32(r4(R+644));TAIL_PRED(t_,);}
 }
 
 XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
@@ -6842,6 +7178,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e80e(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -6851,7 +7188,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e80e:L51e80e:{bud-=2;NFSU2_TR(0x51e80e);
 u8 U[10];
@@ -6907,6 +7245,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e821(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -6916,7 +7255,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e821:L51e821:{bud-=2;NFSU2_TR(0x51e821);
 u8 U[8];
@@ -6938,6 +7278,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e82b(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -6947,7 +7288,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e82b:L51e82b:{bud-=1;NFSU2_TR(0x51e82b);
 u8 U[8];
@@ -6963,6 +7305,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e832(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -6972,7 +7315,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e832:L51e832:{bud-=3;NFSU2_TR(0x51e832);
 u8 U[4];
@@ -6989,7 +7333,7 @@ __builtin_memmove((R+24),(U+0),4);
 B51e834:{NFSU2_TR(0x51e834);
 __builtin_memmove((R+644),gp(u32(r4(G+16))),4);
 w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
-{u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
+{u32 t_=u32(r4(R+644));TAIL_PRED(t_,);}
 }
 
 XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
@@ -6998,6 +7342,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e840(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -7007,7 +7352,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e840:L51e840:{bud-=14;NFSU2_TR(0x51e840);
 u8 U[8];
@@ -7093,6 +7439,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e863(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -7102,7 +7449,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e863:L51e863:{bud-=24;NFSU2_TR(0x51e863);
 u8 U[6];
@@ -7248,7 +7596,7 @@ B51e8c5:{NFSU2_TR(0x51e8c5);
 __builtin_memmove((R+644),gp(u32(r4(G+16))),4);
 w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
 w4(G+16,u32(u32(r4(G+16))+u32(u32(0x14ull))));
-{u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
+{u32 t_=u32(r4(R+644));TAIL_PRED(t_,if(t__==0x4b6580u)[[clang::musttail]] return blk_4b6580(ARGS);if(t__==0x4b66c9u)[[clang::musttail]] return blk_4b66c9(ARGS);if(t__==0x4b6854u)[[clang::musttail]] return blk_4b6854(ARGS);if(t__==0x4b68b9u)[[clang::musttail]] return blk_4b68b9(ARGS););}
 }
 
 XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
@@ -7257,6 +7605,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e8d0(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -7266,7 +7615,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e8d0:L51e8d0:{bud-=9;NFSU2_TR(0x51e8d0);
 u8 U[4];
@@ -7336,6 +7686,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e8e6(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -7345,7 +7696,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e8e6:L51e8e6:{bud-=2;NFSU2_TR(0x51e8e6);
 u8 U[4];
@@ -7365,6 +7717,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e8f0(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -7374,7 +7727,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e8f0:L51e8f0:{bud-=4;NFSU2_TR(0x51e8f0);
 u8 U[8];
@@ -7421,6 +7775,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e903(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -7430,7 +7785,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e903:L51e903:{bud-=2;NFSU2_TR(0x51e903);
 u8 U[8];
@@ -7473,6 +7829,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e916(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -7482,7 +7839,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e916:L51e916:{bud-=2;NFSU2_TR(0x51e916);
 u8 U[8];
@@ -7504,6 +7862,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e91c(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -7513,7 +7872,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e91c:L51e91c:{bud-=1;NFSU2_TR(0x51e91c);
 u8 U[8];
@@ -7529,6 +7889,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e91f(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -7538,7 +7899,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e91f:L51e91f:{bud-=3;NFSU2_TR(0x51e91f);
 u8 U[8];
@@ -7581,6 +7943,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e930(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -7590,7 +7953,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e930:L51e930:{bud-=2;NFSU2_TR(0x51e930);
 u8 U[4];
@@ -7610,6 +7974,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e93a(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -7619,7 +7984,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e93a:L51e93a:{bud-=4;NFSU2_TR(0x51e93a);
 u8 U[8];
@@ -7666,6 +8032,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e94d(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -7675,7 +8042,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e94d:L51e94d:{bud-=2;NFSU2_TR(0x51e94d);
 u8 U[8];
@@ -7718,6 +8086,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e960(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -7727,7 +8096,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e960:L51e960:{bud-=2;NFSU2_TR(0x51e960);
 u8 U[8];
@@ -7749,6 +8119,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e966(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -7758,7 +8129,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e966:L51e966:{bud-=1;NFSU2_TR(0x51e966);
 u8 U[8];
@@ -7774,6 +8146,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e969(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -7783,7 +8156,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e969:L51e969:{bud-=3;NFSU2_TR(0x51e969);
 u8 U[8];
@@ -7839,6 +8213,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e980(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -7848,7 +8223,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e980:L51e980:{bud-=2;NFSU2_TR(0x51e980);
 u8 U[4];
@@ -7868,6 +8244,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e98a(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -7877,7 +8254,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e98a:L51e98a:{bud-=4;NFSU2_TR(0x51e98a);
 u8 U[8];
@@ -7931,6 +8309,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e99d(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -7940,7 +8319,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e99d:L51e99d:{bud-=2;NFSU2_TR(0x51e99d);
 u8 U[14];
@@ -7997,6 +8377,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e9b0(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -8006,7 +8387,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e9b0:L51e9b0:{bud-=2;NFSU2_TR(0x51e9b0);
 u8 U[8];
@@ -8028,6 +8410,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e9b6(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -8037,7 +8420,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e9b6:L51e9b6:{bud-=1;NFSU2_TR(0x51e9b6);
 u8 U[8];
@@ -8053,6 +8437,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e9b9(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -8062,7 +8447,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e9b9:L51e9b9:{bud-=3;NFSU2_TR(0x51e9b9);
 u8 U[8];
@@ -8082,7 +8468,7 @@ __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
 __builtin_memmove((U+8),(U+4),4);
 w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
 s4(u32(r4(G+16)),u32(0x51e9c2ull));
-{u32 t_=u32(r4(U+8));TAIL_DYNAMIC(t_);}
+{u32 t_=u32(r4(U+8));TAIL_PRED(t_,);}
 }
 
 XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
@@ -8091,6 +8477,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e9c2(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -8100,7 +8487,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e9c2:L51e9c2:{bud-=7;NFSU2_TR(0x51e9c2);
 u8 U[8];
@@ -8178,6 +8566,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e9da(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -8187,7 +8576,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e9da:L51e9da:{bud-=1;NFSU2_TR(0x51e9da);
 u8 U[6];
@@ -8209,6 +8599,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e9dd(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -8218,12 +8609,13 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e9dd:L51e9dd:{bud-=1;NFSU2_TR(0x51e9dd);
 __builtin_memmove((R+644),gp(u32(r4(G+16))),4);
 w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
-{u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
+{u32 t_=u32(r4(R+644));TAIL_PRED(t_,);}
 }
 
 XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
@@ -8232,6 +8624,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51e9e0(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -8241,7 +8634,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51e9e0:L51e9e0:{bud-=22;NFSU2_TR(0x51e9e0);
 u8 U[4];
@@ -8375,6 +8769,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51ea1e(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -8384,7 +8779,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51ea1e:L51ea1e:{bud-=8;NFSU2_TR(0x51ea1e);
 u8 U[8];
@@ -8434,6 +8830,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51ea45(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -8443,7 +8840,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51ea45:L51ea45:{bud-=1;NFSU2_TR(0x51ea45);
 u8 U[21];
@@ -8466,6 +8864,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51ea47(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -8475,7 +8874,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51ea47:L51ea47:{bud-=3;NFSU2_TR(0x51ea47);
 u8 U[4];
@@ -8496,6 +8896,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51ea51(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -8505,7 +8906,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51ea51:L51ea51:{bud-=1;NFSU2_TR(0x51ea51);
 u8 U[21];
@@ -8528,6 +8930,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51ea53(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -8537,7 +8940,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51ea53:L51ea53:{bud-=4;NFSU2_TR(0x51ea53);
 u8 U[8];
@@ -8589,6 +8993,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51ea6f(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -8598,7 +9003,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51ea6f:L51ea6f:{bud-=1;NFSU2_TR(0x51ea6f);
 w4(G+16,u32(u32(r4(G+16))+u32(u32(0xcull))));
@@ -8611,6 +9017,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51ea72(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -8620,7 +9027,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51ea72:L51ea72:{bud-=7;NFSU2_TR(0x51ea72);
 u8 U[8];
@@ -8665,7 +9073,7 @@ B51ea84:{NFSU2_TR(0x51ea84);
 __builtin_memmove((R+644),gp(u32(r4(G+16))),4);
 w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
 w4(G+16,u32(u32(r4(G+16))+u32(u32(0x20ull))));
-{u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
+{u32 t_=u32(r4(R+644));TAIL_PRED(t_,if(t__==0x4b429bu)[[clang::musttail]] return blk_4b429b(ARGS);if(t__==0x4b4304u)[[clang::musttail]] return blk_4b4304(ARGS);if(t__==0x4b9f7au)[[clang::musttail]] return blk_4b9f7a(ARGS);if(t__==0x4ba9f0u)[[clang::musttail]] return blk_4ba9f0(ARGS););}
 }
 
 XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
@@ -8674,6 +9082,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51ea90(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -8683,7 +9092,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51ea90:L51ea90:{bud-=10;NFSU2_TR(0x51ea90);
 u8 U[4];
@@ -8762,6 +9172,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51eab0(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -8771,7 +9182,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51eab0:L51eab0:{bud-=2;NFSU2_TR(0x51eab0);
 u8 U[4];
@@ -8791,6 +9203,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51eaba(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -8800,7 +9213,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51eaba:L51eaba:{bud-=4;NFSU2_TR(0x51eaba);
 u8 U[8];
@@ -8847,6 +9261,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51eacd(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -8856,7 +9271,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51eacd:L51eacd:{bud-=2;NFSU2_TR(0x51eacd);
 u8 U[8];
@@ -8899,6 +9315,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51eae0(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -8908,7 +9325,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51eae0:L51eae0:{bud-=2;NFSU2_TR(0x51eae0);
 u8 U[8];
@@ -8930,6 +9348,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51eae6(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -8939,7 +9358,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51eae6:L51eae6:{bud-=1;NFSU2_TR(0x51eae6);
 u8 U[8];
@@ -8955,6 +9375,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51eae9(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -8964,7 +9385,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51eae9:L51eae9:{bud-=3;NFSU2_TR(0x51eae9);
 u8 U[8];
@@ -9006,6 +9428,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51eb00(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -9015,7 +9438,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51eb00:L51eb00:{bud-=2;NFSU2_TR(0x51eb00);
 u8 U[4];
@@ -9035,6 +9459,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51eb0a(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -9044,7 +9469,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51eb0a:L51eb0a:{bud-=4;NFSU2_TR(0x51eb0a);
 u8 U[8];
@@ -9091,6 +9517,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51eb1d(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -9100,7 +9527,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51eb1d:L51eb1d:{bud-=2;NFSU2_TR(0x51eb1d);
 u8 U[8];
@@ -9143,6 +9571,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51eb30(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -9152,7 +9581,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51eb30:L51eb30:{bud-=2;NFSU2_TR(0x51eb30);
 u8 U[8];
@@ -9174,6 +9604,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51eb36(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -9183,7 +9614,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51eb36:L51eb36:{bud-=1;NFSU2_TR(0x51eb36);
 u8 U[8];
@@ -9199,6 +9631,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51eb39(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -9208,7 +9641,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51eb39:L51eb39:{bud-=7;NFSU2_TR(0x51eb39);
 u8 U[8];
@@ -9286,6 +9720,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51eb51(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -9295,7 +9730,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51eb51:L51eb51:{bud-=1;NFSU2_TR(0x51eb51);
 u8 U[6];
@@ -9317,6 +9753,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51eb54(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -9326,12 +9763,13 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51eb54:L51eb54:{bud-=1;NFSU2_TR(0x51eb54);
 __builtin_memmove((R+644),gp(u32(r4(G+16))),4);
 w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
-{u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
+{u32 t_=u32(r4(R+644));TAIL_PRED(t_,);}
 }
 
 XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
@@ -9340,6 +9778,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51eb60(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -9349,7 +9788,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51eb60:L51eb60:{bud-=6;NFSU2_TR(0x51eb60);
 u8 U[4];
@@ -9408,6 +9848,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51eb73(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -9417,7 +9858,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51eb73:L51eb73:{bud-=2;NFSU2_TR(0x51eb73);
 u8 U[4];
@@ -9437,6 +9879,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51eb7d(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -9446,7 +9889,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51eb7d:L51eb7d:{bud-=4;NFSU2_TR(0x51eb7d);
 u8 U[8];
@@ -9492,6 +9936,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51eb90(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -9501,7 +9946,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51eb90:L51eb90:{bud-=2;NFSU2_TR(0x51eb90);
 u8 U[4];
@@ -9543,6 +9989,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51eba3(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -9552,7 +9999,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51eba3:L51eba3:{bud-=2;NFSU2_TR(0x51eba3);
 u8 U[8];
@@ -9574,6 +10022,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51ebad(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -9583,7 +10032,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51ebad:L51ebad:{bud-=1;NFSU2_TR(0x51ebad);
 u8 U[8];
@@ -9599,6 +10049,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51ebb4(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -9608,7 +10059,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51ebb4:L51ebb4:{bud-=1;NFSU2_TR(0x51ebb4);
 u8 U[4];
@@ -9624,6 +10076,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51ebb5(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -9633,7 +10086,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51ebb5:L51ebb5:{bud-=5;NFSU2_TR(0x51ebb5);
 u8 U[8];
@@ -9698,6 +10152,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51ebcb(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -9707,7 +10162,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51ebcb:L51ebcb:{bud-=1;NFSU2_TR(0x51ebcb);
 u8 U[6];
@@ -9729,6 +10185,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51ebce(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -9738,12 +10195,13 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51ebce:L51ebce:{bud-=1;NFSU2_TR(0x51ebce);
 __builtin_memmove((R+644),gp(u32(r4(G+16))),4);
 w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
-{u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
+{u32 t_=u32(r4(R+644));TAIL_PRED(t_,if(t__==0x556266u)[[clang::musttail]] return blk_556266(ARGS););}
 }
 
 XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
@@ -9752,6 +10210,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51ebd0(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -9761,7 +10220,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51ebd0:L51ebd0:{bud-=14;NFSU2_TR(0x51ebd0);
 u8 U[8];
@@ -9847,6 +10307,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51ebf3(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -9856,7 +10317,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51ebf3:L51ebf3:{bud-=4;NFSU2_TR(0x51ebf3);
 u8 U[4];
@@ -9876,7 +10338,7 @@ B51ebfc:{NFSU2_TR(0x51ebfc);
 __builtin_memmove((R+644),gp(u32(r4(G+16))),4);
 w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
 w4(G+16,u32(u32(r4(G+16))+u32(u32(0x14ull))));
-{u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
+{u32 t_=u32(r4(R+644));TAIL_PRED(t_,if(t__==0x4ba2fdu)[[clang::musttail]] return blk_4ba2fd(ARGS););}
 }
 
 XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
@@ -9885,6 +10347,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51ec00(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -9894,7 +10357,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51ec00:L51ec00:{bud-=2;NFSU2_TR(0x51ec00);
 w4(G+0,u32(0x7dfull));
@@ -9902,7 +10366,7 @@ w4(G+0,u32(0x7dfull));
 B51ec05:{NFSU2_TR(0x51ec05);
 __builtin_memmove((R+644),gp(u32(r4(G+16))),4);
 w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
-{u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
+{u32 t_=u32(r4(R+644));TAIL_PRED(t_,);}
 }
 
 XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
@@ -9911,6 +10375,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51ec10(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -9920,7 +10385,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51ec10:L51ec10:{bud-=14;NFSU2_TR(0x51ec10);
 w4(G+16,u32(u32(r4(G+16))-u32(u32(0x10ull))));
@@ -10004,6 +10470,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51ec37(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -10013,10 +10480,11 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51ec37:L51ec37:{bud-=1;NFSU2_TR(0x51ec37);
-{u32 ea_=u32(r4(G+16)+u32(16u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+{u32 ea_=u32(r4(G+16)+u32(16u));const XM<4>& m_=*static_cast<const XM<4>*>(gp(ea_));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_),"m"(m_));}
 {[[clang::musttail]] return blk_51ec3b(ARGS);}
 }
 
@@ -10026,6 +10494,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51ec3b(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -10035,10 +10504,11 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51ec3b:L51ec3b:{bud-=5;NFSU2_TR(0x51ec3b);
-{u32 ea_=u32(r4(G+16)+u32(24u));__asm__ volatile(".byte 0xd8,0x20"::"a"(ea_):"memory");}
+{u32 ea_=u32(r4(G+16)+u32(24u));const XM<4>& m_=*static_cast<const XM<4>*>(gp(ea_));__asm__ volatile(".byte 0xd8,0x20"::"a"(ea_),"m"(m_));}
 }
 B51ec3f:{NFSU2_TR(0x51ec3f);
 u8 U[8];
@@ -10071,6 +10541,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51ec4c(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -10080,10 +10551,11 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51ec4c:L51ec4c:{bud-=1;NFSU2_TR(0x51ec4c);
-{u32 ea_=u32(r4(G+16)+u32(20u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+{u32 ea_=u32(r4(G+16)+u32(20u));u32& m_=*static_cast<u32*>(gp(ea_));__asm__ volatile(".byte 0xd9,0x18":"=m"(m_):"a"(ea_));}
 {[[clang::musttail]] return blk_51ec50(ARGS);}
 }
 
@@ -10093,6 +10565,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51ec50(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -10102,10 +10575,11 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51ec50:L51ec50:{bud-=2;NFSU2_TR(0x51ec50);
-{u32 ea_=u32(r4(G+16)+u32(24u));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_):"memory");}
+{u32 ea_=u32(r4(G+16)+u32(24u));const XM<4>& m_=*static_cast<const XM<4>*>(gp(ea_));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_),"m"(m_));}
 }
 B51ec54:{NFSU2_TR(0x51ec54);
 u8 U[4];
@@ -10120,6 +10594,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51ec58(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -10129,10 +10604,11 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51ec58:L51ec58:{bud-=4;NFSU2_TR(0x51ec58);
-{u32 ea_=u32(r4(G+16)+u32(32u));__asm__ volatile(".byte 0xd8,0x20"::"a"(ea_):"memory");}
+{u32 ea_=u32(r4(G+16)+u32(32u));const XM<4>& m_=*static_cast<const XM<4>*>(gp(ea_));__asm__ volatile(".byte 0xd8,0x20"::"a"(ea_),"m"(m_));}
 }
 B51ec5c:{NFSU2_TR(0x51ec5c);
 u8 U[4];
@@ -10160,6 +10636,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51ec5f(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -10169,10 +10646,11 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51ec5f:L51ec5f:{bud-=2;NFSU2_TR(0x51ec5f);
-{u32 ea_=u32(r4(G+16)+u32(36u));__asm__ volatile(".byte 0xd9,0x18"::"a"(ea_):"memory");}
+{u32 ea_=u32(r4(G+16)+u32(36u));u32& m_=*static_cast<u32*>(gp(ea_));__asm__ volatile(".byte 0xd9,0x18":"=m"(m_):"a"(ea_));}
 }
 B51ec63:{NFSU2_TR(0x51ec63);
 w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
@@ -10186,6 +10664,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51ec68(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -10195,7 +10674,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51ec68:L51ec68:{bud-=3;NFSU2_TR(0x51ec68);
 w4(G+16,u32(u32(r4(G+16))+u32(u32(0x1cull))));
@@ -10248,7 +10728,7 @@ __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
 __builtin_memmove((U+8),(U+4),4);
 w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
 s4(u32(r4(G+16)),u32(0x51ec80ull));
-{u32 t_=u32(r4(U+8));TAIL_DYNAMIC(t_);}
+{u32 t_=u32(r4(U+8));TAIL_PRED(t_,);}
 }
 
 XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
@@ -10257,6 +10737,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51ec80(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -10266,7 +10747,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51ec80:L51ec80:{bud-=3;NFSU2_TR(0x51ec80);
 u8 U[4];
@@ -10290,7 +10772,7 @@ B51ec84:{NFSU2_TR(0x51ec84);
 __builtin_memmove((R+644),gp(u32(r4(G+16))),4);
 w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
 w4(G+16,u32(u32(r4(G+16))+u32(u32(0xcull))));
-{u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
+{u32 t_=u32(r4(R+644));TAIL_PRED(t_,);}
 }
 
 XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
@@ -10299,6 +10781,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51ec90(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -10308,7 +10791,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51ec90:L51ec90:{bud-=10;NFSU2_TR(0x51ec90);
 u8 U[4];
@@ -10387,6 +10871,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51ecb0(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -10396,7 +10881,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51ecb0:L51ecb0:{bud-=2;NFSU2_TR(0x51ecb0);
 u8 U[4];
@@ -10416,6 +10902,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51ecba(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -10425,7 +10912,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51ecba:L51ecba:{bud-=4;NFSU2_TR(0x51ecba);
 u8 U[8];
@@ -10472,6 +10960,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51eccd(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -10481,7 +10970,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51eccd:L51eccd:{bud-=2;NFSU2_TR(0x51eccd);
 u8 U[8];
@@ -10524,6 +11014,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51ece0(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -10533,7 +11024,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51ece0:L51ece0:{bud-=2;NFSU2_TR(0x51ece0);
 u8 U[8];
@@ -10555,6 +11047,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51ece6(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -10564,7 +11057,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51ece6:L51ece6:{bud-=1;NFSU2_TR(0x51ece6);
 u8 U[8];
@@ -10580,6 +11074,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51ece9(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -10589,7 +11084,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51ece9:L51ece9:{bud-=3;NFSU2_TR(0x51ece9);
 u8 U[8];
@@ -10631,6 +11127,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51ed00(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -10640,7 +11137,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51ed00:L51ed00:{bud-=2;NFSU2_TR(0x51ed00);
 u8 U[4];
@@ -10660,6 +11158,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51ed0a(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -10669,7 +11168,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51ed0a:L51ed0a:{bud-=4;NFSU2_TR(0x51ed0a);
 u8 U[8];
@@ -10716,6 +11216,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51ed1d(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -10725,7 +11226,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51ed1d:L51ed1d:{bud-=2;NFSU2_TR(0x51ed1d);
 u8 U[8];
@@ -10768,6 +11270,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51ed30(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -10777,7 +11280,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51ed30:L51ed30:{bud-=2;NFSU2_TR(0x51ed30);
 u8 U[8];
@@ -10799,6 +11303,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51ed36(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -10808,7 +11313,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51ed36:L51ed36:{bud-=1;NFSU2_TR(0x51ed36);
 u8 U[8];
@@ -10824,6 +11330,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51ed39(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -10833,7 +11340,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51ed39:L51ed39:{bud-=7;NFSU2_TR(0x51ed39);
 u8 U[8];
@@ -10911,6 +11419,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51ed51(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -10920,7 +11429,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51ed51:L51ed51:{bud-=1;NFSU2_TR(0x51ed51);
 u8 U[6];
@@ -10942,6 +11452,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51ed54(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -10951,12 +11462,13 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51ed54:L51ed54:{bud-=1;NFSU2_TR(0x51ed54);
 __builtin_memmove((R+644),gp(u32(r4(G+16))),4);
 w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
-{u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
+{u32 t_=u32(r4(R+644));TAIL_PRED(t_,);}
 }
 
 XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
@@ -10965,6 +11477,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51ed60(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -10974,7 +11487,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51ed60:L51ed60:{bud-=9;NFSU2_TR(0x51ed60);
 u8 U[4];
@@ -11044,6 +11558,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51ed76(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -11053,7 +11568,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51ed76:L51ed76:{bud-=2;NFSU2_TR(0x51ed76);
 u8 U[4];
@@ -11073,6 +11589,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51ed80(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -11082,7 +11599,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51ed80:L51ed80:{bud-=4;NFSU2_TR(0x51ed80);
 u8 U[8];
@@ -11129,6 +11647,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51ed93(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -11138,7 +11657,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51ed93:L51ed93:{bud-=2;NFSU2_TR(0x51ed93);
 u8 U[8];
@@ -11181,6 +11701,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51eda6(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -11190,7 +11711,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51eda6:L51eda6:{bud-=2;NFSU2_TR(0x51eda6);
 u8 U[8];
@@ -11212,6 +11734,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51edac(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -11221,7 +11744,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51edac:L51edac:{bud-=1;NFSU2_TR(0x51edac);
 u8 U[8];
@@ -11237,6 +11761,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51edaf(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -11246,7 +11771,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51edaf:L51edaf:{bud-=3;NFSU2_TR(0x51edaf);
 u8 U[8];
@@ -11289,6 +11815,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51edc0(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -11298,7 +11825,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51edc0:L51edc0:{bud-=2;NFSU2_TR(0x51edc0);
 u8 U[4];
@@ -11318,6 +11846,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51edca(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -11327,7 +11856,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51edca:L51edca:{bud-=4;NFSU2_TR(0x51edca);
 u8 U[8];
@@ -11374,6 +11904,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51eddd(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -11383,7 +11914,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51eddd:L51eddd:{bud-=2;NFSU2_TR(0x51eddd);
 u8 U[8];
@@ -11426,6 +11958,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51edf0(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -11435,7 +11968,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51edf0:L51edf0:{bud-=2;NFSU2_TR(0x51edf0);
 u8 U[8];
@@ -11457,6 +11991,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51edf6(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -11466,7 +12001,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51edf6:L51edf6:{bud-=1;NFSU2_TR(0x51edf6);
 u8 U[8];
@@ -11482,6 +12018,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51edf9(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -11491,7 +12028,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51edf9:L51edf9:{bud-=7;NFSU2_TR(0x51edf9);
 u8 U[8];
@@ -11569,6 +12107,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51ee11(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -11578,7 +12117,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51ee11:L51ee11:{bud-=1;NFSU2_TR(0x51ee11);
 u8 U[6];
@@ -11600,6 +12140,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51ee14(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -11609,12 +12150,13 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51ee14:L51ee14:{bud-=1;NFSU2_TR(0x51ee14);
 __builtin_memmove((R+644),gp(u32(r4(G+16))),4);
 w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
-{u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
+{u32 t_=u32(r4(R+644));TAIL_PRED(t_,);}
 }
 
 XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
@@ -11623,6 +12165,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51ee20(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -11632,7 +12175,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51ee20:L51ee20:{bud-=7;NFSU2_TR(0x51ee20);
 u8 U[8];
@@ -11695,6 +12239,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51ee36(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -11704,7 +12249,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51ee36:L51ee36:{bud-=1;NFSU2_TR(0x51ee36);
 w4(R+24,u32(u32(r4(R+24))^u32(r4(R+24))));
@@ -11717,6 +12263,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51ee38(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -11726,7 +12273,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51ee38:L51ee38:{bud-=2;NFSU2_TR(0x51ee38);
 u8 U[8];
@@ -11745,6 +12293,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51ee40(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -11754,7 +12303,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51ee40:L51ee40:{bud-=2;NFSU2_TR(0x51ee40);
 u8 U[4];
@@ -11779,6 +12329,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51ee49(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -11788,7 +12339,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51ee49:L51ee49:{bud-=1;NFSU2_TR(0x51ee49);
 w4(G+0,u32(u32(r4(G+0))^u32(r4(G+0))));
@@ -11801,6 +12353,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51ee4b(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -11810,7 +12363,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51ee4b:L51ee4b:{bud-=2;NFSU2_TR(0x51ee4b);
 u8 U[8];
@@ -11850,6 +12404,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51ee59(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -11859,7 +12414,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51ee59:L51ee59:{bud-=3;NFSU2_TR(0x51ee59);
 w4(G+16,u32(u32(r4(G+16))+u32(u32(0x8ull))));
@@ -11906,6 +12462,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51ee6c(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -11915,7 +12472,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51ee6c:L51ee6c:{bud-=2;NFSU2_TR(0x51ee6c);
 w4(R+24,u32(u32(r4(R+24))^u32(r4(R+24))));
@@ -11930,6 +12488,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51ee70(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -11939,7 +12498,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51ee70:L51ee70:{bud-=5;NFSU2_TR(0x51ee70);
 u8 U[4];
@@ -11966,7 +12526,7 @@ B51ee75:{NFSU2_TR(0x51ee75);
 __builtin_memmove((R+644),gp(u32(r4(G+16))),4);
 w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
 w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
-{u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
+{u32 t_=u32(r4(R+644));TAIL_PRED(t_,if(t__==0x4bbd2du)[[clang::musttail]] return blk_4bbd2d(ARGS);if(t__==0x4bbd59u)[[clang::musttail]] return blk_4bbd59(ARGS);if(t__==0x51f387u)[[clang::musttail]] return blk_51f387(ARGS););}
 }
 
 XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
@@ -11975,6 +12535,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51ee78(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -11984,7 +12545,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51ee78:L51ee78:{bud-=5;NFSU2_TR(0x51ee78);
 u8 U[4];
@@ -12020,7 +12582,7 @@ B51ee7d:{NFSU2_TR(0x51ee7d);
 __builtin_memmove((R+644),gp(u32(r4(G+16))),4);
 w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
 w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
-{u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
+{u32 t_=u32(r4(R+644));TAIL_PRED(t_,if(t__==0x4bbd2du)[[clang::musttail]] return blk_4bbd2d(ARGS);if(t__==0x4bbd59u)[[clang::musttail]] return blk_4bbd59(ARGS);if(t__==0x51f387u)[[clang::musttail]] return blk_51f387(ARGS););}
 }
 
 XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
@@ -12029,6 +12591,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51ee80(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -12038,7 +12601,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51ee80:L51ee80:{bud-=9;NFSU2_TR(0x51ee80);
 u8 U[4];
@@ -12097,6 +12661,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51ee90(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -12106,7 +12671,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51ee90:L51ee90:{bud-=2;NFSU2_TR(0x51ee90);
 u8 U[8];
@@ -12132,6 +12698,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51ee99(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -12141,7 +12708,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51ee99:L51ee99:{bud-=2;NFSU2_TR(0x51ee99);
 w4(R+12,u32(u32(r4(R+12))^u32(r4(R+12))));
@@ -12156,6 +12724,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51eea0(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -12165,7 +12734,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51eea0:L51eea0:{bud-=4;NFSU2_TR(0x51eea0);
 u8 U[8];
@@ -12200,6 +12770,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51eeb0(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -12209,7 +12780,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51eeb0:L51eeb0:{bud-=1;NFSU2_TR(0x51eeb0);
 w4(G+0,u32(u32(r4(G+0))^u32(r4(G+0))));
@@ -12222,6 +12794,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51eeb2(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -12231,7 +12804,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51eeb2:L51eeb2:{bud-=2;NFSU2_TR(0x51eeb2);
 u8 U[8];
@@ -12291,6 +12865,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51eed0(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -12300,7 +12875,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51eed0:L51eed0:{bud-=3;NFSU2_TR(0x51eed0);
 u8 U[8];
@@ -12326,6 +12902,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51eeda(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -12335,7 +12912,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51eeda:L51eeda:{bud-=4;NFSU2_TR(0x51eeda);
 u8 U[8];
@@ -12388,6 +12966,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51eef0(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -12397,7 +12976,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+518,F+6,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51eef0:L51eef0:{bud-=2;NFSU2_TR(0x51eef0);
 u8 U[8];
@@ -12440,6 +13020,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51ef03(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -12449,7 +13030,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51ef03:L51ef03:{bud-=2;NFSU2_TR(0x51ef03);
 u8 U[8];
@@ -12471,6 +13053,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51ef09(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -12480,7 +13063,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51ef09:L51ef09:{bud-=1;NFSU2_TR(0x51ef09);
 u8 U[8];
@@ -12496,6 +13080,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51ef0c(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -12505,7 +13090,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51ef0c:L51ef0c:{bud-=2;NFSU2_TR(0x51ef0c);
 u8 U[8];
@@ -12523,6 +13109,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51ef14(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -12532,7 +13119,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51ef14:L51ef14:{bud-=3;NFSU2_TR(0x51ef14);
 u8 U[8];
@@ -12601,6 +13189,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51ef32(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -12610,7 +13199,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51ef32:L51ef32:{bud-=2;NFSU2_TR(0x51ef32);
 u8 U[4];
@@ -12630,6 +13220,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51ef38(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -12639,7 +13230,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51ef38:L51ef38:{bud-=4;NFSU2_TR(0x51ef38);
 u8 U[8];
@@ -12717,7 +13309,7 @@ B51ef4e:{NFSU2_TR(0x51ef4e);
 __builtin_memmove((R+644),gp(u32(r4(G+16))),4);
 w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
 w4(G+16,u32(u32(r4(G+16))+u32(u32(0x8ull))));
-{u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
+{u32 t_=u32(r4(R+644));TAIL_PRED(t_,if(t__==0x49589fu)[[clang::musttail]] return blk_49589f(ARGS);if(t__==0x4958c5u)[[clang::musttail]] return blk_4958c5(ARGS);if(t__==0x4958e5u)[[clang::musttail]] return blk_4958e5(ARGS);if(t__==0x49efa7u)[[clang::musttail]] return blk_49efa7(ARGS););}
 }
 
 XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
@@ -12726,6 +13318,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51ef51(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -12735,7 +13328,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51ef51:L51ef51:{bud-=2;NFSU2_TR(0x51ef51);
 u8 U[14];
@@ -12792,6 +13386,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51ef64(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -12801,7 +13396,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51ef64:L51ef64:{bud-=9;NFSU2_TR(0x51ef64);
 u8 U[8];
@@ -12855,7 +13451,7 @@ B51ef72:{NFSU2_TR(0x51ef72);
 __builtin_memmove((R+644),gp(u32(r4(G+16))),4);
 w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
 w4(G+16,u32(u32(r4(G+16))+u32(u32(0x8ull))));
-{u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
+{u32 t_=u32(r4(R+644));TAIL_PRED(t_,if(t__==0x49589fu)[[clang::musttail]] return blk_49589f(ARGS);if(t__==0x4958c5u)[[clang::musttail]] return blk_4958c5(ARGS);if(t__==0x4958e5u)[[clang::musttail]] return blk_4958e5(ARGS);if(t__==0x49efa7u)[[clang::musttail]] return blk_49efa7(ARGS););}
 }
 
 XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
@@ -12864,6 +13460,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51ef75(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -12873,7 +13470,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51ef75:L51ef75:{bud-=2;NFSU2_TR(0x51ef75);
 u8 U[14];
@@ -12902,6 +13500,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51ef80(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -12911,7 +13510,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51ef80:L51ef80:{bud-=3;NFSU2_TR(0x51ef80);
 u8 U[8];
@@ -12937,6 +13537,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51ef8a(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -12946,7 +13547,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51ef8a:L51ef8a:{bud-=4;NFSU2_TR(0x51ef8a);
 u8 U[8];
@@ -13024,7 +13626,7 @@ B51efa0:{NFSU2_TR(0x51efa0);
 __builtin_memmove((R+644),gp(u32(r4(G+16))),4);
 w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
 w4(G+16,u32(u32(r4(G+16))+u32(u32(0x8ull))));
-{u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
+{u32 t_=u32(r4(R+644));TAIL_PRED(t_,if(t__==0x49589fu)[[clang::musttail]] return blk_49589f(ARGS);if(t__==0x4958c5u)[[clang::musttail]] return blk_4958c5(ARGS);if(t__==0x4958e5u)[[clang::musttail]] return blk_4958e5(ARGS);if(t__==0x49efa7u)[[clang::musttail]] return blk_49efa7(ARGS););}
 }
 
 XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
@@ -13033,6 +13635,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51efa3(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -13042,7 +13645,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));__builtin_memcpy(R+512,F+0,1);__builtin_memcpy(R+514,F+2,1);__builtin_memcpy(R+518,F+6,2);__builtin_memcpy(R+523,F+11,1);c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51efa3:L51efa3:{bud-=2;NFSU2_TR(0x51efa3);
 u8 U[14];
@@ -13099,6 +13703,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51efb6(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -13108,7 +13713,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51efb6:L51efb6:{bud-=2;NFSU2_TR(0x51efb6);
 u8 U[8];
@@ -13130,6 +13736,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51efbc(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -13139,7 +13746,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51efbc:L51efbc:{bud-=1;NFSU2_TR(0x51efbc);
 u8 U[8];
@@ -13155,6 +13763,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51efbf(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -13164,7 +13773,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51efbf:L51efbf:{bud-=6;NFSU2_TR(0x51efbf);
 u8 U[4];
@@ -13200,7 +13810,7 @@ B51efc4:{NFSU2_TR(0x51efc4);
 __builtin_memmove((R+644),gp(u32(r4(G+16))),4);
 w4(G+16,u32(u32(r4(G+16))+u32(u32(0x4ull))));
 w4(G+16,u32(u32(r4(G+16))+u32(u32(0x8ull))));
-{u32 t_=u32(r4(R+644));TAIL_DYNAMIC(t_);}
+{u32 t_=u32(r4(R+644));TAIL_PRED(t_,if(t__==0x49589fu)[[clang::musttail]] return blk_49589f(ARGS);if(t__==0x4958c5u)[[clang::musttail]] return blk_4958c5(ARGS);if(t__==0x4958e5u)[[clang::musttail]] return blk_4958e5(ARGS);if(t__==0x49efa7u)[[clang::musttail]] return blk_49efa7(ARGS););}
 }
 
 XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;
@@ -13209,6 +13819,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 blk_51efd0(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){
@@ -13218,7 +13829,8 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define ARGS c,r4(G+16),r4(G+0),r4(G+4),bud
 #define SPILL_OUT() do{w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;bud=REG_BUDGET;}while(0)
 #define SPILL_IN() do{w4(G+0,r4(R+0));w4(G+4,r4(R+4));w4(G+16,r4(R+16));__builtin_memcpy(F,R+512,32);}while(0)
-#define TAIL_DYNAMIC(T) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){[[clang::musttail]] return ent_dispatch(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_PRED(T,P) do{u32 t__=u32(T);c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x401u)<=0x41bu,1)){if(g_speed_predict){P}[[clang::musttail]] return ent_dispatch(ARGS);}if(bud>0&&g_native_hook){[[clang::musttail]] return ent_native(ARGS);}nx=t__;goto XIT;}while(0)
+#define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51efd0:L51efd0:{bud-=13;NFSU2_TR(0x51efd0);
 w4(G+16,u32(u32(r4(G+16))-u32(u32(0x20ull))));
@@ -13296,6 +13908,7 @@ FLT:SPILL_OUT();fast_fault(c,fm,fpc);
 #undef SPILL_OUT
 #undef SPILL_IN
 #undef TAIL_DYNAMIC
+#undef TAIL_PRED
 #undef NFSU2_FAULT
 }
 PN u32 ent_51e(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){switch(c.pc){

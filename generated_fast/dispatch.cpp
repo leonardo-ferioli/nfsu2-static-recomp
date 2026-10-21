@@ -2699,6 +2699,10 @@ case 0x781:[[clang::musttail]] return ent_781(c,a4,a0,a1,bud);
 case 0x782:[[clang::musttail]] return ent_782(c,a4,a0,a1,bud);
 case 0x81c:[[clang::musttail]] return ent_81c(c,a4,a0,a1,bud);
 default:missing_instruction(c.pc);}}
+PN u32 ent_native(Cpu& __restrict c,u32 a4,u32 a0,u32 a1,s32 bud){u8* const R=c.regs.data();w4(R+16,a4);w4(R+0,a0);w4(R+4,a1);c.instructions+=REG_BUDGET-bud;
+if(!g_native_hook(c))return c.pc;
+const u32 t=c.pc;if(__builtin_expect(u32((t>>12)-0x401u)<=0x41bu,1)){c.instructions-=REG_BUDGET-bud;[[clang::musttail]] return ent_dispatch(c,r4(R+16),r4(R+0),r4(R+4),bud);}
+return t;}
 u32 dispatch(Cpu& c){switch(c.pc>>12){
 case 0x401:return page_401(c);
 case 0x402:return page_402(c);
