@@ -51,7 +51,7 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 4 AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${FAST_DI
         add_library(nfsu2_${variant} STATIC ${exclude} runtime.cpp userops.cpp ${PLATFORM_SOURCE} ${FAST_DIR}/dispatch.cpp ${FAST_DIR}/mods_tables.cpp mods_runtime.cpp mods_core.cpp mods_resolution.cpp mods_rendering.cpp mods_frontend.cpp mods_anchor.cpp mods_system.cpp mods_input.cpp mods_nos.cpp mods_registry.cpp mods_gamma.cpp mods_widescreen.cpp ${FAST_UNITS})
         target_compile_definitions(nfsu2_${variant} PUBLIC NFSU2_NATIVE32=1 NFSU2_FAST_BACKEND=1)
         target_include_directories(nfsu2_${variant} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
-        target_compile_options(nfsu2_${variant} PRIVATE "-O${RAW_OPT_LEVEL}" -g0 -fno-fast-math -fno-strict-aliasing -mfpmath=sse -Wno-unused-label)
+        target_compile_options(nfsu2_${variant} PRIVATE "-O${RAW_OPT_LEVEL}" -g0 -fno-fast-math -fno-strict-aliasing -mfpmath=sse -Wno-unused-label -ffunction-sections)
         target_link_libraries(nfsu2_${variant} PUBLIC bcrypt user32 winmm shell32 advapi32)
         target_link_libraries(nfsu2_${variant} PUBLIC sleigh_runtime)
     endforeach()
@@ -75,6 +75,13 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 4 AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${FAST_DI
     target_link_libraries(nfsu2_launcher PRIVATE nfsu2_fast)
     # Symbol map of the launcher: the performance report names code by address, this resolves it to the translated page it belongs to.
     target_link_options(nfsu2_launcher PRIVATE "-Wl,/MAP:$<TARGET_FILE_DIR:nfsu2_launcher>/nfsu2_launcher.map")
+    # Speed layer: the translated code that race profiles found hot is laid out together (tools/hot_order.py writes the list; every
+    # function is in its own section). Same code, fewer instruction-cache and TLB misses. -DSPEED_ORDER_FILE= turns it off.
+    set(SPEED_ORDER_FILE "${CMAKE_CURRENT_SOURCE_DIR}/tools/hot_order.txt" CACHE FILEPATH "Linker order file of the hot translated code (empty: none)")
+    if(SPEED_ORDER_FILE AND EXISTS "${SPEED_ORDER_FILE}")
+        target_link_options(nfsu2_launcher PRIVATE "-Wl,/order:@${SPEED_ORDER_FILE}" "-Wl,/ignore:4037")
+        set_property(TARGET nfsu2_launcher APPEND PROPERTY LINK_DEPENDS "${SPEED_ORDER_FILE}")
+    endif()
     # Declared dependency: the SLEIGH specification the runtime P-code interpreter reads (dynamic_code.hpp).
     add_custom_command(TARGET nfsu2_launcher POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_SOURCE_DIR}/third_party/sleigh_spec/x86.sla" "$<TARGET_FILE_DIR:nfsu2_launcher>/sleigh/x86.sla")
