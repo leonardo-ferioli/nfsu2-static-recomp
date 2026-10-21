@@ -412,7 +412,7 @@ void NativePlatform::prepare(Cpu& c){
     initialize_cpu(c,stack,teb);
 }
 void NativePlatform::initialize_cpu(Cpu& c,uint32_t stack,uint32_t teb){
-    std::memset(c.regs.data(),0,c.regs.size());c.instructions=0;
+    std::memset(c.regs.data(),0,guest_register_span);c.instructions=0;
     wr<4>(c,0x110,teb);wm<4>(c,teb,0xffffffff);wm<4>(c,teb+4,stack+stack_size);wm<4>(c,teb+8,stack);
     wm<4>(c,teb+0x18,teb);wm<4>(c,teb+0x20,GetCurrentProcessId());wm<4>(c,teb+0x24,GetCurrentThreadId());wm<4>(c,teb+0x34,0);
     wr<4>(c,16,stack+stack_size-0x100);wm<4>(c,r<4>(c,16),0xdead0000);
@@ -583,9 +583,36 @@ bool NativePlatform::plain_call(Cpu& c,uint32_t target,const char* dll,const cha
     if(callback_fault_set.load(std::memory_order_acquire))raise_callback_fault();
     return true;
 }
+// Speed layer: a device state (SetRenderState / SetTextureStageState / SetSamplerState) or binding (SetTexture, streams, indices,
+// shaders, declarations, constants, the UP draws) method: the same device state cache test as the general path, then for a call
+// that does go to the dll the plain path and the same update of the cache. False leaves the call to the general path.
+bool NativePlatform::cached_call(Cpu& c,uint32_t target,const char* dll,const char* resolved_name,uint32_t profile_id,uint8_t state_kind,uint8_t bind_kind){
+    if(&c!=&main_cpu || !state_cache_on.load(std::memory_order_relaxed) || !state_target[0].load(std::memory_order_relaxed)
+       || state_cache_disabled.load(std::memory_order_relaxed) || state_recording.load(std::memory_order_relaxed))return false;
+    const uint32_t sp=uint32_t(r<4>(c,16)),teb=uint32_t(r<4>(c,0x110));
+    if(sp<guest_u32(teb+8) || sp>guest_u32(teb+4)-8)return false;   // the general path reports it
+    if(state_kind){
+        const uint32_t first=guest_u32(sp+8),second=guest_u32(sp+12),value=state_kind==1?second:guest_u32(sp+16);
+        uint64_t* slot=state_kind==1?state_slot(1,first,0):state_slot(state_kind,first,second);
+        if(!slot)return false;
+        if(*slot==(0x100000000ull|value)){count_main_thread(state_cache_hits);returned(c,0,state_kind==1?3:4);return true;}
+        count_main_thread(state_cache_misses);
+        if(!plain_call(c,target,dll,resolved_name,profile_id))return false;
+        *slot=uint32_t(r<4>(c,0))==0?(0x100000000ull|value):0;
+        return true;
+    }
+    uint32_t args[4]={};
+    for(unsigned i=0;i<bind_argument_count(bind_kind);++i)args[i]=guest_u32(sp+8+4*i);
+    if(const unsigned pop=device_shadow.redundant(bind_kind,args)){count_main_thread(state_cache_hits);returned(c,0,pop);return true;}
+    if(!plain_call(c,target,dll,resolved_name,profile_id))return false;
+    device_shadow.remember(bind_kind,args,uint32_t(r<4>(c,0)));
+    return true;
+}
 // Everything that depends only on the call target is decided once and remembered per thread (a frame makes ~28,000 of these calls).
 namespace {
-struct Route{uint32_t token=0,resolve_generation=0,dynamic_generation=0;uintptr_t target=0;const Import* imported=nullptr;const char* label=nullptr;const char* resolved_name=nullptr;bool special=false;uint32_t id=0;bool d3d_create=false;bool plain=false;uint32_t plain_generation=0;};
+struct Route{uint32_t token=0,resolve_generation=0,dynamic_generation=0;uintptr_t target=0;const Import* imported=nullptr;const char* label=nullptr;const char* resolved_name=nullptr;bool special=false;uint32_t id=0;bool d3d_create=false;bool plain=false;uint32_t plain_generation=0;
+    uint8_t state_kind=0,bind_kind=0;   // speed layer: a device state / binding method that the state cache answers (cached_call)
+};
 thread_local Route routes[2048];
 }
 bool NativePlatform::dispatch(Cpu& c){
@@ -615,11 +642,16 @@ bool NativePlatform::dispatch(Cpu& c){
     // Speed layer: a route already known to take the plain path goes there from here; this front part has no exception frame.
     if(g_speed_bridge){
         const Route& route=routes[(c.pc*2654435761u)>>21];
-        if(route.token==c.pc && route.plain && route.plain_generation==plain_generation.load(std::memory_order_relaxed)
+        if(route.token==c.pc && route.plain_generation==plain_generation.load(std::memory_order_relaxed)
            && route.resolve_generation==resolve_generation.load(std::memory_order_relaxed) && route.dynamic_generation==dynamic_generation.load(std::memory_order_relaxed)
            && !d3d9_recorder_ptr.load(std::memory_order_relaxed)){
-            last_native_name=route.label;
-            if(plain_call(c,uint32_t(route.target),route.imported?route.imported->dll:"Windows",route.resolved_name,route.id))return true;
+            if(route.plain){
+                last_native_name=route.label;
+                if(plain_call(c,uint32_t(route.target),route.imported?route.imported->dll:"Windows",route.resolved_name,route.id))return true;
+            }else if(route.state_kind || route.bind_kind){
+                last_native_name=route.label;
+                if(cached_call(c,uint32_t(route.target),route.imported?route.imported->dll:"Windows",route.resolved_name,route.id,route.state_kind,route.bind_kind))return true;
+            }
         }
     }
     return dispatch_route(c);
@@ -677,11 +709,20 @@ __attribute__((noinline)) bool NativePlatform::dispatch_route(Cpu& c){
                 const uint32_t vtable=guest_u32(light_device);
                 route.plain=t!=guest_u32(vtable+23*4) && t!=guest_u32(vtable+26*4) && t!=guest_u32(vtable+27*4);
             }
+            // The device's state and binding methods: the cache answers repeated values, the rest is a plain call (cached_call).
+            const bool simple=!route.special && !route.d3d_create && !profile_full();
+            route.state_kind=!simple?0:is(state_target[0])?1:is(state_target[1])?2:is(state_target[2])?3:0;
+            route.bind_kind=simple && !route.state_kind && state_target[0].load(std::memory_order_relaxed)?bind_kind_of(t):uint8_t(BindNone);
             route.plain_generation=generation;
         }
-        if(route.plain && !d3d9_recorder_ptr.load(std::memory_order_relaxed)){
-            last_native_name=route.label;
-            if(plain_call(c,uint32_t(route.target),route.imported?route.imported->dll:"Windows",route.resolved_name,route.id))return true;
+        if(!d3d9_recorder_ptr.load(std::memory_order_relaxed)){
+            if(route.plain){
+                last_native_name=route.label;
+                if(plain_call(c,uint32_t(route.target),route.imported?route.imported->dll:"Windows",route.resolved_name,route.id))return true;
+            }else if(route.state_kind || route.bind_kind){
+                last_native_name=route.label;
+                if(cached_call(c,uint32_t(route.target),route.imported?route.imported->dll:"Windows",route.resolved_name,route.id,route.state_kind,route.bind_kind))return true;
+            }
         }
     }
     const Import* imported=route.imported;const uintptr_t target=route.target;const char* resolved_name=route.resolved_name;const bool special=route.special;

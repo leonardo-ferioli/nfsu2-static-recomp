@@ -59,8 +59,15 @@ int main(int argc,char** argv){try{
             }
         }
         const double seconds=std::chrono::duration<double>(std::chrono::steady_clock::now()-started).count();
-        DeleteCriticalSection(section);
         std::cout<<"translated wrapper -> EnterCriticalSection/LeaveCriticalSection: "<<seconds/(2.0*calls)*1e9<<" ns per guest call (loop + translated code + native call)\n";
+        // The same through call_guest, as mods and window procedures call translated code (a pooled processor per call).
+        const unsigned callbacks=200000;
+        BenchSampler callback_sampler("call_guest");
+        const auto callback_started=std::chrono::steady_clock::now();
+        for(unsigned i=0;i<callbacks;++i){p.call_guest(0x6f55dd,block,0,{});p.call_guest(0x6f55e8,block,0,{});}
+        const double callback_seconds=std::chrono::duration<double>(std::chrono::steady_clock::now()-callback_started).count();
+        DeleteCriticalSection(section);
+        std::cout<<"call_guest of the same wrappers: "<<callback_seconds/(2.0*callbacks)*1e9<<" ns per call\n";
     }
     // The game's own memcpy (0x401000, REP MOVSD/MOVSB): translated string instructions are P-code loops.
     {

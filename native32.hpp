@@ -151,6 +151,7 @@ private:
     void record_plain_call(Cpu&,uint32_t target,const char* dll,const char* resolved_name,uint32_t guest_return,bool result,uint32_t eax,uint32_t popped);
     void raise_callback_fault();
     bool dispatch_route(Cpu&);
+    bool cached_call(Cpu&,uint32_t target,const char* dll,const char* resolved_name,uint32_t profile_id,uint8_t state_kind,uint8_t bind_kind);
     void report_dynamic_code(uint64_t total,uint64_t decoded,uint32_t pc);
 };
 }

@@ -895,6 +895,10 @@ def main():
     out.mkdir(exist_ok=True)
     manifest = json.loads((export / "manifest.json").read_text())
     set_userops(manifest)
+    # runtime.hpp guest_register_span: a new processor clears only this much of its register file.
+    span = max(r["offset"] + r["size"] for r in manifest["registers"])
+    if span > 0x2400:
+        raise ValueError(f"guest registers end at {span:#x}, beyond guest_register_span (runtime.hpp)")
     source_root = Path(args.source_root) if args.source_root else ROOT.parent
     original = source_root / "binaries/SPEED2.EXE"
     actual = hashlib.sha256(original.read_bytes()).hexdigest()
