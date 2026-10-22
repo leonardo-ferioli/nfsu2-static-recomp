@@ -336,5 +336,10 @@ the 33 ahead in 25-35 ms at load and none at a draw; images identical.
 ## Known differences
 
 * The first frame of every recording window differs more (2-3) because the state accumulated before the window was not recorded.
+* A render target drawn with a larger depth surface (legal in Direct3D 9, which uses its top-left part), or one with another sample count, gets a
+  depth surface of the target's size and samples of its own for that pass (`resolve_attachments` / `matching_depth` in the layer): the depth test
+  inside the pass is right, but its depth values are not shared with the larger surface. Before, bgfx refused the framebuffer and the pass was
+  dropped: in the live race at 1920x1080 that was one pass every frame ("could not create: framebuffer (colour texture 7, depth texture 2)").
+  `nue_state_test` checks it against the system runtime, with MIPFILTER NONE / MAXMIPLEVEL (now honoured through a LOD clamp per texture).
 
 Note for measurements: a `d3d9.dll` placed next to `nue_replay.exe` is loaded by `--native` instead of the system's (that is the whole point of the dll). For the real Direct3D 9 as ground truth, run a copy of the tool from a folder that does not have the dll.
