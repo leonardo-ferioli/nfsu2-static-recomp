@@ -28,8 +28,11 @@ Not switchable at run time (code shape, verified by the differential tests; comp
 * **State cache fix** (bridge, always on): the device state cache was emptied on every `Release` whose target was the device's
   `Release`. Our d3d9.dll's AddRef/Release are one folded function for all its COM classes (identical code, linker ICF), so every
   texture Release (~7,800 per frame in a race) wiped ~15 KB of cached state: 7.8 % of the game thread in `memset` in the
-  2026-10-20 race profile, and a cache that rarely hit. Now only the device's own Release (first argument == the device) empties
-  it; the shadow's guarantee is unchanged because the dll, like Direct3D 9, holds a reference to every bound object.
+  2026-10-20 race profile. Emptying the cache is now O(1) (every entry carries the epoch it was stored in; a new epoch forgets them
+  all), and it is still emptied on every Release. A first version emptied it only on the device's own Release: the cache then lived
+  long enough to miss device state changed out of its sight, and live (2026-10-21) the dll failed to create a render pass every
+  frame and traffic cars were drawn white, then dark. Which change escapes the cache is not known yet (state block Apply is the
+  first suspect); until it is, the cache keeps the lifetime it had in the builds that rendered correctly.
 * **Cached state calls** (native calls switch): the device's state and binding methods (SetRenderState, SetTextureStageState,
   SetSamplerState, SetTexture, streams, indices, shaders, declarations, constants, the UP draws: ~16,000 calls per frame) get the
   state-cache test in the front of `dispatch` (`cached_call`); a repeated value returns at once, anything else is a plain call

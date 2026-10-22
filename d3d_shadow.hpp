@@ -29,7 +29,12 @@ inline unsigned bind_argument_count(uint8_t kind) {
 
 class DeviceShadow {
 public:
-    void clear() { *this = DeviceShadow(); }
+    // Forgets everything. O(1): entries carry the epoch they were stored in, and clear() starts a new one (the bridge empties the
+    // shadow on every Release, thousands of times a frame); only when the 31-bit epoch wraps is the memory really reset.
+    void clear() {
+        if (((epoch_ + 1) & 0x7fffffffu) == 0) { *this = DeviceShadow(); return; }
+        ++epoch_;
+    }
 
     // The number of arguments (this included) of a call that would set what the device already holds, else 0.
     unsigned redundant(uint8_t kind, const uint32_t* args) const {
@@ -45,7 +50,7 @@ public:
             const unsigned set = kind == BindPixelConstants ? 1 : 0;
             const uint32_t start = args[0], count = args[2];
             if (!count || start >= 256 || count > 256 - start || !args[1]) return 0;
-            for (uint32_t i = 0; i < count; ++i) if (!constant_known_[set][start + i]) return 0;
+            for (uint32_t i = 0; i < count; ++i) if (constant_known_[set][start + i] != epoch_) return 0;
             return std::memcmp(constants_[set] + start * 4, reinterpret_cast<const void*>(uintptr_t(args[1])), size_t(count) * 16) == 0 ? 4 : 0;
         }
         default: return 0;
@@ -68,7 +73,7 @@ public:
             if (start >= 256 || count > 256 - start) break;
             const bool keep = ok && args[1] != 0;
             if (keep) std::memcpy(constants_[set] + start * 4, reinterpret_cast<const void*>(uintptr_t(args[1])), size_t(count) * 16);
-            std::memset(constant_known_[set] + start, keep ? 1 : 0, count);
+            for (uint32_t i = 0; i < count; ++i) constant_known_[set][start + i] = keep ? epoch_ : 0;
             break;
         }
         case BindFvf: single_[2] = 0; break;                      // the declaration now follows the FVF
@@ -80,11 +85,12 @@ public:
 
 private:
     struct Stream { uint64_t buffer; uint32_t offset, stride; };
-    static uint64_t known(uint32_t value) { return 0x100000000ull | value; }
+    uint64_t known(uint32_t value) const { return (uint64_t(epoch_) << 33) | 0x100000000ull | value; }   // never 0 (epoch >= 1)
     uint64_t texture_[16] = {};
     uint64_t single_[4] = {};          // vertex shader, pixel shader, declaration, indices
     Stream stream_[16] = {};
     float constants_[2][256 * 4] = {};
-    uint8_t constant_known_[2][256] = {};
+    uint32_t constant_known_[2][256] = {};   // epoch in which the register's value was stored (0: never)
+    uint32_t epoch_ = 1;
 };
 }  // namespace nfsu2raw

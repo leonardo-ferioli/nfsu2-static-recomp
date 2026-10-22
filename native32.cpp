@@ -199,8 +199,16 @@ struct ProfileThreadScope{
 // Bindings and constants of the device (d3d_shadow.hpp); the call targets that matter are found by hashing, filled in when the device is known.
 DeviceShadow device_shadow;
 uint32_t bind_hash_target[64];uint8_t bind_hash_kind[64];
+// A cached state value is tagged with the epoch it was stored in; emptying the cache starts a new epoch (O(1): it is emptied on every
+// Release, thousands of times a frame), and only a wrapping 31-bit epoch really clears the arrays.
+uint32_t state_epoch=1;
+inline uint64_t state_tag(uint32_t value){return (uint64_t(state_epoch)<<33)|0x100000000ull|value;}
 void clear_state_cache(){
-    std::memset(cached_render_state,0,sizeof(cached_render_state));std::memset(cached_sampler_state,0,sizeof(cached_sampler_state));std::memset(cached_stage_state,0,sizeof(cached_stage_state));
+    if(((state_epoch+1)&0x7fffffffu)==0){
+        std::memset(cached_render_state,0,sizeof(cached_render_state));std::memset(cached_sampler_state,0,sizeof(cached_sampler_state));std::memset(cached_stage_state,0,sizeof(cached_stage_state));
+        state_epoch=0;
+    }
+    ++state_epoch;
     device_shadow.clear();
 }
 inline uint32_t guest_u32(uint32_t address){uint32_t v;std::memcpy(&v,reinterpret_cast<const void*>(uintptr_t(address)),4);return v;}
@@ -569,7 +577,9 @@ bool NativePlatform::plain_call(Cpu& c,uint32_t target,const char* dll,const cha
     // (it empties the state cache; a d3d9.dll may use the same Release for all its objects).
     const uint32_t object=g4(original_sp+4);
     if(input_bloom.load(std::memory_order_relaxed)&(1u<<((object>>4)&31)))return false;
-    if(object==light_device && target==state_reset_target[0].load(std::memory_order_relaxed))return false;
+    // A Release (of the device or, through a shared Release, of anything) empties the device state cache, as the general path does.
+    if(target==state_reset_target[0].load(std::memory_order_relaxed) && &c==&main_cpu && state_cache_on.load(std::memory_order_relaxed)
+       && !state_cache_disabled.load(std::memory_order_relaxed))clear_state_cache();
     const uint32_t guest_return=g4(original_sp);
     if(!seen_call(target,guest_return,false))record_plain_call(c,target,dll,resolved_name,guest_return,false,0,0);
     thread_local bool verified_teb=false;
@@ -601,10 +611,10 @@ bool NativePlatform::cached_call(Cpu& c,uint32_t target,const char* dll,const ch
         const uint32_t first=guest_u32(sp+8),second=guest_u32(sp+12),value=state_kind==1?second:guest_u32(sp+16);
         uint64_t* slot=state_kind==1?state_slot(1,first,0):state_slot(state_kind,first,second);
         if(!slot)return false;
-        if(*slot==(0x100000000ull|value)){count_main_thread(state_cache_hits);returned(c,0,state_kind==1?3:4);return true;}
+        if(*slot==state_tag(value)){count_main_thread(state_cache_hits);returned(c,0,state_kind==1?3:4);return true;}
         count_main_thread(state_cache_misses);
         if(!plain_call(c,target,dll,resolved_name,profile_id))return false;
-        *slot=uint32_t(r<4>(c,0))==0?(0x100000000ull|value):0;
+        *slot=uint32_t(r<4>(c,0))==0?state_tag(value):0;
         return true;
     }
     uint32_t args[4]={};
@@ -759,9 +769,10 @@ __attribute__((noinline)) bool NativePlatform::dispatch_route(Cpu& c){
         if(t==state_target[0].load(std::memory_order_relaxed)){if(!recording)state_kind=1;}
         else if(t==state_target[1].load(std::memory_order_relaxed)){if(!recording)state_kind=2;}
         else if(t==state_target[2].load(std::memory_order_relaxed)){if(!recording)state_kind=3;}
-        // Release of the device itself, Reset. A d3d9.dll may share one Release for all its objects (nue_d3d9 does): only the
-        // device's own Release empties the cache (it used to be emptied on every texture Release, ~8,000 times a frame).
-        else if((t==state_reset_target[0].load(std::memory_order_relaxed) && g4(original_sp+4)==light_device) || t==state_reset_target[1].load(std::memory_order_relaxed))clear_state_cache();
+        // Release, Reset. A d3d9.dll may share one Release for all its objects (nue_d3d9 does), so this runs on every Release of
+        // anything (~8,000 a frame): clear_state_cache is O(1). Emptying it only on the device's own Release let device state
+        // change behind the cache (live 2026-10-21: a failing render pass every frame, traffic cars white then dark).
+        else if(t==state_reset_target[0].load(std::memory_order_relaxed) || t==state_reset_target[1].load(std::memory_order_relaxed))clear_state_cache();
         else if(t==state_reset_target[3].load(std::memory_order_relaxed))state_recording=true;                                                              // BeginStateBlock
         else if(state_apply_target.load(std::memory_order_relaxed)==t)clear_state_cache();                                                                   // IDirect3DStateBlock9::Apply
         else if(!recording)bind_kind=bind_kind_of(t);
@@ -774,7 +785,7 @@ __attribute__((noinline)) bool NativePlatform::dispatch_route(Cpu& c){
             const uint32_t value=state_kind==1?second:g4(original_sp+16);
             uint64_t* slot=state_kind==1?state_slot(1,first,0):state_slot(state_kind,first,second);
             if(!slot)state_kind=0;
-            else if(*slot==(0x100000000ull|value)){count_main_thread(state_cache_hits);returned(c,0,state_kind==1?3:4);return true;}
+            else if(*slot==state_tag(value)){count_main_thread(state_cache_hits);returned(c,0,state_kind==1?3:4);return true;}
             else count_main_thread(state_cache_misses);
         }
     }
@@ -1014,7 +1025,7 @@ __attribute__((noinline)) bool NativePlatform::dispatch_route(Cpu& c){
     if(state_kind){
         const uint32_t first=g4(original_sp+8),second=g4(original_sp+12);
         const uint32_t value=state_kind==1?second:g4(original_sp+16);
-        if(uint64_t* slot=state_kind==1?state_slot(1,first,0):state_slot(state_kind,first,second))*slot=frame.eax==0?(0x100000000ull|value):0;
+        if(uint64_t* slot=state_kind==1?state_slot(1,first,0):state_slot(state_kind,first,second))*slot=frame.eax==0?state_tag(value):0;
     }
     if(bind_kind)device_shadow.remember(bind_kind,bind_args,frame.eax);
     if(enum_index!=UINT_MAX){wm<4>(c,original_sp+4+enum_index*4,enumeration.address);wm<4>(c,original_sp+4+(enum_index+1)*4,enumeration.reference);}
