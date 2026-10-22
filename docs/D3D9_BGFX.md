@@ -37,9 +37,9 @@ cmake --build build_nue32 --target nue_d3d9_dll
   `D3DCREATE_FPU_PRESERVE` is given (then it only masks invalid-operation, zero-divide, overflow and underflow), and leaves it that way. The dll does the same
   (`apply_d3d9_fpu_mode`): the recompiled game unmasks exceptions itself and crashed with `0xc0000090` (`fdivrs` in translated code) one second after
   `CreateDevice` when the dll left them unmasked.
-* Not offered through COM (the game does not use them in any capture): volume textures, queries, `UpdateSurface/UpdateTexture`, `ColorFill`, `DrawPrimitive`
-  (non-UP), `DrawIndexedPrimitiveUP`, patches, additional swap chains, multiple devices, `GetRenderTargetData` of anything but the back buffer. Fixed-function
-  lighting is not implemented (see the coverage table). Display-mode changes for fullscreen are not done: the frame is scaled to the game's window.
+* Not offered through COM (the game does not use them in any capture): volume textures, queries, `UpdateSurface`, `ColorFill`, `DrawPrimitive`
+  (non-UP), `DrawIndexedPrimitiveUP`, patches, additional swap chains, multiple devices, `GetRenderTargetData` of anything but the back buffer (see the
+  coverage table). Display-mode changes for fullscreen are not done: the frame is scaled to the game's window.
 
 ## Layers
 
@@ -82,25 +82,95 @@ so there is none, which the tools use). Handles are `Id<Tag>` (`uint32_t`, 0 = n
 
 ## Coverage (honest)
 
-Tested = replayed from real captures of the game (`captures/menu`, `captures/loading`: race scenes) and compared with the reference images.
+Exercised = replayed from real captures of the game (`captures/menu`, `captures/loading`, `captures/garage`) and compared with the reference images.
+Ground truth = the same calls drawn by the system's Direct3D 9 and by the dll, pixel by pixel (`nue_state_test` 117 cases, `nue_format_test`,
+`nue_defaults_test`, see "Ground-truth tests"). Through COM = what the dll offers to a game (`nue_d3d9/dll`); the layer (`d3d9::Device`) offers a little more.
 
 | Area | State |
 |---|---|
-| Resources: textures 2D/cube, vertex/index buffers, render targets, depth surfaces, declarations, shaders | implemented, exercised |
-| Lock / Unlock of buffers and textures (staging, `DISCARD`/`NOOVERWRITE` accepted) | implemented, exercised |
-| Texture formats: A8R8G8B8, X8R8G8B8, DXT1/3/5 (BCn native, decoded to RGBA8 when the GPU lacks it), A8, L8, A8L8, R5G6B5, A4R4G4B4, A1R5G5B5, R16F/G16R16F/A16B16G16R16F, R32F/A32B32G32R32F, others converted to RGBA8 | table written; A8R8G8B8, DXT1, DXT5 exercised; the rest untested |
-| Render states: Z, blend (incl. separate alpha), alpha test, cull, fill, colour mask, stencil (one side), scissor flag, depth bias, fog, texture factor | implemented; two-sided stencil, clip planes, point sprites, multisample masks: not |
-| Sampler states: filters, addressing, anisotropy | implemented; LOD bias, `MAXMIPLEVEL`, border colour: **not applied** (bgfx has no per-sampler control) |
-| State blocks (Begin/End/Apply, recorded not applied) | implemented, exercised |
-| Programmable pipeline: vertex and pixel shaders 1.x, 2.0, 2.x, 3.0 (control flow `if`/`else`/`rep`/`loop`/`break`, relative addressing, `sincos`, `pow`, `nrm`, `lit`, `texldl`/`texldb`/`texldp`, `dsx`/`dsy`, `texkill`, integer/boolean constants, `vPos`, `vFace`) | implemented; shader model 1.x exercised by the game (45 shaders); models 2/3 validated against the real Direct3D 9 with 33 HLSL cases (`spike/shader_spike/sm_cases`, 126 renders, 0 failures). **Not tested**: `call`/`callnz`/`ret` subroutines, predication (`setp` + `(p0)`), depth output (`oDepth`), multiple render targets, vertex texture fetch |
-| Relative addressing of constants (`c[a0.x]`) in vertex shaders | implemented, exercised |
-| Fixed function: transform, vertex colours, texture coordinates with transform matrices, texture-stage combiners (all `D3DTOP_*` but bump/premodulate), specular add, vertex fog | implemented; exercised only by two simple draws per frame. **Lighting and materials, texture-coordinate generation, vertex blending, point sprites: not implemented** |
-| Fog: vertex fog with programmable and fixed pipelines | implemented; table (pixel) fog with a vertex shader: **not** |
-| Render targets: textures, surfaces, cube faces, mip levels, depth | implemented; multiple render targets: attachments supported, untested |
+| Resources: textures 2D/cube, vertex/index buffers, render targets, depth surfaces, declarations, FVF, shaders | implemented, exercised |
+| Lock / Unlock of buffers and textures (`DISCARD`/`NOOVERWRITE`, rectangles, relock of managed textures returns their contents) | implemented, exercised, ground truth. `D3DLOCK_NO_DIRTY_UPDATE` and `AddDirtyRect` are accepted and ignored (the locked range is always uploaded) |
+| `UpdateTexture` (system memory -> default pool, all levels) | implemented, ground truth |
+| Texture formats: A8R8G8B8, X8R8G8B8, DXT1/3/5 (native BCn, decoded to RGBA8 when the GPU lacks it), A8, L8, A8L8, R5G6B5 (decoded on the CPU), A4R4G4B4, A1R5G5B5, X1R5G5B5, V8U8 (signed RGBA8), G16R16 (blue = 1 as on the real runtime), R16F/G16R16F/A16B16G16R16F, R32F/A32B32G32R32F, depth D16/D24S8/D24X8 | implemented, ground truth (`nue_format_test`, every format read back after a draw) |
+| Render states: Z, blend (incl. separate alpha), alpha test, cull, fill, colour write mask, stencil (one side), depth bias, fog, texture factor | implemented, ground truth. **Not**: two-sided stencil, user clip planes (`SetClipPlane` accepted, ignored), scissor rectangle (`SetScissorRect` stored, not applied), point sprites, multisample mask |
+| Sampler states: filters, addressing (wrap/mirror/clamp/mirror once), anisotropy, `MIPFILTER NONE` (top level only), `MAXMIPLEVEL` | implemented, ground truth. **Not applied**: `MIPMAPLODBIAS`, border colour (bgfx has no per-draw border colour; border addressing samples as clamp), sRGB read/write |
+| State blocks (Begin/End/Apply/Capture, `CreateStateBlock` all/pixel/vertex) | implemented, exercised; Apply runs from compiled lists. The `Get*` calls after an Apply return the facade's shadow, which Apply does not update |
+| Programmable pipeline: vertex and pixel shaders 1.x, 2.0, 2.x, 3.0 (control flow `if`/`else`/`rep`/`loop`/`break`, relative addressing, `sincos`, `pow`, `nrm`, `lit`, `texldl`/`texldb`/`texldp`, `dsx`/`dsy`, `texkill`, integer/boolean constants, `vPos`, `vFace`) | implemented; shader model 1.x exercised by the game (45 shaders); models 2/3 validated against the real Direct3D 9 with 33 HLSL cases (`spike/shader_spike/sm_cases`, 126 renders, 0 failures). **Not tested**: `call`/`callnz`/`ret`, predication (`setp` + `(p0)`), `oDepth`, multiple render targets, vertex texture fetch |
+| Fixed function: transform, vertex colours (missing colour = material colour), texture transforms incl. `D3DTTFF_PROJECTED`, texture-coordinate generation (camera-space normal, position, reflection vector, sphere map), lighting (directional, point, spot; diffuse, specular, ambient, emissive; material sources), texture-stage combiners (all `D3DTOP_*` but bump mapping and premodulate), specular add, vertex fog | implemented, ground truth (the garage car's reflections use it). **Not**: vertex blending / indexed vertex blending, tweening, `D3DTOP_BUMPENVMAP(LUMINANCE)`, `D3DTOP_PREMODULATE`, N-patches |
+| Fog: vertex fog, table (pixel) fog with the fixed pipeline | implemented; table fog with a vertex shader: **not** |
+| Render targets: textures, surfaces, cube faces, mip levels, depth; a depth surface larger than the target (or with another sample count) | implemented; the larger depth case gets a depth surface of the target's size for that pass (bgfx needs equal sizes), so depth written in such a pass is not seen by a later pass that uses the big surface with another target. Multiple render targets: attachments supported, untested |
 | `StretchRect`, `Clear` (full, rectangles, viewport), depth/stencil clear | implemented (copy, or a draw when sizes differ) |
-| Queries, `GetRenderTargetData`, `UpdateSurface`, `ColorFill`, volume textures, `DrawPrimitive` (non-UP), `DrawIndexedPrimitiveUP`, `SetScissorRect`, `SetLight/SetMaterial`, clip planes | not in `d3d9::Device` yet (the game does not use them) |
-| Lost device / `Reset` | `reset` resizes; the lost-device protocol is not implemented |
-| Backends: bgfx Direct3D 11 and Vulkan | both working with the same fidelity (loading capture, mean MAE 0.99 on both) and speed (Vulkan 6.6 ms per frame with the render thread); the Vulkan path hands our SPIR-V to bgfx as is, with the vertex input locations renumbered to the position in the container's attribute list (bgfx binds by position, not by attribute number) and a depth-format fallback (24-bit depth is missing on some Vulkan drivers). Direct3D 12, OpenGL(ES), Metal: not written (the shader path emits GLSL/MSL, the container for them is not written) |
+| `GetRenderTargetData` | the back buffer only |
+| Multisampling (`MultiSampleType` 2-16 and `NONMASKABLE` with quality levels) | implemented: `NONMASKABLE` quality 0/1/2+ -> 2/4/8 samples, capped by the backend and by `msaa=` |
+| Through COM, **not offered** (`D3DERR_NOTAVAILABLE`/`INVALIDCALL`, logged in `nue_d3d9.log` at exit): queries (`CreateQuery`; the game falls back), `DrawPrimitive` (non-UP), `DrawIndexedPrimitiveUP`, `ProcessVertices`, `UpdateSurface`, `ColorFill`, volume textures, patches, additional swap chains, `GetFrontBufferData`, palettes, `CreateOffscreenPlainSurface` in the default pool | not implemented (no capture of the game uses them) |
+| Gamma ramp, cursor, software vertex processing | accepted and ignored |
+| Lost device / `Reset` | `Reset` resizes and restores every default (as the real runtime does); the device is never lost |
+| Fullscreen | not done: the device is always windowed and the frame is scaled (aspect kept) into the game's window; no display-mode change |
+| Backends: bgfx Direct3D 11 and Vulkan | both working with the same fidelity (loading capture, mean MAE 0.99 on both) and speed; the Vulkan path hands our SPIR-V to bgfx as is, with the vertex input locations renumbered to the position in the container's attribute list (bgfx binds by position) and a depth-format fallback. Direct3D 12, OpenGL(ES), Metal: not written (the shader path emits GLSL/MSL, the container for them is not written) |
+
+## Dependencies in detail: device parameters, files, build, guest pointers
+
+The dependency list by layer (window, threads, system dlls, diagnostics) is the section "Dependencies on Windows and on the game repo" written on the
+worker-thread branch; this section adds the details it does not list. Nothing was restructured.
+
+**`CreateDevice` / `Reset` parameters** (`dll/main.cpp` `Direct3D9::CreateDevice`, `dll/device.cpp` `Device9::Reset`)
+
+* Used: `BackBufferWidth/Height` (0 = the window's client size), `BackBufferFormat` (`UNKNOWN` = X8R8G8B8), `BackBufferCount` (0 = 1),
+  `EnableAutoDepthStencil` + `AutoDepthStencilFormat`, `MultiSampleType` + `MultiSampleQuality` (`NONMASKABLE` quality 0/1/2+ = 2/4/8 samples, capped
+  by the backend and by `msaa=`), `PresentationInterval` (`IMMEDIATE` turns vsync off, anything else follows `vsync=`), `hDeviceWindow` (else the focus
+  window), behaviour flag `D3DCREATE_FPU_PRESERVE`.
+* Ignored: `Windowed = FALSE` (no exclusive fullscreen, no display-mode change: the frame is scaled into the window), `FullScreen_RefreshRateInHz`,
+  `SwapEffect`, `Flags` (lockable back buffer, discard depth), a `BackBufferCount` above 1, the other behaviour flags (`MULTITHREADED` does not make
+  the dll thread safe; software/hardware vertex processing are the same path).
+* `Reset` restores every render, sampler and stage state to the real runtime's defaults (measured with `nue_defaults_test`) and keeps the HWND unless
+  a new one is given. The device is never lost (`TestCooperativeLevel` is always `D3D_OK`).
+
+**Files and configuration** (folder = the dll's, from `GetModuleFileNameA`)
+
+* `nue_d3d9.ini`, section `[graphics]`, read with `GetPrivateProfileStringA` (`ini_value`): `renderer`, `vsync`, `render_thread`, `log`,
+  `log_unsupported`, `shader_cache`, `msaa` (`off`, `auto`, N), `texture_copy_mb`, `texture_report_at`, `mark_missing_textures`,
+  `render_thread_priority`, `render_thread_cpu`.
+* Environment (wins over the ini): `NUE_RENDERER`, `NUE_VSYNC`, `NUE_RENDER_THREAD`, `NUE_TEXTURE_REPORT_AT`, `NUE_MARK_MISSING`,
+  `NUE_RENDER_THREAD_PRIORITY`, `NUE_RENDER_THREAD_CPU`. `NUE_MSAA` is read by the layer itself (`src/layer/layer_resources.cpp`: the one `getenv` in
+  the portable part). Debugging only, in the adapter: `NUE_NO_ANISO`, `NUE_NO_BC`, `NUE_LOG_CAPS`, `NUE_DUMP_GLSL`; in the dll: `NUE_PDH_DEBUG`.
+* Written: `nue_d3d9.log` (appended), `nue_shader_cache\<hash>.nsc` (Direct3D 11 bytecode only, key = hash of the translated shader and the target;
+  `shader_cache=<folder>` moves it), `nue_screenshot_N.bmp` (F12), `nue_textures_N.txt` (F11 or `texture_report_at`). F10 toggles drawing textures
+  without data as a magenta checker.
+
+**Build**
+
+* `nue_d3d9/CMakeLists.txt` sets `REPO` to the folder above it and builds bgfx and SPIRV-Cross from `${REPO}/third_party/bgfx.cmake` (bgfx's
+  vendored SPIRV-Cross; the translator writes SPIR-V itself, no glslang). Nothing else of the game repository is compiled into the dll.
+* 32-bit dll: clang `-m32 -msse4.2`, `NUE_STATIC_CRT=ON`; `dll/x86_stdcall_fix.h` undoes bx's `#define __stdcall` (wrong COM calling convention on
+  x86 otherwise); `NUE_EXPORT` writes the x86 decorated export names.
+* The game repository's top `CMakeLists.txt` compiles `nue_d3d9/src/d3d9_trace.cpp` and `nue_d3d9/src/null_gpu.cpp` into the launcher (its recorder
+  `d3d9_recorder.cpp` writes the trace format), adds `nue_d3d9/include` to the include path, and `mods_system.cpp` includes `nue/window_fit.hpp`.
+* The launcher side of the drop-in lives in the game repository: `native32.cpp` `d3d9_override_module` loads `d3d9.dll` from the launcher's folder for
+  the guest's `d3d9.dll` imports and trusts its code range like a system dll (`NFSU2_SYSTEM_D3D9=1` turns it off).
+
+**32-bit guest pointers**
+
+* Library: none. Objects are `Id<Tag>` handles (`uint32_t`, 0 = none); locked memory is a `LockedRegion` the layer owns (the header notes that the
+  shim may place it in the guest arena).
+* dll: real COM pointers, no guest addresses. In the recompiled launcher it must be the 32-bit build: the guest is 32-bit and calls the objects through
+  the launcher's bridge, so their pointers, vtables and locked memory have to be 32-bit addresses of the same process. The 64-bit dll is for the tools.
+* Trace format (`nue/d3d9_trace.hpp`): objects are named by the 32-bit guest address of their COM object.
+
+## Known open issues
+
+* The game thread is mostly translated game code: in a race the dll is 3.7 ms of a 42-65 ms frame with the render thread (8 %). Faster frames come
+  from the speed layer of the recompilation, not from this library.
+* Worker-thread mode (translator and bgfx on a thread of their own) is on branch `claude/laughing-heyrovsky-c8cd6f`, off by default, not on this branch.
+* Texture contents kept for relock and `UpdateTexture` are capped by `texture_copy_mb` (default 160 MB): past the cap a relock returns zeros, the
+  failure that hid the garage car's environment map before the copies existed.
+* `BeginStateBlock` failed three times at the start of one live session (seen in `nue_d3d9.log`, not reproduced by any capture).
+* Not implemented: scissor rectangle, user clip planes, two-sided stencil, LOD bias, border colour, sRGB, vertex blending, point sprites, bump mapping,
+  queries, volume textures (no capture of NFSU2 needs them; Most Wanted may).
+* A depth surface larger than the target gets a substitute of the target's size per pass (see "Known differences").
+* `Get*State` after `StateBlock::Apply` returns the values from before the Apply (the facade's shadow is not refreshed).
+* 4x multisampling costs the same GPU time as 8x on the test machine's integrated GPU; the test folder uses `msaa=off`.
+* Never lost, never fullscreen: alt-tab and display-mode changes are left to the window.
+* The first frame of every recording window differs more in replays (state from before the window was not recorded).
 
 ## Shader path
 
