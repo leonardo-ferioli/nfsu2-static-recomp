@@ -333,6 +333,66 @@ middle of the race. The dll now keeps a list of the programs made from the game'
 loading. Measured with the captures through the dll: the first run lists 33 programs (about 2-2.5 ms each in the translator), every later run makes
 the 33 ahead in 25-35 ms at load and none at a draw; images identical.
 
+## Dependencies on Windows and on the game repo (to replace with the NUE engine's native API)
+
+nue_d3d9 is planned to become the engine's `legacy_d3d9` module (nue-engine repo, LEGACY ABI). What it depends on today, by layer, so that each item
+can later be swapped for a native-API call. Nothing here was restructured yet.
+
+**Layer (`src/layer`, `include/nue/d3d9_*.hpp`) and shader translator (`src/shader`)**: portable C++20, no Windows types, no guest pointers
+(`include/nue/types.hpp`). Inputs are handles and spans. Two notes: `d3d9_device.hpp` documents that lock memory is handed to a shim that converts
+it to a guest address (the recompiled game's 32-bit arena); the trace format (`d3d9_trace.hpp`) names objects by the 32-bit guest address of their
+COM object. Logging goes through `LayerOptions::log` (a C function pointer); the program list path comes in `LayerOptions::program_list`.
+
+**bgfx adapter (`bgfx/`)**:
+* Window: `BgfxOptions::window` is a native handle (`HWND` on Windows), `window_width/height`, `set_window_size`, `set_visible_area`; the final pass
+  scales the game's back buffer into the window with `fit_aspect` from `include/nue/window_fit.hpp` (letterbox; also used by the launcher's scaled window).
+* `bgfx::init` / `shutdown` are called by the adapter itself (the seam's PREPARE mode); reset flags in one place (`reset_flags()`).
+* Shader compiler: `shader_container.cpp` loads `d3dcompiler_47.dll` with `LoadLibraryA` (Direct3D 11 bytecode) and compiles on a `CreateThread`
+  thread; the disk cache is a folder path (`BgfxOptions::shader_cache_dir`). Log through a C function pointer.
+
+**COM facade, the drop-in `d3d9.dll` (`dll/`)**: Windows only by nature.
+* Exports `Direct3DCreate9(Ex)`, `D3DPERF_*` with the 32-bit stdcall decorations; COM object layout of the x86 ABI.
+* Capability queries (`GetDeviceCaps`, adapter modes, formats) are forwarded to the system `d3d9.dll` (`GetSystemDirectoryA` + `LoadLibraryA`; no
+  device is made there).
+* `CreateDevice`/`Reset`: the window comes from `D3DPRESENT_PARAMETERS::hDeviceWindow` or the focus window; sizes from `GetClientRect`,
+  `ClientToScreen`, `MonitorFromWindow`/`GetMonitorInfo` (visible part of the client area); back buffer size/format/depth/multisample/interval come
+  straight from the game's parameters (and `msaa` of the ini).
+* x87 control word forced like the real runtime (`apply_d3d9_fpu_mode`, `fldcw`), thread id from the TEB (`fs:[0x24]` / `gs:[0x48]`).
+* Configuration: `nue_d3d9.ini` next to the dll read with `GetPrivateProfileStringA`, plus environment variables (`NUE_*`); log file
+  `nue_d3d9.log` next to the dll (`GetModuleFileNameA`); shader cache and program list default to `<dll folder>\nue_shader_cache`.
+* Diagnostics: vectored exception handler, `set_terminate`/`SIGABRT`/invalid-parameter handlers, a heartbeat thread, GPU busy share from the
+  `pdh.dll` performance counters, thread CPU time (`GetThreadTimes`, `QueryThreadCycleTime`), `QueryPerformanceCounter`, `__rdtsc`.
+* Threads: `tune_render_threads` sets the priority / ideal processor of the threads bgfx starts (`SetThreadPriority`, `SetThreadIdealProcessor`);
+  worker mode uses Win32 events and `MsgWaitForMultipleObjects` + `PeekMessageW(PM_QS_SENDMESSAGE)` so the game thread keeps answering messages sent
+  to its window while it waits.
+* Keys: F10/F11/F12 read with `GetAsyncKeyState` in `Present` (debug aids).
+* Guest pointers: none in the dll itself. It runs natively in the launcher's process; the launcher's bridge turns the guest's 32-bit COM calls into
+  calls on these objects. The game's own `HWND`s are real handles.
+
+**Tools (`tools/`)**: hidden Win32 windows, `LoadLibraryA` of our dll and of the system one; test only.
+
+## What the NUE engine's graphics seam expects (nue_engine/docs/GFX_D3D9_SEAM.md, API.md, branch claude/nue-core-0454cf)
+
+* Direction: nue_d3d9 depends on the engine (core + gfx), never the other way round. `nue_gfx` provides the window, the renderer choice, lifecycle
+  events (resize, suspend/resume, device lost) and shared policy (shader cache directory under the `cache` VFS root, log routing, power/GPU
+  preference); nue_d3d9 is a client.
+* First path: PREPARE mode (`NUE_GFX_PREPARE_ONLY`). The engine selects the renderer and hands `nue_gfx_get_native()` values; nue_d3d9 keeps
+  calling `bgfx::init` itself, with `BgfxOptions.window = nue_gfx_native.window.window`, `renderer`, `vsync` and sizes. This works with today's code.
+* Requested changes (not done yet): `BgfxOptions::external_init` (skip `bgfx::init`/`shutdown`, for MANAGED mode) and `platform_data`; a
+  `create_bgfx_gpu_from_gfx(nue_gfx, options)` entry that calls `nue_gfx_get_native`, `nue_gfx_notify_initialized` and registers a listener;
+  `set_window_size` driven by `NUE_GFX_NOTIFY_RESIZED`; suspend/resume/device lost mapped to `TestCooperativeLevel` (`D3DERR_DEVICELOST`, then
+  `DEVICENOTRESET`) and `Reset`; `Reset` with new back buffer sizes mapped to `nue_gfx_resize`; the shader cache folder from
+  `nue_gfx_desc.shader_cache_dir` resolved with `nue_vfs_resolve`.
+* Window ownership: the game creates its own HWND; the launcher attaches it with `nue_window_create(desc.attach)`; the engine observes and never
+  destroys it.
+* Threading: the API says `nue_gfx_present` and bgfx calls run on the render thread. With `worker_thread=1` the dll calls `bgfx::init`, every bgfx
+  call and `bgfx::shutdown` on its own worker thread (not the game thread): a MANAGED mode must either init bgfx on that thread or the worker must be
+  the thread the engine calls the render thread.
+* Renderers: the seam orders Windows D3D11, Vulkan, D3D12, OpenGL; Linux Vulkan, OpenGL, GLES; Android Vulkan, GLES; iOS Metal. The translator is
+  tested on D3D11 and Vulkan; GLSL ES and MSL output exist in SPIRV-Cross but are untested here.
+* Texture formats are to come from nue-texture (D3DFMT/FOURCC tables, codecs, transcoding for GPUs without BC); today they are the layer's own
+  `src/layer/formats.cpp` (decode to RGBA8 when the GPU lacks a format).
+
 ## Known differences
 
 * The first frame of every recording window differs more (2-3) because the state accumulated before the window was not recorded.
