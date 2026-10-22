@@ -10705,7 +10705,7 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B5ced2e:L5ced2e:{bud-=1;NFSU2_TR(0x5ced2e);
-if(r4(MODV+28)){{[[clang::musttail]] return blk_5ced34(ARGS);}}
+if(r4(MODV+32)){{[[clang::musttail]] return blk_5ced34(ARGS);}}
 __builtin_memmove(gp(0x870d1c),(R+24),4);
 {[[clang::musttail]] return blk_5ced34(ARGS);}
 }

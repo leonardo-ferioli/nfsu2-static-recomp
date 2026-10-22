@@ -9407,7 +9407,7 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B5c0d3e:L5c0d3e:{bud-=1;NFSU2_TR(0x5c0d3e);
-if(r1(F+6)){if(r4(MODV+72)){[[clang::musttail]] return blk_5c0db8(ARGS);}else{[[clang::musttail]] return blk_5c0d98(ARGS);}}
+if(r1(F+6)){if(r4(MODV+76)){[[clang::musttail]] return blk_5c0db8(ARGS);}else{[[clang::musttail]] return blk_5c0d98(ARGS);}}
 }
 B5c0d40:L5c0d40:{bud-=1;NFSU2_TR(0x5c0d40);
 w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
@@ -9469,7 +9469,7 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B5c0d53:L5c0d53:{bud-=1;NFSU2_TR(0x5c0d53);
-if(r4(MODV+72)){[[clang::musttail]] return blk_5c0d55(ARGS);}else{[[clang::musttail]] return blk_5c0d61(ARGS);}
+if(r4(MODV+76)){[[clang::musttail]] return blk_5c0d55(ARGS);}else{[[clang::musttail]] return blk_5c0d61(ARGS);}
 }
 
 XIT:w4(R+0,r4(G+0));w4(R+4,r4(G+4));w4(R+16,r4(G+16));c.instructions+=REG_BUDGET-bud;return nx;

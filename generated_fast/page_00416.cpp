@@ -13130,7 +13130,7 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B416d82:L416d82:{bud-=1;NFSU2_TR(0x416d82);
-if(r4(MODV+64)){[[clang::musttail]] return blk_416d8c(ARGS);}
+if(r4(MODV+68)){[[clang::musttail]] return blk_416d8c(ARGS);}
 if(r1(F+2)){{[[clang::musttail]] return blk_416d8c(ARGS);}}
 {[[clang::musttail]] return blk_416d84(ARGS);}
 }

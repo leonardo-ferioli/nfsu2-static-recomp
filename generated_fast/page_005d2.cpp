@@ -5225,7 +5225,7 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B5d2768:L5d2768:{bud-=1;NFSU2_TR(0x5d2768);
-if(r4(MODV+28)){{[[clang::musttail]] return blk_5d276e(ARGS);}}
+if(r4(MODV+32)){{[[clang::musttail]] return blk_5d276e(ARGS);}}
 __builtin_memmove(gp(0x870d1c),(R+24),4);
 {[[clang::musttail]] return blk_5d276e(ARGS);}
 }
@@ -9038,7 +9038,7 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B5d2c0d:L5d2c0d:{bud-=3;NFSU2_TR(0x5d2c0d);
 u8 U[4];
-__builtin_memmove((U+0),(MODV+60),4);
+__builtin_memmove((U+0),(MODV+64),4);
 w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
 s4(u32(r4(G+16)),r4(U+0));
 }
