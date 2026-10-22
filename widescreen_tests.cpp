@@ -6,6 +6,7 @@
 #include "mods.hpp"
 #include "mods_internal.hpp"
 #include "mods_widescreen.hpp"
+#include "mods_detail.hpp"
 #include <cmath>
 #include <cstring>
 #include <filesystem>
@@ -278,6 +279,17 @@ int main(int argc, char** argv) {
 
         std::filesystem::remove_all(temp);
         std::filesystem::remove_all(std::filesystem::path(argv[2]) / "nfsu2_widescreen_test_files");
+        // ---- detail settings (mods_detail.cpp): the original values in the image, then each level ----------------------------
+        {
+            check(address_of("lod_a_ratio") == 0x7a47dc && f32_at(0x7a47dc) == 4.0f, "LOD A ratio is the game's 4.0 at 0x7a47dc");
+            check(address_of("force_car_lod") == 0x802728 && i32_at(0x802728) == -1 && i32_at(0x80272c) == -1, "car and tyre LOD overrides are -1");
+            check(get_var("world_min_pixels") == 17, "scenery pixel limit is 17");
+            install_detail(DetailSettings{2, true});
+            check(get_var("world_min_pixels") == 4 && f32_at(0x7a47dc) > 0.0f && f32_at(0x7a47dc) < 0.1f, "max: 4 px and a ratio just above 0");
+            check(i32_at(0x802728) == 0 && i32_at(0x80272c) == 0, "cars: LOD A forced");
+            install_detail(DetailSettings{});
+            check(get_var("world_min_pixels") == 17 && f32_at(0x7a47dc) == 4.0f && i32_at(0x802728) == -1 && i32_at(0x80272c) == -1, "original restores every value");
+        }
         std::cout << "widescreen tests passed\n";
         return 0;
     } catch (const std::exception& error) {

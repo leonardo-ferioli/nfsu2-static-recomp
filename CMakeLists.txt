@@ -48,7 +48,7 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 4 AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${FAST_DI
         if(variant STREQUAL "fast_trace")
             set(exclude EXCLUDE_FROM_ALL)  # differential builds only: cmake --build --target fast_resource_trace_tests
         endif()
-        add_library(nfsu2_${variant} STATIC ${exclude} runtime.cpp userops.cpp ${PLATFORM_SOURCE} ${FAST_DIR}/dispatch.cpp ${FAST_DIR}/mods_tables.cpp mods_runtime.cpp mods_core.cpp mods_resolution.cpp mods_rendering.cpp mods_frontend.cpp mods_anchor.cpp mods_system.cpp mods_input.cpp mods_nos.cpp mods_registry.cpp mods_gamma.cpp mods_widescreen.cpp ${FAST_UNITS})
+        add_library(nfsu2_${variant} STATIC ${exclude} runtime.cpp userops.cpp ${PLATFORM_SOURCE} ${FAST_DIR}/dispatch.cpp ${FAST_DIR}/mods_tables.cpp mods_runtime.cpp mods_core.cpp mods_resolution.cpp mods_rendering.cpp mods_frontend.cpp mods_anchor.cpp mods_system.cpp mods_input.cpp mods_nos.cpp mods_registry.cpp mods_gamma.cpp mods_widescreen.cpp mods_detail.cpp ${FAST_UNITS})
         target_compile_definitions(nfsu2_${variant} PUBLIC NFSU2_NATIVE32=1 NFSU2_FAST_BACKEND=1)
         target_include_directories(nfsu2_${variant} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
         target_compile_options(nfsu2_${variant} PRIVATE "-O${RAW_OPT_LEVEL}" -g0 -fno-fast-math -fno-strict-aliasing -mfpmath=sse -Wno-unused-label -ffunction-sections)

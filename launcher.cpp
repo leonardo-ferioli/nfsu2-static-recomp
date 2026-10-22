@@ -25,6 +25,7 @@
 #include <vector>
 #include "native32.hpp"
 #include "speed.hpp"
+#include "mods_detail.hpp"
 #include "mods_widescreen.hpp"
 #include "platform/services.hpp"
 
@@ -70,6 +71,7 @@ struct Config {
     uint64_t max_instructions = 0;  // 0: unlimited
     WidescreenSettings widescreen;
     SpeedSettings speed;   // [SPEED]: the speed layer's switches (speed.hpp)
+    DetailSettings detail; // [DETAIL]: how far the detailed models reach (mods_detail.hpp)
     bool dialogs = true, verify_only = false, info = false, help = false, version = false, trace = true, state_cache = true, vsync = false, profile = false;
 };
 
@@ -336,6 +338,21 @@ void load_ini(const fs::path& file, Config& config, bool explicit_file) {
             apply_widescreen_setting(config, section, key, value, file.string() + ":" + std::to_string(number));
             continue;
         }
+        if (section == "detail") {
+            const std::string origin = file.string() + ":" + std::to_string(number);
+            value = lower(trim(value.substr(0, value.find(';'))));
+            if (key == "world_detail") {
+                if (value == "original") config.detail.world = 0;
+                else if (value == "high") config.detail.world = 1;
+                else if (value == "max") config.detail.world = 2;
+                else throw std::runtime_error(origin + ": world_detail is original, high or max");
+            } else if (key == "car_detail") {
+                if (value == "original") config.detail.cars = false;
+                else if (value == "max") config.detail.cars = true;
+                else throw std::runtime_error(origin + ": car_detail is original or max");
+            } else throw std::runtime_error(origin + ": unknown key " + key);
+            continue;
+        }
         if (section == "speed") {
             const std::string origin = file.string() + ":" + std::to_string(number);
             value = trim(value.substr(0, value.find(';')));
@@ -572,6 +589,7 @@ static int launcher_main(int argc, char** argv) {
         try {
             config.widescreen.dry_run = config.verify_only;
             logger.info(install_widescreen(config.widescreen));
+            logger.info(install_detail(config.detail));
         } catch (const std::exception& error) {
             report_failure(config, std::string("No se pudo aplicar el parche de pantalla ancha: ") + error.what());
             return Exit::verification;
