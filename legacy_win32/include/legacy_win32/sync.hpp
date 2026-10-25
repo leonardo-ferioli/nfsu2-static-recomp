@@ -18,7 +18,6 @@ namespace nfsu2::legacy::win32 {
 
 constexpr uint32_t kStillActive = 259;
 constexpr uint32_t kTlsOutOfIndexes = 0xFFFFFFFFu;
-constexpr Handle kCurrentThreadPseudoHandle = 0xFFFFFFFEu, kCurrentProcessPseudoHandle = 0xFFFFFFFFu;
 namespace thread_priority { enum : int32_t { idle = -15, lowest = -2, below_normal = -1, normal = 0, above_normal = 1, highest = 2, time_critical = 15 }; }
 
 struct SyncPolicy {

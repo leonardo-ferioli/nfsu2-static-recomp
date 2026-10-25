@@ -21,6 +21,7 @@ using Bytes = std::span<const std::byte>;           // data crossing into the li
 using MutableBytes = std::span<std::byte>;
 using Handle = uint32_t;                       // what the guest sees as HANDLE / HKEY / HWND... (0 = NULL)
 constexpr Handle kInvalidHandle = 0xFFFFFFFFu; // INVALID_HANDLE_VALUE
+constexpr Handle kCurrentProcessPseudoHandle = 0xFFFFFFFFu, kCurrentThreadPseudoHandle = 0xFFFFFFFEu;   // GetCurrentProcess(), GetCurrentThread()
 
 // The Win32 error codes the subset uses (GetLastError values). Zero means success.
 namespace err {

@@ -112,6 +112,8 @@ public:
         MEMORYSTATUSEX m{sizeof m};
         if (GlobalMemoryStatusEx(&m)) { i.total_memory = m.ullTotalPhys; i.available_memory = m.ullAvailPhys; i.total_virtual = m.ullTotalVirtual; i.available_virtual = m.ullAvailVirtual; }
         i.sse3 = IsProcessorFeaturePresent(PF_SSE3_INSTRUCTIONS_AVAILABLE);
+        i.pf_mask = 0;
+        for (unsigned f = 0; f < 64; ++f) if (IsProcessorFeaturePresent(f)) i.pf_mask |= 1ull << f;
         i.os_name = "Windows";
         i.ansi_code_page = GetACP(); i.oem_code_page = GetOEMCP(); i.user_lcid = GetUserDefaultLCID();
 #else
