@@ -26,6 +26,7 @@
 #include "native32.hpp"
 #include "mods_widescreen.hpp"
 #include "platform/services.hpp"
+#include "platform/audio/dsound_install.hpp"
 
 // The guest image blocks held in the program (image_data.cpp, made by tools/embed_image.py): SPEED2.EXE is not read.
 extern const nfsu2raw::EmbeddedImageBlock embedded_image_blocks[];
@@ -68,6 +69,7 @@ struct Config {
     unsigned log_max_kb = 1024, log_keep = 3, watchdog_seconds = 0;
     uint64_t max_instructions = 0;  // 0: unlimited
     WidescreenSettings widescreen;
+    nfsu2::platform::audio::AudioSettings audio;   // audio=system|nue: who answers the game's DirectSound
     bool dialogs = true, verify_only = false, info = false, help = false, version = false, trace = true, state_cache = true, vsync = false, profile = false;
 };
 
@@ -304,6 +306,23 @@ void apply_setting(Config& config, const std::string& key, const std::string& va
     else if (key == "vsync") config.vsync = parse_bool(value, false);
     else if (key == "profile") config.profile = parse_bool(value, false);
     else if (key == "trace") config.trace = parse_bool(value, true);
+    else if (key == "audio") {
+        const std::string v = lower(value);
+        if (v == "nue" || v == "on") config.audio.enabled = true;
+        else if (v == "system" || v == "off") config.audio.enabled = false;
+        else throw std::runtime_error(origin + ": audio must be system or nue");
+    }
+    else if (key == "audio_latency_ms") config.audio.latency_ms = unsigned(std::max<unsigned long long>(10, number_value(500)));
+    else if (key == "audio_sample_rate") config.audio.sample_rate = unsigned(std::max<unsigned long long>(8000, number_value(192000)));
+    else if (key == "audio_spatial") {
+        const std::string v = lower(value);
+        using nfsu2::platform::audio::SpatialMode;
+        if (v == "auto") config.audio.spatial = SpatialMode::automatic;
+        else if (v == "stereo") config.audio.spatial = SpatialMode::stereo;
+        else if (v == "speakers") config.audio.spatial = SpatialMode::speakers;
+        else if (v == "binaural" || v == "headphones") config.audio.spatial = SpatialMode::binaural;
+        else throw std::runtime_error(origin + ": audio_spatial must be auto, stereo, speakers or binaural");
+    }
     else throw std::runtime_error(origin + ": unknown key " + key);
 }
 
@@ -356,6 +375,9 @@ const char* usage_text =
     "  --record-capture-every N  una imagen de referencia cada N fotogramas de la ventana (por defecto 30; 0 = ninguna)\n"
     "  --record-start-frame N    abre la primera ventana en el fotograma N en lugar de esperar a F9\n"
     "  --record-max-mb N    tope en MB de los datos grabados (texturas, vertices, shaders; por defecto 3072)\n"
+    "  --audio system|nue   quien atiende el DirectSound del juego: system = el de Windows (por defecto), nue = la capa propia (mezclador + WASAPI)\n"
+    "  --audio-latency MS   latencia objetivo de la salida con --audio nue (por defecto 40)\n"
+    "  --audio-spatial MODE auto, stereo, speakers o binaural (auriculares) con --audio nue\n"
     "  --profile            cada 5 s anota en logs/native_trace.log fps, tiempo dentro de Direct3D y otros datos de rendimiento\n"
     "  --no-widescreen      desactiva el parche de pantalla ancha (resolucion original 640x480)\n"
     "  --width N --height N resolucion de pantalla ancha; con estas opciones se usa siempre, aunque haya otra guardada\n"
@@ -397,6 +419,9 @@ Config parse_arguments(int argc, char** argv) {
         else if (arg == "--no-state-cache") overrides["state_cache"] = "off";
         else if (arg == "--vsync") overrides["vsync"] = "on";
         else if (arg == "--profile") overrides["profile"] = "on";
+        else if (arg == "--audio") overrides["audio"] = value();
+        else if (arg == "--audio-latency") overrides["audio_latency_ms"] = value();
+        else if (arg == "--audio-spatial") overrides["audio_spatial"] = value();
         else if (arg == "--no-widescreen") widescreen_overrides.emplace_back("enabled", "off");
         else if (arg == "--width") { widescreen_overrides.emplace_back("width", value()); widescreen_overrides.emplace_back("force_resolution", "on"); given_size = true; }
         else if (arg == "--height") { widescreen_overrides.emplace_back("height", value()); widescreen_overrides.emplace_back("force_resolution", "on"); given_size = true; }
@@ -543,6 +568,16 @@ static int launcher_main(int argc, char** argv) {
             if (!failure.empty()) throw std::runtime_error("grabador Direct3D 9: " + failure);
             logger.info("Direct3D 9 recorder: " + config.record_dir.string() + " (F9 opens a window of " + std::to_string(config.record_frames) + " frames; state cache off)");
         }
+        {
+            std::string why;
+            const auto note = [](const std::string& text) { logger.info(text); };
+            if (nfsu2::platform::audio::install_dsound(platform, config.audio, note, why)) {
+                // installed: the log line was written by the layer
+            } else {
+                logger.info(std::string("audio: system DirectSound (") + why + ")");
+                if (config.audio.enabled) logger.warn("audio=nue could not be activated (" + why + "); the game uses the system DirectSound");
+            }
+        }
         logger.info(config.vsync ? "vertical sync: forced on" : "vertical sync: as the game asks");
         logger.info(config.state_cache ? "Direct3D state cache: on" : "Direct3D state cache: off");
         logger.info(fps_cap ? "frame-rate cap: " + std::to_string(fps_cap) + " fps" : std::string("frame-rate cap: off"));
@@ -577,11 +612,13 @@ static int launcher_main(int argc, char** argv) {
         try {
             platform.run(budget, trace);
             logger.info("the translated program returned normally");
+            nfsu2::platform::audio::shutdown_dsound([](const std::string& text) { logger.info(text); });
             return Exit::ok;
         } catch (const std::exception& e) {
             std::ostringstream text;
             text << "Ejecucion detenida: " << e.what() << " (PC=0x" << std::hex << cpu.pc << std::dec << ", instrucciones=" << cpu.instructions << ")";
             report_failure(config, text.str());
+            nfsu2::platform::audio::shutdown_dsound([](const std::string& t) { logger.info(t); });
             return Exit::stopped;
         }
     } catch (const std::exception& e) {

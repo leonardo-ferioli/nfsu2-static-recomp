@@ -440,7 +440,9 @@ code, mouse deltas and buttons, up to four gamepads with a style tag, touch poin
 (last device above its noise threshold) so the HUD can later pick a glyph set. The shim's DirectInput facade (which must support the game's action
 mapping) would sit on this. *No implementation, no touch layout and no glyph switching now; DirectInput stays pass-through.*
 
-**Audio — placeholder.** A PCM **ring** with play/write cursors matching DirectSound's streaming buffer (`open_ring`, `ring_write` at `Unlock`,
+**Audio — implemented, see [`NUE_HANDOVER_DSOUND.md`](NUE_HANDOVER_DSOUND.md)** (`platform/audio/`: Level A `ds::Device`, spatial renderers, `AudioSink`, the DirectSound facade, `audio=nue` in the launcher). The placeholder below is what was planned before the inventory showed that the game uses exactly one streaming ring.
+
+**Audio — original placeholder.** A PCM **ring** with play/write cursors matching DirectSound's streaming buffer (`open_ring`, `ring_write` at `Unlock`,
 `ring_cursors`, `play`/`stop`), plus an optional pull stream for low-latency back-ends. **Clock/Threads/Sync/Timers**: `now_ns()` as an inline free
 function (4,064 clock reads per frame), thread start with a class/priority hint and the priority cap, events/mutexes, address-keyed wait/wake
 for guest critical sections, a synchronous-cancel timer for `timeSetEvent`. **Memory**: one reserved 4 GiB guest arena, commit/protect,
