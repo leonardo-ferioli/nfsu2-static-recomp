@@ -68,6 +68,28 @@ def mod_overrides():
     return out
 
 
+def facade_groups():
+    """name -> group of win32_facade*.cpp that answers it when the layer is on (the `on("Name", ...)` calls inside each install_<group>)."""
+    out = {}
+    for fn in ("win32_facade.cpp", "win32_facade_dinput.cpp"):
+        path = os.path.join(ROOT, fn)
+        if not os.path.exists(path):
+            continue
+        group = None
+        for line in open(path, encoding="utf-8", errors="replace"):
+            m = re.match(r"void Win32Facade::Impl::install_(\w+)\(\)", line)
+            if m:
+                group = m.group(1)
+                continue
+            if group:
+                for name in re.findall(r'on\("([A-Za-z0-9_]+)"', line):
+                    out[name] = group
+                if line.startswith("}"):
+                    group = None
+    out["DirectInput8Create"] = "dinput"
+    return out
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--trace", action="append", required=True)
@@ -77,7 +99,7 @@ def main():
 
     imports = load_imports()
     sites, per_frame, windows = trace_counts(args.trace)
-    special, overrides = bridge_special(), mod_overrides()
+    special, overrides, facade = bridge_special(), mod_overrides(), facade_groups()
 
     rows = []
     for imp in imports:
@@ -90,15 +112,15 @@ def main():
             handled.append("bridge")
         if name in overrides:
             handled.append("mod override (%s)" % ", ".join(sorted(set(overrides[name]))))
-        rows.append(dict(dll=dll, name=name, sites=sites.get(name, 0), rate=per_frame.get(name), handled=" + ".join(handled) or "OS pass-through",
+        rows.append(dict(dll=dll, name=name, sites=sites.get(name, 0), rate=per_frame.get(name), handled=" + ".join(handled) or "OS pass-through", facade=facade.get(name, ""),
                          module=entry["module"], status=entry["status"], note=entry["note"]))
 
     lines = []
-    lines.append("| Function | DLL | Call sites | Calls/frame | Today | Level A module | Status | Behaviour notes |")
-    lines.append("|---|---|---:|---:|---|---|---|---|")
+    lines.append("| Function | DLL | Call sites | Calls/frame | Today | Facade group | Level A module | Status | Behaviour notes |")
+    lines.append("|---|---|---:|---:|---|---|---|---|---|")
     for r in sorted(rows, key=lambda r: (r["dll"], r["module"], r["name"])):
         rate = "" if r["rate"] is None else ("%.1f" % r["rate"])
-        lines.append("| %s | %s | %s | %s | %s | %s | %s | %s |" % (r["name"], r["dll"], r["sites"] or "0 (not reached)", rate, r["handled"], r["module"], r["status"], r["note"]))
+        lines.append("| %s | %s | %s | %s | %s | %s | %s | %s | %s |" % (r["name"], r["dll"], r["sites"] or "0 (not reached)", rate, r["handled"], r["facade"] or "-", r["module"], r["status"], r["note"]))
     called = sum(1 for r in rows if r["sites"])
     header = "%d imports (graphics, DirectDraw and DirectSound entry points excluded), %d reached in the traced sessions (%d profile windows)\n\n" % (len(rows), called, windows)
     text = header + "\n".join(lines) + "\n"
@@ -111,7 +133,7 @@ def main():
         os.makedirs(args.tbl, exist_ok=True)
         with open(os.path.join(args.tbl, "win32.tbl"), "w", encoding="utf-8", newline="\n") as f:
             for r in sorted(rows, key=lambda r: (r["dll"], r["name"])):
-                f.write("%-14s %-34s since 1  status %-12s module %-10s sites %-3d %s\n" % (r["dll"], r["name"], r["status"], r["module"], r["sites"], r["note"]))
+                f.write("%-14s %-34s since 1  status %-12s module %-10s facade %-8s sites %-3d %s\n" % (r["dll"], r["name"], r["status"], r["module"], r["facade"] or "-", r["sites"], r["note"]))
         with open(os.path.join(args.tbl, "dinput8.tbl"), "w", encoding="utf-8", newline="\n") as f:
             for line in status_table.dinput_rows():
                 f.write(line + "\n")

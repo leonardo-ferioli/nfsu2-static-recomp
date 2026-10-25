@@ -17,6 +17,8 @@ Handle HandleTable::add(std::shared_ptr<Object> object) {
 }
 
 bool HandleTable::decode(Handle h, uint32_t& index) const {
+    if (!owns(h)) return false;
+    h -= bias_;
     if (h == 0 || (h & 3) != 0 || h >= (8u << 15)) return false;
     index = (h >> 2) & 0x1FFFu;
     const uint32_t generation = (h >> 15) & 7u;

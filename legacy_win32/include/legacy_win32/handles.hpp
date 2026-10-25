@@ -23,7 +23,10 @@ public:
 
 class HandleTable {
 public:
-    HandleTable() { slots_.resize(1); }
+    // `bias` is added to every value the table hands out. A host that still has other handles (the real operating system's) gives the table a bias so
+    // that the two ranges cannot meet: `owns` then says whose a value is.
+    explicit HandleTable(uint32_t bias = 0) : bias_(bias) { slots_.resize(1); }
+    bool owns(Handle h) const { return h >= bias_ && h - bias_ < 0x40000u; }
     // Returns 0 when the table is full.
     Handle add(std::shared_ptr<Object> object);
     std::shared_ptr<Object> get(Handle h) const;
@@ -41,9 +44,10 @@ public:
 
 private:
     struct Slot { std::shared_ptr<Object> object; uint32_t generation = 1; };
-    static Handle encode(uint32_t index, uint32_t generation) { return ((generation & 7u) << 13 | index) << 2; }
+    Handle encode(uint32_t index, uint32_t generation) const { return bias_ + (((generation & 7u) << 13 | index) << 2); }
     bool decode(Handle h, uint32_t& index) const;
 
+    uint32_t bias_ = 0;
     mutable std::mutex m_;
     std::vector<Slot> slots_;                 // slot 0 is never used: handle 0 is NULL
     std::vector<uint32_t> free_;

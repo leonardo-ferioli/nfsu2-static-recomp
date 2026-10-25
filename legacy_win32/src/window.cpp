@@ -81,6 +81,8 @@ char32_t character_of(uint32_t vk, bool shift, bool caps) {
 
 }  // namespace
 
+uint32_t virtual_key_from_hid(uint32_t hid) { return virtual_key_of(hid); }
+
 struct WindowSystem::Impl {
     Impl(platform::Clock& c, platform::Threads& t, HandleTable& h, std::function<uint32_t()> tid) : clock(c), threads(t), handles(h), current_thread(std::move(tid)) {
         mutex = threads.mutex_create(true).value;     // recursive: a window procedure called under the lock may call back into this object

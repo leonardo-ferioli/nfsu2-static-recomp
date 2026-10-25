@@ -30,6 +30,7 @@ if(WIN32)
     file(GLOB LEGACY_WIN32_HOST_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/host/*.cpp")
     add_library(legacy_win32_host STATIC ${LEGACY_WIN32_HOST_SOURCES})
     target_link_libraries(legacy_win32_host PUBLIC legacy_win32)
+    target_include_directories(legacy_win32_host PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
     target_link_libraries(legacy_win32_host PUBLIC advapi32 user32)
 endif()
 

@@ -137,4 +137,7 @@ private:
     Handle desktop_ = 0;
 };
 
+// HID usage (platform scancode) -> Windows virtual-key code, 0 for a usage that has none.
+uint32_t virtual_key_from_hid(uint32_t hid);
+
 }  // namespace nfsu2::legacy::win32

@@ -856,7 +856,8 @@ bool NativePlatform::dispatch(Cpu& c){
             {"GetDeviceState",offsetof(IDirectInputDevice8AVtbl,GetDeviceState)},{"GetDeviceData",offsetof(IDirectInputDevice8AVtbl,GetDeviceData)},
             {"SetDataFormat",offsetof(IDirectInputDevice8AVtbl,SetDataFormat)},{"SetCooperativeLevel",offsetof(IDirectInputDevice8AVtbl,SetCooperativeLevel)},
             {"SetProperty",offsetof(IDirectInputDevice8AVtbl,SetProperty)},{"SetEventNotification",offsetof(IDirectInputDevice8AVtbl,SetEventNotification)},
-            {"Poll",offsetof(IDirectInputDevice8AVtbl,Poll)},{"GetCapabilities",offsetof(IDirectInputDevice8AVtbl,GetCapabilities)}};
+            {"Poll",offsetof(IDirectInputDevice8AVtbl,Poll)},{"GetCapabilities",offsetof(IDirectInputDevice8AVtbl,GetCapabilities)},
+            {"BuildActionMap",offsetof(IDirectInputDevice8AVtbl,BuildActionMap)},{"SetActionMap",offsetof(IDirectInputDevice8AVtbl,SetActionMap)}};
         static const Method input_methods[]={{"CreateDevice",offsetof(IDirectInput8AVtbl,CreateDevice)},{"EnumDevices",offsetof(IDirectInput8AVtbl,EnumDevices)}};
         const char* method="other";
         if(existing_input==2){for(const auto& d:device_methods)if(target==m<4>(c,vt+d.offset))method=d.name;}
@@ -875,6 +876,17 @@ bool NativePlatform::dispatch(Cpu& c){
                 const uint32_t count=uint32_t(m<4>(c,argument(c,3))),size=argument(c,1),buffer=argument(c,2);
                 for(uint32_t i=0;buffer && i<count && i<16;++i){
                     std::ostringstream msg;msg<<"DI buffered event: offset=0x"<<std::hex<<uint32_t(m<4>(c,buffer+i*size))<<" data=0x"<<uint32_t(m<4>(c,buffer+i*size+4));record(msg.str());
+                }
+            }
+            if(existing_input==2 && (std::strcmp(method,"BuildActionMap")==0 || std::strcmp(method,"SetActionMap")==0) && frame.eax==0 && argument(c,1)){
+                // Diagnostic (NFSU2_TRACE_INPUT=1): the action format the game passes and what DirectInput made of it, one line per action. This is the data a replacement
+                // of the genre mapping (docs/NUE_HANDOVER_WIN32_DINPUT.md, "what is still missing") has to reproduce.
+                const uint32_t format=argument(c,1),count=uint32_t(m<4>(c,format+12)),table=uint32_t(m<4>(c,format+16)),size=uint32_t(m<4>(c,format+4));
+                std::ostringstream head;head<<"DI action format ("<<method<<"): genre=0x"<<std::hex<<uint32_t(m<4>(c,format+36))<<" buffer="<<std::dec<<uint32_t(m<4>(c,format+40))<<" actions="<<count<<" axis range "<<int32_t(m<4>(c,format+44))<<".."<<int32_t(m<4>(c,format+48));record(head.str());
+                for(uint32_t i=0;i<count && i<256 && table;++i){
+                    const uint32_t a=table+i*size;
+                    std::ostringstream line;line<<"DI action["<<i<<"] semantic=0x"<<std::hex<<uint32_t(m<4>(c,a+4))<<" flags=0x"<<uint32_t(m<4>(c,a+8))<<" app=0x"<<uint32_t(m<4>(c,a))<<" objid=0x"<<uint32_t(m<4>(c,a+32))<<" how=0x"<<uint32_t(m<4>(c,a+36))<<" instance="<<std::hex<<uint32_t(m<4>(c,a+16))<<"-"<<uint32_t(m<4>(c,a+20));
+                    record(line.str());
                 }
             }
             if(existing_input==2 && std::strcmp(method,"GetDeviceState")==0 && frame.eax==0 && argument(c,1)==256){
@@ -907,6 +919,13 @@ void NativePlatform::override_import(const char* name,unsigned argument_count,Na
         return;
     }
     throw Fault(std::string("the game does not import ")+name);
+}
+bool NativePlatform::imports_function(const char* name){return import_token(name)!=0;}
+void NativePlatform::throw_if_stopping(const char* what) const{if(stopping)throw Fault(std::string(what)+" interrupted during shutdown");}
+uint32_t NativePlatform::import_token(const char* name){for(const auto& i:imports)if(std::strcmp(i.name,name)==0)return i.token;return 0;}
+void NativePlatform::remove_import_override(const char* name){
+    const uint32_t token=import_token(name);if(!token)return;
+    const uint32_t slot=(token-0xf0000000u)>>4;if(slot<import_override_slots)import_overrides[slot].reset();
 }
 uint32_t NativePlatform::add_method_token(unsigned argument_count,NativeHook hook){
     const unsigned index=method_token_count.fetch_add(1);

@@ -42,6 +42,12 @@ public:
     // Replaces an imported Windows function by a native one (mods). The handler reads its stdcall arguments from the guest stack
     // and returns EAX; it runs on the calling thread instead of the real function. Install before run().
     void override_import(const char* name,unsigned argument_count,NativeHook hook);
+    // True when the game imports `name` (the Win32 facade installs only what exists), the token of its import slot (0 when absent), and the removal of an override.
+    static bool imports_function(const char* name);
+    static uint32_t import_token(const char* name);
+    void remove_import_override(const char* name);
+    // Raises a Fault when the platform is shutting down (a long guest wait or sleep calls it between slices, as the bridge's own waits do).
+    void throw_if_stopping(const char* what) const;
     // Method tokens: the vtable slots of guest-visible objects served by the shim instead of by Windows (docs/PLATFORM_API.md, section 4).
     // A guest `call [vtable+slot]` reaches the token; the handler reads its stdcall arguments (`this` first) and returns EAX, and
     // `argument_count` words (this included) are removed from the guest stack. Returns the token to store in the vtable.

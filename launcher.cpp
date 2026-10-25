@@ -25,6 +25,7 @@
 #include <vector>
 #include "native32.hpp"
 #include "mods_widescreen.hpp"
+#include "win32_facade.hpp"
 #include "platform/services.hpp"
 
 // The guest image blocks held in the program (image_data.cpp, made by tools/embed_image.py): SPEED2.EXE is not read.
@@ -64,6 +65,7 @@ enum Exit { ok = 0, usage = 2, game_files = 3, verification = 4, stopped = 5, wa
 
 struct Config {
     fs::path game_dir, log_dir, config_file, sleigh_spec, record_dir;
+    std::string win32_layer;   // groups of Win32 and DirectInput functions answered by the legacy_win32 library instead of the real Windows (--win32-layer; empty: none)
     unsigned record_frames = 120, record_capture_every = 30, record_start_frame = 0, record_max_mb = 3072;   // Direct3D 9 call recorder (--record-d3d9)
     unsigned log_max_kb = 1024, log_keep = 3, watchdog_seconds = 0;
     uint64_t max_instructions = 0;  // 0: unlimited
@@ -289,6 +291,7 @@ void apply_setting(Config& config, const std::string& key, const std::string& va
     else if (key == "sleigh_spec") config.sleigh_spec = path_value();
     else if (key == "log_max_kb") config.log_max_kb = unsigned(number_value(1u << 20));
     else if (key == "record_d3d9") config.record_dir = path_value();
+    else if (key == "win32_layer") config.win32_layer = value;
     else if (key == "record_frames") config.record_frames = unsigned(number_value(100000));
     else if (key == "record_capture_every") config.record_capture_every = unsigned(number_value(100000));
     else if (key == "record_start_frame") config.record_start_frame = unsigned(number_value(100000000));
@@ -390,6 +393,7 @@ Config parse_arguments(int argc, char** argv) {
         else if (arg == "--watchdog") overrides["watchdog_seconds"] = value();
         else if (arg == "--fps-limit") overrides["fps_limit"] = value();
         else if (arg == "--record-d3d9") overrides["record_d3d9"] = value();
+        else if (arg == "--win32-layer") overrides["win32_layer"] = value();
         else if (arg == "--record-frames") overrides["record_frames"] = value();
         else if (arg == "--record-capture-every") overrides["record_capture_every"] = value();
         else if (arg == "--record-start-frame") overrides["record_start_frame"] = value();
@@ -532,6 +536,18 @@ static int launcher_main(int argc, char** argv) {
         platform.set_frame_limit(fps_cap);
         platform.set_state_cache(config.state_cache);
         platform.set_vsync(config.vsync);
+        std::unique_ptr<Win32Facade> win32_facade;   // after the platform, destroyed before it
+        {
+            std::string spec = config.win32_layer;
+            if (spec.empty()) { char text[256]; const DWORD n = GetEnvironmentVariableA("NFSU2_WIN32_LAYER", text, sizeof text); if (n && n < sizeof text) spec.assign(text, n); }
+            std::string unknown;
+            const Win32LayerOptions layer = parse_win32_layer(spec, unknown);
+            if (!unknown.empty()) throw std::runtime_error("--win32-layer: grupo desconocido '" + unknown + "' (grupos: time,text,process,sync,memory,files,dinput,all,none)");
+            if (layer.any()) {
+                win32_facade = std::make_unique<Win32Facade>(platform, layer);
+                logger.info("Win32 layer (legacy_win32): " + spec + " -> " + win32_facade->installed_report());
+            } else logger.info("Win32 layer: off (every call goes to Windows)");
+        }
         if (!config.record_dir.empty()) {
             RecorderOptions record;
             record.directory = config.record_dir;
