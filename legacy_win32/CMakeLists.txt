@@ -25,16 +25,24 @@ add_library(legacy_win32 STATIC ${LEGACY_WIN32_SOURCES})
 target_include_directories(legacy_win32 PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include")
 target_link_libraries(legacy_win32 PUBLIC nfsu2_platform_std)
 
+# Host backends: the real operating system behind the Level A interfaces (Windows only for now).
+if(WIN32)
+    file(GLOB LEGACY_WIN32_HOST_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/host/*.cpp")
+    add_library(legacy_win32_host STATIC ${LEGACY_WIN32_HOST_SOURCES})
+    target_link_libraries(legacy_win32_host PUBLIC legacy_win32)
+    target_link_libraries(legacy_win32_host PUBLIC advapi32 user32)
+endif()
+
 file(GLOB LEGACY_WIN32_TEST_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/tests/*.cpp")
 add_executable(legacy_win32_tests ${LEGACY_WIN32_TEST_SOURCES})
 target_link_libraries(legacy_win32_tests PRIVATE legacy_win32)
 if(WIN32)
-    target_link_libraries(legacy_win32_tests PRIVATE advapi32 user32)   # the differential tests compare with the real Windows API
+    target_link_libraries(legacy_win32_tests PRIVATE legacy_win32_host advapi32 user32)   # the differential tests compare with the real Windows API
 endif()
 
-set(LEGACY_WIN32_TEST_MODULES handles time text)
+set(LEGACY_WIN32_TEST_MODULES handles time text registry)
 if(WIN32)
-    list(APPEND LEGACY_WIN32_TEST_MODULES time_windows text_codepages_windows text_classes_windows text_collation_windows text_locale_windows text_wsprintf_windows)
+    list(APPEND LEGACY_WIN32_TEST_MODULES time_windows text_codepages_windows text_classes_windows text_collation_windows text_locale_windows text_wsprintf_windows registry_windows)
 endif()
 foreach(module IN LISTS LEGACY_WIN32_TEST_MODULES)
     add_test(NAME legacy_win32_${module} COMMAND legacy_win32_tests ${module})
