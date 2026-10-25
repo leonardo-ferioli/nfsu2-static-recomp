@@ -16,6 +16,8 @@ struct SystemInfo {
     bool sse = true, sse2 = true, sse3 = false, ssse3 = false, sse41 = false, sse42 = false, avx = false, mmx = true, cmpxchg8b = true, rdtsc = true;
     std::string cpu_vendor, cpu_name;
     std::string os_name;
+    uint32_t ansi_code_page = 1252, oem_code_page = 437;   // the machine's legacy code pages (GetACP / GetOEMCP of a Windows host)
+    uint32_t user_lcid = 0x0409;                           // the user's default locale as a Windows LCID
 };
 
 class System {

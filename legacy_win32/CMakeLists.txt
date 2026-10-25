@@ -32,9 +32,9 @@ if(WIN32)
     target_link_libraries(legacy_win32_tests PRIVATE advapi32 user32)   # the differential tests compare with the real Windows API
 endif()
 
-set(LEGACY_WIN32_TEST_MODULES handles time)
+set(LEGACY_WIN32_TEST_MODULES handles time text)
 if(WIN32)
-    list(APPEND LEGACY_WIN32_TEST_MODULES time_windows)
+    list(APPEND LEGACY_WIN32_TEST_MODULES time_windows text_codepages_windows text_classes_windows text_collation_windows text_locale_windows text_wsprintf_windows)
 endif()
 foreach(module IN LISTS LEGACY_WIN32_TEST_MODULES)
     add_test(NAME legacy_win32_${module} COMMAND legacy_win32_tests ${module})

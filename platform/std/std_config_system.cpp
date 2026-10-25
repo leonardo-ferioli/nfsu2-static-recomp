@@ -113,6 +113,7 @@ public:
         if (GlobalMemoryStatusEx(&m)) { i.total_memory = m.ullTotalPhys; i.available_memory = m.ullAvailPhys; i.total_virtual = m.ullTotalVirtual; i.available_virtual = m.ullAvailVirtual; }
         i.sse3 = IsProcessorFeaturePresent(PF_SSE3_INSTRUCTIONS_AVAILABLE);
         i.os_name = "Windows";
+        i.ansi_code_page = GetACP(); i.oem_code_page = GetOEMCP(); i.user_lcid = GetUserDefaultLCID();
 #else
         i.total_memory = i.available_memory = 4ull << 30;
         i.total_virtual = i.available_virtual = 4ull << 30;
