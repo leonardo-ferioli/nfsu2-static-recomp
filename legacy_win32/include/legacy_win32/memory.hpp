@@ -1,0 +1,74 @@
+// Memory: VirtualAlloc / VirtualFree / VirtualProtect / VirtualQuery / IsBad*Ptr, heaps (HeapCreate, HeapAlloc, HeapReAlloc, HeapFree, HeapSize,
+// HeapDestroy, GetProcessHeap) and GlobalAlloc / GlobalFree.
+//
+// The guest's memory is an `AddressSpace`: a 32-bit address space the library asks for pages (reserve, commit, protect...) and that tells it where a
+// guest address lives in the host (`host()`), which is how the facade reads and writes guest data. Two implementations: `ArenaAddressSpace` (portable,
+// deterministic: one block of host memory standing for the 4 GiB window, the model of NUE's WINDOW64 / INDIRECT guests) and, on Windows, the real
+// VirtualAlloc of a 32-bit process (identity mapping, legacy_win32/host). The Win32 rules (alignment, errors, state machine of a region) live in the arena;
+// the heap manager on top is independent of which address space it runs in.
+#pragma once
+#include "legacy_win32/common.hpp"
+#include <map>
+#include <memory>
+#include <mutex>
+#include <vector>
+
+namespace nfsu2::legacy::win32 {
+
+namespace mem { enum : uint32_t { commit = 0x1000, reserve = 0x2000, decommit = 0x4000, release = 0x8000, reset = 0x80000, top_down = 0x100000, free_ = 0x10000, private_ = 0x20000, image = 0x1000000, mapped = 0x40000 }; }
+namespace page { enum : uint32_t { noaccess = 0x01, readonly = 0x02, readwrite = 0x04, writecopy = 0x08, execute = 0x10, execute_read = 0x20, execute_readwrite = 0x40, execute_writecopy = 0x80, guard = 0x100, nocache = 0x200, writecombine = 0x400 }; }
+namespace heap_flag { enum : uint32_t { no_serialize = 1, generate_exceptions = 4, zero_memory = 8, realloc_in_place_only = 0x10, create_enable_execute = 0x40000 }; }
+namespace gmem { enum : uint32_t { fixed = 0, moveable = 2, zeroinit = 0x40 }; }
+
+struct RegionInfo {                         // MEMORY_BASIC_INFORMATION
+    uint32_t base_address = 0, allocation_base = 0, allocation_protect = 0, region_size = 0, state = mem::free_, protect = 0, type = 0;
+};
+
+class AddressSpace {
+public:
+    virtual ~AddressSpace() = default;
+    // Each returns a Win32 error code (0 = success). Sizes are in bytes; the implementation rounds to pages.
+    virtual uint32_t virtual_alloc(uint32_t address, uint32_t size, uint32_t type, uint32_t protect, uint32_t& result) = 0;
+    virtual uint32_t virtual_free(uint32_t address, uint32_t size, uint32_t type) = 0;
+    virtual uint32_t virtual_protect(uint32_t address, uint32_t size, uint32_t protect, uint32_t& old_protect) = 0;
+    virtual uint32_t virtual_query(uint32_t address, RegionInfo& out) = 0;
+    // The host memory behind [address, address + size), or null when any of it is not committed.
+    virtual std::byte* host(uint32_t address, uint32_t size) = 0;
+};
+
+std::unique_ptr<AddressSpace> make_arena_address_space(uint32_t arena_bytes = 256u << 20);
+
+// IsBadReadPtr / IsBadWritePtr / IsBadCodePtr on any address space: true when some byte of the range cannot be accessed that way.
+bool is_bad_read_ptr(AddressSpace&, uint32_t address, uint32_t size);
+bool is_bad_write_ptr(AddressSpace&, uint32_t address, uint32_t size);
+bool is_bad_code_ptr(AddressSpace&, uint32_t address);
+
+using HeapId = Handle;
+
+class HeapManager {
+public:
+    explicit HeapManager(AddressSpace& space);
+    ~HeapManager();
+    HeapId get_process_heap() const { return process_heap_; }
+    Ret<HeapId> heap_create(uint32_t flags, uint32_t initial_size, uint32_t maximum_size);   // maximum 0 = growable
+    Ret<bool> heap_destroy(HeapId);
+    Ret<uint32_t> heap_alloc(HeapId, uint32_t flags, uint32_t size);                          // the address, 0 on failure (ERROR_NOT_ENOUGH_MEMORY)
+    Ret<uint32_t> heap_realloc(HeapId, uint32_t flags, uint32_t address, uint32_t size);
+    Ret<bool> heap_free(HeapId, uint32_t flags, uint32_t address);                            // FALSE for an address the heap does not own
+    Ret<uint32_t> heap_size(HeapId, uint32_t flags, uint32_t address);                        // 0xFFFFFFFF for an invalid block
+    // GlobalAlloc / GlobalFree (fixed memory out of the process heap; GMEM_MOVEABLE is served as fixed memory: documented deviation).
+    Ret<uint32_t> global_alloc(uint32_t flags, uint32_t size);
+    Ret<uint32_t> global_free(uint32_t address);                                              // 0 on success, the address on failure
+    uint64_t live_blocks(HeapId) const;
+    uint64_t live_bytes(HeapId) const;
+
+private:
+    struct Heap;
+    Heap* find(HeapId) const;
+    AddressSpace& space_;
+    mutable std::mutex m_;
+    std::map<HeapId, std::unique_ptr<Heap>> heaps_;
+    HeapId process_heap_ = 0, next_ = 0x00150000;
+};
+
+}  // namespace nfsu2::legacy::win32
