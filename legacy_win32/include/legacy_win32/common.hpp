@@ -27,7 +27,7 @@ enum : uint32_t {
     mod_not_found = 126, proc_not_found = 127, dir_not_empty = 145, already_exists = 183, envvar_not_found = 203, more_data = 234,
     wait_timeout = 258, no_more_items = 259, not_owner = 288, too_many_posts = 298, io_pending = 997, invalid_flags = 1004,
     invalid_window_handle = 1400, class_already_exists = 1410, class_does_not_exist = 1411, invalid_thread_id = 1444, no_token = 1008,
-    invalid_cursor_handle = 1402, invalid_index = 1413, not_found = 1168, old_win_version = 1150,
+    invalid_cursor_handle = 1402, invalid_index = 1413, not_found = 1168, old_win_version = 1150, operation_aborted = 995, no_unicode_translation = 1113,
 };
 }
 
