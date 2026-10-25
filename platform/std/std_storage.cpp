@@ -11,6 +11,9 @@
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
 #include <windows.h>
+#include <io.h>
+#else
+#include <unistd.h>
 #endif
 
 namespace nfsu2::platform::stdlib {
@@ -100,7 +103,7 @@ public:
         if (want_write && !writable_path(p)) return {Status::invalid_argument, {}};
         auto file = std::make_shared<OpenFile>();
 #if defined(_WIN32)
-        _wfopen_s(&file->file, native.c_str(), fs::path(mode).c_str());
+        file->file = _wfsopen(native.c_str(), fs::path(mode).c_str(), _SH_DENYNO);   // share with every other opener: sharing rules are the Win32 layer's job
 #else
         file->file = std::fopen(native.c_str(), mode);
 #endif
@@ -179,9 +182,11 @@ public:
         if (!f || !f->can_write) return Status::invalid_argument;
         std::lock_guard lock(f->m);
         std::fflush(f->file);
-        std::error_code ec;
-        fs::resize_file(f->native, size, ec);
-        return ec ? Status::io_error : Status::ok;
+#if defined(_WIN32)
+        return _chsize_s(_fileno(f->file), int64_t(size)) == 0 ? Status::ok : Status::io_error;   // through the open descriptor: resizing by name fails on a file that is open
+#else
+        return ftruncate(fileno(f->file), off_t(size)) == 0 ? Status::ok : Status::io_error;
+#endif
     }
     Status flush(FileHandle h) override {
         auto f = file_of(h);

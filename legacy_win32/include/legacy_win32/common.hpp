@@ -7,14 +7,18 @@
 //   * Win32 *semantics* live here: handle values, error codes, wait rules, path rules, FILETIME arithmetic, code pages... so they can be tested
 //     headless and, where Windows is the host, against the real implementation.
 #pragma once
+#include <cstddef>
 #include <cstdint>
 #include <memory>
+#include <span>
 #include <mutex>
 #include <string>
 #include <vector>
 
 namespace nfsu2::legacy::win32 {
 
+using Bytes = std::span<const std::byte>;           // data crossing into the library, valid for the call (same as platform::Bytes)
+using MutableBytes = std::span<std::byte>;
 using Handle = uint32_t;                       // what the guest sees as HANDLE / HKEY / HWND... (0 = NULL)
 constexpr Handle kInvalidHandle = 0xFFFFFFFFu; // INVALID_HANDLE_VALUE
 

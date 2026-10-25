@@ -40,9 +40,9 @@ if(WIN32)
     target_link_libraries(legacy_win32_tests PRIVATE legacy_win32_host advapi32 user32 winmm)   # the differential tests compare with the real Windows API
 endif()
 
-set(LEGACY_WIN32_TEST_MODULES handles time text registry sync)
+set(LEGACY_WIN32_TEST_MODULES handles time text registry sync files)
 if(WIN32)
-    list(APPEND LEGACY_WIN32_TEST_MODULES time_windows text_codepages_windows text_classes_windows text_collation_windows text_locale_windows text_wsprintf_windows registry_windows sync_windows)
+    list(APPEND LEGACY_WIN32_TEST_MODULES time_windows text_codepages_windows text_classes_windows text_collation_windows text_locale_windows text_wsprintf_windows registry_windows sync_windows files_windows)
 endif()
 foreach(module IN LISTS LEGACY_WIN32_TEST_MODULES)
     add_test(NAME legacy_win32_${module} COMMAND legacy_win32_tests ${module})
