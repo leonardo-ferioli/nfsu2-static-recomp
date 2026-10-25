@@ -17,7 +17,7 @@ set(PLATFORM_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../platform")
 add_library(nfsu2_platform_std STATIC
     ${PLATFORM_DIR}/storage_path.cpp
     ${PLATFORM_DIR}/std/std_clock.cpp ${PLATFORM_DIR}/std/std_threads.cpp ${PLATFORM_DIR}/std/std_storage.cpp ${PLATFORM_DIR}/std/std_config_system.cpp
-    ${PLATFORM_DIR}/null/null_services.cpp)
+    ${PLATFORM_DIR}/null/null_services.cpp ${PLATFORM_DIR}/null/null_platform.cpp)
 target_include_directories(nfsu2_platform_std PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/..")
 
 file(GLOB LEGACY_WIN32_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
@@ -40,9 +40,9 @@ if(WIN32)
     target_link_libraries(legacy_win32_tests PRIVATE legacy_win32_host advapi32 user32 winmm)   # the differential tests compare with the real Windows API
 endif()
 
-set(LEGACY_WIN32_TEST_MODULES handles time text registry sync files)
+set(LEGACY_WIN32_TEST_MODULES handles time text registry sync files window window_platform)
 if(WIN32)
-    list(APPEND LEGACY_WIN32_TEST_MODULES time_windows text_codepages_windows text_classes_windows text_collation_windows text_locale_windows text_wsprintf_windows registry_windows sync_windows files_windows)
+    list(APPEND LEGACY_WIN32_TEST_MODULES time_windows text_codepages_windows text_classes_windows text_collation_windows text_locale_windows text_wsprintf_windows registry_windows sync_windows files_windows window_windows)
 endif()
 foreach(module IN LISTS LEGACY_WIN32_TEST_MODULES)
     add_test(NAME legacy_win32_${module} COMMAND legacy_win32_tests ${module})
