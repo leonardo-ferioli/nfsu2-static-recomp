@@ -135,6 +135,8 @@ target_link_libraries(raw_resource_tests PRIVATE nfsu2_raw)
 # The user's own game files used by the tests (a git worktree is not next to them: pass -DGAME_DIR=...).
 set(GAME_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../data game (pc)" CACHE PATH "Folder with the game data (GLOBAL, CARS, TRACKS...) for the tests")
 enable_testing()
+# The Win32 subset and DirectInput as a library with no dependence on the host OS (docs/NUE_HANDOVER_WIN32_DINPUT.md); its tests are legacy_win32_*.
+add_subdirectory(legacy_win32)
 add_test(NAME raw_semantics COMMAND raw_semantics_tests)
 add_test(NAME raw_platform COMMAND raw_platform_tests "${CMAKE_CURRENT_SOURCE_DIR}/export" "${GAME_DIR}")
 if(TARGET raw_seh_tests)
