@@ -9,7 +9,7 @@
 #include <cstdio>
 #include <mutex>
 #include <atomic>
-#ifdef NFSU2_NATIVE32
+#if defined(NFSU2_NATIVE32) || defined(_WIN32)
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
 #include <windows.h>

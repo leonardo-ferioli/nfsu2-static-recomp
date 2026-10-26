@@ -203,6 +203,10 @@ every P-code operation explicitly and is the oracle for the differential tests.
 | `fast_widescreen` | Every patch point, written values, hook handlers, a function hook inside translated code |
 | `d3d_shadow` | The Direct3D state filter |
 | `launcher_cli` | Configuration, verification and a deterministic bounded run equal to the diagnostic runner |
+| `platform_api`, `fast_facade`, `fast_recorder` | The platform interfaces, the method-token facade, Direct3D 9 trace record and replay |
+| `win32_facade`, `legacy_win32_*` | The Win32 and DirectInput library: rules compared with the real Windows, and the facade in the launcher |
+| `audio`, `dsound_facade`, `dsound_differential`, `wasapi_smoke`, `fast_dsound_install` | The DirectSound layer: mixer, call rules compared with the real DirectSound, output, install in the launcher |
+| `nue_d3d9` tools | `nue_tests`, and the drop-in `d3d9.dll` against the system's Direct3D 9 (formats, states, defaults, window behaviour); see [`docs/D3D9_BGFX.md`](docs/D3D9_BGFX.md) |
 
 ### Repository layout
 
@@ -212,6 +216,9 @@ every P-code operation explicitly and is the oracle for the differential tests.
 | `runtime.*`, `fast.hpp`, `userops*.hpp` | Reference runtime and fast-backend helpers |
 | `native32.*`, `launcher.cpp`, `dynamic_code.*` | The Windows boundary, the launcher, the run-time interpreter |
 | `mods*.{hpp,cpp,inc}` | The native widescreen fix and its patch-point runtime |
+| `platform/`, `legacy_win32/` | Platform interfaces (clock, threads, storage, window, input, audio) with Windows and null backends; the Win32 and DirectInput subset as a library |
+| `nue_d3d9/` | The Direct3D 9 layer over bgfx and the drop-in `d3d9.dll` |
+| `speed.*` | The speed layer (see [`docs/SPEED_LAYER.md`](docs/SPEED_LAYER.md)) |
 | `third_party/` | SLEIGH engine and specification, widescreen fix notices |
 | `docs/` | Roadmap, design notes, the platform API proposal (`PLATFORM_API.md`) |
 

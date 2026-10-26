@@ -55,5 +55,6 @@ build_spike/
 build_nue_rel/
 nue_out/
 build_nue32/
+build_nue64/
 build32r/
 nue_test_game/

@@ -4,7 +4,7 @@ using namespace nfsu2raw;
 static void check(bool ok,const char* why){if(!ok)throw Fault(why);}
 int main(int argc,char** argv){
     try{
-        if(argc!=2)throw Fault("test requires export directory");
+        if(argc<2)throw Fault("test requires export directory");
         Cpu c;Platform p(c,argv[1],".");
         check(c.pc==0x0075bcc7,"actual PE entry point");
         check(m<2>(c,0x00400000)==0x5a4d,"DOS header data");

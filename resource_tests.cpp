@@ -1,6 +1,6 @@
 #include "runtime.hpp"
 #include "difftrace.hpp"
-#ifdef NFSU2_NATIVE32
+#if defined(NFSU2_NATIVE32) || defined(_WIN32)
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #endif
