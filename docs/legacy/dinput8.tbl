@@ -1,0 +1,17 @@
+DirectInput8Create     DirectInput8Create                 since 1  status implemented entry point; returns IDirectInput8A; version below 0x0800 is refused
+IDirectInput8A         AddRef/Release                     since 1  status implemented reference counts of the COM objects are the facade's; a device lives while the table holds it
+IDirectInput8A         CreateDevice                       since 1  status implemented keyboard, mouse and one game controller per GUID
+IDirectInput8A         EnumDevices                        since 1  status implemented callback runs a guest function (facade)
+IDirectInput8A         EnumDevicesBySemantics             since 1  status partial   keyboard and mouse genres are listed; game-controller genres are not mapped (no table in the library)
+IDirectInput8A         ConfigureDevices                   since 1  status stub      needs a UI: fails with DIERR_UNSUPPORTED (not logged); the game was not seen calling it
+IDirectInputDevice8A   AddRef/Release                     since 1  status implemented 
+IDirectInputDevice8A   Acquire/Unacquire                  since 1  status implemented 
+IDirectInputDevice8A   GetDeviceState                     since 1  status implemented keyboard 256 bytes, mouse DIMOUSESTATE2, joystick DIJOYSTATE2 (the mod's joy_state hook reads it)
+IDirectInputDevice8A   GetDeviceData                      since 1  status implemented buffered events; overflow reporting
+IDirectInputDevice8A   SetDataFormat                      since 1  status implemented 
+IDirectInputDevice8A   SetCooperativeLevel                since 1  status implemented 
+IDirectInputDevice8A   SetProperty/GetProperty            since 1  status implemented buffer size, axis range, dead zone
+IDirectInputDevice8A   Poll                               since 1  status implemented 
+IDirectInputDevice8A   GetCapabilities/EnumObjects        since 1  status implemented 
+IDirectInputDevice8A   BuildActionMap/SetActionMap        since 1  status partial   the game uses action mapping; keyboard and mouse semantics only
+IDirectInputDevice8A   SetEventNotification               since 1  status stub      accepted and ignored: the game polls

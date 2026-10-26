@@ -25,6 +25,8 @@
 #include <vector>
 #include "native32.hpp"
 #include "mods_widescreen.hpp"
+#include "win32_facade.hpp"
+#include "platform/services.hpp"
 
 // The guest image blocks held in the program (image_data.cpp, made by tools/embed_image.py): SPEED2.EXE is not read.
 extern const nfsu2raw::EmbeddedImageBlock embedded_image_blocks[];
@@ -62,7 +64,9 @@ constexpr const char* sleigh_spec_sha256 = "52bb7d8371a164f6726702cdd1b5bc46a634
 enum Exit { ok = 0, usage = 2, game_files = 3, verification = 4, stopped = 5, watchdog = 124 };
 
 struct Config {
-    fs::path game_dir, log_dir, config_file, sleigh_spec;
+    fs::path game_dir, log_dir, config_file, sleigh_spec, record_dir;
+    std::string win32_layer;   // groups of Win32 and DirectInput functions answered by the legacy_win32 library instead of the real Windows (--win32-layer; empty: none)
+    unsigned record_frames = 120, record_capture_every = 30, record_start_frame = 0, record_max_mb = 3072;   // Direct3D 9 call recorder (--record-d3d9)
     unsigned log_max_kb = 1024, log_keep = 3, watchdog_seconds = 0;
     uint64_t max_instructions = 0;  // 0: unlimited
     WidescreenSettings widescreen;
@@ -286,6 +290,12 @@ void apply_setting(Config& config, const std::string& key, const std::string& va
     else if (key == "log_dir") config.log_dir = path_value();
     else if (key == "sleigh_spec") config.sleigh_spec = path_value();
     else if (key == "log_max_kb") config.log_max_kb = unsigned(number_value(1u << 20));
+    else if (key == "record_d3d9") config.record_dir = path_value();
+    else if (key == "win32_layer") config.win32_layer = value;
+    else if (key == "record_frames") config.record_frames = unsigned(number_value(100000));
+    else if (key == "record_capture_every") config.record_capture_every = unsigned(number_value(100000));
+    else if (key == "record_start_frame") config.record_start_frame = unsigned(number_value(100000000));
+    else if (key == "record_max_mb") config.record_max_mb = unsigned(number_value(1000000));
     else if (key == "log_keep") config.log_keep = unsigned(number_value(20));
     else if (key == "max_instructions") config.max_instructions = number_value(~0ull);
     else if (key == "watchdog_seconds") config.watchdog_seconds = unsigned(number_value(86400));
@@ -346,6 +356,11 @@ const char* usage_text =
     "  --no-state-cache     no omite las llamadas de estado de Direct3D que repiten el valor actual\n"
     "  --vsync              fuerza la sincronizacion vertical (evita el desgarro de imagen)\n"
     "  --fps-log            cada 5 s anota en logs/native_trace.log los fps y los tiempos de fotograma (casi sin costo; sin --profile)\n"
+    "  --record-d3d9 DIR    graba las llamadas Direct3D 9 (trazas + imagenes de referencia) en DIR; F9 abre una ventana de grabacion de --record-frames fotogramas\n"
+    "  --record-frames N    fotogramas por ventana de grabacion (por defecto 120)\n"
+    "  --record-capture-every N  una imagen de referencia cada N fotogramas de la ventana (por defecto 30; 0 = ninguna)\n"
+    "  --record-start-frame N    abre la primera ventana en el fotograma N en lugar de esperar a F9\n"
+    "  --record-max-mb N    tope en MB de los datos grabados (texturas, vertices, shaders; por defecto 3072)\n"
     "  --profile            cada 5 s anota en logs/native_trace.log fps, tiempo dentro de Direct3D y otros datos de rendimiento\n"
     "  --no-widescreen      desactiva el parche de pantalla ancha (resolucion original 640x480)\n"
     "  --width N --height N resolucion de pantalla ancha; con estas opciones se usa siempre, aunque haya otra guardada\n"
@@ -379,6 +394,12 @@ Config parse_arguments(int argc, char** argv) {
         else if (arg == "--max-instructions") overrides["max_instructions"] = value();
         else if (arg == "--watchdog") overrides["watchdog_seconds"] = value();
         else if (arg == "--fps-limit") overrides["fps_limit"] = value();
+        else if (arg == "--record-d3d9") overrides["record_d3d9"] = value();
+        else if (arg == "--win32-layer") overrides["win32_layer"] = value();
+        else if (arg == "--record-frames") overrides["record_frames"] = value();
+        else if (arg == "--record-capture-every") overrides["record_capture_every"] = value();
+        else if (arg == "--record-start-frame") overrides["record_start_frame"] = value();
+        else if (arg == "--record-max-mb") overrides["record_max_mb"] = value();
         else if (arg == "--no-state-cache") overrides["state_cache"] = "off";
         else if (arg == "--vsync") overrides["vsync"] = "on";
         else if (arg == "--profile") overrides["profile"] = "on";
@@ -519,6 +540,29 @@ static int launcher_main(int argc, char** argv) {
         platform.set_state_cache(config.state_cache);
         platform.set_vsync(config.vsync);
         platform.set_fps_log(config.fps_log);
+        std::unique_ptr<Win32Facade> win32_facade;   // after the platform, destroyed before it
+        {
+            std::string spec = config.win32_layer;
+            if (spec.empty()) { char text[256]; const DWORD n = GetEnvironmentVariableA("NFSU2_WIN32_LAYER", text, sizeof text); if (n && n < sizeof text) spec.assign(text, n); }
+            std::string unknown;
+            const Win32LayerOptions layer = parse_win32_layer(spec, unknown);
+            if (!unknown.empty()) throw std::runtime_error("--win32-layer: grupo desconocido '" + unknown + "' (grupos: time,text,process,sync,memory,files,dinput,all,none)");
+            if (layer.any()) {
+                win32_facade = std::make_unique<Win32Facade>(platform, layer);
+                logger.info("Win32 layer (legacy_win32): " + spec + " -> " + win32_facade->installed_report());
+            } else logger.info("Win32 layer: off (every call goes to Windows)");
+        }
+        if (!config.record_dir.empty()) {
+            RecorderOptions record;
+            record.directory = config.record_dir;
+            record.window_frames = config.record_frames;
+            record.capture_every = config.record_capture_every;
+            record.start_frame = config.record_start_frame;
+            record.max_blob_mb = config.record_max_mb;
+            const std::string failure = platform.set_d3d9_recorder(record);
+            if (!failure.empty()) throw std::runtime_error("grabador Direct3D 9: " + failure);
+            logger.info("Direct3D 9 recorder: " + config.record_dir.string() + " (F9 opens a window of " + std::to_string(config.record_frames) + " frames; state cache off)");
+        }
         logger.info(config.vsync ? "vertical sync: forced on" : "vertical sync: as the game asks");
         logger.info(config.state_cache ? "Direct3D state cache: on" : "Direct3D state cache: off");
         logger.info(fps_cap ? "frame-rate cap: " + std::to_string(fps_cap) + " fps" : std::string("frame-rate cap: off"));
@@ -568,7 +612,7 @@ static int launcher_main(int argc, char** argv) {
 
 int main(int argc, char** argv) {
     // Without this, Windows scales the game's window on high-DPI displays and the 1024x768 picture fills only part of it.
-    SetProcessDPIAware();
+    nfsu2::platform::services().display->set_dpi_aware();
     attach_console();
     return launcher_main(argc, argv);
 }

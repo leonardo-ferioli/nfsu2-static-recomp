@@ -1,6 +1,7 @@
 #pragma once
 #include "runtime.hpp"
 #include "dynamic_code.hpp"
+#include "d3d9_recorder.hpp"
 #include <filesystem>
 #include <fstream>
 #include <map>
@@ -41,6 +42,18 @@ public:
     // Replaces an imported Windows function by a native one (mods). The handler reads its stdcall arguments from the guest stack
     // and returns EAX; it runs on the calling thread instead of the real function. Install before run().
     void override_import(const char* name,unsigned argument_count,NativeHook hook);
+    // True when the game imports `name` (the Win32 facade installs only what exists), the token of its import slot (0 when absent), and the removal of an override.
+    static bool imports_function(const char* name);
+    static uint32_t import_token(const char* name);
+    void remove_import_override(const char* name);
+    // Raises a Fault when the platform is shutting down (a long guest wait or sleep calls it between slices, as the bridge's own waits do).
+    void throw_if_stopping(const char* what) const;
+    // Method tokens: the vtable slots of guest-visible objects served by the shim instead of by Windows (docs/PLATFORM_API.md, section 4).
+    // A guest `call [vtable+slot]` reaches the token; the handler reads its stdcall arguments (`this` first) and returns EAX, and
+    // `argument_count` words (this included) are removed from the guest stack. Returns the token to store in the vtable.
+    static constexpr uint32_t method_token_base=0xf1000000u;
+    static constexpr unsigned method_token_slots=8192;
+    uint32_t add_method_token(unsigned argument_count,NativeHook hook);
     // Threads the game creates (and the one that runs the game) are restricted to this affinity mask (0 = unrestricted).
     void set_game_thread_affinity(uintptr_t mask){thread_affinity=mask;}
     const std::filesystem::path& game_directory() const{return assets;}
@@ -67,6 +80,9 @@ public:
     void set_vsync(bool on){vsync_on=on;}
     // Logs the frame rate and frame-time percentiles every 5 s to the trace log (one QueryPerformanceCounter per frame; no sampling).
     void set_fps_log(bool on){fps_log_on=on;}
+    // Records the game's Direct3D 9 calls and data (d3d9_recorder.hpp). Turns the state cache off (the trace should hold every call). Returns an error text, empty on success.
+    std::string set_d3d9_recorder(const RecorderOptions& options);
+    void finish_d3d9_recorder(){if(auto* r=d3d9_recorder_ptr.load())r->finish();}
     void register_dynamic_region(uint32_t base,uint32_t size);
     uint64_t dynamic_instructions_decoded() const{auto* d=dynamic.load();return d?d->decoded_count():0;}
 private:
@@ -109,6 +125,10 @@ private:
     struct ImportOverride{unsigned argument_count;NativeHook handler;};
     static constexpr unsigned import_override_slots=512;
     std::unique_ptr<ImportOverride> import_overrides[import_override_slots];   // by import token: (token-0xf0000000)>>4
+    std::unique_ptr<D3d9Recorder> d3d9_recorder;
+    std::atomic<D3d9Recorder*> d3d9_recorder_ptr{nullptr};
+    std::atomic<ImportOverride*> method_tokens[method_token_slots]={};   // by (token-method_token_base)>>4; entries live until the platform is destroyed
+    std::atomic<unsigned> method_token_count{0};
     std::atomic<uintptr_t> thread_affinity{0};
     std::string callback_fault;
     std::atomic<bool> callback_fault_set{false};

@@ -1,13 +1,13 @@
 # Graphics backend decision: bgfx first
 
-Status: **chosen, not yet validated.** The first step is a measured spike (see "Validation").
+Status: **chosen, not yet validated. bgfx is the only renderer.** The first step is a measured spike (see "Validation").
 
 ## Requirements
 
 1. The game's graphics calls stay at **Direct3D 9 semantics** behind our own API; the translated game does not know the backend.
 2. **Android:** the player can switch between **Vulkan and OpenGL ES** from the game's menu, whatever the device.
 3. **iPhone/iPad:** must run (Metal).
-4. PC (Windows, Linux, macOS) shares the same code path; on Windows the native Direct3D 9 backend stays as the reference.
+4. PC (Windows, Linux, macOS) shares the same code path. **There is no native Direct3D 9 backend in the end state**: on Windows bgfx runs on its Direct3D 11 / 12 / Vulkan renderers. The native Direct3D 9 pass-through in `native32.cpp` is a temporary bridge, used to record reference traces and images, and is deleted once bgfx reaches parity (see `PLATFORM_API.md`, section 5).
 5. Process budget of 2 GB. No dependency that forces its own main loop on the game.
 
 ## Options considered
@@ -34,8 +34,11 @@ translated game  ->  Direct3D 9 semantics layer (ours, written once)
 ```
 
 - The Direct3D 9 layer can lean on DXVK's Direct3D 9 front-end for semantics (zlib license) and on Direct3D 9-on-12 as a reference.
-- Fixed-function Direct3D 9 has no equivalent in modern APIs: it is emulated with shaders. bgfx compiles shaders offline, so the
-  fixed-function permutations the game really uses are collected from recorded call traces and precompiled.
+- Fixed-function Direct3D 9 has no equivalent in modern APIs: it is emulated with generated shaders, and the game's own Direct3D 9
+  shader bytecode is translated (own IR -> SPIR-V -> SPIRV-Cross -> GLSL ES / MSL / HLSL, wrapped in bgfx's shader container by our code,
+  cached on disk). `shaderc` is used only at our build time for our own shaders. Decision, alternatives and licences in `PLATFORM_API.md`, 3.4.
+- bgfx applies resource updates before the frame's draws, while Direct3D 9 Lock/Unlock is ordered with draws: the layer versions buffers and
+  copies the range each draw reads (`PLATFORM_API.md`, 3.5).
 - Switching renderer from the menu is a device reset: Direct3D 9 already defines device loss and recreation, and the game recreates
   its default-pool resources itself. The layer keeps "managed" resources (memory cost to be weighed against the 2 GB budget).
 - Window, input, audio and files are separate (SDL3 candidate). The game keeps its own main loop on its own thread; bgfx's thread and
@@ -45,7 +48,8 @@ translated game  ->  Direct3D 9 semantics layer (ours, written once)
 
 - OpenGL ES has high per-draw overhead; the game issues about 58,000 Direct3D 9 calls per frame, so batching and state caching decide
   whether GLES is usable.
-- bgfx submission differs from Direct3D 9 Lock/Unlock (about 6,900 pairs per frame measured): shadow copies and uploads needed.
+- bgfx submission differs from Direct3D 9 Lock/Unlock (the game locks vertex buffers about 90 times per frame): shadow copies and per-draw uploads needed.
+- **Shaders are the first risk** (translation of Direct3D 9 bytecode and fixed-function emulation, compile time on phones): spike S1 in `PLATFORM_API.md`.
 - Compressed texture formats (DXT) are not universal on mobile: conversion (e.g. to ASTC) is ours.
 - Apple distribution rules were not researched.
 

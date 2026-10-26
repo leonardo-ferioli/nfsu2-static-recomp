@@ -201,7 +201,7 @@ every P-code operation explicitly and is the oracle for the differential tests.
 | `native32.*`, `launcher.cpp`, `dynamic_code.*` | The Windows boundary, the launcher, the run-time interpreter |
 | `mods*.{hpp,cpp,inc}` | The native widescreen fix and its patch-point runtime |
 | `third_party/` | SLEIGH engine and specification, widescreen fix notices |
-| `docs/` | Roadmap and design notes |
+| `docs/` | Roadmap, design notes, the platform API proposal (`PLATFORM_API.md`) |
 
 ### Building
 
