@@ -51,6 +51,9 @@ INI = """; NFS Underground 2 - NUE - launcher configuration. Every line is optio
 ; more), stereo, speakers, or binaural (headphones: surround and 3D sounds are rendered with a head model).
 ;audio_latency_ms=40
 ;audio_spatial=auto
+; Win32 and DirectInput functions answered by this program's own library (legacy_win32) instead of Windows: a comma-separated list of
+; groups (time, text, process, sync, memory, files, dinput), all, or none (default: none, every call goes to Windows). Same as --win32-layer.
+;win32_layer=none
 ; Specification used to interpret code the game generates at run time (see README.txt, "Third-party component").
 ; Default: sleigh\\x86.sla next to the launcher; its SHA-256 is verified at start.
 ;sleigh_spec=sleigh\\x86.sla
@@ -167,6 +170,11 @@ Exit codes
   0 normal; 2 usage or configuration; 3 game folder or executable missing; 4 verification failed;
   5 the translated program stopped (see the log); 124 the diagnostic watchdog expired.
 
+Optional Direct3D 9 layer (d3d9.dll)
+  If d3d9.dll is next to nfsu2_launcher.exe the game's Direct3D 9 calls go to it instead of the system's: a translation layer
+  over bgfx (Direct3D 11 by default, Vulkan with renderer=vulkan in nue_d3d9.ini). Without the file, or with the environment variable
+  NFSU2_SYSTEM_D3D9=1, the system's Direct3D 9 is used. The layer writes nue_d3d9.log next to the dll. See LEEME.txt for the switches.
+
 Third-party component (declared dependency)
   The game's audio engine loads x86 code modules from its data files into memory at run time. That code is not part
   of SPEED2.EXE, so it cannot be translated ahead of time. The launcher interprets it instruction by instruction with
@@ -199,6 +207,55 @@ Legal
   including its original code bytes, which are never executed). Do not redistribute it unless you have the right to do
   so. The package contains no other game files (no cars, tracks, sound or videos).
 """
+
+
+LEEME = """NFS Underground 2 - NUE: paquete de prueba
+=============================================
+
+Este paquete no contiene archivos del juego. Hace falta tu carpeta del juego (la que tiene GLOBAL, FRONTEND, CARS, TRACKS...).
+
+Arranque
+  nfsu2_launcher.exe --game-dir "C:\\ruta\\al\\juego"
+  Los valores por defecto son los de siempre: lo nuevo esta apagado salvo que lo actives.
+
+Interruptores (linea de comandos o launcher.ini; la linea de comandos manda)
+  --audio system|nue        Quien atiende el DirectSound del juego. system (por defecto) = el de Windows. nue = la capa propia
+                            (mezclador por software + salida WASAPI). Con nue: --audio-latency MS (10-500, por defecto 40) y
+                            --audio-spatial auto|stereo|speakers|binaural. El registro dice que salida se uso y cuantas llamadas hizo el juego.
+  --win32-layer GRUPOS      Funciones de Win32 y DirectInput respondidas por la biblioteca propia (legacy_win32) en lugar de Windows.
+                            GRUPOS = lista separada por comas de time,text,process,sync,memory,files,dinput; all; none (por defecto).
+                            Nunca se ha probado dentro del juego: para probar, empieza con un grupo (por ejemplo time) y mira el registro.
+  --fps-log                 Cada 5 s anota en logs/native_trace.log los fps y los percentiles del tiempo de fotograma (casi sin costo).
+  --profile                 Informe de rendimiento mas detallado (cuesta algo de velocidad).
+  --fps-limit N             Limite de fotogramas (0 = sin limite, -1 = frecuencia del monitor, -2 = el doble; por defecto 60).
+  --no-speed                Apaga la capa de velocidad ([speed] en launcher.ini) para comparar.
+  --vsync, --no-state-cache Como antes.
+  [detail] world_detail / car_detail en launcher.ini: original (por defecto), high, max. Mas detalle cuesta fotogramas.
+
+Capa Direct3D 9 (d3d9.dll, junto a nfsu2_launcher.exe)
+  El launcher la carga en lugar del Direct3D 9 del sistema. Para volver al del sistema: borra d3d9.dll o pon NFSU2_SYSTEM_D3D9=1.
+  Ajustes en nue_d3d9.ini (junto a la dll; todo comentado = valores por defecto):
+    renderer=d3d11|vulkan   vsync=0|1   render_thread=0|1   worker_thread=0|1 (traduccion y bgfx en otro hilo)
+    msaa=auto|off|2|4|8   texture_copy_mb   shader_cache=<carpeta>   log=0|1
+  Teclas dentro del juego: F12 guarda una captura (nue_screenshot_N.bmp), F11 un informe de texturas, F10 marca en magenta las texturas sin datos.
+  Registro: nue_d3d9.log junto a la dll (creacion del dispositivo, resets, lo que el traductor no soporta y, con worker_thread=1, una linea
+  "worker thread:" cada 3 s). Variables de entorno: NUE_RENDERER, NUE_VSYNC, NUE_RENDER_THREAD, NUE_WORKER_THREAD, NUE_MSAA.
+
+Sin verificar en el juego
+  La capa de audio (audio=nue), la capa Win32 (--win32-layer), esta d3d9.dll y la capa de velocidad en esta combinacion. Si algo falla,
+  manda logs/nfsu2_launcher.log, logs/native_trace.log y nue_d3d9.log.
+"""
+
+D3D9_INI_NOTE = "; Optional. Every value below is commented out: the built-in defaults apply. Remove the ';' of a line to change it.\n"
+
+
+def d3d9_ini(sample):
+    out = []
+    for line in sample.read_text(encoding="utf-8").splitlines():
+        if line.strip() and not line.startswith((";", "[")):
+            line = ";" + line
+        out.append(line)
+    return D3D9_INI_NOTE + "\n".join(out) + "\n"
 
 
 NOTICE = """Third-party components used by nfsu2_launcher.exe
@@ -246,6 +303,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--build-dir", type=Path, default=ROOT / "build32")
     parser.add_argument("--out", type=Path, default=ROOT / "dist")
+    parser.add_argument("--d3d9-dll", type=Path, default=ROOT / "build_nue32" / "d3d9.dll", help="the 32-bit d3d9.dll (nue_d3d9, static CRT) to put next to the launcher")
     args = parser.parse_args()
     exe = args.build_dir.resolve() / "nfsu2_launcher.exe"
     if not exe.exists():
@@ -276,6 +334,17 @@ def main():
     if not (package / "launcher.ini").exists():
         (package / "launcher.ini").write_text(INI, encoding="utf-8", newline="\r\n")
     (package / "README.txt").write_text(README, encoding="utf-8", newline="\r\n")
+    (package / "LEEME.txt").write_text(LEEME, encoding="utf-8", newline="\r\n")
+    d3d9_dll = args.d3d9_dll.resolve()
+    if d3d9_dll.exists():
+        (package / "d3d9.dll").write_bytes(d3d9_dll.read_bytes())
+        # The user's nue_d3d9.ini is never overwritten either: the template (every value commented out) is always written to nue_d3d9.default.ini.
+        template = d3d9_ini(ROOT / "nue_d3d9/dll/nue_d3d9.ini.sample")
+        (package / "nue_d3d9.default.ini").write_text(template, encoding="utf-8", newline="\r\n")
+        if not (package / "nue_d3d9.ini").exists():
+            (package / "nue_d3d9.ini").write_text(template, encoding="utf-8", newline="\r\n")
+    else:
+        print(f"note: {d3d9_dll} not found; the package has no d3d9.dll (the system's Direct3D 9 is used)")
     manifest = json.loads((ROOT / "export/manifest.json").read_text())
     info = {
         "built_utc": datetime.now(timezone.utc).isoformat(),
@@ -290,10 +359,12 @@ def main():
         "runtime_interpreter": {"engine": "Ghidra SLEIGH (Apache-2.0)", "scope": "memory made executable at run time outside the SPEED2.EXE image",
                                 "specification_sha256": sha256(sleigh / "x86.sla")},
         "contains_game_data_files": False,
+        "d3d9_dll_sha256": sha256(package / "d3d9.dll") if (package / "d3d9.dll").exists() else None,
         "status": "experimental: menu, race, cars and audio not yet validated",
     }
     (package / "VERSION.json").write_text(json.dumps(info, indent=2) + "\n", encoding="utf-8")
-    sums = [f"{sha256(package / name)}  {name}" for name in ("nfsu2_launcher.exe", "launcher.default.ini", "README.txt", "VERSION.json", "sleigh/x86.sla", "sleigh/PROVENANCE.txt", "sleigh/LICENSE-Apache-2.0.txt", "sleigh/NOTICE-third-party.txt", "third-party/widescreen-fix/PROVENANCE.txt", "third-party/widescreen-fix/LICENSE-MIT.txt")]
+    sums = [f"{sha256(package / name)}  {name}" for name in ("nfsu2_launcher.exe", "launcher.default.ini", "README.txt", "LEEME.txt", "VERSION.json", "sleigh/x86.sla", "sleigh/PROVENANCE.txt", "sleigh/LICENSE-Apache-2.0.txt", "sleigh/NOTICE-third-party.txt", "third-party/widescreen-fix/PROVENANCE.txt", "third-party/widescreen-fix/LICENSE-MIT.txt")]
+    sums += [f"{sha256(package / name)}  {name}" for name in ("d3d9.dll", "nue_d3d9.default.ini") if (package / name).exists()]
     (package / "SHA256SUMS.txt").write_text("\n".join(sums) + "\n", encoding="utf-8")
     archive = args.out.resolve() / "NFSU2-static.zip"
     with zipfile.ZipFile(archive, "w", zipfile.ZIP_DEFLATED) as z:

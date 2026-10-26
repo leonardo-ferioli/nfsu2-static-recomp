@@ -412,6 +412,8 @@ const char* usage_text =
     "  --audio system|nue   quien atiende el DirectSound del juego: system = el de Windows (por defecto), nue = la capa propia (mezclador + WASAPI)\n"
     "  --audio-latency MS   latencia objetivo de la salida con --audio nue (por defecto 40)\n"
     "  --audio-spatial MODE auto, stereo, speakers o binaural (auriculares) con --audio nue\n"
+    "  --win32-layer GRUPOS funciones de Win32 y DirectInput atendidas por la biblioteca propia en lugar de Windows (time,text,process,sync,memory,files,dinput | all | none; por defecto none)
+"
     "  --no-speed           apaga la capa de velocidad (llamadas nativas directas, retornos predichos, busquedas con cache; ver [SPEED])\n"
     "  --profile            cada 5 s anota en logs/native_trace.log fps, tiempo dentro de Direct3D y otros datos de rendimiento\n"
     "  --no-widescreen      desactiva el parche de pantalla ancha (resolucion original 640x480)\n"

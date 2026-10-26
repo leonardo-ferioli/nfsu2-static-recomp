@@ -111,6 +111,7 @@ The widescreen options keep the section and key names of the original fix: `[MAI
 | `--no-state-cache` | Send every Direct3D state call, even repeated ones |
 | `--audio system\|nue` | Who answers the game's DirectSound: `system` (default) is Windows', `nue` is NUE's own audio layer (software mixer, WASAPI output); see `docs/NUE_HANDOVER_DSOUND.md` |
 | `--audio-latency MS`, `--audio-spatial MODE` | With `--audio nue`: target latency, and `auto`, `stereo`, `speakers` or `binaural` (headphones) |
+| `--win32-layer GROUPS` | Answer groups of Win32 and DirectInput functions (`time`, `text`, `process`, `sync`, `memory`, `files`, `dinput`, `all`) with NUE's own library instead of Windows; default `none` |
 | `--no-widescreen` | Turn the widescreen fix off (original 640x480) |
 | `--profile` | Write the performance report to `logs\native_trace.log` |
 | `--fps-log` | Only the frame rate and frame-time percentiles every 5 s, with almost no cost |
@@ -121,6 +122,14 @@ The widescreen options keep the section and key names of the original fix: `[MAI
 HUD size is `FEScale` in `[MAIN]`; `FEScaleAnchor` keeps corner elements in their corners, and
 `FEStretchBackdrops` makes backdrops fill the whole width. `RadarMaskScale` and `RadarMaskLimit`
 in `[GRAPHICS]` control the mini-map on very large screens.
+
+### Direct3D 9 layer
+
+If `d3d9.dll` (built from `nue_d3d9/`, 32-bit) sits next to `nfsu2_launcher.exe`, the game's Direct3D 9 calls are
+translated to bgfx (Direct3D 11 by default, Vulkan with `renderer=vulkan`) instead of going to the system's Direct3D 9.
+Without the file, or with `NFSU2_SYSTEM_D3D9=1`, nothing changes. Options live in `nue_d3d9.ini` next to the dll
+(`renderer`, `vsync`, `render_thread`, `worker_thread`, `msaa`, `shader_cache`, `log`); it writes `nue_d3d9.log`.
+See [`docs/D3D9_BGFX.md`](docs/D3D9_BGFX.md).
 
 ## What's next
 
