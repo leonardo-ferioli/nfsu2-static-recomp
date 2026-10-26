@@ -109,6 +109,8 @@ The widescreen options keep the section and key names of the original fix: `[MAI
 | `--fps-limit N` | Frame-rate cap: `0` none, `-1` the monitor's rate, `-2` double, default `60` |
 | `--vsync` | Present with the display's vertical sync |
 | `--no-state-cache` | Send every Direct3D state call, even repeated ones |
+| `--audio system\|nue` | Who answers the game's DirectSound: `system` (default) is Windows', `nue` is NUE's own audio layer (software mixer, WASAPI output); see `docs/NUE_HANDOVER_DSOUND.md` |
+| `--audio-latency MS`, `--audio-spatial MODE` | With `--audio nue`: target latency, and `auto`, `stereo`, `speakers` or `binaural` (headphones) |
 | `--no-widescreen` | Turn the widescreen fix off (original 640x480) |
 | `--profile` | Write the performance report to `logs\native_trace.log` |
 | `--fps-log` | Only the frame rate and frame-time percentiles every 5 s, with almost no cost |

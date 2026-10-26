@@ -44,6 +44,13 @@ INI = """; NFS Underground 2 - NUE - launcher configuration. Every line is optio
 ;profile=off
 ; Frame rate only: every 5 s logs/native_trace.log gets the fps and the frame-time percentiles (median, 99th, worst). Costs almost nothing, unlike profile (same as --fps-log).
 ;fps_log=off
+; Who answers the game's DirectSound. system = the Windows DirectSound (default). nue = this program's own audio layer (software mixer, WASAPI
+; output, no use of the system DirectSound); the log (nfsu2_launcher.log) then says what the output is and, at exit, how many calls the game made.
+;audio=system
+; With audio=nue: target latency in milliseconds (10-500), and what to do with the 3D/speaker layout: auto (stereo for two channels, speakers for
+; more), stereo, speakers, or binaural (headphones: surround and 3D sounds are rendered with a head model).
+;audio_latency_ms=40
+;audio_spatial=auto
 ; Specification used to interpret code the game generates at run time (see README.txt, "Third-party component").
 ; Default: sleigh\\x86.sla next to the launcher; its SHA-256 is verified at start.
 ;sleigh_spec=sleigh\\x86.sla

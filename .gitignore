@@ -1,6 +1,7 @@
 # Build output and local runs
 build/
 build32/
+build_audio*/
 dist/
 logs/
 *.log
