@@ -123,7 +123,7 @@ void trace_roundtrip() {
     CHECK(stats.frames == 1 && stats.records == 19 && stats.unsupported == 1 && stats.bad_objects == 0);
     CHECK(device.draws == 2 && device.calls[size_t(Method::create_texture)] == 1 && device.calls[size_t(Method::destroy_texture)] == 1);
     CHECK(device.calls[size_t(Method::lock_buffer)] == 1 && device.calls[size_t(Method::unlock_buffer)] == 1 && device.calls[size_t(Method::create_pixel_shader)] == 1);
-    CHECK(device.live_resources() == 2);   // the vertex buffer and the pixel shader are still alive
+    CHECK(device.live_resources() == 3);   // the vertex buffer, the pixel shader and the state block the replay opens for state calls made outside a capture window
     reader.close();
     TraceReader bad;
     CHECK(!bad.open(dir / "missing", error));
