@@ -1,0 +1,39 @@
+{
+ "vars": [
+  {
+   "name": "world_min_pixels",
+   "default": 17
+  }
+ ],
+ "immediates": [
+  {
+   "insn": 6121108,
+   "byte": 6121110,
+   "value": 17,
+   "var": "world_min_pixels",
+   "note": "scenery: fewer pixels than this are not drawn (main views)"
+  }
+ ],
+ "addresses": [],
+ "nops": [],
+ "hooks": [],
+ "data": [
+  {
+   "name": "lod_a_ratio",
+   "address": 8013788,
+   "byte": 6121208
+  },
+  {
+   "name": "force_car_lod",
+   "address": 8398632,
+   "byte": 6383510
+  },
+  {
+   "name": "force_tire_lod",
+   "address": 8398636,
+   "byte": 6383529
+  }
+ ],
+ "retargets": [],
+ "force_jumps": []
+}

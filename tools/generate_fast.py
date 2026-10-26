@@ -18,6 +18,7 @@ import io
 import json
 import re
 import sys
+import time
 
 ROOT = Path(__file__).resolve().parents[1]
 CT = {1: "u8", 2: "u16", 4: "u32", 8: "u64"}
@@ -216,6 +217,26 @@ FPU_CONTROL, MXCSR = (0x10a0, 2), (0x1094, 4)   # register-file offset and width
 # extension) is emitted: the effective address is evaluated from the guest registers and handed over in EAX.
 TEXT = b""
 TEXT_BASE = 0x401000
+# Speed layer (--x87-operands precise, the default): each passed-through x87 instruction tells the compiler exactly which guest
+# memory it reads or writes (an "m"/"=m" operand of that size at the effective address) instead of clobbering all memory, so guest
+# registers held in host registers are not stored and reloaded around every FPU instruction; register forms touch no memory.
+# Environment, state-save and BCD forms keep the full barrier. (opcode, ModRM reg field) -> ("r" | "w", bytes).
+X87_PRECISE = True
+X87_OUT_TYPE = {2: "u16", 4: "u32", 8: "u64"}
+X87_MEMORY = {}
+for _r in range(8):
+    X87_MEMORY[(0xD8, _r)] = ("r", 4)    # FADD..FDIVR m32fp, FCOM/FCOMP m32fp
+    X87_MEMORY[(0xDA, _r)] = ("r", 4)    # FIADD..FIDIVR m32int, FICOM/FICOMP
+    X87_MEMORY[(0xDC, _r)] = ("r", 8)    # m64fp arithmetic and compares
+    X87_MEMORY[(0xDE, _r)] = ("r", 2)    # m16int arithmetic and compares
+X87_MEMORY.update({
+    (0xD9, 0): ("r", 4), (0xD9, 2): ("w", 4), (0xD9, 3): ("w", 4), (0xD9, 5): ("r", 2), (0xD9, 7): ("w", 2),   # FLD/FST/FSTP m32, FLDCW, FNSTCW
+    (0xDB, 0): ("r", 4), (0xDB, 1): ("w", 4), (0xDB, 2): ("w", 4), (0xDB, 3): ("w", 4),                        # FILD/FISTTP/FIST/FISTP m32
+    (0xDB, 5): ("r", 10), (0xDB, 7): ("w", 10),                                                                # FLD/FSTP m80
+    (0xDD, 0): ("r", 8), (0xDD, 1): ("w", 8), (0xDD, 2): ("w", 8), (0xDD, 3): ("w", 8), (0xDD, 7): ("w", 2),   # FLD/FISTTP/FST/FSTP m64, FNSTSW m16
+    (0xDF, 0): ("r", 2), (0xDF, 1): ("w", 2), (0xDF, 2): ("w", 2), (0xDF, 3): ("w", 2),                        # FILD/FISTTP/FIST/FISTP m16
+    (0xDF, 5): ("r", 8), (0xDF, 7): ("w", 8),                                                                  # FILD/FISTP m64
+})
 GUEST_REG = {0: 0, 1: 4, 2: 8, 3: 12, 4: 16, 5: 20, 6: 24, 7: 28}   # EAX ECX EDX EBX ESP EBP ESI EDI -> register-file offset
 X87_PASSTHROUGH = True
 # Transfers to other pages are tail calls (clang musttail) straight into the target page's body function instead of a
@@ -373,6 +394,10 @@ class Emitter:
         self.reg_writes = []
         self.userop_sites = 0
         self.block_info = {}   # address -> (starts a block, instructions from here to the end of its block)
+
+    def dynamic_transfer(self, name, ins):
+        """Statement that leaves through the dynamic target t_ (RETURN, CALLIND, BRANCHIND); gen_regs adds predictions."""
+        return "TAIL_DYNAMIC(t_);"
 
     # ---- operand access -------------------------------------------------------
     def reg(self, off, size):
@@ -554,7 +579,7 @@ class Emitter:
                 out.append(f"if({self.rd(args[1], um)}){{{self.branch(op[2], i, len(ops), ins)}}}")
             elif name in ("CALLIND", "BRANCHIND", "RETURN"):
                 terminal = True
-                out.append(f"{{u32 t_=u32({self.rd(args[0], um)});{'TAIL_DYNAMIC(t_);' if TAIL_CALLS else 'EXIT(t_);'}}}")
+                out.append(f"{{u32 t_=u32({self.rd(args[0], um)});{self.dynamic_transfer(name, ins) if TAIL_CALLS else 'EXIT(t_);'}}}")
             elif name == "CALLOTHER":
                 out.append(self.callother(ins, dest, args, um))
             else:
@@ -595,13 +620,25 @@ class Emitter:
             if ins.mod_addresses:   # the absolute operand of this instruction is read through a mod pointer
                 expression = f"u32(r4(MODV+{ins.mod_addresses[0][1] * 4}))"
             encoded = ",".join(f"0x{x:02x}" for x in prefix + bytes([opcode, (reg << 3)]))  # ModRM mod=00 rm=000: [eax]
-            out.append(f'{{u32 ea_={expression};__asm__ volatile(".byte {encoded}"::"a"(ea_):"memory");}}')
+            access = X87_MEMORY.get((opcode, reg)) if X87_PRECISE else None
+            if access is not None and access[0] == "w" and access[1] not in X87_OUT_TYPE:
+                access = None   # clang takes only scalar asm outputs: 80-bit stores keep the full barrier
+            if access is None:
+                out.append(f'{{u32 ea_={expression};__asm__ volatile(".byte {encoded}"::"a"(ea_):"memory");}}')
+            elif access[0] == "r":   # reads exactly these bytes of guest memory: no barrier for anything else
+                out.append(f'{{u32 ea_={expression};const XM<{access[1]}>& m_=*static_cast<const XM<{access[1]}>*>(gp(ea_));'
+                           f'__asm__ volatile(".byte {encoded}"::"a"(ea_),"m"(m_));}}')
+            else:                    # writes exactly these bytes (a scalar lvalue of that size)
+                t = X87_OUT_TYPE[access[1]]
+                out.append(f'{{u32 ea_={expression};{t}& m_=*static_cast<{t}*>(gp(ea_));'
+                           f'__asm__ volatile(".byte {encoded}":"=m"(m_):"a"(ea_));}}')
         else:
             encoded = ",".join(f"0x{x:02x}" for x in raw)
+            barrier = "" if X87_PRECISE else ':"memory"'   # register forms touch no memory
             if raw[-2:] == bytes([0xdf,0xe0]):          # FNSTSW AX: the status word goes to the guest's AX
-                out.append(f'{{u32 ax_;__asm__ volatile(".byte {encoded}":"=a"(ax_)::"memory");w2({self.reg(0, 2)},u16(ax_));}}')
+                out.append(f'{{u32 ax_;__asm__ volatile(".byte {encoded}":"=a"(ax_):{barrier});w2({self.reg(0, 2)},u16(ax_));}}')
             else:
-                out.append(f'__asm__ volatile(".byte {encoded}":::"memory");')
+                out.append(f'__asm__ volatile(".byte {encoded}"::{barrier});')
         nxt = a + ins.length
         if nxt not in self.page_addrs or (nxt >> 12) != self.page:
             out.append(self.exit_static(nxt))
@@ -809,7 +846,15 @@ def emit_page(page, insns, live_out=None):
 
 def write_if_changed(path, text):
     if not path.exists() or path.read_text(encoding="utf-8") != text:
-        path.write_text(text, encoding="utf-8", newline="\n")
+        # Windows sometimes refuses to reopen a file for a moment (a scanner or indexer holding it): EINVAL / permission errors.
+        for attempt in range(20):
+            try:
+                path.write_text(text, encoding="utf-8", newline="\n")
+                return
+            except OSError:
+                if attempt == 19:
+                    raise
+                time.sleep(0.25 * (attempt + 1))
 
 
 def main():
@@ -828,6 +873,12 @@ def main():
                         help="return to the dispatch loop on every page transfer")
     parser.add_argument("--no-x87-passthrough", dest="x87_passthrough", action="store_false",
                         help="lower x87 through the P-code stack model instead of the host FPU")
+    parser.add_argument("--source-root", default=None,
+                        help="folder holding binaries/SPEED2.EXE and data/text.bin (default: the parent of raw_recomp; a git worktree passes the main one)")
+    parser.add_argument("--predict", type=int, default=None, metavar="N",
+                        help="speed layer: predicted return sites per RETURN (default gen_regs.PREDICT_MAX, 0 = none)")
+    parser.add_argument("--x87-operands", choices=("precise", "clobber"), default="precise",
+                        help="speed layer: passed-through x87 instructions name the guest memory they access (precise) or clobber all memory")
     parser.add_argument("--no-liveness", dest="liveness", action="store_false",
                         help="keep every flag computation (full-fidelity register hashes)")
     args = parser.parse_args()
@@ -844,15 +895,22 @@ def main():
     out.mkdir(exist_ok=True)
     manifest = json.loads((export / "manifest.json").read_text())
     set_userops(manifest)
-    original = ROOT.parent / "binaries/SPEED2.EXE"
+    # runtime.hpp guest_register_span: a new processor clears only this much of its register file.
+    span = max(r["offset"] + r["size"] for r in manifest["registers"])
+    if span > 0x2400:
+        raise ValueError(f"guest registers end at {span:#x}, beyond guest_register_span (runtime.hpp)")
+    source_root = Path(args.source_root) if args.source_root else ROOT.parent
+    original = source_root / "binaries/SPEED2.EXE"
     actual = hashlib.sha256(original.read_bytes()).hexdigest()
     if actual.lower() != manifest["input_sha256"].lower():
         raise ValueError("Ghidra program SHA-256 does not match the source binary")
-    if (export / "memory_401000.bin").read_bytes() != (ROOT.parent / "data/text.bin").read_bytes():
+    if (export / "memory_401000.bin").read_bytes() != (source_root / "data/text.bin").read_bytes():
         raise ValueError("Ghidra .text has been patched: export the original instruction stream")
     global TEXT, X87_PASSTHROUGH, TAIL_CALLS
     TEXT = (export / "memory_401000.bin").read_bytes()
     X87_PASSTHROUGH = args.x87_passthrough
+    global X87_PRECISE
+    X87_PRECISE = args.x87_operands == "precise"
     TAIL_CALLS = args.tail_calls and MEMORY_REGS
     regs = None
     if args.reg_params != "off":
@@ -861,6 +919,8 @@ def main():
         import gen_regs
         regs = gen_regs
         gen_regs.set_target(args.reg_params)
+        if args.predict is not None:
+            gen_regs.PREDICT_MAX = args.predict
         TAIL_CALLS = True
         program = gen_regs.Program()
     specs = []
@@ -930,10 +990,23 @@ def main():
         if regs:
             for p in sorted(pages):
                 f.write(f"PN u32 ent_{p:x}({regs.declare_args()});\n")
+            # The default of every dispatch switch is a tail call too: a plain call there (missing_instruction is cdecl) made each
+            # switch save and restore XMM4-7 (regcall callee-saved) on every dynamic transfer.
+            f.write(f"__attribute__((noinline)) PN u32 ent_missing({regs.declare_args()}){{missing_instruction(c.pc);}}\n")
             f.write(f"PN u32 ent_dispatch({regs.declare_args()}){{switch(c.pc>>12){{\n")
             for p in sorted(pages):
                 f.write(f"case 0x{p:x}:[[clang::musttail]] return ent_{p:x}({regs.arg_names()});\n")
-            f.write("default:missing_instruction(c.pc);}}\n")
+            f.write(f"default:[[clang::musttail]] return ent_missing({regs.arg_names()});}}}}\n")
+            # Speed layer (speed.hpp): a dynamic transfer outside the image, made from translated code through g_native_hook; when the
+            # hook declines (or after a call that returns outside the image) this returns to the dispatch loop like XIT does.
+            lo, hi = min(pages), max(pages)
+            store = "".join(f"w4(R+{4 * t},a{t});" for t in regs.ORDER if not isinstance(t, str))
+            load = ",".join("c" if t == "c" else "bud" if t == "bud" else f"r4(R+{4 * t})" for t in regs.ORDER)
+            f.write(f"PN u32 ent_native({regs.declare_args()}){{u8* const R=c.regs.data();{store}c.instructions+=REG_BUDGET-bud;\n"
+                    f"if(!g_native_hook(c))return c.pc;\n"
+                    f"const u32 t=c.pc;if(__builtin_expect(u32((t>>12)-0x{lo:x}u)<=0x{hi - lo:x}u,1)){{c.instructions-=REG_BUDGET-bud;"
+                    f"[[clang::musttail]] return ent_dispatch({load});}}\n"
+                    f"return t;}}\n")
         elif TAIL_CALLS:
             for p in sorted(pages):
                 f.write(f"u32 body_{p:x}(u8* __restrict R,Cpu& c);\n")

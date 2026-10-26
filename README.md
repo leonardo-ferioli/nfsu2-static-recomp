@@ -114,6 +114,7 @@ The widescreen options keep the section and key names of the original fix: `[MAI
 | `--no-widescreen` | Turn the widescreen fix off (original 640x480) |
 | `--profile` | Write the performance report to `logs\native_trace.log` |
 | `--fps-log` | Only the frame rate and frame-time percentiles every 5 s, with almost no cost |
+| `--no-speed` | Turn the speed layer off (`[speed]` in `launcher.ini`; see [`docs/SPEED_LAYER.md`](docs/SPEED_LAYER.md)) |
 | `--verify-only` | Check the installation and exit |
 | `--log-dir DIR`, `--no-trace`, `--no-dialog`, `--watchdog S` | Logging and diagnostics |
 

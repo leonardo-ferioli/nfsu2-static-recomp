@@ -13,8 +13,12 @@
 
 namespace nfsu2raw {
 #ifdef NFSU2_NATIVE32
-static std::atomic<uint64_t> memory_epoch=1;
-void invalidate_native_memory(){memory_epoch.fetch_add(1,std::memory_order_relaxed);}
+// 32-bit: a 64-bit atomic add is a lock cmpxchg8b loop on x86-32, and this runs after every native call. Only equality is
+// compared, so wrapping around is harmless.
+static std::atomic<uint32_t> memory_epoch=1;
+// A plain load and store, not a locked add: the value only has to change. Two threads racing may store the same new value; a
+// cache then lives on that should have been dropped, which only matters for the diagnostic of an access to freed memory.
+void invalidate_native_memory(){memory_epoch.store(memory_epoch.load(std::memory_order_relaxed)+1,std::memory_order_relaxed);}
 #endif
 Cpu::~Cpu(){
 #ifdef NFSU2_NATIVE32
@@ -30,7 +34,7 @@ uint8_t* Cpu::pointer(uint32_t a,size_t n) {
             return reinterpret_cast<uint8_t*>(uintptr_t(a));
         }
         struct Cache{uint64_t base=0,end=0;};
-        thread_local std::array<Cache,16> hot{};thread_local uint64_t epoch=0;thread_local unsigned next=0;
+        thread_local std::array<Cache,16> hot{};thread_local uint32_t epoch=0;thread_local unsigned next=0;
         const auto current=memory_epoch.load(std::memory_order_relaxed);
         if(epoch!=current){hot={};epoch=current;next=0;}
         for(const auto& entry:hot)if(a>=entry.base && uint64_t(a)+n<=entry.end)return reinterpret_cast<uint8_t*>(uintptr_t(a));

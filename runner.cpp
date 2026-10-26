@@ -2,6 +2,7 @@
 #include "difftrace.hpp"
 #ifdef NFSU2_NATIVE32
 #include "native32.hpp"
+#include "bench_sampler.hpp"
 using ActivePlatform=nfsu2raw::NativePlatform;
 #else
 #include "platform.hpp"
@@ -50,6 +51,9 @@ int main(int argc,char** argv){
 #ifdef NFSU2_DIFF_TRACE
             DiffTrace trace;   // only counted when NFSU2_BENCH_TRACE is set: tracing slows the reference engine
             if(std::getenv("NFSU2_BENCH_TRACE"))diff_trace=&trace;
+#endif
+#ifdef NFSU2_NATIVE32
+            BenchSampler sampler("bench-hash");   // NFSU2_BENCH_SAMPLE=1
 #endif
             const auto started=std::chrono::steady_clock::now();
             for(unsigned i=0;i<repeat;++i){

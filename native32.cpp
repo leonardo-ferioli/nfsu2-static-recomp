@@ -10,6 +10,7 @@
 #include <cstddef>
 #include "native32.hpp"
 #include "d3d_shadow.hpp"
+#include "speed.hpp"
 #include "platform/services.hpp"
 #include <algorithm>
 #include <iomanip>
@@ -143,10 +144,14 @@ bool system_code(uint32_t a){
 // ---- optional profile of guest -> Windows calls (NFSU2_PROFILE=1) ---------------------------------------------------
 // Every native call is timed; every 5 s a summary goes to the trace log: wall time, instructions per second of the main
 // thread, how much of the time the main thread spent inside Windows, and the targets that cost the most. Off by default.
-bool profile_enabled(){static const bool on=GetEnvironmentVariableA("NFSU2_PROFILE",nullptr,0)!=0;return on;}
+// Read on every native call: cached in a plain global (the environment is set by the launcher before the platform starts).
+int profile_mode=-1;   // -1 not read yet, 0 off, 1 light, 2 full
+__attribute__((noinline)) int read_profile_mode(){char v[16];const DWORD n=GetEnvironmentVariableA("NFSU2_PROFILE",v,sizeof(v));profile_mode=!n?0:(n<sizeof(v)&&!std::strcmp(v,"full"))?2:1;return profile_mode;}
+inline int current_profile_mode(){const int m=profile_mode;return __builtin_expect(m>=0,1)?m:read_profile_mode();}
+bool profile_enabled(){return current_profile_mode()!=0;}
 // NFSU2_PROFILE=1 is the light profile: native calls are only counted (one relaxed atomic add each), the main thread is
 // sampled, and the sampler thread writes the report; NFSU2_PROFILE=full also times every call (about 0.3 us each).
-bool profile_full(){static const bool on=[]{char v[16];return GetEnvironmentVariableA("NFSU2_PROFILE",v,sizeof(v))&&!std::strcmp(v,"full");}();return on;}
+bool profile_full(){return current_profile_mode()==2;}
 constexpr unsigned light_slots=8192;
 std::atomic<uint64_t> light_counts[light_slots];
 std::atomic<uint64_t> light_ticks[light_slots];      // time spent inside each native target (light profile; QueryPerformanceCounter ticks)
@@ -162,7 +167,12 @@ uint64_t cached_render_state[render_states],cached_sampler_state[sampler_stages*
 std::atomic<uint32_t> state_target[3]={},state_reset_target[5]={};   // call targets (0 until the device is known)
 std::atomic<bool> state_cache_disabled{false},state_recording{false};
 std::atomic<uint32_t> state_block_vtable{0},state_apply_target{0},light_create_device_target{0};
-std::atomic<uint64_t> state_cache_hits{0},state_cache_misses{0};
+std::atomic<uint64_t> state_cache_hits{0},state_cache_misses{0};   // main thread only: counted with plain load + store (no lock)
+inline void count_main_thread(std::atomic<uint64_t>& counter){counter.store(counter.load(std::memory_order_relaxed)+1,std::memory_order_relaxed);}
+// Speed layer: bumped whenever a target that the bridge treats specially becomes known (the device and its state, Present,
+// state blocks), so each route re-decides whether it may take the plain path.
+std::atomic<uint32_t> plain_generation{1};
+inline void special_targets_changed(){plain_generation.fetch_add(1,std::memory_order_relaxed);}
 uint32_t light_vertex_buffer_vtable=0,light_index_buffer_vtable=0,light_texture_vtable=0;
 // Per-thread view for the profile: every thread that runs translated code is sampled (where it is, or which Windows call it
 // is inside) and its CPU time measured, to see what a loading pause is waiting for.
@@ -189,8 +199,16 @@ struct ProfileThreadScope{
 // Bindings and constants of the device (d3d_shadow.hpp); the call targets that matter are found by hashing, filled in when the device is known.
 DeviceShadow device_shadow;
 uint32_t bind_hash_target[64];uint8_t bind_hash_kind[64];
+// A cached state value is tagged with the epoch it was stored in; emptying the cache starts a new epoch (O(1): it is emptied on every
+// Release, thousands of times a frame), and only a wrapping 31-bit epoch really clears the arrays.
+uint32_t state_epoch=1;
+inline uint64_t state_tag(uint32_t value){return (uint64_t(state_epoch)<<33)|0x100000000ull|value;}
 void clear_state_cache(){
-    std::memset(cached_render_state,0,sizeof(cached_render_state));std::memset(cached_sampler_state,0,sizeof(cached_sampler_state));std::memset(cached_stage_state,0,sizeof(cached_stage_state));
+    if(((state_epoch+1)&0x7fffffffu)==0){
+        std::memset(cached_render_state,0,sizeof(cached_render_state));std::memset(cached_sampler_state,0,sizeof(cached_sampler_state));std::memset(cached_stage_state,0,sizeof(cached_stage_state));
+        state_epoch=0;
+    }
+    ++state_epoch;
     device_shadow.clear();
 }
 inline uint32_t guest_u32(uint32_t address){uint32_t v;std::memcpy(&v,reinterpret_cast<const void*>(uintptr_t(address)),4);return v;}
@@ -377,8 +395,11 @@ NativePlatform::NativePlatform(Cpu& c,const std::filesystem::path& game,const Bl
     prepare(c);for(const auto& i:imports)wm<4>(c,i.iat,i.token);c.pc=entry_point;
     command_line='"'+(assets/"SPEED2.EXE").string()+'"';current_platform=this;
     exception_guard=AddVectoredExceptionHandler(1,native_fault_guard);
+    apply_speed_settings();
+    g_native_hook=speed_settings().native_calls?&translated_native_call:nullptr;
 }
 NativePlatform::~NativePlatform(){
+    g_native_hook=nullptr;
     stopping=true;
     d3d9_recorder_ptr.store(nullptr);if(d3d9_recorder)d3d9_recorder->finish();
     if(profile_sampler.joinable())profile_sampler.join();
@@ -399,7 +420,7 @@ void NativePlatform::prepare(Cpu& c){
     initialize_cpu(c,stack,teb);
 }
 void NativePlatform::initialize_cpu(Cpu& c,uint32_t stack,uint32_t teb){
-    std::memset(c.regs.data(),0,c.regs.size());c.instructions=0;
+    std::memset(c.regs.data(),0,guest_register_span);c.instructions=0;
     wr<4>(c,0x110,teb);wm<4>(c,teb,0xffffffff);wm<4>(c,teb+4,stack+stack_size);wm<4>(c,teb+8,stack);
     wm<4>(c,teb+0x18,teb);wm<4>(c,teb+0x20,GetCurrentProcessId());wm<4>(c,teb+0x24,GetCurrentThreadId());wm<4>(c,teb+0x34,0);
     wr<4>(c,16,stack+stack_size-0x100);wm<4>(c,r<4>(c,16),0xdead0000);
@@ -414,14 +435,23 @@ void NativePlatform::record(const std::string& text){
     }
     trace<<text<<'\n';trace.flush();trace_bytes+=text.size()+1;
 }
+// One bit per (call site, direction) hashed into a shared bitmap: a site seen before costs one relaxed load, no lock and no
+// thread-local access. A collision can hide a first-use record of the diagnostic trace; it never changes behaviour.
+// Two bits per slot, 131,072 slots in 32 KiB: it stays in the cache (a 1 MiB byte table cost two cache misses per call in the game).
+std::atomic<uint32_t> seen_call_words[1u<<13];
+inline unsigned seen_call_slot(uint32_t target,uint32_t guest_return){return ((target*2654435761u)^(guest_return*40503u))>>15;}   // 17 bits
+inline uint32_t seen_call_bit(unsigned slot,bool result){return 1u<<((slot&15)*2+(result?1:0));}
+// The common case (a site seen before) inline in the caller; the first time goes to first_native_call.
+inline bool seen_call(uint32_t target,uint32_t guest_return,bool result){
+    const unsigned slot=seen_call_slot(target,guest_return);
+    return (seen_call_words[slot>>4].load(std::memory_order_relaxed)&seen_call_bit(slot,result))!=0;
+}
 bool NativePlatform::first_native_call(uint32_t target,uint32_t guest_return,bool result){
-    // One bit per (call site, direction) hashed into a shared bitmap: a site seen before costs one relaxed load, no lock and no
-    // thread-local access. A collision can hide a first-use record of the diagnostic trace; it never changes behaviour.
-    static std::atomic<uint8_t> seen_bits[1u<<20];
-    const unsigned bit=result?2:1;
-    std::atomic<uint8_t>& cell=seen_bits[(((target*2654435761u)^(guest_return*40503u))>>12)&((1u<<20)-1)];
+    const unsigned slot=seen_call_slot(target,guest_return);
+    const uint32_t bit=seen_call_bit(slot,result);
+    std::atomic<uint32_t>& cell=seen_call_words[slot>>4];
     if(cell.load(std::memory_order_relaxed)&bit)return false;
-    cell.fetch_or(uint8_t(bit),std::memory_order_relaxed);
+    cell.fetch_or(bit,std::memory_order_relaxed);
     bool first=false;
     {
         std::lock_guard guard(log_mutex);
@@ -541,15 +571,92 @@ void NativePlatform::profile_native_call(Cpu& c,uint32_t target,const char* impo
     for(auto& entry:profile_stats){entry.second.calls=0;entry.second.ticks=0;entry.second.main_ticks=0;}
     profile_window_start=now;profile_window_instructions=main_cpu.instructions;profile_main_ticks=profile_all_ticks=profile_calls=0;
 }
+// Speed layer: the general path below reduced to what a call without special treatment needs (same order, same effects): the
+// guest stack check, the guest's last error, the call on the guest stack, the first-call trace records and the results. Cold
+// work (records, faults) is out of line so this function needs no exception frame.
+__attribute__((noinline,cold)) void NativePlatform::record_plain_call(Cpu& c,uint32_t target,const char* dll,const char* resolved_name,uint32_t guest_return,bool result,uint32_t eax,uint32_t popped){
+    if(!first_native_call(target,guest_return,result))return;
+    std::ostringstream s;
+    if(!result)s<<c.instructions<<" "<<dll<<"!"<<resolved_name<<" return=0x"<<std::hex<<guest_return;
+    else s<<"RETURN target=0x"<<std::hex<<target<<" guest=0x"<<guest_return<<" EAX=0x"<<eax<<" stack-pop="<<std::dec<<popped;
+    record(s.str());
+}
+__attribute__((noinline,cold)) void NativePlatform::raise_callback_fault(){
+    std::lock_guard lock(state_mutex);if(!callback_fault.empty())throw Fault(callback_fault);
+}
+[[noreturn]] __attribute__((noinline,cold)) static void plain_stack_fault(){throw Fault("guest stack pointer is outside its stack during a native call");}
+[[noreturn]] __attribute__((noinline,cold)) static void plain_teb_fault(){throw Fault("unrecognized Windows x86 stack allocation layout");}
+bool NativePlatform::plain_call(Cpu& c,uint32_t target,const char* dll,const char* resolved_name,uint32_t profile_id){
+    auto g4=[](uint32_t address){uint32_t v;std::memcpy(&v,reinterpret_cast<const void*>(uintptr_t(address)),4);return v;};
+    auto s4=[](uint32_t address,uint32_t v){std::memcpy(reinterpret_cast<void*>(uintptr_t(address)),&v,4);};
+    const uint32_t original_sp=uint32_t(r<4>(c,16));
+    const uint32_t teb=uint32_t(r<4>(c,0x110));
+    const uint32_t guest_stack_base=g4(teb+4),guest_stack_limit=g4(teb+8);
+    if(original_sp<guest_stack_limit || original_sp>guest_stack_base-8)plain_stack_fault();
+    // A DirectInput object (the first argument of its methods) needs the general path, and so does the device's own Release
+    // (it empties the state cache; a d3d9.dll may use the same Release for all its objects).
+    const uint32_t object=g4(original_sp+4);
+    if(input_bloom.load(std::memory_order_relaxed)&(1u<<((object>>4)&31)))return false;
+    // A Release (of the device or, through a shared Release, of anything) empties the device state cache, as the general path does.
+    if(target==state_reset_target[0].load(std::memory_order_relaxed) && &c==&main_cpu && state_cache_on.load(std::memory_order_relaxed)
+       && !state_cache_disabled.load(std::memory_order_relaxed))clear_state_cache();
+    const uint32_t guest_return=g4(original_sp);
+    if(!seen_call(target,guest_return,false))record_plain_call(c,target,dll,resolved_name,guest_return,false,0,0);
+    thread_local bool verified_teb=false;
+    if(!verified_teb){ULONG_PTR low,high;GetCurrentThreadStackLimits(&low,&high);if(low!=__readfsdword(0xe0c))plain_teb_fault();verified_teb=true;}
+    NativeFrame frame{target,original_sp+4,0,0,0,0,guest_stack_base,guest_stack_limit};
+    {const uint32_t last_error=g4(teb+0x34);asm volatile("movl %0,%%fs:0x34"::"r"(last_error):"memory");}   // what SetLastError does
+    // The light profile (route id) counts and times the call like the general path; the full profile never comes here.
+    if(profile_id && my_thread_profile)my_thread_profile->native=last_native_name;
+    const uint64_t light_started=profile_id?profile_clock():0;
+    invoke_native32(&frame);const DWORD guest_error=__readfsdword(0x34);
+    if(profile_id){light_ticks[profile_id].fetch_add(profile_clock()-light_started,std::memory_order_relaxed);light_counts[profile_id].fetch_add(1,std::memory_order_relaxed);}
+    invalidate_native_memory();s4(teb+0x34,guest_error);
+    uint32_t result_eax=frame.eax,result_edx=frame.edx,result_ecx=frame.ecx,after=frame.after;asm volatile("":"+r"(result_edx),"+r"(result_ecx));
+    if(!seen_call(target,guest_return,true))record_plain_call(c,target,dll,resolved_name,guest_return,true,result_eax,after-original_sp);
+    s4(original_sp,guest_return);
+    wr<4>(c,0,result_eax);wr<4>(c,8,result_edx);wr<4>(c,4,result_ecx);wr<4>(c,16,after);c.pc=guest_return;wr<4>(c,644,c.pc);
+    if(callback_fault_set.load(std::memory_order_acquire))raise_callback_fault();
+    return true;
+}
+// Speed layer: a device state (SetRenderState / SetTextureStageState / SetSamplerState) or binding (SetTexture, streams, indices,
+// shaders, declarations, constants, the UP draws) method: the same device state cache test as the general path, then for a call
+// that does go to the dll the plain path and the same update of the cache. False leaves the call to the general path.
+bool NativePlatform::cached_call(Cpu& c,uint32_t target,const char* dll,const char* resolved_name,uint32_t profile_id,uint8_t state_kind,uint8_t bind_kind){
+    if(&c!=&main_cpu || !state_cache_on.load(std::memory_order_relaxed) || !state_target[0].load(std::memory_order_relaxed)
+       || state_cache_disabled.load(std::memory_order_relaxed) || state_recording.load(std::memory_order_relaxed))return false;
+    const uint32_t sp=uint32_t(r<4>(c,16)),teb=uint32_t(r<4>(c,0x110));
+    if(sp<guest_u32(teb+8) || sp>guest_u32(teb+4)-8)return false;   // the general path reports it
+    if(state_kind){
+        const uint32_t first=guest_u32(sp+8),second=guest_u32(sp+12),value=state_kind==1?second:guest_u32(sp+16);
+        uint64_t* slot=state_kind==1?state_slot(1,first,0):state_slot(state_kind,first,second);
+        if(!slot)return false;
+        if(*slot==state_tag(value)){count_main_thread(state_cache_hits);returned(c,0,state_kind==1?3:4);return true;}
+        count_main_thread(state_cache_misses);
+        if(!plain_call(c,target,dll,resolved_name,profile_id))return false;
+        *slot=uint32_t(r<4>(c,0))==0?state_tag(value):0;
+        return true;
+    }
+    uint32_t args[4]={};
+    for(unsigned i=0;i<bind_argument_count(bind_kind);++i)args[i]=guest_u32(sp+8+4*i);
+    if(const unsigned pop=device_shadow.redundant(bind_kind,args)){count_main_thread(state_cache_hits);returned(c,0,pop);return true;}
+    if(!plain_call(c,target,dll,resolved_name,profile_id))return false;
+    device_shadow.remember(bind_kind,args,uint32_t(r<4>(c,0)));
+    return true;
+}
+// Everything that depends only on the call target is decided once and remembered per thread (a frame makes ~28,000 of these calls).
+namespace {
+struct Route{uint32_t token=0,resolve_generation=0,dynamic_generation=0;uintptr_t target=0;const Import* imported=nullptr;const char* label=nullptr;const char* resolved_name=nullptr;bool special=false;uint32_t id=0;bool d3d_create=false;bool plain=false;uint32_t plain_generation=0;
+    uint8_t state_kind=0,bind_kind=0;   // speed layer: a device state / binding method that the state cache answers (cached_call)
+};
+thread_local Route routes[2048];
+}
 bool NativePlatform::dispatch(Cpu& c){
     if(c.pc>=image_base && c.pc<image_base+image_size)return false;
     if(auto* code=dynamic.load();code && code->contains(c.pc)){
         const uint64_t before=c.instructions;code->run(c,1u<<18);
         const uint64_t total=dynamic_executed.fetch_add(c.instructions-before)+(c.instructions-before);
-        if(total>=dynamic_report_at.load()){
-            dynamic_report_at=total*4;
-            std::ostringstream message;message<<"DYNAMIC CODE executed "<<total<<" instructions so far ("<<code->decoded_count()<<" decoded) last pc=0x"<<std::hex<<c.pc;record(message.str());
-        }
+        if(total>=dynamic_report_at.load()){dynamic_report_at=total*4;report_dynamic_code(total,code->decoded_count(),c.pc);}
         return true;
     }
     if(c.pc>=0xf0ffff00 && c.pc<0xf0ffff30)return exception_return(c);
@@ -568,6 +675,28 @@ bool NativePlatform::dispatch(Cpu& c){
         auto hook=native_hooks.find(c.pc);
         if(hook!=native_hooks.end()){const unsigned argc=hook->second.first;const uint32_t value=hook->second.second(c);returned(c,value,argc);return true;}
     }
+    // Speed layer: a route already known to take the plain path goes there from here; this front part has no exception frame.
+    if(g_speed_bridge){
+        const Route& route=routes[(c.pc*2654435761u)>>21];
+        if(route.token==c.pc && route.plain_generation==plain_generation.load(std::memory_order_relaxed)
+           && route.resolve_generation==resolve_generation.load(std::memory_order_relaxed) && route.dynamic_generation==dynamic_generation.load(std::memory_order_relaxed)
+           && !d3d9_recorder_ptr.load(std::memory_order_relaxed)){
+            if(route.plain){
+                last_native_name=route.label;
+                if(plain_call(c,uint32_t(route.target),route.imported?route.imported->dll:"Windows",route.resolved_name,route.id))return true;
+            }else if(route.state_kind || route.bind_kind){
+                last_native_name=route.label;
+                if(cached_call(c,uint32_t(route.target),route.imported?route.imported->dll:"Windows",route.resolved_name,route.id,route.state_kind,route.bind_kind))return true;
+            }
+        }
+    }
+    return dispatch_route(c);
+}
+__attribute__((noinline)) void NativePlatform::report_dynamic_code(uint64_t total,uint64_t decoded,uint32_t pc){
+    std::ostringstream message;message<<"DYNAMIC CODE executed "<<total<<" instructions so far ("<<decoded<<" decoded) last pc=0x"<<std::hex<<pc;record(message.str());
+}
+// Everything that depends on the call target: special imports, the device state cache, the profile, the recorder, DirectInput.
+__attribute__((noinline)) bool NativePlatform::dispatch_route(Cpu& c){
     static const std::unordered_map<uint32_t,const Import*> import_table=[]{std::unordered_map<uint32_t,const Import*> t;for(const auto& i:imports)t[i.token]=&i;return t;}();
     // Differential-test controls (environment only; never active in normal runs).
     static const std::string stop_import=[]{char b[64];return std::string(b,GetEnvironmentVariableA("NFSU2_STOP_AT_IMPORT",b,sizeof(b))%sizeof(b));}();
@@ -581,9 +710,6 @@ bool NativePlatform::dispatch(Cpu& c){
         if(GetEnvironmentVariableA("NFSU2_DETERMINISTIC_TIME",nullptr,0))for(auto n:{"QueryPerformanceCounter","GetEnvironmentStringsW","GetEnvironmentStringsA","GetEnvironmentStrings",
             "FreeEnvironmentStringsW","FreeEnvironmentStringsA","Process32First","Process32Next","GetTickCount","timeGetTime","GetSystemTimeAsFileTime"})t.insert(n);
         return t;}();
-    // Everything that depends only on the call target is decided once and remembered per thread (a frame makes ~17,000 of these calls).
-    struct Route{uint32_t token=0,resolve_generation=0,dynamic_generation=0;uintptr_t target=0;const Import* imported=nullptr;const char* label=nullptr;const char* resolved_name=nullptr;bool special=false;uint32_t id=0;bool d3d_create=false;};
-    thread_local Route routes[2048];
     Route& route=routes[(c.pc*2654435761u)>>21];
     {
         const uint32_t resolve_now=resolve_generation.load(std::memory_order_relaxed),dynamic_now=dynamic_generation.load(std::memory_order_relaxed);
@@ -599,6 +725,39 @@ bool NativePlatform::dispatch(Cpu& c){
             if(profile_enabled() && !profile_full()){
                 const uint32_t id=light_next.fetch_add(1);
                 if(id<light_slots){route.id=id;std::lock_guard lock(profile_mutex);light_labels[id]=profile_label(uint32_t(resolved),imported?imported->name:nullptr);light_targets[id]=uint32_t(resolved);}
+            }
+        }
+    }
+    // Speed layer: a target that none of the special treatments below concerns (no import by name, not the device's state,
+    // Present, Reset, state blocks or creation, no recorder or profile) takes the plain path. Decided once per route and again
+    // whenever such a target becomes known; the DirectInput object check depends on the call and is made every time.
+    if(g_speed_bridge){
+        const uint32_t generation=plain_generation.load(std::memory_order_relaxed);
+        if(route.plain_generation!=generation){
+            const uint32_t t=uint32_t(route.target);
+            auto is=[t](const std::atomic<uint32_t>& a){return a.load(std::memory_order_relaxed)==t;};
+            route.plain=!route.special && !route.d3d_create && !profile_full() && !(light_d3d9 && !light_device)
+                && !is(state_target[0]) && !is(state_target[1]) && !is(state_target[2])
+                && !is(state_reset_target[1]) && !is(state_reset_target[2]) && !is(state_reset_target[3]) && !is(state_reset_target[4])
+                && !is(state_apply_target) && !is(light_create_device_target) && !is(light_present) && bind_kind_of(t)==BindNone;
+            // The light profile learns the vertex buffer, index buffer and texture vtables from CreateVertexBuffer/IndexBuffer/Texture.
+            if(route.plain && profile_enabled() && light_device){
+                const uint32_t vtable=guest_u32(light_device);
+                route.plain=t!=guest_u32(vtable+23*4) && t!=guest_u32(vtable+26*4) && t!=guest_u32(vtable+27*4);
+            }
+            // The device's state and binding methods: the cache answers repeated values, the rest is a plain call (cached_call).
+            const bool simple=!route.special && !route.d3d_create && !profile_full();
+            route.state_kind=!simple?0:is(state_target[0])?1:is(state_target[1])?2:is(state_target[2])?3:0;
+            route.bind_kind=simple && !route.state_kind && state_target[0].load(std::memory_order_relaxed)?bind_kind_of(t):uint8_t(BindNone);
+            route.plain_generation=generation;
+        }
+        if(!d3d9_recorder_ptr.load(std::memory_order_relaxed)){
+            if(route.plain){
+                last_native_name=route.label;
+                if(plain_call(c,uint32_t(route.target),route.imported?route.imported->dll:"Windows",route.resolved_name,route.id))return true;
+            }else if(route.state_kind || route.bind_kind){
+                last_native_name=route.label;
+                if(cached_call(c,uint32_t(route.target),route.imported?route.imported->dll:"Windows",route.resolved_name,route.id,route.state_kind,route.bind_kind))return true;
             }
         }
     }
@@ -630,24 +789,27 @@ bool NativePlatform::dispatch(Cpu& c){
         if(t==state_target[0].load(std::memory_order_relaxed)){if(!recording)state_kind=1;}
         else if(t==state_target[1].load(std::memory_order_relaxed)){if(!recording)state_kind=2;}
         else if(t==state_target[2].load(std::memory_order_relaxed)){if(!recording)state_kind=3;}
-        else if(t==state_reset_target[0].load(std::memory_order_relaxed) || t==state_reset_target[1].load(std::memory_order_relaxed))clear_state_cache();   // Release, Reset
+        // Release, Reset. A d3d9.dll may share one Release for all its objects (nue_d3d9 does), so this runs on every Release of
+        // anything (~8,000 a frame): clear_state_cache is O(1). Emptying it only on the device's own Release let device state
+        // change behind the cache (live 2026-10-21: a failing render pass every frame, traffic cars white then dark).
+        else if(t==state_reset_target[0].load(std::memory_order_relaxed) || t==state_reset_target[1].load(std::memory_order_relaxed))clear_state_cache();
         else if(t==state_reset_target[3].load(std::memory_order_relaxed))state_recording=true;                                                              // BeginStateBlock
         else if(state_apply_target.load(std::memory_order_relaxed)==t)clear_state_cache();                                                                   // IDirect3DStateBlock9::Apply
         else if(!recording)bind_kind=bind_kind_of(t);
         if(bind_kind){
             for(unsigned i=0;i<bind_argument_count(bind_kind);++i)bind_args[i]=g4(original_sp+8+4*i);
-            if(const unsigned pop=device_shadow.redundant(bind_kind,bind_args)){state_cache_hits.fetch_add(1,std::memory_order_relaxed);returned(c,0,pop);return true;}
+            if(const unsigned pop=device_shadow.redundant(bind_kind,bind_args)){count_main_thread(state_cache_hits);returned(c,0,pop);return true;}
         }
         if(state_kind){
             const uint32_t first=g4(original_sp+8),second=g4(original_sp+12);
             const uint32_t value=state_kind==1?second:g4(original_sp+16);
             uint64_t* slot=state_kind==1?state_slot(1,first,0):state_slot(state_kind,first,second);
             if(!slot)state_kind=0;
-            else if(*slot==(0x100000000ull|value)){state_cache_hits.fetch_add(1,std::memory_order_relaxed);returned(c,0,state_kind==1?3:4);return true;}
-            else state_cache_misses.fetch_add(1,std::memory_order_relaxed);
+            else if(*slot==state_tag(value)){count_main_thread(state_cache_hits);returned(c,0,state_kind==1?3:4);return true;}
+            else count_main_thread(state_cache_misses);
         }
     }
-    if(first_native_call(uint32_t(target),guest_return,false)){
+    if(!seen_call(uint32_t(target),guest_return,false) && first_native_call(uint32_t(target),guest_return,false)){
         std::ostringstream msg;msg<<c.instructions<<" "<<(imported?imported->dll:"Windows")<<"!"<<resolved_name<<" return=0x"<<std::hex<<guest_return;record(msg.str());
     }
     if(special){
@@ -784,11 +946,11 @@ bool NativePlatform::dispatch(Cpu& c){
     thread_local bool verified_teb=false;
     if(!verified_teb){ULONG_PTR low,high;GetCurrentThreadStackLimits(&low,&high);if(low!=__readfsdword(0xe0c))throw Fault("unrecognized Windows x86 stack allocation layout");verified_teb=true;}
     std::string proc_name;
-    if(name=="GetProcAddress" && argument(c,1)>0xffff)proc_name=reinterpret_cast<char*>(uintptr_t(argument(c,1)));
+    if(special && name=="GetProcAddress" && argument(c,1)>0xffff)proc_name=reinterpret_cast<char*>(uintptr_t(argument(c,1)));
     uint32_t input_out=0,input_kind=0,object=g4(original_sp+4),release_method=0;
     unsigned enum_index=UINT_MAX;
     bool semantic_enumeration=false;
-    if(name=="DirectInput8Create"){input_out=argument(c,3);input_kind=1;}
+    if(special && name=="DirectInput8Create"){input_out=argument(c,3);input_kind=1;}
     unsigned existing_input=0;
     if(input_bloom.load(std::memory_order_relaxed)&(1u<<((object>>4)&31))){std::lock_guard lock(state_mutex);auto found=input_objects.find(object);if(found!=input_objects.end())existing_input=found->second;}
     if(existing_input){
@@ -833,7 +995,7 @@ bool NativePlatform::dispatch(Cpu& c){
         }
         else{
             // Present is slot 17 of the device whose creation (IDirect3D9::CreateDevice, slot 16) we just saw succeed.
-            if(route.d3d_create && frame.eax){light_d3d9=frame.eax;light_create_device_target=g4(g4(frame.eax)+16*4);}
+            if(route.d3d_create && frame.eax){light_d3d9=frame.eax;light_create_device_target=g4(g4(frame.eax)+16*4);special_targets_changed();}
             else if(light_d3d9 && !light_device && frame.eax==0 && uint32_t(target)==g4(g4(light_d3d9)+16*4)){
                 const uint32_t device=g4(g4(original_sp+4+6*4));
                 if(device){
@@ -843,6 +1005,7 @@ bool NativePlatform::dispatch(Cpu& c){
                     state_reset_target[0]=g4(vtable+2*4);state_reset_target[1]=g4(vtable+16*4);
                     state_reset_target[2]=g4(vtable+59*4);state_reset_target[3]=g4(vtable+60*4);state_reset_target[4]=g4(vtable+61*4);
                     light_present.store(g4(vtable+17*4));
+                    special_targets_changed();
                 }
             }
         }
@@ -851,10 +1014,10 @@ bool NativePlatform::dispatch(Cpu& c){
         const uint32_t t=uint32_t(target);
         if(t==state_reset_target[4].load(std::memory_order_relaxed)){
             state_recording=false;   // EndStateBlock(device, &block)
-            if(frame.eax==0 && !state_block_vtable.load()){const uint32_t block=g4(g4(original_sp+8));if(block){state_block_vtable=g4(block);state_apply_target=g4(g4(block)+5*4);}}
+            if(frame.eax==0 && !state_block_vtable.load()){const uint32_t block=g4(g4(original_sp+8));if(block){state_block_vtable=g4(block);state_apply_target=g4(g4(block)+5*4);special_targets_changed();}}
         }else if(t==state_reset_target[2].load(std::memory_order_relaxed) && frame.eax==0 && !state_block_vtable.load()){
             const uint32_t block=g4(g4(original_sp+12));   // CreateStateBlock(device, type, &block)
-            if(block){state_block_vtable=g4(block);state_apply_target=g4(g4(block)+5*4);}
+            if(block){state_block_vtable=g4(block);state_apply_target=g4(g4(block)+5*4);special_targets_changed();}
         }
     }
     if(profiling && !profiling_full && light_device && frame.eax==0){
@@ -875,7 +1038,7 @@ bool NativePlatform::dispatch(Cpu& c){
         }
         profile_native_call(c,uint32_t(target),imported?imported->name:nullptr,elapsed);
     }
-    if(first_native_call(uint32_t(target),guest_return,true)){
+    if(!seen_call(uint32_t(target),guest_return,true) && first_native_call(uint32_t(target),guest_return,true)){
         std::ostringstream s;s<<"RETURN target=0x"<<std::hex<<uint32_t(target)<<" guest=0x"<<guest_return<<" EAX=0x"<<frame.eax<<" stack-pop="<<std::dec<<(frame.after-original_sp);record(s.str());
     }
     if(frame.eax && !proc_name.empty()){std::lock_guard lock(state_mutex);dynamic_names[frame.eax]=proc_name;dynamic_name_count=dynamic_names.size();++dynamic_generation;}
@@ -883,7 +1046,7 @@ bool NativePlatform::dispatch(Cpu& c){
     if(state_kind){
         const uint32_t first=g4(original_sp+8),second=g4(original_sp+12);
         const uint32_t value=state_kind==1?second:g4(original_sp+16);
-        if(uint64_t* slot=state_kind==1?state_slot(1,first,0):state_slot(state_kind,first,second))*slot=frame.eax==0?(0x100000000ull|value):0;
+        if(uint64_t* slot=state_kind==1?state_slot(1,first,0):state_slot(state_kind,first,second))*slot=frame.eax==0?state_tag(value):0;
     }
     if(bind_kind)device_shadow.remember(bind_kind,bind_args,frame.eax);
     if(enum_index!=UINT_MAX){wm<4>(c,original_sp+4+enum_index*4,enumeration.address);wm<4>(c,original_sp+4+(enum_index+1)*4,enumeration.reference);}
@@ -938,12 +1101,31 @@ bool NativePlatform::dispatch(Cpu& c){
         }
     }
     if(existing_input && target==release_method && frame.eax==0){std::lock_guard lock(state_mutex);input_objects.erase(object);}
-    wr<4>(c,0,frame.eax);wr<4>(c,8,frame.edx);wr<4>(c,4,frame.ecx);wr<4>(c,16,frame.after);c.pc=guest_return;wr<4>(c,644,c.pc);
+    // invoke_native32 stored EDX and ECX with two 32-bit stores; read them as two 32-bit loads (a merged 64-bit load cannot be
+    // forwarded from those stores and stalls on every call).
+    uint32_t result_edx=frame.edx,result_ecx=frame.ecx;asm volatile("":"+r"(result_edx),"+r"(result_ecx));
+    wr<4>(c,0,frame.eax);wr<4>(c,8,result_edx);wr<4>(c,4,result_ecx);wr<4>(c,16,frame.after);c.pc=guest_return;wr<4>(c,644,c.pc);
     if(callback_fault_set.load(std::memory_order_acquire)){std::lock_guard lock(state_mutex);if(!callback_fault.empty())throw Fault(callback_fault);}
     return true;
 }
+// Speed layer (speed.hpp): translated code calls this for a dynamic transfer outside the image instead of returning to the loop
+// below. It does what one iteration of that loop would do; the stop address of the innermost execute() and a platform that is
+// stopping are left to the loop.
+thread_local uint32_t execute_stop=0;
+bool NativePlatform::translated_native_call(Cpu& c){
+    NativePlatform* const p=current_platform;
+    if(!p || c.pc==execute_stop || p->stopping)return false;
+    // An address that the bridge declined (a stop address of a test harness running outside execute(), say) is declined again
+    // without asking Windows what lies there: one per thread is remembered until the set of known targets changes.
+    thread_local uint32_t declined_pc=0,declined_generation=0;
+    const uint32_t generation=resolve_generation.load(std::memory_order_relaxed)^(dynamic_generation.load(std::memory_order_relaxed)<<16);
+    if(c.pc==declined_pc && generation==declined_generation)return false;
+    if(p->dispatch(c))return true;
+    declined_pc=c.pc;declined_generation=generation;
+    return false;
+}
 uint32_t NativePlatform::execute(Cpu& c,uint32_t stop,uint64_t budget){
-    struct Restore{Cpu* previous;~Restore(){active_guest_cpu=previous;}}restore{active_guest_cpu};active_guest_cpu=&c;
+    struct Restore{Cpu* previous;uint32_t stop;~Restore(){active_guest_cpu=previous;execute_stop=stop;}}restore{active_guest_cpu,execute_stop};active_guest_cpu=&c;execute_stop=stop;
     for(uint64_t i=0;i<budget;++i){if(stopping)throw Fault("translated execution interrupted");if(c.pc==stop)return uint32_t(r<4>(c,0));if(!dispatch(c)){last_page_entry=c.pc;step(c);}}
     throw Fault("native32 translated instruction budget exhausted");
 }

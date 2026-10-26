@@ -18,6 +18,7 @@ call (musttail), so a loop's registers stay in host registers from one iteration
     control returns to the dispatch loop (checked on backward edges and dynamic transfers, which every cycle contains).
 Runtime services (user operations, mod hooks, faults) see the registers through Cpu::regs: SPILL_OUT/SPILL_IN around them.
 """
+import bisect
 import json
 import re
 import struct
@@ -33,6 +34,8 @@ G_SIZE = 32
 PASSED = list(range(8))
 ORDER = [0, 1, 2, 3, 4, 5, 6, 7, "c", "bud"]
 HOT_ORDER = [4, 0, 1, 6, 7, 2, 3, 5]   # ESP EAX ECX ESI EDI EDX EBX EBP: by static use count in the program
+# Speed layer (speed.hpp): predicted return sites tried per RETURN before the dispatch switch (0 = no predictions).
+PREDICT_MAX = 4
 
 
 def set_target(spec):
@@ -73,12 +76,23 @@ class Program:
         self.leaders = set()
         self.live_in = {}
         self.blocks = set()        # leaders that exist as generated functions
+        self.calls = []            # (call instruction, return site, static target) of every direct CALL
+        self.jumps = []            # (instruction, static target) of every direct unconditional BRANCH (tail calls among them)
+        self.returns = set()       # RETURN instructions
+        self.ret_candidates = {}   # RETURN instruction -> likely return sites (speed layer: predicted returns)
 
     def note(self, raw):
         a, n = raw["a"], raw["n"]
         self.addrs.append(a)
         self.lengths[a] = n
         ops = raw["p"]
+        for op in ops:
+            if op[0] == "CALL" and op[2][0] == "ram":
+                self.calls.append((a, a + n, int(op[2][1], 16)))
+            elif op[0] == "BRANCH" and op[2][0] == "ram":
+                self.jumps.append((a, int(op[2][1], 16)))
+            elif op[0] == "RETURN":
+                self.returns.add(a)
         for op in ops:
             name = op[0]
             for node in op[2:]:
@@ -143,8 +157,10 @@ class Program:
         leaders |= {a + self.lengths[a] for a in self.nop_insns if a in self.lengths}
         # Every aligned 32-bit word of the program image that points into the code (vtables, callback tables, SEH and
         # switch tables): a dynamic transfer can only enter a function body at a leader.
+        self.image = []   # (base, bytes) of the program image, for the jump tables of BRANCHIND (table_targets)
         for block in manifest["memory"]:
             data = (Path(export_dir) / block["file"]).read_bytes()
+            self.image.append((block["start"], data))
             words = struct.unpack_from(f"<{len(data) // 4}I", data)
             leaders |= {w for w in words if TEXT_LO <= w < TEXT_HI}
         leaders |= {f["entry"] for f in manifest["functions"] if not f.get("external")}
@@ -161,6 +177,63 @@ class Program:
         missing = sorted(a for a in self.mod_points if (a >> 12) in pages and a in have and a not in self.blocks)
         if missing:
             raise ValueError("mod patch points without a block entry: " + ", ".join(hex(a) for a in missing))
+        self.predict_returns(manifest)
+
+    def table_targets(self, ins, limit=256):
+        """Blocks named by a jump table that an indirect JMP reads (JMP [base+reg*4]): the code addresses stored from each image
+        constant of the instruction onwards, until the first word that is not one. Only a prediction (the dispatch switch stays the
+        fallback), so a table read too far or too short costs time, not correctness."""
+        out = []
+        for op in ins.ops:
+            for node in op[2:]:
+                if not (node and node[0] == "const" and node[2] == 4):
+                    continue
+                base = int(node[1], 16)
+                for start, data in self.image:
+                    if start <= base < start + len(data) - 3:
+                        at = base - start
+                        while at + 4 <= len(data) and len(out) < limit:
+                            w = struct.unpack_from("<I", data, at)[0]
+                            if not TEXT_LO <= w < TEXT_HI:
+                                break
+                            if w in self.blocks and w not in out:
+                                out.append(w)
+                            at += 4
+        return out
+
+    def predict_returns(self, manifest):
+        """Likely targets of each RETURN: the return sites of the direct calls to the function that holds it, plus those of the
+        callers of functions that reach it by a tail jump. A prediction is only ever an exact comparison of the dynamic target
+        followed by a direct tail call to the block the dispatch switch would select, so a wrong or missing one costs time, not
+        correctness."""
+        ranges = sorted((lo, hi, f["entry"]) for f in manifest["functions"] if not f.get("external") for lo, hi in f["ranges"])
+        starts = [r[0] for r in ranges]
+
+        def owner(a):
+            i = bisect.bisect_right(starts, a) - 1
+            while i >= 0 and ranges[i][0] <= a:
+                if a <= ranges[i][1]:
+                    return ranges[i][2]
+                i -= 1
+            return None
+        entries = {r[2] for r in ranges}
+        sites = {}
+        for a, ret, target in self.calls:
+            if target in entries and ret in self.blocks:
+                sites.setdefault(target, []).append(ret)
+        tails = {}
+        for a, target in self.jumps:
+            if target in entries:
+                src = owner(a)
+                if src is not None and src != target:
+                    tails.setdefault(target, set()).add(src)
+        for r in self.returns:
+            f = owner(r)
+            if f is None:
+                continue
+            cands = list(dict.fromkeys(sites.get(f, []) + [s for g in sorted(tails.get(f, ())) for s in sites.get(g, [])]))
+            if cands:
+                self.ret_candidates[r] = cands
 
 
 def written_flags(insns):
@@ -225,6 +298,21 @@ def make(GF):
                     bit += 1
             return "".join(out)
 
+        def dynamic_transfer(self, name, ins):
+            """TAIL_PRED(target, predicted blocks): see emit_function. A RETURN tries the return sites of the callers of its
+            function; an indirect JMP through a jump table of the image switches on the table's blocks."""
+            pred = ""
+            if name == "RETURN" and PREDICT_MAX:
+                for t in self.prog.ret_candidates.get(ins.addr, [])[:PREDICT_MAX]:
+                    self.referenced.add(t)
+                    pred += f"if(t__==0x{t:x}u)[[clang::musttail]] return blk_{t:x}(ARGS);"
+            elif name == "BRANCHIND" and PREDICT_MAX:
+                cases = self.prog.table_targets(ins)
+                if cases:
+                    self.referenced.update(cases)
+                    pred = "switch(t__){" + "".join(f"case 0x{t:x}u:[[clang::musttail]] return blk_{t:x}(ARGS);" for t in cases) + "default:break;}"
+            return f"TAIL_PRED(t_,{pred});"
+
         def exit_code(self, target):
             return self.flush_flags(self.prog.live_in.get(target, flaglive.ALL_FLAGS)) + f"EXIT(0x{target:x}u);"
 
@@ -286,6 +374,8 @@ def emit_page_regs(GF, RegEmitter, prog, page, insns, live_out):
         pieces.append(emit_function(GF, prog, start, fn, written, dyn, body))
     head = ['#include "fast_regs.hpp"', "namespace nfsu2raw {", "#define EXIT(T) do{nx=u32(T);goto XIT;}while(0)"]
     head.append("PN u32 ent_dispatch(%s);" % declare_args())
+    head.append("PN u32 ent_native(%s);" % declare_args())
+    head.append("PN u32 ent_missing(%s);" % declare_args())   # the switch default, a tail call (see dispatch.cpp)
     for t in sorted(referenced):
         head.append("PN u32 blk_%x(%s);" % (t, declare_args()))
     own = sorted(i.addr for i in insns if i.addr in prog.blocks)
@@ -296,7 +386,7 @@ def emit_page_regs(GF, RegEmitter, prog, page, insns, live_out):
     ent = ["PN u32 ent_%x(%s){switch(c.pc){" % (page, declare_args())]
     for a in own:
         ent.append(f"case 0x{a:x}:[[clang::musttail]] return blk_{a:x}({arg_names()});")
-    ent.append("default:missing_instruction(c.pc);}}")
+    ent.append(f"default:[[clang::musttail]] return ent_missing({arg_names()});}}}}")
     wrapper = (f"u32 page_{page:x}(Cpu& c){{u8* R=c.regs.data();return ent_{page:x}("
                + ",".join("c" if t == "c" else "REG_BUDGET" if t == "bud" else f"r4(R+{4 * t})" for t in ORDER) + ");}")
     return "\n".join(head) + "\n" + "".join(pieces) + "\n".join(ent) + "\n" + wrapper + "\n#undef EXIT\n}\n"
@@ -335,10 +425,19 @@ def emit_function(GF, prog, start, fn, written, dyn, body):
         else:
             bit += 1
     lo, hi = min(GF.ALL_PAGES), max(GF.ALL_PAGES)
-    out.append(f"#define TAIL_DYNAMIC(T) do{{u32 t__=u32(T);{dflush}c.pc=t__;if(__builtin_expect(bud>0&&u32((t__>>12)-0x{lo:x}u)<=0x{hi - lo:x}u,1)){{[[clang::musttail]] return ent_dispatch(ARGS);}}nx=t__;goto XIT;}}while(0)")
+    # A dynamic transfer: into the translated image through the dispatch switch, after the predicted blocks P when the speed
+    # layer allows them (g_speed_predict); outside it (Windows, Direct3D, COM methods, the run-time interpreter) through the speed
+    # layer's native-call hook without leaving translated code (ent_native, a tail call: a call made here would make every block
+    # with a dynamic transfer save registers on entry). Without the hook control returns to the dispatch loop as before.
+    inimg = f"u32((t__>>12)-0x{lo:x}u)<=0x{hi - lo:x}u"
+    out.append(f"#define TAIL_PRED(T,P) do{{u32 t__=u32(T);{dflush}c.pc=t__;"
+               f"if(__builtin_expect(bud>0&&{inimg},1)){{if(g_speed_predict){{P}}[[clang::musttail]] return ent_dispatch(ARGS);}}"
+               f"if(bud>0&&g_native_hook){{[[clang::musttail]] return ent_native(ARGS);}}"
+               f"nx=t__;goto XIT;}}while(0)")
+    out.append("#define TAIL_DYNAMIC(T) TAIL_PRED(T,)")
     out.append("#define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)")
     out.append(body)
     out.append(f"XIT:{store_g}c.instructions+=REG_BUDGET-bud;return nx;")
     out.append("FLT:SPILL_OUT();fast_fault(c,fm,fpc);")
-    out.append("#undef ARGS\n#undef SPILL_OUT\n#undef SPILL_IN\n#undef TAIL_DYNAMIC\n#undef NFSU2_FAULT\n}\n")
+    out.append("#undef ARGS\n#undef SPILL_OUT\n#undef SPILL_IN\n#undef TAIL_DYNAMIC\n#undef TAIL_PRED\n#undef NFSU2_FAULT\n}\n")
     return "\n".join(out)

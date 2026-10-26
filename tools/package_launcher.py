@@ -55,6 +55,24 @@ INI = """; NFS Underground 2 - NUE - launcher configuration. Every line is optio
 ; Default: sleigh\\x86.sla next to the launcher; its SHA-256 is verified at start.
 ;sleigh_spec=sleigh\\x86.sla
 
+[speed]
+; Speed layer: shortcuts in the translated game that never change what it computes. Each can be switched off to compare
+; (all at once: --no-speed or enabled=off; the environment variables NFSU2_SPEED_NATIVE_CALLS / _PREDICT / _LOOKUPS = 0 or 1 win).
+; native_calls: Windows and Direct3D calls are made straight from the translated code instead of through the dispatch loop.
+;native_calls=on
+; predict: a return or an indirect call first tries the places the translator found likely, then the full address lookup.
+;predict=on
+; lookups: the widescreen fix remembers the game addresses it looks up by name.
+;lookups=on
+
+[detail]
+; How far away the game keeps its detailed models. The game draws distant scenery with simpler models and switches to the detailed
+; one late as you approach; small distant objects are not drawn at all. original = the game as it is; high = detailed models twice
+; as far and smaller objects drawn; max = the detailed model whenever it is loaded. Higher settings cost frame rate.
+;world_detail=original
+; Cars and tyres (traffic included): original = the game's own choice, max = always the detailed model.
+;car_detail=original
+
 [widescreen]
 ; The widescreen fix is built into this program (a port of the open-source NFSU2 Widescreen Fix; see README.txt). enabled=off
 ; restores the original game. width/height: the resolution used when none is saved yet (0 = the desktop's); afterwards the
