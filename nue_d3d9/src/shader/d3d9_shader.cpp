@@ -1,9 +1,9 @@
-#include "platform/shader/d3d9_shader.hpp"
+#include "nue/shader/d3d9_shader.hpp"
 #include <algorithm>
 #include <cstdio>
 #include <cstring>
 
-namespace nfsu2::platform::shader {
+namespace nue::shader {
 namespace {
 
 struct OpInfo { const char* name; int8_t dst; int8_t src; };   // operand counts for models below 2.0 (src < 0: depends on version)
@@ -73,6 +73,35 @@ const char* opcode_name(uint16_t opcode) {
     return "?";
 }
 
+size_t token_count(const uint32_t* tokens) {
+    const uint32_t version = tokens[0], kind = version >> 16;
+    if (kind != 0xFFFE && kind != 0xFFFF) return 0;
+    const uint32_t major = (version >> 8) & 0xFF, minor = version & 0xFF;
+    const bool has_length = major >= 2, pixel = kind == 0xFFFF;
+    size_t pos = 1;
+    while (pos < (1u << 20)) {
+        const uint32_t token = tokens[pos];
+        const uint16_t opcode = uint16_t(token & 0xFFFF);
+        if (opcode == op_end) return pos + 1;
+        if (opcode == op_comment) { pos += 1 + ((token >> 16) & 0x7FFF); continue; }
+        size_t length;
+        if (opcode == op_phase) length = 0;
+        else if (opcode == op_def || opcode == op_defi) length = 5;
+        else if (opcode == op_dcl || opcode == op_defb) length = 2;
+        else if (has_length) length = (token >> 24) & 0xF;
+        else {
+            const PixelOp* p = pixel_info(opcode);
+            const OpInfo* i = info_for(opcode);
+            if (p) length = size_t(p->dst + p->src);
+            else if (i) length = size_t(i->dst + i->src);
+            else return 0;
+            if (pixel && major == 1 && minor == 4 && (opcode == op_texcoord || opcode == op_tex)) length = 2;
+        }
+        pos += 1 + length;
+    }
+    return 0;
+}
+
 bool decode(std::span<const uint32_t> tokens, Program& out, std::string& error) {
     out = Program{};
     if (tokens.size() < 2) { error = "too short"; return false; }
@@ -138,11 +167,25 @@ bool decode(std::span<const uint32_t> tokens, Program& out, std::string& error) 
             in.dst = decode_dst(tokens[at++]);
             in.immediate[0] = float(tokens[at++] & 1);
         } else {
-            if (dst_count) { in.has_dst = true; in.dst = decode_dst(tokens[at++]); }
-            // (a predicate source, if any, is the last token of the instruction; it is skipped, not kept in src[])
-            const int sources = std::min(src_count, 4);
-            for (int k = 0; k < sources; ++k) in.src[k] = decode_src(tokens[at++]);
-            in.src_count = uint8_t(sources);
+            size_t tail = pos + advance;
+            if (in.predicated && tail > at) { in.predicate = decode_src(tokens[tail - 1]); --tail; }   // the predicate is the last token of the instruction
+            if (dst_count) {
+                in.has_dst = true; in.dst = decode_dst(tokens[at++]);
+                if (in.dst.relative && has_length && at < tail) ++at;   // the address register of a relative destination (not interpreted)
+            }
+            // Sources are read until the tokens run out: in models 2 and 3 a relative source is followed by the token of its address register.
+            int k = 0;
+            while (at < tail && k < 4) {
+                SrcParam s = decode_src(tokens[at++]);
+                if (s.relative && has_length && at < tail + (in.predicated ? 0 : 0) && at < pos + advance) {
+                    const uint32_t rel = tokens[at++];
+                    s.relative_loop = type_of(rel) == RegType::loop;
+                    s.relative_component = uint8_t((rel >> 16) & 3);
+                }
+                in.src[k++] = s;
+            }
+            in.src_count = uint8_t(k);
+            (void)src_count;
         }
         for (int k = 0; k < in.src_count; ++k) {
             const SrcParam& s = in.src[k];
@@ -280,4 +323,4 @@ std::string disassemble(const Program& p) {
     return text;
 }
 
-}  // namespace nfsu2::platform::shader
+}  // namespace nue::shader

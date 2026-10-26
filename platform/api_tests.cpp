@@ -69,7 +69,7 @@ void null_device_and_gpu() {
     null::NullGpu gpu;
     CHECK(gpu.caps().texture_format[size_t(gpu::Format::bc1)]);
     MutableBytes memory;
-    auto transient = gpu.allocate_transient(128, 32, memory);
+    auto transient = gpu.allocate_transient(128, 32, false, memory);
     CHECK(transient && memory.size() == 128);
     gpu::DrawDesc state;
     gpu.begin_pass({});

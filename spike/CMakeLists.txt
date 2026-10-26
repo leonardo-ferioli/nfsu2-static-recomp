@@ -19,8 +19,8 @@ target_include_directories(spirv_cross PUBLIC ${SPIRV_CROSS})
 target_compile_options(spirv_cross PRIVATE -O2 -w)
 
 # Our shader path (portable C++).
-add_library(nfsu2_shader STATIC ${REPO}/platform/shader/d3d9_shader.cpp ${REPO}/platform/shader/d3d9_to_spirv.cpp ${REPO}/platform/shader/cross_compile.cpp)
-target_include_directories(nfsu2_shader PUBLIC ${REPO})
+add_library(nfsu2_shader STATIC ${REPO}/nue_d3d9/src/shader/d3d9_shader.cpp ${REPO}/nue_d3d9/src/shader/d3d9_to_spirv.cpp ${REPO}/nue_d3d9/src/shader/cross_compile.cpp)
+target_include_directories(nfsu2_shader PUBLIC ${REPO}/nue_d3d9/include ${REPO}/nue_d3d9/src)
 target_link_libraries(nfsu2_shader PUBLIC spirv_cross)
 
 find_library(D3DCOMPILER d3dcompiler HINTS "C:/Program Files (x86)/Windows Kits/10/Lib/10.0.26100.0/um/x64")

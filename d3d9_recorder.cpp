@@ -15,7 +15,7 @@
 #include <tuple>
 
 namespace nfsu2raw {
-using namespace nfsu2::platform::d3d9;
+using namespace nue::d3d9;
 
 namespace {
 #define SLOT(Vtbl, Name) (unsigned(offsetof(Vtbl, Name) / sizeof(void*)))
@@ -461,7 +461,7 @@ void D3d9Recorder::after(uint32_t target, uint32_t sp, uint32_t eax, uint64_t in
         else if (s == SLOT(V, SetTransform)) { std::vector<uint32_t> w{a[1]}; for (int i = 0; i < 16; ++i) w.push_back(u32_at(a[2] + i * 4)); r.emit(uint8_t(Method::set_transform), w); }
         else if (s == SLOT(V, SetViewport)) { const uint32_t p = a[1]; r.emit(uint8_t(Method::set_viewport), {u32_at(p), u32_at(p + 4), u32_at(p + 8), u32_at(p + 12), u32_at(p + 16), u32_at(p + 20)}); }
         else if (s == SLOT(V, SetRenderState)) r.emit(uint8_t(Method::set_render_state), {a[1], a[2]});
-        else if (s == SLOT(V, BeginStateBlock)) { r.emit(uint8_t(Method::begin_state_block), {}); r.in_state_block = true; }
+        else if (s == SLOT(V, BeginStateBlock)) { r.in_state_block = true; r.emit(uint8_t(Method::begin_state_block), {}); }   // in_state_block first: a begin outside a window must be recorded too
         else if (s == SLOT(V, EndStateBlock)) { r.in_state_block = false; if (ok_result) { const uint32_t o = u32_at(a[1]); r.add(o, Kind::state_block); r.emit(uint8_t(Method::end_state_block), {o}); } }
         else if (s == SLOT(V, SetTexture)) r.emit(uint8_t(Method::set_texture), {a[1], a[2]});
         else if (s == SLOT(V, SetTextureStageState)) r.emit(uint8_t(Method::set_texture_stage_state), {a[1], a[2], a[3]});

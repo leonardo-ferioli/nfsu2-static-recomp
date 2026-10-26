@@ -1,6 +1,7 @@
 // Frame-time constants, intro skipping, cutscene frame rate, CPU affinity, drive check, sound step and the windowed modes
 // (the mod's Misc and Windowed modules). The windowed modes act on the game's window calls, which this program implements
 // natively (NativePlatform::override_import) instead of patching an import table.
+#include "nue/window_fit.hpp"
 #include "mods_internal.hpp"
 #include "platform/services.hpp"
 namespace platform = nfsu2::platform;
@@ -53,9 +54,9 @@ std::tuple<int, int, int, int> before_create_window(int width, int height) {
     const auto [desktop_w, desktop_h] = monitor_size();
     int new_w = width, new_h = height;
     if (g_scale_window) {
-        const float aspect = float(width) / float(height);
-        new_h = desktop_h;
-        new_w = int(new_h * aspect);
+        const nue::FitRect fit = nue::fit_aspect(uint32_t(width), uint32_t(height), 0, 0, uint32_t(desktop_w), uint32_t(desktop_h));   // as large as fits the monitor, aspect kept
+        new_w = int(fit.width);
+        new_h = int(fit.height);
     }
     if (g_stretch_window) {
         new_h = desktop_h;
@@ -85,9 +86,9 @@ void center_window_position(int width, int height) {
     const auto [desktop_w, desktop_h] = monitor_size();
     int new_w = width, new_h = height;
     if (g_scale_window) {
-        const float aspect = float(width) / float(height);
-        new_h = desktop_h;
-        new_w = int(new_h * aspect);
+        const nue::FitRect fit = nue::fit_aspect(uint32_t(width), uint32_t(height), 0, 0, uint32_t(desktop_w), uint32_t(desktop_h));   // as large as fits the monitor, aspect kept
+        new_w = int(fit.width);
+        new_h = int(fit.height);
     }
     if (g_stretch_window) {
         new_h = desktop_h;

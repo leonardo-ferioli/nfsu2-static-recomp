@@ -8,7 +8,7 @@
 #include <string>
 #include <vector>
 
-namespace nfsu2::platform::shader {
+namespace nue::shader {
 
 enum class Stage : uint8_t { vertex, pixel };
 
@@ -49,6 +49,9 @@ struct SrcParam {
     uint8_t swizzle[4] = {0, 1, 2, 3};   // 0 = x ... 3 = w
     SrcModifier modifier = SrcModifier::none;
     bool relative = false;
+    // Relative addressing (c[a0.x + n], c[aL + n]) in models 2 and 3: the address register and its component. Model 1 always uses a0.x.
+    bool relative_loop = false;
+    uint8_t relative_component = 0;
 };
 
 struct Instruction {
@@ -56,6 +59,7 @@ struct Instruction {
     uint8_t control = 0;            // bits 16..23 of the opcode token (comparison for ifc/setp, texld variant)
     bool coissue = false;           // pixel shaders 1.x: "+" instruction paired with the previous one
     bool predicated = false;
+    SrcParam predicate;             // the predicate register (p0 with swizzle and optional negation) when predicated
     bool has_dst = false;
     DstParam dst;
     SrcParam src[4];
@@ -74,10 +78,12 @@ struct Program {
 
 // Decodes a complete shader (version token to END token). Returns false and sets `error` on anything it does not understand.
 bool decode(std::span<const uint32_t> tokens, Program& out, std::string& error);
+// Number of tokens of a shader whose size is not known (D3D9 gives only a pointer): up to and including the end token; 0 when it is not a shader.
+size_t token_count(const uint32_t* tokens);
 
 // Text in the style of Microsoft's disassembler ("mul r0, t0, v0", "add r0.xyz, r0, r0", "+ mov r0.w, r0.w", "dcl_position v0").
 std::string disassemble(const Program&);
 
 const char* opcode_name(uint16_t opcode);
 
-}  // namespace nfsu2::platform::shader
+}  // namespace nue::shader
