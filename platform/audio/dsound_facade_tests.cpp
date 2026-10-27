@@ -390,6 +390,13 @@ void test_3d_and_notify_via_abi(GuestMemory* memory = nullptr) {
     uint32_t list[4] = {2400 * 4, 0xE1, 0xFFFFFFFFu, 0xE2};   // DSBPOSITIONNOTIFY: offset, event handle
     CHECK_HR(g.call(notify, 3, {2, g.put(list, 16)}), HR_OK);
     CHECK_HR(g.call(notify, 3, {2, 0}), HR_INVALIDARG);
+    // Hostile counts: `count * 8` must not wrap in 32 bits (0x20000001 * 8 == 8), nor ask for hundreds of millions of entries.
+    const uint32_t list_ptr = g.put(list, 16);
+    CHECK_HR(g.call(notify, 3, {0x20000001u, list_ptr}), HR_INVALIDARG);
+    CHECK_HR(g.call(notify, 3, {0x20000000u, list_ptr}), HR_INVALIDARG);
+    CHECK_HR(g.call(notify, 3, {0xFFFFFFFFu, list_ptr}), HR_INVALIDARG);
+    CHECK_HR(g.call(notify, 3, {0x10001u, list_ptr}), HR_INVALIDARG);
+    CHECK_HR(g.call(notify, 3, {2, 0xFFFFFFF8u}), HR_INVALIDARG);   // 2 entries starting 8 bytes below the end of the 4 GiB space
     g.call(nb, buf_slot::Play, {0, 0, 1});
     g.sink->advance(4800);
     CHECK(g.host.events == std::vector<uint32_t>({0xE1}));

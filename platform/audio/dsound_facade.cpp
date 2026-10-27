@@ -761,7 +761,10 @@ struct DsoundFacade::Impl {
         if (slot == 0) return query_interface(o, a[1], a[2]);
         if (slot != 3) return hr::unsupported;
         const uint32_t count = a[1];
-        if (count > 0 && (!a[2] || !at(a[2], count * 8))) return hr::invalid_param;
+        // The count and the array come from the guest: bound the count (a DSBPOSITIONNOTIFY is 8 bytes; `count * 8` in 32 bits would wrap) and the
+        // range inside the 32-bit guest space, then check that the whole array is mapped.
+        if (count > 0x10000) return hr::invalid_param;
+        if (count > 0 && (!a[2] || uint64_t(a[2]) + uint64_t(count) * 8 > 0x100000000ull || !at(a[2], count * 8))) return hr::invalid_param;
         std::vector<Notify> list;
         for (uint32_t i = 0; i < count; ++i) {
             uint32_t off, handle;
