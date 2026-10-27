@@ -82,9 +82,23 @@ plain C++ for both widths; the reciprocal estimates (`rcpps`, `rcpss`, `rsqrtss`
 `PN` in `fast_regs.hpp` is `regcall` on x86-32 and `preserve_none` on x86-64 and arm64. A block-to-block `musttail` call is a plain jump on all of them
 (checked in the assembly of aarch64-linux, aarch64-macos, aarch64-pc-windows-msvc and x86_64-linux).
 
-## Gates
+## Gates (run on the Windows PC; `tools/cross_gate.py <tree> <target>` compiles every file of a tree, `-O0`)
 
-See the table at the end of this file for the run that produced the final numbers.
+| Gate | Result |
+|---|---|
+| default output unchanged | `generate_fast.py` without arguments regenerated after the last change: `identical: 901 files` against `generated_fast` (`tools/diff_generated.py`) |
+| 32-bit `ctest` (default build, 50 tests incl. `fast_dynamic`, `fast_dynamic_boot`, `fast_resources`, `reg_entries`, `x87_host_fpu`, `launcher_cli`) | 50 of 50 pass |
+| 32-bit virtual x87, `double` and `soft80` (all pages generated and built in that mode) | `fast_platform`, `fast_dynamic`, `fast_dynamic_boot` (220,614 instructions as the interpreter), `fast_widescreen` x2, `fast_seh`, `fast_resources`, `reg_entries`, `x87_host_fpu` (60 functions, 692 trials, 0 mismatches) pass |
+| `--host x86_64`, 901 files, conservative leaders | `x86_64-pc-windows-msvc` 901/901 |
+| `--host x86_64`, 901 files, tight leaders (final generator) | `x86_64-pc-windows-msvc` 901/901 (541 MB of objects at -O0) |
+| `--host aarch64` (virtual x87 `double`), 901 files, conservative leaders | `aarch64-linux-gnu` 901/901, `aarch64-pc-windows-msvc` 901/901, `aarch64-macos` 901/901 |
+| `--host aarch64`, tight leaders (final generator) | see the end of this file |
+| `reg_entries` on the 64-bit trees (14,987 addresses against 177,625 entries) | pass |
+| the whole `--host x86_64` program executed on x86-64 | `tools/spike/x64_program_check.cpp`: the 901 files, built as x86-64, map the real image **in an arena** (`host = base + guest`, base from `VirtualAlloc`, not at the guest addresses) and run the game's resource-name hash routine for 147 random strings: results and instruction counts identical to the 32-bit product in all 147 (`tools/spike/arena_cmp.py`). This also proves that no generated code or x87 `.byte` instruction relies on a 32-bit host pointer on the paths executed. |
+| JDLZ on x86-64 (`tools/spike/jdlz_bench.cpp`, page 573 of the `x86_64` tree) | output and instruction count (14,299,370) identical |
+| `x87v_tests`, `x87_soft_tests`, `fast_optests` as x86-64 programs | pass |
+| `fast_dynamic`, `fast_dynamic_boot` on x86-64 | not possible yet: they need `NativePlatform` (bridge, x86-32 JIT) |
+| arm64 execution | not done: no device or emulator on the PC; `tools/litmus/tso_litmus.cpp` and the x87 comparisons are the first things to run there |
 
 ## Memory ordering on arm64
 
