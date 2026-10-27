@@ -42,8 +42,22 @@ Run the translated game on a 64-bit host (Windows x64 first, then Linux and Andr
 3. **x64 fast backend.** `generate_fast.py --host x64`: `gp` with the base, x87 asm address in RAX, `gen_regs.set_target('x64')` (all 8 guest registers in host registers), `ent_native` / predicted returns adapted, tail calls. Compile all pages for x64 and run `fast_*` tests that do not need the bridge (`fast_dynamic`, `fast_resources`, `reg_entries`, `x87_host_fpu`).
 4. **`NativePlatform64`.** Image mapping in the arena, TEB/stack/heap in guest memory, guest threads, SEH, timer callbacks, the SLEIGH interpreter over the arena; imports from the Level A modules only. The three layers below move to their final shape here.
 5. **Run on Windows x64** (menu first), then Linux, then Android.
+6. **Zero run-time code** (needed for iOS): the audio modules translated ahead of time or replaced natively, and the coverage of the main image proven (see "No interpreter and no JIT on iOS").
 
 Rule for every stage: the 32-bit build keeps passing its tests; nothing is pushed; a stage ends in a commit with the test results.
+
+## No interpreter and no JIT on iOS (decision of 2026-10-27)
+
+iOS gives an app no executable memory it can write, so the SLEIGH interpreter (`dynamic_code.cpp`) and any JIT are **not** options there. Two things in the port use run-time code today; neither may remain on iOS.
+
+1. **The audio engine's modules.** The game loads relocatable x86 modules from its data files into the heap, relocates them and makes them executable; the interpreter runs them (observed: five regions, 177 distinct instructions in a first menu session; routines such as 0x71feef / 0x720767 / 0x72023c). Alternatives, in the order to try:
+   * **A. Translate them ahead of time like `SPEED2.EXE`.** The modules are bytes in the data files of the supported release (checked by hash, as the image is). Extract them with a tool, disassemble the whole module offline (not only the executed addresses), generate pages for them, and compile those into the app. At run time the loader still copies and relocates the module; the translated pages are used when the relocated bytes hash-equal the expected module **at the expected address**. In the arena model the guest heap is ours, so the load address can be made deterministic (a fixed address for module allocations); the pages are generated for that address. Fallback for any other bytes: stop with a clear error (never an interpreter on iOS).
+   * **B. Native reimplementation of what the modules do** (the audio codecs and DSP, `nue-audio`), hooked at the module's entry points like the mods hook the game. Cleanest long term, needs fidelity checks against the translated modules (A gives the reference: run both on the same input and compare samples).
+   * **C. Convert at import time** (sound banks to PCM/Opus on a desktop tool) -- only valid together with B, because the engine that reads the banks must then be replaced.
+   * Rejected: a JIT (not allowed on iOS), shipping an interpreter "only for rare paths" (it is the same thing).
+2. **Dynamic transfers inside `SPEED2.EXE`.** A jump to an address that is not a block leader ends in `ent_missing` ("no statically translated instruction at 0x..."). On iOS this must never happen: the leader set (static targets, return sites, function entries, jump tables, code-pointing words, immediates) is checked by `tools/test_reg_entries.py` and `tools/discover_gap_entries.py`; the coverage of every scene must be proven from traces before an iOS build, and any miss is a bug in the leader discovery, fixed by adding the entry, not by interpreting.
+
+Stage 4 (`NativePlatform64`) therefore keeps the interpreter as a desktop-only fallback behind a build switch (`NFSU2_DYNAMIC_INTERPRETER`, off for iOS), and stage 6 is added: **zero run-time code** (modules by A or B, coverage proof for the main image).
 
 ## Who does what
 
