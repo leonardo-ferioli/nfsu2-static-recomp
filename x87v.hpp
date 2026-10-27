@@ -16,10 +16,11 @@
 #include "fast.hpp"
 #include "x87_soft.hpp"
 #include <cmath>
+#include <cstdio>
 
 namespace nfsu2raw::x87v {
 using x87soft::Ctl;
-enum : u32 { O_C0 = 0x1090, O_CW = 0x10a0, O_SW = 0x10a2, O_TW = 0x10a4, O_ST = 0x1100 };
+enum : u32 { O_C0 = 0x1090, O_CW = 0x10a0, O_SW = 0x10a2, O_TW = 0x10a4, O_DEPTH = 0x10b0, O_ST = 0x1100 };
 
 inline u16 control_word(const u8* R) { const u16 c = r2(R + O_CW); return c ? c : u16(0x27f); }
 inline unsigned top(const u8* R) { return (r2(R + O_SW) >> 11) & 7; }
@@ -163,10 +164,17 @@ struct DblP {
         q = 0;
         if (std::isnan(a) || std::isnan(b) || std::isinf(a) || b == 0) return std::nan("");
         const double d = nearest ? std::nearbyint(a / b) : std::trunc(a / b);
-        q = unsigned((unsigned long long)std::fabs(d) & 7);
+        if (std::fabs(d) >= 4503599627370496.0) {   // the quotient does not fit a double's significand: its low bits come from the exact algorithm
+            unsigned exact;
+            SoftP::fprem(SoftP::fromd(a), SoftP::fromd(b), nearest, exact);
+            q = exact;
+        } else q = unsigned((unsigned long long)std::fabs(d) & 7);
         return nearest ? std::remainder(a, b) : std::fmod(a, b);
     }
-    static T scale(T a, T n, const Ctl&) { return std::ldexp(a, int(std::trunc(std::fmax(-100000.0, std::fmin(100000.0, n))))); }
+    static T scale(T a, T n, const Ctl&) {
+        if (std::isinf(n)) return n > 0 ? (a == 0 ? std::nan("") : (std::isinf(a) ? a : std::copysign(INFINITY, a))) : (std::isinf(a) ? std::nan("") : std::copysign(0.0, a));
+        return std::ldexp(a, int(std::trunc(std::fmax(-100000.0, std::fmin(100000.0, n)))));
+    }
     static unsigned klass(T v, bool& neg) {
         neg = std::signbit(v);
         switch (std::fpclassify(v)) { case FP_NAN: return 3; case FP_INFINITE: return 2; case FP_ZERO: return 1; case FP_SUBNORMAL: return 4; default: return 0; }
@@ -183,8 +191,15 @@ template<class P> struct Fpu {
     using T = typename P::T;
     static T get(u8* R, unsigned i) { return P::rd(slot(R, i)); }
     static void put(u8* R, unsigned i, T v) { P::wr(slot(R, i), v); }
+#ifdef NFSU2_X87_CHECK_STACK
+    // Validation builds (generate_fast.py --x87-check): the depth of the stack is counted so that, like the real FPU, an overflow or
+    // underflow sets the sticky stack-fault flag (status word bit 6). Product builds do not model it.
+    static void push(u8* R, T v) { if (R[O_DEPTH] >= 8) w2(R + O_SW, r2(R + O_SW) | 0x40); else ++R[O_DEPTH]; set_top(R, top(R) - 1); put(R, 0, v); }
+    static void pop(u8* R) { if (R[O_DEPTH] == 0) w2(R + O_SW, r2(R + O_SW) | 0x40); else --R[O_DEPTH]; set_top(R, top(R) + 1); }
+#else
     static void push(u8* R, T v) { set_top(R, top(R) - 1); put(R, 0, v); }
     static void pop(u8* R) { set_top(R, top(R) + 1); }
+#endif
     static Ctl ctl(const u8* R) { return x87soft::control(control_word(R)); }
     // kind: 0 a+b, 1 a*b, 4 a-b, 5 b-a, 6 a/b, 7 b/a
     static T arith(unsigned kind, T a, T b, const Ctl& c) {
@@ -333,5 +348,111 @@ template<class P> struct Fpu {
         return 0;
     }
 };
+// Equality of a host extended value and a stored value in the policy's format (tests and the shadow mode); `raw80` says the stored bytes are
+// an 80-bit image (an FSAVE image) rather than a slot.
+inline bool shadow_equal_for_tests(const x87soft::Ext& h, const u8* bytes, bool raw80 = false) {
+    x87soft::Ext v;
+    if (raw80 || std::is_same_v<Policy, SoftP>) v = x87soft::load(bytes); else v = x87soft::from_f64(r8(bytes));
+    x87soft::Ext hh = h;
+    if (!raw80 && !std::is_same_v<Policy, SoftP>) hh = x87soft::from_f64(x87soft::to_f64(h, x87soft::Ctl{0, 53}));
+    if (raw80 && !std::is_same_v<Policy, SoftP>) { x87soft::Ext d = x87soft::from_f64(x87soft::to_f64(h, x87soft::Ctl{0, 53})); hh = d; v = x87soft::from_f64(x87soft::to_f64(v, x87soft::Ctl{0, 53})); }
+    if (hh.sig == v.sig && hh.se == v.se) return true;
+    return x87soft::unpack(h).k == x87soft::NAN_ && x87soft::unpack(v).k == x87soft::NAN_;
+}
+#ifdef NFSU2_X87_SHADOW
+// Shadow mode (generate_fast.py --x87-shadow, x86 hosts only, a validation build): every instruction runs on BOTH the virtual FPU and the
+// host FPU, in lock step, and the results are compared; the host's result is the one the program continues with (memory operands are
+// taken from the host run and the virtual stack is re-synchronised from the host after a difference), so the program behaves exactly
+// as with the host FPU while stderr lists every place where the virtual FPU would have differed (first 200, a total at exit).
+inline long g_shadow_checked = 0, g_shadow_bad = 0;
+inline void shadow_summary() { if (g_shadow_checked) std::fprintf(stderr, "x87 shadow: %ld instructions checked, %ld differ" "\n", g_shadow_checked, g_shadow_bad); }
+struct ShadowReporter { ~ShadowReporter() { shadow_summary(); } };
+inline ShadowReporter g_shadow_reporter;
+inline unsigned operand_bytes(u32 op, u32 modrm) {
+    const u32 reg = (modrm >> 3) & 7;
+    if ((modrm >> 6) == 3) return 0;
+    switch (op) {
+        case 0xd8: case 0xda: return 4;
+        case 0xdc: return 8;
+        case 0xde: return 2;
+        case 0xd9: return reg == 4 || reg == 6 ? 28 : (reg == 5 || reg == 7 ? 2 : 4);
+        case 0xdb: return reg == 5 || reg == 7 ? 10 : 4;
+        case 0xdd: return reg == 4 || reg == 6 ? 108 : (reg == 7 ? 2 : 8);
+        default: return reg == 5 || reg == 7 ? 8 : 2;
+    }
+}
+inline bool shadow_same(const x87soft::Ext& h, const u8* slot_bytes, bool approx) {
+    x87soft::Ext v;
+    if constexpr (std::is_same_v<Policy, SoftP>) v = x87soft::load(slot_bytes);
+    else v = x87soft::from_f64(r8(slot_bytes));
+    x87soft::Ext hh = h;
+    if constexpr (!std::is_same_v<Policy, SoftP>) hh = x87soft::from_f64(x87soft::to_f64(h, x87soft::Ctl{0, 53}));
+    if (hh.sig == v.sig && hh.se == v.se) return true;
+    if (x87soft::unpack(h).k == x87soft::NAN_ && x87soft::unpack(v).k == x87soft::NAN_) return true;
+    if (!approx) return false;
+    const double x = std::bit_cast<double>(x87soft::to_f64(h, x87soft::Ctl{0, 53})), y = std::bit_cast<double>(x87soft::to_f64(v, x87soft::Ctl{0, 53}));
+    return std::fabs(x - y) <= 1e-14 * std::fmax(1.0, std::fabs(x));
+}
+template<u32 OP, u32 MODRM> inline u32 insn(u8* R, void* ea) {
+    constexpr bool mem = (MODRM >> 6) != 3;
+    constexpr u32 reg = (MODRM >> 3) & 7;
+    constexpr bool approx = OP == 0xd9 && (MODRM == 0xf0 || MODRM == 0xf1 || MODRM == 0xf2 || MODRM == 0xf3 || MODRM == 0xf9 || MODRM == 0xfb || MODRM == 0xfe || MODRM == 0xff);
+    const unsigned n = operand_bytes(OP, MODRM);
+    u8 before[112], host_after[112];
+    if (mem) std::memcpy(before, ea, n);
+    u32 ax_h = 0;
+    if constexpr (OP == 0xdf && MODRM == 0xe0) { u32 r; asm volatile(".byte %c1,%c2" : "=a"(r) : "i"(OP), "i"(MODRM) : "memory"); ax_h = r & 0xffff; }
+    else if constexpr (mem) asm volatile(".byte %c1,%c2" ::"a"(ea), "i"(OP), "i"(MODRM) : "memory");
+    else asm volatile(".byte %c0,%c1" ::"i"(OP), "i"(MODRM) : "memory");
+    if (mem) { std::memcpy(host_after, ea, n); std::memcpy(ea, before, n); }
+    Fpu<Policy>::run<OP, MODRM>(R, ea);
+    u8 env[108];
+    asm volatile("fnsave %0" : "=m"(env)::"memory");
+    asm volatile("frstor %0" ::"m"(env) : "memory");
+    u16 sw_h, cw_h, tw_h; std::memcpy(&sw_h, env + 4, 2); std::memcpy(&cw_h, env, 2); std::memcpy(&tw_h, env + 8, 2);
+    const unsigned top_h = (sw_h >> 11) & 7;
+    bool ok = top_h == top(R);
+    if ((cw_h & 0x0f3f) != (control_word(R) & 0x0f3f)) ok = false;
+    const unsigned cc_h = ((sw_h >> 8) & 1) | (((sw_h >> 9) & 1) << 1) | (((sw_h >> 10) & 1) << 2) | (((sw_h >> 14) & 1) << 3);
+    const unsigned cc_v = R[O_C0] | (R[O_C0 + 1] << 1) | (R[O_C0 + 2] << 2) | (R[O_C0 + 3] << 3);
+    const bool compare_op = ((OP == 0xd8 || OP == 0xdc) && (reg == 2 || reg == 3)) || (OP == 0xd9 && MODRM == 0xe4) || (OP == 0xdd && !mem && MODRM >= 0xe0) || (OP == 0xda && !mem) || (OP == 0xde && MODRM == 0xd9);
+    const unsigned cc_mask = compare_op ? 0xdu : ((OP == 0xd9 && (MODRM == 0xe5 || MODRM == 0xf8 || MODRM == 0xf5)) ? 0xfu : 0u);
+    const bool partial_prem = OP == 0xd9 && (MODRM == 0xf8 || MODRM == 0xf5) && (cc_h & 4);
+    if (!partial_prem && (cc_h & cc_mask) != (cc_v & cc_mask)) ok = false;
+    if (ok && !partial_prem) {
+        for (unsigned i = 0; i < 8; ++i) {
+            if (((tw_h >> (2 * ((top_h + i) & 7))) & 3) == 3) continue;                     // empty on the host
+            if (!shadow_same(x87soft::load(env + 28 + 10 * i), slot(R, i), approx)) { ok = false; break; }
+        }
+    }
+    if (mem && !(OP == 0xd9 && (reg == 4 || reg == 6 || reg == 7)) && !(OP == 0xdd && (reg == 4 || reg == 6 || reg == 7)) && std::memcmp(host_after, before, n) != 0) {
+        const bool both_nan32 = n == 4 && (std::bit_cast<float>(r4(host_after)) != std::bit_cast<float>(r4(host_after)));
+        const bool both_nan64 = n == 8 && (std::bit_cast<double>(r8(host_after)) != std::bit_cast<double>(r8(host_after)));
+        if (std::memcmp(host_after, ea, n) != 0 && !both_nan32 && !both_nan64 && !(n == 10 && !std::is_same_v<Policy, SoftP>)) ok = false;
+    }
+    ++g_shadow_checked;
+    if (mem) std::memcpy(ea, host_after, n);
+    if (!ok) {
+        if (++g_shadow_bad <= 200) {
+            std::fprintf(stderr, "x87 shadow MISMATCH %02x/%02x top host %u virtual %u cc host %x virtual %x control word host %04x virtual %04x tags host %04x" "\n", OP, MODRM, top_h, top(R), cc_h, cc_v, cw_h, control_word(R), tw_h);
+            for (unsigned i = 0; i < 8; ++i) {
+                const unsigned p = (top_h + i) & 7;
+                if (((tw_h >> (2 * p)) & 3) == 3) continue;
+                const x87soft::Ext hv = x87soft::load(env + 28 + 10 * i);
+                const x87soft::Ext vv = std::is_same_v<Policy, SoftP> ? x87soft::load(slot(R, i)) : x87soft::from_f64(r8(slot(R, i)));
+                std::fprintf(stderr, "    ST(%u) host %04x:%016llx virtual %04x:%016llx" "\n", i, hv.se, (unsigned long long)hv.sig, vv.se, (unsigned long long)vv.sig);
+            }
+        }
+        for (unsigned i = 0; i < 8; ++i) {   // the program continues with the host's state
+            const unsigned p = (top_h + i) & 7;
+            if (((tw_h >> (2 * p)) & 3) != 3) Policy::wr(R + O_ST + 16 * p, Policy::from80(env + 28 + 10 * i));
+        }
+        set_top(R, top_h);
+        R[O_C0] = cc_h & 1; R[O_C0 + 1] = (cc_h >> 1) & 1; R[O_C0 + 2] = (cc_h >> 2) & 1; R[O_C0 + 3] = (cc_h >> 3) & 1;
+    }
+    return ax_h;
+}
+#else
 template<u32 OP, u32 MODRM> inline u32 insn(u8* R, void* ea) { return Fpu<Policy>::run<OP, MODRM>(R, ea); }
+#endif
 }

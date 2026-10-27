@@ -18,6 +18,8 @@
 #include <random>
 #include <iomanip>
 #include <iostream>
+#include <cstdio>
+#include <cstdlib>
 #include <string>
 #include <vector>
 using namespace nfsu2raw;
@@ -59,7 +61,7 @@ struct Outcome{uint32_t registers[8];uint64_t instructions;double seconds;};
 // (the product never does it): it validates the interpreter over ~220k real instructions of CRT, C++ and Win32 startup
 // code. The two processes must end in the same registers, the same instruction count and the same memory.
 static int boot_digest(const std::filesystem::path& specification,const char* exports,const char* game,bool interpreted,const char* dump_path){
-    _putenv_s("NFSU2_DETERMINISTIC_MAP","1");_putenv_s("NFSU2_DETERMINISTIC_TIME","1");_putenv_s("NFSU2_STOP_AT_IMPORT","CreateThread");
+    _putenv_s("NFSU2_DETERMINISTIC_MAP","1");_putenv_s("NFSU2_DETERMINISTIC_TIME","1");if(!std::getenv("NFSU2_STOP_AT_IMPORT"))_putenv_s("NFSU2_STOP_AT_IMPORT","CreateThread");   // NFSU2_STOP_AT_IMPORT=<name> in the environment bisects the boot
     Cpu c;NativePlatform p(c,exports,game);
     DynamicCode interpreter(specification);
     uint32_t image_end=0;for(const auto& region:c.memory)if(region.base==0x400000)image_end=region.base+uint32_t(region.bytes.size());
@@ -67,7 +69,9 @@ static int boot_digest(const std::filesystem::path& specification,const char* ex
     interpreter.add_region(0x401000,image_end-0x401000);
     std::string stop;
     try{
+        FILE* boot_trace=std::getenv("NFSU2_BOOT_TRACE")?std::fopen(std::getenv("NFSU2_BOOT_TRACE"),"w"):nullptr;   // pc and instruction count at every return to this loop
         for(;;){
+            if(boot_trace)std::fprintf(boot_trace,"%08x %llu\n",c.pc,(unsigned long long)c.instructions);
             if(interpreted && interpreter.contains(c.pc))interpreter.run(c,1u<<20);
             else if(!p.dispatch(c)){if(interpreted)throw Fault("interpreted run reached code that is neither interpreted nor native");step(c);}
         }
@@ -82,6 +86,7 @@ static int boot_digest(const std::filesystem::path& specification,const char* ex
         const uint32_t register_bytes=0x1000;put(&register_bytes,4);put(registers.data(),registers.size());
         for(const auto& region:c.memory){const uint32_t base=region.base,size=uint32_t(region.bytes.size());put(&base,4);put(&size,4);put(c.pointer(base,size),size);}
     }
+    if(std::getenv("NFSU2_BOOT_TRACE")){uint16_t host_cw=x87_store_control();std::fprintf(stderr,"host x87 control word at the stop: %04x, guest register image: %04x\n",host_cw,unsigned(uint16_t(r<2>(c,0x10a0))));}
     std::cout<<"DIGEST stop=\""<<stop<<"\" pc=0x"<<std::hex<<c.pc;
     for(unsigned reg:general_registers)std::cout<<" r"<<reg<<"=0x"<<uint32_t(r<4>(c,reg));
     std::cout<<std::dec<<" instructions="<<c.instructions<<"\n";

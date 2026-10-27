@@ -241,6 +241,8 @@ GUEST_REG = {0: 0, 1: 4, 2: 8, 3: 12, 4: 16, 5: 20, 6: 24, 7: 28}   # EAX ECX ED
 X87_PASSTHROUGH = True
 HOST = "x86_32"       # --host
 X87_MODE = "host"     # --x87
+X87_SHADOW = False     # --x87-shadow: validation build that runs every instruction on the virtual and the host FPU and compares
+X87_CHECK = False      # --x87-check: validation builds count the virtual stack depth (x87v.hpp)
 X87_EA64 = False      # the effective address of a passed-through x87 instruction is a 64-bit host address (RAX)
 # Transfers to other pages are tail calls (clang musttail) straight into the target page's body function instead of a
 # return to the dispatch loop: no loop, no platform checks, no dispatch switch for static targets. A chain counter hands
@@ -334,11 +336,10 @@ def apply_mod_patches(ins):
 
 def x87_defines():
     """Lines that select the virtual FPU in a generated file (empty for the host FPU, so the default output is unchanged)."""
-    if X87_MODE == "double":
-        return "#define NFSU2_X87_VIRTUAL 1\n#include " + chr(34) + "x87v.hpp" + chr(34) + "\n"
-    if X87_MODE == "soft80":
-        return "#define NFSU2_X87_VIRTUAL 1\n#define NFSU2_X87_SOFT80 1\n#include " + chr(34) + "x87v.hpp" + chr(34) + "\n"
-    return ""
+    if X87_MODE not in ("double", "soft80"):
+        return ""
+    return ("#define NFSU2_X87_VIRTUAL 1\n" + ("#define NFSU2_X87_SOFT80 1\n" if X87_MODE == "soft80" else "")
+            + ("#define NFSU2_X87_CHECK_STACK 1\n" if X87_CHECK else "") + ("#define NFSU2_X87_SHADOW 1\n" if X87_SHADOW else "") + "#include " + chr(34) + "x87v.hpp" + chr(34) + "\n")
 
 
 def x87_encoding(ins):
@@ -912,6 +913,8 @@ def main():
                         help="return to the dispatch loop on every page transfer")
     parser.add_argument("--no-x87-passthrough", dest="x87_passthrough", action="store_false",
                         help="alias of --x87 pcode")
+    parser.add_argument("--x87-shadow", action="store_true", help="virtual x87 on an x86 host: run every instruction on the virtual and the host FPU in lock step, compare, and continue with the host's results (validation builds)")
+    parser.add_argument("--x87-check", action="store_true", help="virtual x87 only: count the stack depth and set the sticky stack-fault flag like the hardware (validation builds)")
     parser.add_argument("--host", choices=("x86_32", "x86_64", "aarch64"), default="x86_32",
                         help="processor the generated code is compiled for. x86_32 (default) is the product: guest address = host address, "
                              "x87 on the host FPU. x86_64 and aarch64 use the 64-bit guest memory model (every access through gp(), see "
@@ -934,8 +937,10 @@ def main():
         # The product shape unless an option that only exists in the page shape was asked for.
         page_only = args.local_regs or args.track_pc or not args.liveness or not args.tail_calls or args.pages
         args.reg_params = "off" if page_only else "x86:3"
-    global HOST, X87_MODE, X87_EA64
+    global HOST, X87_MODE, X87_EA64, X87_CHECK, X87_SHADOW
     HOST = args.host
+    X87_SHADOW = args.x87_shadow
+    X87_CHECK = args.x87_check
     X87_MODE = args.x87 or ("double" if HOST == "aarch64" else "host")
     if not args.x87_passthrough:
         X87_MODE = "pcode"

@@ -73,7 +73,60 @@ static double rel_error(Ext a, Ext b) {
 template<u32 OP, u32 MODRM> static Counters test_one(long trials, const char* name) {
     Counters ct;
     bool writes; const Kind kind = operand_kind(OP, MODRM, writes);
-    if (kind == ENV) return ct;
+    if (kind == ENV) {
+        static std::vector<u8> Rbuf(0x4000);
+        // FLDENV / FRSTOR load an image taken from a (different) host state; FNSTENV / FNSAVE store one. The state afterwards (TOP, control word,
+        // the registers the image or the stack holds) and the stored control/status words and register images must agree.
+        const u32 reg = (MODRM >> 3) & 7; const bool loads = reg == 4; const bool saves_regs = OP == 0xdd;
+        for (long t = 0; t < trials / 4 + 1; ++t) {
+            constexpr int N = 5;
+            const uint16_t cw = uint16_t(0x7f | ((rng() % 3 == 1 ? 2 : (rng() % 3 == 0 ? 0 : 3)) << 8) | ((rng() % 4) << 10));
+            Ext ext[N]; double vals[N]; for (int i = 0; i < N; ++i) { vals[i] = random_double(); if (std::isnan(vals[i])) vals[i] = 1.5; ext[i] = ext_of_double(vals[i]); }
+            std::vector<u8> image(112, 0), image_v(112, 0);
+            if (loads) {   // the image: state with k values, taken by the host
+                asm volatile("fninit; fldcw %0" ::"m"(cw));
+                const int k = int(rng() % (N + 1)); for (int i = k - 1; i >= 0; --i) { u8 tmp[10]; x87soft::store(tmp, ext[i]); asm volatile("fldt %0" ::"m"(tmp) : "st"); }
+                asm volatile("fnsave %0" : "=m"(*reinterpret_cast<u8(*)[108]>(image.data()))::"memory");
+                image_v = image;
+                // FNSAVE zeroes the exception pointers of this image; the registers of the image are what matters.
+            }
+            // host: a different current state, then the instruction
+            // all eight physical registers get known contents first (FNINIT does not clear them), so a loaded image selects well-defined data
+            Ext fill[8]; for (auto& f : fill) f = ext_of_double(random_double());
+            asm volatile("fninit; fldcw %0" ::"m"(cw));
+            for (int p = 7; p >= 0; --p) { u8 tmp[10]; x87soft::store(tmp, fill[p]); asm volatile("fldt %0" ::"m"(tmp) : "st"); }
+            asm volatile("fninit; fldcw %0" ::"m"(cw));
+            const int depth_now = int(rng() % (N + 1)); for (int i = depth_now - 1; i >= 0; --i) { u8 tmp[10]; x87soft::store(tmp, ext[(i + 2) % N]); asm volatile("fldt %0" ::"m"(tmp) : "st"); }
+            std::vector<u8> out_h = image, out_v = image_v;
+            u32 ax_h = 0; host_exec<OP, MODRM>(loads ? image.data() : out_h.data(), ax_h);
+            u8 env[108]; asm volatile("fnsave %0" : "=m"(env)::"memory"); asm volatile("fninit");
+            // virtual
+            u8* R = Rbuf.data(); std::memset(R, 0, 0x4000); w2(R + x87v::O_CW, cw);
+            for (int p = 0; p < 8; ++p) { u8 tmp[10]; x87soft::store(tmp, fill[p]); x87v::Policy::wr(R + x87v::O_ST + 16 * p, x87v::Policy::from80(tmp)); }
+            for (int i = depth_now - 1; i >= 0; --i) { u8 tmp[10]; x87soft::store(tmp, ext[(i + 2) % N]); x87v::Fpu<x87v::Policy>::push(R, x87v::Policy::from80(tmp)); }
+            x87v::insn<OP, MODRM>(R, loads ? image_v.data() : out_v.data());
+            uint16_t sw_h, cw_h, tw_h; std::memcpy(&sw_h, env + 4, 2); std::memcpy(&cw_h, env, 2); std::memcpy(&tw_h, env + 8, 2);
+            bool ok = ((sw_h >> 11) & 7) == x87v::top(R) && (cw_h & 0x0f3f) == (x87v::control_word(R) & 0x0f3f);
+            for (unsigned i = 0; i < 8 && ok; ++i) {
+                if (((tw_h >> (2 * ((x87v::top(R) + i) & 7))) & 3) == 3) continue;
+                if (!x87v::shadow_equal_for_tests(x87soft::load(env + 28 + 10 * i), x87v::slot(R, i))) ok = false;
+            }
+            if (!loads) {   // stored image: control word, status word TOP, and for FSAVE the register images
+                uint16_t a, b; std::memcpy(&a, out_h.data(), 2); std::memcpy(&b, out_v.data(), 2); if ((a & 0x0f3f) != (b & 0x0f3f)) ok = false;
+                std::memcpy(&a, out_h.data() + 4, 2); std::memcpy(&b, out_v.data() + 4, 2); if ((a ^ b) & 0x3800) ok = false;
+                if (saves_regs) {
+                    uint16_t twh; std::memcpy(&twh, out_h.data() + 8, 2);
+                    for (unsigned i = 0; i < 8 && ok; ++i) {
+                        if (((twh >> (2 * ((((a >> 11) & 7) + i) & 7))) & 3) == 3) continue;
+                        if (!x87v::shadow_equal_for_tests(x87soft::load(out_h.data() + 28 + 10 * i), out_v.data() + 28 + 10 * i, true)) ok = false;
+                    }
+                }
+            }
+            ++ct.trials;
+            if (!ok && ++ct.bad <= 2) std::printf("  MISMATCH ENV %s op=%02x/%02x depth_now=%d top_h=%u top_v=%u cw_h=%04x cw_v=%04x\n", name, OP, MODRM, depth_now, (sw_h >> 11) & 7, x87v::top(R), cw_h, x87v::control_word(R));
+        }
+        return ct;
+    }
     using P = x87v::Policy;
     static std::vector<u8> Rbuf(0x4000);
     for (long t = 0; t < trials; ++t) {
