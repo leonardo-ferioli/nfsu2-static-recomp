@@ -218,6 +218,11 @@ Arranque
   nfsu2_launcher.exe --game-dir "C:\\ruta\\al\\juego"
   Los valores por defecto son los de siempre: lo nuevo esta apagado salvo que lo actives.
 
+Tu configuracion
+  Este paquete trae un launcher.ini con todo por defecto. Si ya tenias uno, copialo junto al launcher: las claves antiguas siguen valiendo.
+  Ojo con el tamano del HUD de carrera: FEScale en [MAIN] vale 1.00 por defecto; si jugabas con FEScale = 0.80, el HUD se ve mas grande
+  hasta que lo vuelvas a poner. logs/nfsu2_launcher.log dice "hud on (scale X)" con el valor que se aplico.
+
 Interruptores (linea de comandos o launcher.ini; la linea de comandos manda)
   --audio system|nue        Quien atiende el DirectSound del juego. system (por defecto) = el de Windows. nue = la capa propia
                             (mezclador por software + salida WASAPI). Con nue: --audio-latency MS (10-500, por defecto 40) y

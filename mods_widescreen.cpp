@@ -3,6 +3,7 @@
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
 #include <windows.h>
+#include <cstdio>
 #include <sstream>
 
 namespace nfsu2raw {
@@ -28,8 +29,10 @@ std::string install_widescreen(const WidescreenSettings& settings) {
     mods::install_nos_trail(settings);
     mods::install_gamma(settings);
     const auto [desktop_w, desktop_h] = mods::desktop_resolution();
+    char hud_scale[16];
+    std::snprintf(hud_scale, sizeof hud_scale, "%.2f", settings.fe_scale);
     std::ostringstream text;
-    text << "widescreen fix: on, " << mods::resolution_count() << " resolutions (desktop " << desktop_w << "x" << desktop_h << "), hud " << (settings.fix_hud ? "on" : "off")
+    text << "widescreen fix: on, " << mods::resolution_count() << " resolutions (desktop " << desktop_w << "x" << desktop_h << "), hud " << (settings.fix_hud ? "on" : "off") << " (scale " << hud_scale << ")"
          << ", fov " << (settings.fix_fov ? "on" : "off") << ", fmv mode " << settings.fmv_mode << ", skip intro " << (settings.skip_intro ? "on" : "off")
          << ", windowed mode " << settings.windowed_mode << ", game frame rate " << mods::resolved_fps_limit(settings) << ", camera " << (settings.camera ? "on" : "off")
          << ", gamepad " << settings.improve_gamepad << ", console gamma " << (settings.console_gamma ? "on" : "off")

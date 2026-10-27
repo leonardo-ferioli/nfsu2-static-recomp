@@ -109,6 +109,18 @@ class LauncherTests(unittest.TestCase):
             ini.write_text(bad)
             self.assertEqual(run(["--config", ini, "--game-dir", GAME, "--log-dir", self.temp / "logs", "--verify-only"]).returncode, 2, bad)
 
+    def test_the_hud_scale_is_read_from_the_ini_and_defaults_to_the_mods_one(self):
+        # A launcher.ini written for an earlier build (FEScale = 0.80 and its trailing comment) must still apply; without the key the HUD is at 1.00.
+        base = ["--game-dir", GAME, "--log-dir", self.temp / "logs", "--verify-only"]
+        log_path = self.temp / "logs" / "nfsu2_launcher.log"
+        ini = self.temp / "hud.ini"
+        ini.write_text(chr(10).join(["[MAIN]", "FEScale = 0.80                      ; Size of UI elements. (Default = 1.00, Xbox = 0.92)", ""]))
+        self.assertEqual(run(base + ["--config", ini]).returncode, 0)
+        self.assertIn("hud on (scale 0.80)", log_path.read_text(errors="replace"))
+        ini.write_text(chr(10).join(["[MAIN]", ";FEScale = 0.80", ""]))
+        self.assertEqual(run(base + ["--config", ini]).returncode, 0)
+        self.assertIn("hud on (scale 1.00)", log_path.read_text(errors="replace"))
+
     def test_windowed_option_selects_a_window_mode_and_size(self):
         base = ["--game-dir", GAME, "--log-dir", self.temp / "logs", "--verify-only"]
         self.assertEqual(run(base + ["--windowed"]).returncode, 0)
