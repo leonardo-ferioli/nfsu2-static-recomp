@@ -71,10 +71,11 @@ INI = """; NFS Underground 2 - NUE - launcher configuration. Every line is optio
 [detail]
 ; How far away the game keeps its detailed models. The game draws distant scenery with simpler models and switches to the detailed
 ; one late as you approach; small distant objects are not drawn at all. original = the game as it is; high = detailed models twice
-; as far and smaller objects drawn; max = the detailed model whenever it is loaded. Higher settings cost frame rate.
-;world_detail=original
+; as far and smaller objects drawn; max = the detailed model whenever it is loaded. Higher settings cost frame rate. (The program's own default is original;
+; this file carries the project's working values: high and max.)
+world_detail=high
 ; Cars and tyres (traffic included): original = the game's own choice, max = always the detailed model.
-;car_detail=original
+car_detail=max
 
 [widescreen]
 ; The widescreen fix is built into this program (a port of the open-source NFSU2 Widescreen Fix; see README.txt). enabled=off
@@ -97,7 +98,7 @@ INI = """; NFS Underground 2 - NUE - launcher configuration. Every line is optio
 ;Scaling = 0                         ; Adjusts FOV aspect ratio to be mathematically correct. Requires FixFOV.
 ;HudAspectRatioConstraint = Auto     ; Constrains the HUD to an aspect ratio. Use Auto, 16:9, 21:9, 1920x1080, or a pixel offset.
 ;FMVWidescreenMode = 1               ; FMVs fill a 16:9 screen. (0 = Original | 1 = Cropped | 2 = Stretched)
-;FEScale = 1.00                      ; Size of the in-race HUD (menus and dialogs are never scaled here). (Default = 1.00, Xbox = 0.92)
+FEScale = 0.80                      ; Size of the in-race HUD (menus and dialogs are never scaled here). (Original mod: 1.00, Xbox = 0.92; 0.80 is the working value of this project)
 ;FMVScale = 1.00                     ; Size of FMVs.
 ;AutoFitFE = 0                       ; Automatically fits 16:9 UI content to smaller aspect ratios.
 ;AutoFitFMV = 1                      ; Automatically scales the FMVs to fully fit the width of the screen (black bars below 16:9).
@@ -216,12 +217,13 @@ Este paquete no contiene archivos del juego. Hace falta tu carpeta del juego (la
 
 Arranque
   nfsu2_launcher.exe --game-dir "C:\\ruta\\al\\juego"
-  Los valores por defecto son los de siempre: lo nuevo esta apagado salvo que lo actives.
+  Lo nuevo (audio=nue, --win32-layer) esta apagado salvo que lo actives; los ajustes de trabajo estan abajo, en "Tu configuracion".
 
 Tu configuracion
   Este paquete trae un launcher.ini con todo por defecto. Si ya tenias uno, copialo junto al launcher: las claves antiguas siguen valiendo.
-  Ojo con el tamano del HUD de carrera: FEScale en [MAIN] vale 1.00 por defecto; si jugabas con FEScale = 0.80, el HUD se ve mas grande
-  hasta que lo vuelvas a poner. logs/nfsu2_launcher.log dice "hud on (scale X)" con el valor que se aplico.
+  Los valores de trabajo del proyecto vienen activos: FEScale = 0.80 en [MAIN] (tambien es el valor por defecto del programa), [detail] world_detail=high y
+  car_detail=max en launcher.ini, y vsync=0, worker_thread=1, msaa=off en nue_d3d9.ini. Si copias un launcher.ini viejo encima, valen los de ese archivo.
+  logs/nfsu2_launcher.log dice "hud on (scale X)" con el FEScale que se aplico.
 
 Interruptores (linea de comandos o launcher.ini; la linea de comandos manda)
   --audio system|nue        Quien atiende el DirectSound del juego. system (por defecto) = el de Windows. nue = la capa propia
@@ -242,6 +244,7 @@ Capa Direct3D 9 (d3d9.dll, junto a nfsu2_launcher.exe)
   Ajustes en nue_d3d9.ini (junto a la dll; todo comentado = valores por defecto):
     renderer=d3d11|vulkan   vsync=0|1   render_thread=0|1   worker_thread=0|1 (traduccion y bgfx en otro hilo)
     msaa=auto|off|2|4|8   texture_copy_mb   shader_cache=<carpeta>   log=0|1
+  En este paquete nue_d3d9.ini trae activos vsync=0, worker_thread=1 y msaa=off; el resto, comentado.
   Teclas dentro del juego: F12 guarda una captura (nue_screenshot_N.bmp), F11 un informe de texturas, F10 marca en magenta las texturas sin datos.
   Registro: nue_d3d9.log junto a la dll (creacion del dispositivo, resets, lo que el traductor no soporta y, con worker_thread=1, una linea
   "worker thread:" cada 3 s). Variables de entorno: NUE_RENDERER, NUE_VSYNC, NUE_RENDER_THREAD, NUE_WORKER_THREAD, NUE_MSAA.
@@ -251,14 +254,18 @@ Sin verificar en el juego
   manda logs/nfsu2_launcher.log, logs/native_trace.log y nue_d3d9.log.
 """
 
-D3D9_INI_NOTE = "; Optional. Every value below is commented out: the built-in defaults apply. Remove the ';' of a line to change it.\n"
+D3D9_INI_NOTE = "; Optional. vsync, worker_thread and msaa carry the project's working values; every other value is commented out (the dll's own default applies).\n"
+
+
+D3D9_WORKING = {"vsync": "0", "worker_thread": "1", "msaa": "off"}   # the values the project has been tested with; the others are the dll's own defaults
 
 
 def d3d9_ini(sample):
     out = []
     for line in sample.read_text(encoding="utf-8").splitlines():
         if line.strip() and not line.startswith((";", "[")):
-            line = ";" + line
+            key = line.split("=", 1)[0].strip()
+            line = f"{key}={D3D9_WORKING[key]}" if key in D3D9_WORKING else ";" + line
         out.append(line)
     return D3D9_INI_NOTE + "\n".join(out) + "\n"
 

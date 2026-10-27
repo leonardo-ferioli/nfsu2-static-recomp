@@ -22,7 +22,8 @@ struct WidescreenSettings {
     bool fov_scaling = false;                // "Scaling"
     std::string hud_aspect_constraint = "auto";
     int fmv_mode = 1;                        // FMVWidescreenMode: 0 untouched, 1 cropped to 16:9, 2 stretched
-    float fe_scale = 1.0f, fmv_scale = 1.0f;
+    float fe_scale = 0.80f;                  // FEScale: the project's working value (the original mod's is 1.00)
+    float fmv_scale = 1.0f;
     bool auto_fit_fe = false, auto_fit_fmv = true;
     bool fe_anchor = true;                   // FEScaleAnchor: elements keep their screen zone (corner/edge/centre) when the interface is scaled
     bool fe_stretch_backdrops = true;        // FEStretchBackdrops: full-height 4:3 backdrops (title, loading) are widened to the whole screen

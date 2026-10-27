@@ -119,7 +119,7 @@ The widescreen options keep the section and key names of the original fix: `[MAI
 | `--verify-only` | Check the installation and exit |
 | `--log-dir DIR`, `--no-trace`, `--no-dialog`, `--watchdog S` | Logging and diagnostics |
 
-HUD size is `FEScale` in `[MAIN]`; `FEScaleAnchor` keeps corner elements in their corners, and
+HUD size is `FEScale` in `[MAIN]` (default `0.80`, the project's working value; the original mod uses 1.00); `FEScaleAnchor` keeps corner elements in their corners, and
 `FEStretchBackdrops` makes backdrops fill the whole width. `RadarMaskScale` and `RadarMaskLimit`
 in `[GRAPHICS]` control the mini-map on very large screens.
 

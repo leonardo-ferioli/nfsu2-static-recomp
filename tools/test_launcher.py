@@ -110,16 +110,34 @@ class LauncherTests(unittest.TestCase):
             self.assertEqual(run(["--config", ini, "--game-dir", GAME, "--log-dir", self.temp / "logs", "--verify-only"]).returncode, 2, bad)
 
     def test_the_hud_scale_is_read_from_the_ini_and_defaults_to_the_mods_one(self):
-        # A launcher.ini written for an earlier build (FEScale = 0.80 and its trailing comment) must still apply; without the key the HUD is at 1.00.
+        # A launcher.ini written for an earlier build (FEScale = 0.80 and its trailing comment) must still apply; without the key the project's working value 0.80 applies, and an explicit 1.00 still gives 1.00.
         base = ["--game-dir", GAME, "--log-dir", self.temp / "logs", "--verify-only"]
         log_path = self.temp / "logs" / "nfsu2_launcher.log"
         ini = self.temp / "hud.ini"
         ini.write_text(chr(10).join(["[MAIN]", "FEScale = 0.80                      ; Size of UI elements. (Default = 1.00, Xbox = 0.92)", ""]))
         self.assertEqual(run(base + ["--config", ini]).returncode, 0)
         self.assertIn("hud on (scale 0.80)", log_path.read_text(errors="replace"))
-        ini.write_text(chr(10).join(["[MAIN]", ";FEScale = 0.80", ""]))
+        ini.write_text(chr(10).join(["[MAIN]", ";FEScale = 1.00", ""]))
+        self.assertEqual(run(base + ["--config", ini]).returncode, 0)
+        self.assertIn("hud on (scale 0.80)", log_path.read_text(errors="replace"))
+        ini.write_text(chr(10).join(["[MAIN]", "FEScale = 1.00", ""]))
         self.assertEqual(run(base + ["--config", ini]).returncode, 0)
         self.assertIn("hud on (scale 1.00)", log_path.read_text(errors="replace"))
+
+    def test_the_package_template_ships_the_working_hud_scale(self):
+        import importlib.util
+        spec = importlib.util.spec_from_file_location("package_launcher", Path(__file__).with_name("package_launcher.py"))
+        package = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(package)
+        ini = self.temp / "template.ini"
+        ini.write_text(package.INI)
+        self.assertEqual(run(["--config", ini, "--game-dir", GAME, "--log-dir", self.temp / "logs", "--verify-only"]).returncode, 0)
+        self.assertIn("hud on (scale 0.80)", (self.temp / "logs" / "nfsu2_launcher.log").read_text(errors="replace"))
+        self.assertRegex(package.INI, r"(?m)^FEScale = 0"+chr(92)+r".80 ")
+        self.assertRegex(package.INI, r"(?m)^world_detail=high$")
+        d3d9 = package.d3d9_ini(Path(__file__).resolve().parents[1] / "nue_d3d9" / "dll" / "nue_d3d9.ini.sample")
+        for line in ("vsync=0", "worker_thread=1", "msaa=off"):
+            self.assertRegex(d3d9, "(?m)^" + line + "$")
 
     def test_windowed_option_selects_a_window_mode_and_size(self):
         base = ["--game-dir", GAME, "--log-dir", self.temp / "logs", "--verify-only"]
