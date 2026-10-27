@@ -913,6 +913,10 @@ def main():
                         help="return to the dispatch loop on every page transfer")
     parser.add_argument("--no-x87-passthrough", dest="x87_passthrough", action="store_false",
                         help="alias of --x87 pcode")
+    parser.add_argument("--leaders", choices=("conservative", "tight"), default=None,
+                        help="conservative (default on x86_32): every 4-byte constant that is a code address makes a block entry, including the address each "
+                             "x87 instruction stores in the FPU instruction pointer (which splits every run of x87 instructions into one block per instruction). "
+                             "tight (default for the virtual x87 and the 64-bit hosts) leaves those out")
     parser.add_argument("--x87-shadow", action="store_true", help="virtual x87 on an x86 host: run every instruction on the virtual and the host FPU in lock step, compare, and continue with the host's results (validation builds)")
     parser.add_argument("--x87-check", action="store_true", help="virtual x87 only: count the stack depth and set the sticky stack-fault flag like the hardware (validation builds)")
     parser.add_argument("--host", choices=("x86_32", "x86_64", "aarch64"), default="x86_32",
@@ -988,6 +992,7 @@ def main():
             gen_regs.PREDICT_MAX = args.predict
         TAIL_CALLS = True
         program = gen_regs.Program()
+        program.tight = (args.leaders or ("tight" if (HOST != "x86_32" or X87_MODE in ("double", "soft80")) else "conservative")) == "tight"
     specs = []
     if args.use_mods:
         specs = args.mods or sorted(str(f) for f in (ROOT / "mods").glob("*_spec.json"))

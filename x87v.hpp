@@ -117,9 +117,12 @@ struct DblP {
     using T = double;
     static T rd(const u8* p) { return std::bit_cast<double>(r8(p)); }
     static void wr(u8* p, T v) { w8(p, std::bit_cast<u64>(v)); }
-    // Precision control 24: round to a 24-bit significand, nearest-even, keeping the (extended) exponent range of the x87
-    // (a conversion to float would overflow at 3.4e38 and denormalise at 1e-38, which the real FPU does not).
+    // Precision control 24: round to a 24-bit significand, nearest-even, keeping the (extended) exponent range of the x87. Inside the range of
+    // normal floats that is the conversion to float and back (two instructions); outside it (below 1.2e-38 or above 3.4e38, where a float would
+    // denormalise or overflow and the real FPU does not) the significand is rounded on the bits.
     static T round24(T r) {
+        const T a = std::fabs(r);
+        if (__builtin_expect(a >= 1.2e-38 && a <= 3.4e38, 1)) return double(float(r));
         u64 u = std::bit_cast<u64>(r);
         if (((u >> 52) & 0x7ff) == 0x7ff) return r;                       // infinity, NaN
         u += 0x0fffffffull + ((u >> 29) & 1);                                // add half an ulp (ties to even), carry into the exponent is right
@@ -163,12 +166,16 @@ struct DblP {
     static T fprem(T a, T b, bool nearest, unsigned& q) {
         q = 0;
         if (std::isnan(a) || std::isnan(b) || std::isinf(a) || b == 0) return std::nan("");
-        const double d = nearest ? std::nearbyint(a / b) : std::trunc(a / b);
+        const double r = nearest ? std::remainder(a, b) : std::fmod(a, b);            // exact
+        double d = nearest ? std::nearbyint(a / b) : std::trunc(a / b);              // the quotient, possibly off by one near an integer
         if (std::fabs(d) >= 4503599627370496.0) {   // the quotient does not fit a double's significand: its low bits come from the exact algorithm
             unsigned exact;
             SoftP::fprem(SoftP::fromd(a), SoftP::fromd(b), nearest, exact);
             q = exact;
-        } else q = unsigned((unsigned long long)std::fabs(d) & 7);
+            return r;
+        }
+        d += (std::fma(-d, b, a) - r) / b;                                          // a - d*b is exact in fma: correct d by the difference to the exact remainder
+        q = unsigned((unsigned long long)std::fabs(d) & 7);
         return nearest ? std::remainder(a, b) : std::fmod(a, b);
     }
     static T scale(T a, T n, const Ctl&) {
