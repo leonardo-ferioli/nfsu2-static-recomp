@@ -81,6 +81,16 @@ The `race` capture does not open (`not a Direct3D 9 trace`) with the pre-integra
 `--help` lists the new switches; `--verify-only` passes with and without `--audio nue --win32-layer all`. No game file is in the repository or in the package (the launcher holds
 the translated image of `SPEED2.EXE` as data, as before).
 
+## After the checkpoint: HUD about 110 % in the first test folder
+
+The code that places and scales the HUD (`mods_anchor.cpp`, `mods_frontend.cpp`, `mods_widescreen.hpp`) is byte-identical to `pre-integration/bgfx`, and the display queries the mods use
+(`mods_resolution.cpp`, `mods_system.cpp` through `platform::services().display`) return exactly what the old Win32 calls returned on the test machine (same 138 modes, same
+2496x1664 current mode, same desktop size before and after the DPI call; compared by a scratch program). The cause is configuration: the earlier `launcher.ini` files used for testing carry
+`FEScale = 0.80`, and a fresh folder from the package has every value commented out, so the in-race HUD is at the default 1.00 (1.25 times larger). The game also runs in the
+scaled-window mode (1920x1080 into 2496x1404, from `fit_aspect`; the old code made a 2958x1664 window that cropped the sides), which makes the picture 0.84 times what it was on
+screen; together 1.05 to 1.10 times the HUD of the earlier tests. Put `FEScale = 0.80` back in `[MAIN]` of the new `launcher.ini` (or copy the old file: its keys still apply).
+The launcher log now says `hud on (scale X)`.
+
 ## Known open issues and what is not verified
 
 * **Audio never heard in the game.** `audio=nue` is tested against the real DirectSound with silence and with a fake guest, never with the running game.
