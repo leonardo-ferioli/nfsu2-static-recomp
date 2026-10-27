@@ -1,4 +1,6 @@
 #include "win32_facade_internal.hpp"
+#include <chrono>
+#include <thread>
 
 namespace nfsu2raw {
 
@@ -11,7 +13,7 @@ Win32LayerOptions parse_win32_layer(const std::string& spec, std::string& error)
         while (!name.empty() && name.front() == ' ') name.erase(name.begin());
         while (!name.empty() && name.back() == ' ') name.pop_back();
         if (name.empty() || name == "none") continue;
-        if (name == "all") { o.time = o.text = o.process = o.sync = o.memory = o.files = o.dinput = true; }
+        if (name == "all") { o.time = o.text = o.process = o.sync = o.memory = o.files = o.dinput = true; o.registry = o.traps = !kRealOs; }
         else if (name == "time") o.time = true;
         else if (name == "text") o.text = true;
         else if (name == "process") o.process = true;
@@ -19,6 +21,8 @@ Win32LayerOptions parse_win32_layer(const std::string& spec, std::string& error)
         else if (name == "memory") o.memory = true;
         else if (name == "files") o.files = true;
         else if (name == "dinput") o.dinput = true;
+        else if (name == "registry") o.registry = true;
+        else if (name == "traps") o.traps = true;
         else if (error.empty()) error = name;
     }
     return o;
@@ -265,13 +269,13 @@ void Win32Facade::Impl::install_sync() {
         return r.value;
     });
     on("SetEvent", 1, [this](Cpu& c) {
-        if (!handles.owns(arg(c, 0))) return real(c, [&] { return SetEvent(H(arg(c, 0))); });
+        if (!mine(arg(c, 0))) return FACADE_REAL(c, "SetEvent", SetEvent(H(arg(c, 0))));
         auto r = sync.set_event(arg(c, 0));
         if (!r) { set_error(c, r.error); return 0u; }
         return 1u;
     });
     on("ResetEvent", 1, [this](Cpu& c) {
-        if (!handles.owns(arg(c, 0))) return real(c, [&] { return ResetEvent(H(arg(c, 0))); });
+        if (!mine(arg(c, 0))) return FACADE_REAL(c, "ResetEvent", ResetEvent(H(arg(c, 0))));
         auto r = sync.reset_event(arg(c, 0));
         if (!r) { set_error(c, r.error); return 0u; }
         return 1u;
@@ -282,20 +286,20 @@ void Win32Facade::Impl::install_sync() {
         return r.value;
     });
     on("ReleaseMutex", 1, [this](Cpu& c) {
-        if (!handles.owns(arg(c, 0))) return real(c, [&] { return ReleaseMutex(H(arg(c, 0))); });
+        if (!mine(arg(c, 0))) return FACADE_REAL(c, "ReleaseMutex", ReleaseMutex(H(arg(c, 0))));
         auto r = sync.release_mutex(arg(c, 0));
         if (!r) { set_error(c, r.error); return 0u; }
         return 1u;
     });
     on("CloseHandle", 1, [this](Cpu& c) {
         const uint32_t h = arg(c, 0);
-        if (handles.owns(h)) return handles.close(h) ? 1u : (set_error(c, lw::err::invalid_handle), 0u);
-        return real(c, [&] { return CloseHandle(H(h)); });
+        if (mine(h)) return handles.close(h) ? 1u : (set_error(c, lw::err::invalid_handle), 0u);
+        return FACADE_REAL(c, "CloseHandle", CloseHandle(H(h)));
     });
     on("DuplicateHandle", 7, [this](Cpu& c) {
         const uint32_t source = arg(c, 1);
-        if (!handles.owns(source)) return real(c, [&] { return DuplicateHandle(H(arg(c, 0)), H(source), H(arg(c, 2)), reinterpret_cast<LPHANDLE>(uintptr_t(arg(c, 3))), arg(c, 4), arg(c, 5), arg(c, 6)); });
-        auto r = sync.duplicate_handle(source, (arg(c, 6) & DUPLICATE_CLOSE_SOURCE) != 0);
+        if (!mine(source)) return FACADE_REAL(c, "DuplicateHandle", DuplicateHandle(H(arg(c, 0)), H(source), H(arg(c, 2)), reinterpret_cast<LPHANDLE>(uintptr_t(arg(c, 3))), arg(c, 4), arg(c, 5), arg(c, 6)));
+        auto r = sync.duplicate_handle(source, (arg(c, 6) & 0x1u /* DUPLICATE_CLOSE_SOURCE */) != 0);
         if (!r) { set_error(c, r.error); return 0u; }
         if (arg(c, 3)) *ptr<uint32_t>(arg(c, 3)) = r.value;
         return 1u;
@@ -306,12 +310,12 @@ void Win32Facade::Impl::install_sync() {
         for (;;) {
             const uint32_t part = remaining == lw::kInfinite ? 100u : std::min(remaining, 100u);
             uint32_t value;
-            if (handles.owns(handle)) {
+            if (mine(handle)) {
                 auto r = sync.wait_for_single_object(handle, part);
                 if (r.error) { set_error(c, r.error); return lw::kWaitFailed; }
                 value = r.value;
             } else {
-                value = real(c, [&] { return WaitForSingleObject(H(handle), part); });
+                value = FACADE_REAL(c, "WaitForSingleObject", WaitForSingleObject(H(handle), part));
             }
             if (value != lw::kWaitTimeout) return value;
             if (remaining != lw::kInfinite) { if (remaining <= 100) return value; remaining -= 100; }
@@ -325,13 +329,13 @@ void Win32Facade::Impl::install_sync() {
         const bool all = arg(c, 2) != 0;
         uint32_t ms = arg(c, 3);
         size_t owned = 0;
-        for (uint32_t i = 0; i < count && i < 64; ++i) owned += handles.owns(list[i]);
+        for (uint32_t i = 0; i < count && i < 64; ++i) owned += mine(list[i]);
         if (owned == 0) {
             for (;;) {
-                const uint32_t part = ms == INFINITE ? 100u : std::min(ms, 100u);
-                const DWORD v = real(c, [&] { return WaitForMultipleObjects(count, reinterpret_cast<const HANDLE*>(list), all, part); });
-                if (v != WAIT_TIMEOUT) return v;
-                if (ms != INFINITE) { if (ms <= 100) return v; ms -= 100; }
+                const uint32_t part = ms == lw::kInfinite ? 100u : std::min(ms, 100u);
+                const uint32_t v = FACADE_REAL(c, "WaitForMultipleObjects", WaitForMultipleObjects(count, reinterpret_cast<const HANDLE*>(list), all, part));
+                if (v != lw::kWaitTimeout) return v;
+                if (ms != lw::kInfinite) { if (ms <= 100) return v; ms -= 100; }
                 platform.throw_if_stopping("guest wait");
             }
         }
@@ -349,13 +353,13 @@ void Win32Facade::Impl::install_sync() {
         for (;;) {
             for (uint32_t i = 0; i < count; ++i) {
                 uint32_t value;
-                if (handles.owns(list[i])) { auto r = sync.wait_for_single_object(list[i], 0); value = r.value; }
-                else value = WaitForSingleObject(H(list[i]), 0);
-                if (!all && value != WAIT_TIMEOUT) return value + i;
+                if (mine(list[i])) { auto r = sync.wait_for_single_object(list[i], 0); value = r.value; }
+                else value = FACADE_REAL(c, "WaitForSingleObject", WaitForSingleObject(H(list[i]), 0));
+                if (!all && value != lw::kWaitTimeout) return value + i;
             }
-            if (ms == 0) return WAIT_TIMEOUT;
-            Sleep(1);
-            if (ms != INFINITE) --ms;
+            if (ms == 0) return lw::kWaitTimeout;
+            std::this_thread::sleep_for(std::chrono::milliseconds(1));
+            if (ms != lw::kInfinite) --ms;
             platform.throw_if_stopping("guest wait");
         }
     });
@@ -380,29 +384,62 @@ void Win32Facade::Impl::install_files() {
     on("CreateFileA", 7, [this](Cpu& c) {
         const uint32_t flags = arg(c, 5);
         const std::string name = cstr(arg(c, 0));
-        // Overlapped files, devices and other special opens stay with the real system (the library models plain synchronous files).
-        const bool special = (flags & (FILE_FLAG_OVERLAPPED | FILE_FLAG_DELETE_ON_CLOSE | FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_NO_BUFFERING | FILE_FLAG_OPEN_REPARSE_POINT)) || name.rfind("\\\\", 0) == 0;
-        if (special) return real(c, [&] { return uintptr_t(CreateFileA(name.c_str(), arg(c, 1), arg(c, 2), nullptr, arg(c, 4), flags, nullptr)); });
+        // With a real OS (32-bit Windows), overlapped files, devices and other special opens stay with it. Without one, an overlapped file is an ordinary file whose
+        // reads and writes complete before they return (see ReadFile), which is a legal way for overlapped I/O to finish; devices ("\\.\\") do not exist.
+        constexpr uint32_t kSpecial = 0x40000000u /* OVERLAPPED */ | 0x04000000u /* DELETE_ON_CLOSE */ | 0x02000000u /* BACKUP_SEMANTICS */ | 0x20000000u /* NO_BUFFERING */ | 0x00200000u /* OPEN_REPARSE_POINT */;
+        const bool special = kRealOs ? ((flags & kSpecial) || name.rfind("\\\\", 0) == 0) : false;
+        if (special) return FACADE_REAL(c, "CreateFileA", uintptr_t(CreateFileA(name.c_str(), arg(c, 1), arg(c, 2), nullptr, arg(c, 4), flags, nullptr)));
         auto r = files.create_file(name, arg(c, 1), arg(c, 2), arg(c, 4), flags);
         set_error(c, r.error);
         return r.value;
     });
     on("ReadFile", 5, [this](Cpu& c) {
-        if (!handles.owns(arg(c, 0)) || arg(c, 4)) return real(c, [&] { return ReadFile(H(arg(c, 0)), ptr<void>(arg(c, 1)), arg(c, 2), arg(c, 3) ? ptr<DWORD>(arg(c, 3)) : nullptr, arg(c, 4) ? ptr<OVERLAPPED>(arg(c, 4)) : nullptr); });
+        if (!mine(arg(c, 0)) || (kRealOs && arg(c, 4))) return FACADE_REAL(c, "ReadFile", ReadFile(H(arg(c, 0)), ptr<void>(arg(c, 1)), arg(c, 2), arg(c, 3) ? ptr<DWORD>(arg(c, 3)) : nullptr, arg(c, 4) ? ptr<OVERLAPPED>(arg(c, 4)) : nullptr));
+        if (arg(c, 4)) {                                                            // OVERLAPPED {Internal, InternalHigh, Offset, OffsetHigh, hEvent}: read at that offset, complete now
+            uint32_t* o = ptr<uint32_t>(arg(c, 4));
+            auto at = files.set_file_pointer(arg(c, 0), int64_t(o[2]) | (int64_t(o[3]) << 32), 0);
+            if (at.error) { set_error(c, at.error); return 0u; }
+            auto r = files.read_file(arg(c, 0), lw::MutableBytes(ptr<std::byte>(arg(c, 1)), arg(c, 2)));
+            o[0] = r.error; o[1] = r.error ? 0 : r.value;
+            if (arg(c, 3)) *ptr<uint32_t>(arg(c, 3)) = r.error ? 0 : r.value;
+            if (o[4]) sync.set_event(o[4]);
+            if (r.error) { set_error(c, r.error); return 0u; }
+            return 1u;
+        }
         auto r = files.read_file(arg(c, 0), lw::MutableBytes(ptr<std::byte>(arg(c, 1)), arg(c, 2)));
         if (arg(c, 3)) *ptr<uint32_t>(arg(c, 3)) = r.error ? 0 : r.value;
         if (r.error) { set_error(c, r.error); return 0u; }
         return 1u;
     });
     on("WriteFile", 5, [this](Cpu& c) {
-        if (!handles.owns(arg(c, 0)) || arg(c, 4)) return real(c, [&] { return WriteFile(H(arg(c, 0)), ptr<const void>(arg(c, 1)), arg(c, 2), arg(c, 3) ? ptr<DWORD>(arg(c, 3)) : nullptr, arg(c, 4) ? ptr<OVERLAPPED>(arg(c, 4)) : nullptr); });
+        if (!mine(arg(c, 0)) || (kRealOs && arg(c, 4))) return FACADE_REAL(c, "WriteFile", WriteFile(H(arg(c, 0)), ptr<const void>(arg(c, 1)), arg(c, 2), arg(c, 3) ? ptr<DWORD>(arg(c, 3)) : nullptr, arg(c, 4) ? ptr<OVERLAPPED>(arg(c, 4)) : nullptr));
+        if (arg(c, 4)) {
+            uint32_t* o = ptr<uint32_t>(arg(c, 4));
+            auto at = files.set_file_pointer(arg(c, 0), int64_t(o[2]) | (int64_t(o[3]) << 32), 0);
+            if (at.error) { set_error(c, at.error); return 0u; }
+            auto r = files.write_file(arg(c, 0), lw::Bytes(ptr<const std::byte>(arg(c, 1)), arg(c, 2)));
+            o[0] = r.error; o[1] = r.value;
+            if (arg(c, 3)) *ptr<uint32_t>(arg(c, 3)) = r.value;
+            if (o[4]) sync.set_event(o[4]);
+            if (r.error) { set_error(c, r.error); return 0u; }
+            return 1u;
+        }
         auto r = files.write_file(arg(c, 0), lw::Bytes(ptr<const std::byte>(arg(c, 1)), arg(c, 2)));
         if (arg(c, 3)) *ptr<uint32_t>(arg(c, 3)) = r.value;
         if (r.error) { set_error(c, r.error); return 0u; }
         return 1u;
     });
+    // The overlapped operations of a host without a real OS complete before they return (see ReadFile), so the result is already in the structure.
+    on("GetOverlappedResult", 4, [this](Cpu& c) -> uint32_t {
+        if (kRealOs && !mine(arg(c, 0))) return FACADE_REAL(c, "GetOverlappedResult", GetOverlappedResult(H(arg(c, 0)), ptr<OVERLAPPED>(arg(c, 1)), arg(c, 2) ? ptr<DWORD>(arg(c, 2)) : nullptr, arg(c, 3)));
+        if (!arg(c, 1)) { set_error(c, lw::err::invalid_parameter); return 0u; }
+        const uint32_t* o = ptr<const uint32_t>(arg(c, 1));
+        if (arg(c, 2)) *ptr<uint32_t>(arg(c, 2)) = o[1];
+        if (o[0]) { set_error(c, o[0]); return 0u; }
+        return 1u;
+    });
     on("SetFilePointer", 4, [this](Cpu& c) {
-        if (!handles.owns(arg(c, 0))) return real(c, [&] { return SetFilePointer(H(arg(c, 0)), LONG(arg(c, 1)), arg(c, 2) ? ptr<LONG>(arg(c, 2)) : nullptr, arg(c, 3)); });
+        if (!mine(arg(c, 0))) return FACADE_REAL(c, "SetFilePointer", SetFilePointer(H(arg(c, 0)), LONG(arg(c, 1)), arg(c, 2) ? ptr<LONG>(arg(c, 2)) : nullptr, arg(c, 3)));
         const uint32_t high_address = arg(c, 2);
         const int64_t distance = high_address ? (int64_t(int32_t(*ptr<uint32_t>(high_address))) << 32) | arg(c, 1) : int64_t(int32_t(arg(c, 1)));
         auto r = files.set_file_pointer(arg(c, 0), distance, arg(c, 3));
@@ -412,7 +449,7 @@ void Win32Facade::Impl::install_files() {
         return uint32_t(r.value);
     });
     on("GetFileSize", 2, [this](Cpu& c) {
-        if (!handles.owns(arg(c, 0))) return real(c, [&] { return GetFileSize(H(arg(c, 0)), arg(c, 1) ? ptr<DWORD>(arg(c, 1)) : nullptr); });
+        if (!mine(arg(c, 0))) return FACADE_REAL(c, "GetFileSize", GetFileSize(H(arg(c, 0)), arg(c, 1) ? ptr<DWORD>(arg(c, 1)) : nullptr));
         auto r = files.get_file_size(arg(c, 0));
         if (r.error) { set_error(c, r.error); return 0xFFFFFFFFu; }
         if (arg(c, 1)) *ptr<uint32_t>(arg(c, 1)) = uint32_t(r.value >> 32);
@@ -420,19 +457,19 @@ void Win32Facade::Impl::install_files() {
         return uint32_t(r.value);
     });
     on("SetEndOfFile", 1, [this](Cpu& c) {
-        if (!handles.owns(arg(c, 0))) return real(c, [&] { return SetEndOfFile(H(arg(c, 0))); });
+        if (!mine(arg(c, 0))) return FACADE_REAL(c, "SetEndOfFile", SetEndOfFile(H(arg(c, 0))));
         auto r = files.set_end_of_file(arg(c, 0));
         if (!r) { set_error(c, r.error); return 0u; }
         return 1u;
     });
     on("FlushFileBuffers", 1, [this](Cpu& c) {
-        if (!handles.owns(arg(c, 0))) return real(c, [&] { return FlushFileBuffers(H(arg(c, 0))); });
+        if (!mine(arg(c, 0))) return FACADE_REAL(c, "FlushFileBuffers", FlushFileBuffers(H(arg(c, 0))));
         auto r = files.flush_file_buffers(arg(c, 0));
         if (!r) { set_error(c, r.error); return 0u; }
         return 1u;
     });
     on("GetFileType", 1, [this](Cpu& c) {
-        if (!handles.owns(arg(c, 0))) return real(c, [&] { return GetFileType(H(arg(c, 0))); });
+        if (!mine(arg(c, 0))) return FACADE_REAL(c, "GetFileType", GetFileType(H(arg(c, 0))));
         return files.get_file_type(arg(c, 0));
     });
     on("DeleteFileA", 1, [this](Cpu& c) { auto r = files.delete_file(cstr(arg(c, 0))); if (!r) { set_error(c, r.error); return 0u; } return 1u; });
@@ -459,7 +496,7 @@ void Win32Facade::Impl::install_files() {
         return r.value;
     });
     on("FindNextFileA", 2, [this, fill_find](Cpu& c) {
-        if (!handles.owns(arg(c, 0))) return real(c, [&] { return FindNextFileA(H(arg(c, 0)), ptr<WIN32_FIND_DATAA>(arg(c, 1))); });
+        if (!mine(arg(c, 0))) return FACADE_REAL(c, "FindNextFileA", FindNextFileA(H(arg(c, 0)), ptr<WIN32_FIND_DATAA>(arg(c, 1))));
         lw::FindData d;
         auto r = files.find_next_file(arg(c, 0), d);
         if (!r) { set_error(c, r.error); return 0u; }
@@ -467,7 +504,7 @@ void Win32Facade::Impl::install_files() {
         return 1u;
     });
     on("FindClose", 1, [this](Cpu& c) {
-        if (!handles.owns(arg(c, 0))) return real(c, [&] { return FindClose(H(arg(c, 0))); });
+        if (!mine(arg(c, 0))) return FACADE_REAL(c, "FindClose", FindClose(H(arg(c, 0))));
         return files.find_close(arg(c, 0)) ? 1u : (set_error(c, lw::err::invalid_handle), 0u);
     });
     on("GetFullPathNameA", 4, [this](Cpu& c) {
@@ -511,6 +548,8 @@ Win32Facade::Win32Facade(NativePlatform& platform, const Win32LayerOptions& opti
     if (options.sync) impl_->install_sync();
     if (options.files) impl_->install_files();
     if (options.dinput) impl_->install_dinput();
+    if (options.registry) impl_->install_registry();
+    if (options.traps) impl_->install_traps();
 }
 Win32Facade::~Win32Facade() = default;
 const std::string& Win32Facade::installed_report() const { return impl_->report; }

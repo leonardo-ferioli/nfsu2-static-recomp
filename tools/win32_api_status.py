@@ -2,8 +2,8 @@
 
 This file is data: tools/win32_inventory.py prints it next to the measured call counts and writes docs/legacy/win32.tbl and dinput8.tbl from it.
 Status vocabulary (docs/ABI.md 2.6 of NUE): implemented (Level A has it, tested), partial (documented deviation), stub (accepted, returns a fixed
-answer), trap (explicit failure with a log line, never a silent no-op; implemented only where the table says so), unreached (not called in any traced session, no Level A
-implementation; the bridge passes it to the host OS today and NUE must answer it with a trap), pending (not written yet; this file must have none when the hand-over is final).
+answer), trap (explicit failure with a log line, never a silent no-op: the facade's `traps` group; no Level A module, there is nothing to model), unreached (not called in any
+traced session, no implementation anywhere; the bridge passes it to the host OS today), pending (not written yet; this file must have none when the hand-over is final).
 """
 
 MODULES = {
@@ -52,8 +52,8 @@ MODULE_STATUS = {
     "time": "implemented", "timers": "implemented", "text": "implemented", "memory": "implemented", "process": "implemented", "files": "implemented",
     "sync": "implemented", "registry": "implemented", "window": "implemented", "dinput": "implemented",
     "seh": "partial",        # guest exception state machine: stays in the bridge (NUE: legacy_core)
-    "gdi": "unreached",      # not reached in any traced session except DeleteObject
-    "net": "unreached",      # 41 imports, none reached: NUE answers with a logged failure, never a silent success
+    "gdi": "trap",           # not reached in any traced session except DeleteObject: the facade's traps group answers with a failure
+    "net": "trap",           # 41 imports (Winsock, serial, TAPI, NetBIOS), none reached: the same, logged, never a silent success
 }
 STATUS = {
     "GetTimeZoneInformation": "partial",     # no daylight-saving schedule: only the offset in effect now
@@ -62,9 +62,9 @@ STATUS = {
     "GetStringTypeA": "partial", "GetStringTypeW": "partial", "GetLocaleInfoA": "partial", "GetLocaleInfoW": "partial", "EnumSystemLocalesA": "partial",   # en-US data for every locale
     "WaitForMultipleObjects": "implemented", "SuspendThread": "partial", "TerminateThread": "partial",   # the platform cannot stop a running thread from outside
     "CreateFileMappingA": "partial", "MapViewOfFile": "partial", "UnmapViewOfFile": "partial", "FindResourceA": "partial", "FindResourceW": "partial", "LoadResource": "partial", "LockResource": "partial", "SizeofResource": "partial",
-    "ShellExecuteA": "stub", "GetDriveTypeA": "partial", "GetLogicalDrives": "partial", "GetDiskFreeSpaceA": "partial", "GetDiskFreeSpaceExA": "partial", "GetOverlappedResult": "unreached",
+    "ShellExecuteA": "stub", "GetDriveTypeA": "partial", "GetLogicalDrives": "partial", "GetDiskFreeSpaceA": "partial", "GetDiskFreeSpaceExA": "partial", "GetOverlappedResult": "partial",
     "SetStdHandle": "partial", "GetStdHandle": "partial", "SetHandleCount": "stub",
-    "DeleteObject": "stub",
+    "DeleteObject": "stub",     # facade traps group: succeeds on nothing
     "RegCreateKeyA": "implemented", "RegOpenKeyA": "implemented",
     "Process32First": "partial", "Process32Next": "partial", "CreateToolhelp32Snapshot": "partial",   # the game's own process only
     "DebugBreak": "partial", "RtlUnwind": "partial", "RaiseException": "partial", "UnhandledExceptionFilter": "partial", "SetUnhandledExceptionFilter": "partial",

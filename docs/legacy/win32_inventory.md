@@ -2,25 +2,25 @@
 
 | Function | DLL | Call sites | Calls/frame | Today | Facade group | Level A module | Status | Behaviour notes |
 |---|---|---:|---:|---|---|---|---|---|
-| RegCloseKey | advapi32.dll | 6 |  | mod override (mods_registry.cpp) | - | registry | implemented |  |
-| RegCreateKeyA | advapi32.dll | 1 |  | mod override (mods_registry.cpp) | - | registry | implemented |  |
-| RegOpenKeyA | advapi32.dll | 2 |  | mod override (mods_registry.cpp) | - | registry | implemented |  |
-| RegOpenKeyExA | advapi32.dll | 6 |  | mod override (mods_registry.cpp) | - | registry | implemented |  |
-| RegQueryValueExA | advapi32.dll | 39 |  | mod override (mods_registry.cpp) | - | registry | implemented | the game's own keys live in a settings file (RegistryWrapper, mod) or the user registry (RegistryFallback) |
-| RegSetValueExA | advapi32.dll | 30 |  | mod override (mods_registry.cpp) | - | registry | implemented |  |
+| RegCloseKey | advapi32.dll | 6 |  | mod override (mods_registry.cpp) | registry | registry | implemented |  |
+| RegCreateKeyA | advapi32.dll | 1 |  | mod override (mods_registry.cpp) | registry | registry | implemented |  |
+| RegOpenKeyA | advapi32.dll | 2 |  | mod override (mods_registry.cpp) | registry | registry | implemented |  |
+| RegOpenKeyExA | advapi32.dll | 6 |  | mod override (mods_registry.cpp) | registry | registry | implemented |  |
+| RegQueryValueExA | advapi32.dll | 39 |  | mod override (mods_registry.cpp) | registry | registry | implemented | the game's own keys live in a settings file (RegistryWrapper, mod) or the user registry (RegistryFallback) |
+| RegSetValueExA | advapi32.dll | 30 |  | mod override (mods_registry.cpp) | registry | registry | implemented |  |
 | DirectInput8Create | dinput8.dll | 2 |  | bridge | dinput | dinput | implemented | Level A device model; the COM objects are the facade's. Action maps map keyboard and mouse semantics only (see hand-over) |
-| BitBlt | gdi32.dll | 0 (not reached) |  | OS pass-through | - | gdi | unreached |  |
-| CreateBitmap | gdi32.dll | 0 (not reached) |  | OS pass-through | - | gdi | unreached |  |
-| CreateCompatibleDC | gdi32.dll | 0 (not reached) |  | OS pass-through | - | gdi | unreached |  |
-| CreateFontA | gdi32.dll | 0 (not reached) |  | OS pass-through | - | gdi | unreached |  |
-| DeleteDC | gdi32.dll | 0 (not reached) |  | OS pass-through | - | gdi | unreached |  |
-| DeleteObject | gdi32.dll | 1 |  | OS pass-through | - | gdi | stub |  |
-| ExtTextOutA | gdi32.dll | 0 (not reached) |  | OS pass-through | - | gdi | unreached |  |
-| GetPixel | gdi32.dll | 0 (not reached) |  | OS pass-through | - | gdi | unreached |  |
-| SelectObject | gdi32.dll | 0 (not reached) |  | OS pass-through | - | gdi | unreached |  |
-| SetBkColor | gdi32.dll | 0 (not reached) |  | OS pass-through | - | gdi | unreached |  |
-| SetBkMode | gdi32.dll | 0 (not reached) |  | OS pass-through | - | gdi | unreached |  |
-| SetTextColor | gdi32.dll | 0 (not reached) |  | OS pass-through | - | gdi | unreached |  |
+| BitBlt | gdi32.dll | 0 (not reached) |  | OS pass-through | traps | gdi | trap |  |
+| CreateBitmap | gdi32.dll | 0 (not reached) |  | OS pass-through | traps | gdi | trap |  |
+| CreateCompatibleDC | gdi32.dll | 0 (not reached) |  | OS pass-through | traps | gdi | trap |  |
+| CreateFontA | gdi32.dll | 0 (not reached) |  | OS pass-through | traps | gdi | trap |  |
+| DeleteDC | gdi32.dll | 0 (not reached) |  | OS pass-through | traps | gdi | trap |  |
+| DeleteObject | gdi32.dll | 1 |  | OS pass-through | traps | gdi | stub |  |
+| ExtTextOutA | gdi32.dll | 0 (not reached) |  | OS pass-through | traps | gdi | trap |  |
+| GetPixel | gdi32.dll | 0 (not reached) |  | OS pass-through | traps | gdi | trap |  |
+| SelectObject | gdi32.dll | 0 (not reached) |  | OS pass-through | traps | gdi | trap |  |
+| SetBkColor | gdi32.dll | 0 (not reached) |  | OS pass-through | traps | gdi | trap |  |
+| SetBkMode | gdi32.dll | 0 (not reached) |  | OS pass-through | traps | gdi | trap |  |
+| SetTextColor | gdi32.dll | 0 (not reached) |  | OS pass-through | traps | gdi | trap |  |
 | CreateDirectoryA | kernel32.dll | 2 |  | OS pass-through | files | files | implemented |  |
 | CreateFileA | kernel32.dll | 2 |  | OS pass-through | files | files | implemented | relative game paths, case-insensitive names through the Storage; overlapped and special opens stay with the real system in the facade |
 | CreateFileMappingA | kernel32.dll | 0 (not reached) |  | OS pass-through | - | files | partial |  |
@@ -41,7 +41,7 @@
 | GetFullPathNameA | kernel32.dll | 1 |  | OS pass-through | files | files | implemented |  |
 | GetLogicalDrives | kernel32.dll | 2 |  | OS pass-through | - | files | partial |  |
 | GetLongPathNameA | kernel32.dll | 2 |  | OS pass-through | files | files | implemented |  |
-| GetOverlappedResult | kernel32.dll | 0 (not reached) |  | OS pass-through | - | files | unreached |  |
+| GetOverlappedResult | kernel32.dll | 0 (not reached) |  | OS pass-through | files | files | partial |  |
 | GetStdHandle | kernel32.dll | 1 |  | OS pass-through | - | files | partial |  |
 | LoadResource | kernel32.dll | 1 |  | OS pass-through | - | files | partial |  |
 | LockResource | kernel32.dll | 1 |  | OS pass-through | - | files | partial |  |
@@ -72,15 +72,15 @@
 | VirtualFree | kernel32.dll | 0 (not reached) |  | OS pass-through | - | memory | implemented |  |
 | VirtualProtect | kernel32.dll | 1 |  | bridge | - | memory | implemented | same: the bridge registers executable regions for the interpreter |
 | VirtualQuery | kernel32.dll | 0 (not reached) |  | OS pass-through | - | memory | implemented |  |
-| GetCommConfig | kernel32.dll | 0 (not reached) |  | OS pass-through | - | net | unreached |  |
-| GetCommState | kernel32.dll | 0 (not reached) |  | OS pass-through | - | net | unreached |  |
-| PurgeComm | kernel32.dll | 0 (not reached) |  | OS pass-through | - | net | unreached |  |
-| SetCommConfig | kernel32.dll | 0 (not reached) |  | OS pass-through | - | net | unreached |  |
-| SetCommMask | kernel32.dll | 0 (not reached) |  | OS pass-through | - | net | unreached |  |
-| SetCommState | kernel32.dll | 0 (not reached) |  | OS pass-through | - | net | unreached |  |
-| SetCommTimeouts | kernel32.dll | 0 (not reached) |  | OS pass-through | - | net | unreached |  |
-| SetupComm | kernel32.dll | 0 (not reached) |  | OS pass-through | - | net | unreached |  |
-| WaitCommEvent | kernel32.dll | 0 (not reached) |  | OS pass-through | - | net | unreached |  |
+| GetCommConfig | kernel32.dll | 0 (not reached) |  | OS pass-through | traps | net | trap |  |
+| GetCommState | kernel32.dll | 0 (not reached) |  | OS pass-through | traps | net | trap |  |
+| PurgeComm | kernel32.dll | 0 (not reached) |  | OS pass-through | traps | net | trap |  |
+| SetCommConfig | kernel32.dll | 0 (not reached) |  | OS pass-through | traps | net | trap |  |
+| SetCommMask | kernel32.dll | 0 (not reached) |  | OS pass-through | traps | net | trap |  |
+| SetCommState | kernel32.dll | 0 (not reached) |  | OS pass-through | traps | net | trap |  |
+| SetCommTimeouts | kernel32.dll | 0 (not reached) |  | OS pass-through | traps | net | trap |  |
+| SetupComm | kernel32.dll | 0 (not reached) |  | OS pass-through | traps | net | trap |  |
+| WaitCommEvent | kernel32.dll | 0 (not reached) |  | OS pass-through | traps | net | trap |  |
 | CreateToolhelp32Snapshot | kernel32.dll | 1 |  | OS pass-through | - | process | partial |  |
 | DebugBreak | kernel32.dll | 0 (not reached) |  | OS pass-through | - | process | partial |  |
 | ExitProcess | kernel32.dll | 1 |  | OS pass-through | - | process | implemented |  |
@@ -173,18 +173,18 @@
 | QueryPerformanceFrequency | kernel32.dll | 3 |  | OS pass-through | time | time | implemented |  |
 | Sleep | kernel32.dll | 2 |  | bridge | - | time | implemented | sliced into 100 ms sleeps for the same reason; the bridge keeps it |
 | SleepEx | kernel32.dll | 2 |  | bridge | - | time | implemented |  |
-| Netbios | netapi32.dll | 0 (not reached) |  | OS pass-through | - | net | unreached |  |
+| Netbios | netapi32.dll | 0 (not reached) |  | OS pass-through | traps | net | trap |  |
 | ShellExecuteA | shell32.dll | 0 (not reached) |  | OS pass-through | - | files | stub |  |
 | SHGetFolderPathA | shfolder.dll | 1 |  | mod override (mods_registry.cpp) | - | files | partial |  |
-| lineAnswer | tapi32.dll | 0 (not reached) |  | OS pass-through | - | net | unreached |  |
-| lineClose | tapi32.dll | 0 (not reached) |  | OS pass-through | - | net | unreached |  |
-| lineGetDevCaps | tapi32.dll | 0 (not reached) |  | OS pass-through | - | net | unreached |  |
-| lineGetID | tapi32.dll | 0 (not reached) |  | OS pass-through | - | net | unreached |  |
-| lineInitialize | tapi32.dll | 0 (not reached) |  | OS pass-through | - | net | unreached |  |
-| lineMakeCall | tapi32.dll | 0 (not reached) |  | OS pass-through | - | net | unreached |  |
-| lineNegotiateAPIVersion | tapi32.dll | 0 (not reached) |  | OS pass-through | - | net | unreached |  |
-| lineOpen | tapi32.dll | 0 (not reached) |  | OS pass-through | - | net | unreached |  |
-| lineShutdown | tapi32.dll | 0 (not reached) |  | OS pass-through | - | net | unreached |  |
+| lineAnswer | tapi32.dll | 0 (not reached) |  | OS pass-through | traps | net | trap |  |
+| lineClose | tapi32.dll | 0 (not reached) |  | OS pass-through | traps | net | trap |  |
+| lineGetDevCaps | tapi32.dll | 0 (not reached) |  | OS pass-through | traps | net | trap |  |
+| lineGetID | tapi32.dll | 0 (not reached) |  | OS pass-through | traps | net | trap |  |
+| lineInitialize | tapi32.dll | 0 (not reached) |  | OS pass-through | traps | net | trap |  |
+| lineMakeCall | tapi32.dll | 0 (not reached) |  | OS pass-through | traps | net | trap |  |
+| lineNegotiateAPIVersion | tapi32.dll | 0 (not reached) |  | OS pass-through | traps | net | trap |  |
+| lineOpen | tapi32.dll | 0 (not reached) |  | OS pass-through | traps | net | trap |  |
+| lineShutdown | tapi32.dll | 0 (not reached) |  | OS pass-through | traps | net | trap |  |
 | wsprintfA | user32.dll | 0 (not reached) |  | OS pass-through | text | text | implemented |  |
 | wvsprintfA | user32.dll | 1 |  | OS pass-through | text | text | implemented |  |
 | AdjustWindowRect | user32.dll | 1 |  | mod override (mods_system.cpp) | - | window | implemented | overridden by the window-fit mod; Level A uses classic non-client metrics |
@@ -229,25 +229,25 @@
 | timeGetTime | winmm.dll | 8 | 149.3 | OS pass-through | time | time | partial |  |
 | timeKillEvent | winmm.dll | 0 (not reached) |  | bridge | - | timers | implemented |  |
 | timeSetEvent | winmm.dll | 1 |  | bridge | - | timers | implemented | Level A serialises callbacks like the multimedia timer thread; the bridge keeps it (guest CPU contexts) |
-| WSACleanup | ws2_32.dll | 0 (not reached) |  | OS pass-through | - | net | unreached |  |
-| WSAGetLastError | ws2_32.dll | 0 (not reached) |  | OS pass-through | - | net | unreached |  |
-| WSAIoctl | ws2_32.dll | 0 (not reached) |  | OS pass-through | - | net | unreached |  |
-| WSAStartup | ws2_32.dll | 0 (not reached) |  | OS pass-through | - | net | unreached |  |
-| accept | ws2_32.dll | 0 (not reached) |  | OS pass-through | - | net | unreached |  |
-| bind | ws2_32.dll | 0 (not reached) |  | OS pass-through | - | net | unreached |  |
-| closesocket | ws2_32.dll | 0 (not reached) |  | OS pass-through | - | net | unreached |  |
-| connect | ws2_32.dll | 0 (not reached) |  | OS pass-through | - | net | unreached |  |
-| gethostbyname | ws2_32.dll | 0 (not reached) |  | OS pass-through | - | net | unreached |  |
-| gethostname | ws2_32.dll | 0 (not reached) |  | OS pass-through | - | net | unreached |  |
-| getpeername | ws2_32.dll | 0 (not reached) |  | OS pass-through | - | net | unreached |  |
-| getsockname | ws2_32.dll | 0 (not reached) |  | OS pass-through | - | net | unreached |  |
-| ioctlsocket | ws2_32.dll | 0 (not reached) |  | OS pass-through | - | net | unreached |  |
-| listen | ws2_32.dll | 0 (not reached) |  | OS pass-through | - | net | unreached |  |
-| recv | ws2_32.dll | 0 (not reached) |  | OS pass-through | - | net | unreached |  |
-| recvfrom | ws2_32.dll | 0 (not reached) |  | OS pass-through | - | net | unreached |  |
-| select | ws2_32.dll | 0 (not reached) |  | OS pass-through | - | net | unreached |  |
-| send | ws2_32.dll | 0 (not reached) |  | OS pass-through | - | net | unreached |  |
-| sendto | ws2_32.dll | 0 (not reached) |  | OS pass-through | - | net | unreached |  |
-| setsockopt | ws2_32.dll | 0 (not reached) |  | OS pass-through | - | net | unreached |  |
-| shutdown | ws2_32.dll | 0 (not reached) |  | OS pass-through | - | net | unreached |  |
-| socket | ws2_32.dll | 0 (not reached) |  | OS pass-through | - | net | unreached |  |
+| WSACleanup | ws2_32.dll | 0 (not reached) |  | OS pass-through | traps | net | trap |  |
+| WSAGetLastError | ws2_32.dll | 0 (not reached) |  | OS pass-through | traps | net | trap |  |
+| WSAIoctl | ws2_32.dll | 0 (not reached) |  | OS pass-through | traps | net | trap |  |
+| WSAStartup | ws2_32.dll | 0 (not reached) |  | OS pass-through | traps | net | trap |  |
+| accept | ws2_32.dll | 0 (not reached) |  | OS pass-through | traps | net | trap |  |
+| bind | ws2_32.dll | 0 (not reached) |  | OS pass-through | traps | net | trap |  |
+| closesocket | ws2_32.dll | 0 (not reached) |  | OS pass-through | traps | net | trap |  |
+| connect | ws2_32.dll | 0 (not reached) |  | OS pass-through | traps | net | trap |  |
+| gethostbyname | ws2_32.dll | 0 (not reached) |  | OS pass-through | traps | net | trap |  |
+| gethostname | ws2_32.dll | 0 (not reached) |  | OS pass-through | traps | net | trap |  |
+| getpeername | ws2_32.dll | 0 (not reached) |  | OS pass-through | traps | net | trap |  |
+| getsockname | ws2_32.dll | 0 (not reached) |  | OS pass-through | traps | net | trap |  |
+| ioctlsocket | ws2_32.dll | 0 (not reached) |  | OS pass-through | traps | net | trap |  |
+| listen | ws2_32.dll | 0 (not reached) |  | OS pass-through | traps | net | trap |  |
+| recv | ws2_32.dll | 0 (not reached) |  | OS pass-through | traps | net | trap |  |
+| recvfrom | ws2_32.dll | 0 (not reached) |  | OS pass-through | traps | net | trap |  |
+| select | ws2_32.dll | 0 (not reached) |  | OS pass-through | traps | net | trap |  |
+| send | ws2_32.dll | 0 (not reached) |  | OS pass-through | traps | net | trap |  |
+| sendto | ws2_32.dll | 0 (not reached) |  | OS pass-through | traps | net | trap |  |
+| setsockopt | ws2_32.dll | 0 (not reached) |  | OS pass-through | traps | net | trap |  |
+| shutdown | ws2_32.dll | 0 (not reached) |  | OS pass-through | traps | net | trap |  |
+| socket | ws2_32.dll | 0 (not reached) |  | OS pass-through | traps | net | trap |  |

@@ -1,16 +1,20 @@
 #include "legacy_win32/guest_threads.hpp"
 #include <chrono>
+#include <cstdio>
 #include <string>
 #include <thread>
 
 namespace nfsu2::legacy::win32 {
+namespace {
+std::string hex(uint32_t v) { char b[16]; std::snprintf(b, sizeof b, "%x", v); return b; }
+}  // namespace
 
 GuestThreads::GuestThreads(Sync& sync, GuestExecutor& executor, std::function<void(std::string_view)> log) : sync_(sync), executor_(executor), log_(std::move(log)) {}
 GuestThreads::~GuestThreads() = default;
 
 Ret<Handle> GuestThreads::create_thread(uint32_t start, uint32_t parameter, uint32_t flags, uint32_t stack_bytes, uint32_t* thread_id) {
     if (sync_.stopping) return fail<Handle>(err::operation_aborted);
-    if (!executor_.is_code(start)) throw GuestFault("thread entry is not translated guest code: 0x" + std::to_string(start));
+    if (!executor_.is_code(start)) throw GuestFault("thread entry is not translated guest code: 0x" + hex(start));
     auto body = [this, start, parameter, stack_bytes]() -> uint32_t {
         std::unique_ptr<GuestContext> context = executor_.create_context(stack_bytes);
         if (!context) return 0xDEAD0002u;
@@ -75,16 +79,17 @@ uint32_t GuestTimers::set_event(uint32_t delay_ms, uint32_t, uint32_t callback, 
             if (pulse) sync_.pulse_event(callback); else sync_.set_event(callback);
         });
     }
-    if (!executor_.is_code(callback)) throw GuestFault("timer callback is not translated guest code: 0x" + std::to_string(callback));
+    if (!executor_.is_code(callback)) throw GuestFault("timer callback is not translated guest code: 0x" + hex(callback));
     return sync_.time_set_event(delay_ms, periodic, [this, callback, user](uint32_t id) {
         if (sync_.stopping) return;
-        std::unique_lock lock(m_, std::defer_lock);
-        // The callbacks never overlap (Sync serialises them), so the shared context is only ever used by one at a time; the lock guards its creation.
-        lock.lock();
-        if (!context_) context_ = executor_.create_context(0);
-        GuestContext* context = context_.get();
-        ++run_;
-        lock.unlock();
+        // The callbacks never overlap (Sync serialises them), so the shared context is only ever used by one at a time; the lock guards its creation and the counter.
+        GuestContext* context;
+        {
+            std::lock_guard lock(m_);
+            if (!context_) context_ = executor_.create_context(0);
+            context = context_.get();
+            ++run_;
+        }
         if (!context) return;
         try {
             const uint32_t args[5] = {id, 0, user, 0, 0};

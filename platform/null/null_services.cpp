@@ -324,6 +324,7 @@ bool NullInput::gamepad_state(GamepadId id, GamepadState& out) {
 }
 uint32_t NullInput::add_listener(Listener l) { std::lock_guard lock(m_); listeners_[next_listener_] = std::move(l); return next_listener_++; }
 void NullInput::remove_listener(uint32_t id) { std::lock_guard lock(m_); listeners_.erase(id); }
+void NullInput::push(const InputEvent& e) { std::lock_guard lock(m_); queue_.push_back(e); }
 void NullInput::key(uint32_t sc, bool down, int64_t t) { std::lock_guard lock(m_); InputEvent e; e.kind = InputEventKind::key; e.code = sc; e.value = down; e.time_ns = t; queue_.push_back(e); }
 void NullInput::mouse_button(uint32_t b, bool down, int64_t t) { std::lock_guard lock(m_); InputEvent e; e.kind = InputEventKind::mouse_button; e.code = b; e.value = down; e.time_ns = t; queue_.push_back(e); }
 void NullInput::mouse_move(int32_t dx, int32_t dy, int64_t t) { std::lock_guard lock(m_); InputEvent e; e.kind = InputEventKind::mouse_motion; e.value = dx; e.value2 = dy; e.time_ns = t; queue_.push_back(e); }

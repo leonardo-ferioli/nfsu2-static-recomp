@@ -91,6 +91,11 @@ public:
     uint32_t add_listener(Listener) override;
     void remove_listener(uint32_t id) override;
 
+    // The one entry a real backend needs: it turns each event its own OS or engine reports (SDL3, NUE's nue_event, an Android or iOS input queue) into an
+    // InputEvent (scancodes are USB HID usages, as in SDL and NUE) and pushes it; the snapshots and the listeners are updated at the next `pump`. A pad is
+    // announced with add_pad() / remove_pad() so that it has an id. The class is therefore the portable input of every host that has an event pump.
+    void push(const InputEvent&);
+
     // Scripting. Events are queued and delivered (and the snapshots updated) at the next `pump`.
     void key(uint32_t scancode, bool down, int64_t time_ns);
     void mouse_button(uint32_t button, bool down, int64_t time_ns);

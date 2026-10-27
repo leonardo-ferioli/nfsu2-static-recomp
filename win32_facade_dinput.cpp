@@ -2,8 +2,12 @@
 // model of legacy_win32 (legacy_win32/include/legacy_win32/dinput.hpp). A COM object is {vtable pointer, id}; the vtable is an array of call tokens
 // (NativePlatform::add_method_token), so a guest `call [vtable + slot]` lands in a handler below that decodes the stdcall arguments and the guest structures.
 #include "win32_facade_internal.hpp"
+#ifdef NFSU2_FACADE_REAL_OS
 #include "host/windows_input.hpp"
+#endif
+#include "platform/services.hpp"
 #include <atomic>
+#include <stdexcept>
 #include <map>
 
 namespace nfsu2raw {
@@ -103,8 +107,15 @@ void write_action_results(uint32_t address, const ldi::ActionFormat& f) {
 void Win32Facade::Impl::install_dinput() {
     dinput = std::make_unique<DInputState>();
     plat::Input* input = input_override;
+#ifdef NFSU2_FACADE_REAL_OS
     if (!input) { input_owned = lw::host::make_windows_input(); input = input_owned.get(); }
-    di = std::make_unique<ldi::DirectInput>(*input, *clock, [](uint32_t hwnd) { return hwnd == 0 || uint32_t(uintptr_t(GetForegroundWindow())) == hwnd; });
+    auto foreground = [](uint32_t hwnd) { return hwnd == 0 || uint32_t(uintptr_t(GetForegroundWindow())) == hwnd; };
+#else
+    if (!input) throw std::runtime_error("Win32 layer: DirectInput needs a platform::Input on this host");
+    // The guest's window is the platform's: it is "foreground" while the platform window has the focus.
+    auto foreground = [](uint32_t) { auto* window = plat::services().window; return window == nullptr || window->focused(); };
+#endif
+    di = std::make_unique<ldi::DirectInput>(*input, *clock, foreground);
     DInputState* state = dinput.get();
     Impl* self = this;
 
