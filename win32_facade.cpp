@@ -1,4 +1,5 @@
 #include "win32_facade_internal.hpp"
+#include "guest_memory.hpp"
 
 namespace nfsu2raw {
 
@@ -137,7 +138,7 @@ void Win32Facade::Impl::install_text() {
             std::string text_copy = s;
             text_copy.push_back('\0');
             // The string has to live in guest-visible memory for the duration of the callback: host memory is guest memory here.
-            if (platform.callback(callback, {uint32_t(uintptr_t(text_copy.data()))}) == 0) break;
+            if (platform.callback(callback, {nfsu2::guest::to_guest(text_copy.data())}) == 0) break;
         }
         return 1u;
     });
@@ -291,7 +292,7 @@ void Win32Facade::Impl::install_sync() {
     });
     on("DuplicateHandle", 7, [this](Cpu& c) {
         const uint32_t source = arg(c, 1);
-        if (!handles.owns(source)) return real(c, [&] { return DuplicateHandle(H(arg(c, 0)), H(source), H(arg(c, 2)), reinterpret_cast<LPHANDLE>(uintptr_t(arg(c, 3))), arg(c, 4), arg(c, 5), arg(c, 6)); });
+        if (!handles.owns(source)) return real(c, [&] { return DuplicateHandle(H(arg(c, 0)), H(source), H(arg(c, 2)), nfsu2::guest::ptr<HANDLE>(arg(c, 3)), arg(c, 4), arg(c, 5), arg(c, 6)); });
         auto r = sync.duplicate_handle(source, (arg(c, 6) & DUPLICATE_CLOSE_SOURCE) != 0);
         if (!r) { set_error(c, r.error); return 0u; }
         if (arg(c, 3)) *ptr<uint32_t>(arg(c, 3)) = r.value;

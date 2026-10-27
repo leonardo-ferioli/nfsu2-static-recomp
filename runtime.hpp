@@ -1,4 +1,5 @@
 #pragma once
+#include "guest_memory.hpp"
 #include <array>
 #include <bit>
 #include <cstdint>

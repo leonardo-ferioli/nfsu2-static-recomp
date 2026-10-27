@@ -3,6 +3,7 @@
 // file; the user-files folder can live in the game folder; the language can be chosen in the configuration.
 // The game's registry calls are native here (NativePlatform::override_import).
 #include "mods_internal.hpp"
+#include "guest_memory.hpp"
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
 #include <windows.h>
@@ -44,7 +45,7 @@ std::string last_component(const std::string& path) {
 }
 bool intercepted(const char* sub_key) { return sub_key && std::strstr(sub_key, "Need for Speed") != nullptr; }
 
-HKEY key_of(uint32_t value) { return reinterpret_cast<HKEY>(uintptr_t(int32_t(value))); }   // predefined keys are sign-extended handles
+HKEY key_of(uint32_t value) { return nfsu2::guest::host_handle<HKEY>(int32_t(value)); }   // predefined keys are sign-extended handles
 
 uint32_t file_close_key(Cpu& c) {
     const uint32_t key = argument(c, 0);
@@ -52,27 +53,27 @@ uint32_t file_close_key(Cpu& c) {
 }
 // Opens/creates of the game's own keys never reach the registry: the file section is remembered and the handle is null.
 bool intercept(Cpu& c, unsigned result_argument) {
-    const char* sub_key = reinterpret_cast<const char*>(uintptr_t(argument(c, 1)));
+    const char* sub_key = nfsu2::guest::ptr<const char>(argument(c, 1));
     if (!intercepted(sub_key)) return false;
-    *reinterpret_cast<HKEY*>(uintptr_t(argument(c, result_argument))) = nullptr;
+    *nfsu2::guest::ptr<HKEY>(argument(c, result_argument)) = nullptr;
     g_section = last_component(sub_key);
     return true;
 }
 uint32_t file_open_key_a(Cpu& c) {
     if (intercept(c, 2)) return ERROR_SUCCESS;
-    return uint32_t(RegOpenKeyA(key_of(argument(c, 0)), reinterpret_cast<const char*>(uintptr_t(argument(c, 1))), reinterpret_cast<HKEY*>(uintptr_t(argument(c, 2)))));
+    return uint32_t(RegOpenKeyA(key_of(argument(c, 0)), nfsu2::guest::ptr<const char>(argument(c, 1)), nfsu2::guest::ptr<HKEY>(argument(c, 2))));
 }
 uint32_t file_open_key_ex_a(Cpu& c) {
     if (intercept(c, 4)) return ERROR_SUCCESS;
-    return uint32_t(RegOpenKeyExA(key_of(argument(c, 0)), reinterpret_cast<const char*>(uintptr_t(argument(c, 1))), argument(c, 2), argument(c, 3), reinterpret_cast<HKEY*>(uintptr_t(argument(c, 4)))));
+    return uint32_t(RegOpenKeyExA(key_of(argument(c, 0)), nfsu2::guest::ptr<const char>(argument(c, 1)), argument(c, 2), argument(c, 3), nfsu2::guest::ptr<HKEY>(argument(c, 4))));
 }
 uint32_t file_create_key_a(Cpu& c) {
     if (argument(c, 0) == 0) {
-        *reinterpret_cast<HKEY*>(uintptr_t(argument(c, 2))) = nullptr;
+        *nfsu2::guest::ptr<HKEY>(argument(c, 2)) = nullptr;
         return ERROR_SUCCESS;
     }
     if (intercept(c, 2)) return ERROR_SUCCESS;
-    return uint32_t(RegCreateKeyA(key_of(argument(c, 0)), reinterpret_cast<const char*>(uintptr_t(argument(c, 1))), reinterpret_cast<HKEY*>(uintptr_t(argument(c, 2)))));
+    return uint32_t(RegCreateKeyA(key_of(argument(c, 0)), nfsu2::guest::ptr<const char>(argument(c, 1)), nfsu2::guest::ptr<HKEY>(argument(c, 2))));
 }
 
 std::vector<uint8_t> hex_bytes(const std::string& text) {
@@ -89,10 +90,10 @@ std::vector<uint8_t> hex_bytes(const std::string& text) {
 // RegQueryValueExA on the settings file: the value comes from the file (or the default); a default found missing is written back.
 uint32_t file_query_value(Cpu& c) {
     HKEY key = key_of(argument(c, 0));
-    const char* value_name = reinterpret_cast<const char*>(uintptr_t(argument(c, 1)));
-    DWORD* type = reinterpret_cast<DWORD*>(uintptr_t(argument(c, 3)));
-    BYTE* data = reinterpret_cast<BYTE*>(uintptr_t(argument(c, 4)));
-    DWORD* size = reinterpret_cast<DWORD*>(uintptr_t(argument(c, 5)));
+    const char* value_name = nfsu2::guest::ptr<const char>(argument(c, 1));
+    DWORD* type = nfsu2::guest::ptr<DWORD>(argument(c, 3));
+    BYTE* data = nfsu2::guest::ptr<BYTE>(argument(c, 4));
+    DWORD* size = nfsu2::guest::ptr<DWORD>(argument(c, 5));
     if (key != nullptr) return uint32_t(RegQueryValueExA(key, value_name, nullptr, type, data, size));
     const std::string name = value_name ? value_name : "@";
     DWORD kind = type ? *type : REG_SZ;
@@ -162,9 +163,9 @@ uint32_t file_query_value(Cpu& c) {
 
 uint32_t file_set_value(Cpu& c) {
     HKEY key = key_of(argument(c, 0));
-    const char* value_name = reinterpret_cast<const char*>(uintptr_t(argument(c, 1)));
+    const char* value_name = nfsu2::guest::ptr<const char>(argument(c, 1));
     DWORD type = argument(c, 3);
-    const BYTE* data = reinterpret_cast<const BYTE*>(uintptr_t(argument(c, 4)));
+    const BYTE* data = nfsu2::guest::ptr<const BYTE>(argument(c, 4));
     const DWORD size = argument(c, 5);
     if (key != nullptr) return uint32_t(RegSetValueExA(key, value_name, 0, type, data, size));
     if (!value_name) return ERROR_INVALID_PARAMETER;
@@ -216,13 +217,13 @@ uint32_t file_set_value(Cpu& c) {
 // ---- the current user's registry (RegistryFallback) -------------------------------------------------------------------------------------------------
 HKEY user_for(HKEY key) { return key == HKEY_LOCAL_MACHINE ? HKEY_CURRENT_USER : key; }
 uint32_t user_create_key(Cpu& c) {
-    return uint32_t(RegCreateKeyA(user_for(key_of(argument(c, 0))), reinterpret_cast<const char*>(uintptr_t(argument(c, 1))), reinterpret_cast<HKEY*>(uintptr_t(argument(c, 2)))));
+    return uint32_t(RegCreateKeyA(user_for(key_of(argument(c, 0))), nfsu2::guest::ptr<const char>(argument(c, 1)), nfsu2::guest::ptr<HKEY>(argument(c, 2))));
 }
 uint32_t user_open_key(Cpu& c) {
-    return uint32_t(RegOpenKeyA(user_for(key_of(argument(c, 0))), reinterpret_cast<const char*>(uintptr_t(argument(c, 1))), reinterpret_cast<HKEY*>(uintptr_t(argument(c, 2)))));
+    return uint32_t(RegOpenKeyA(user_for(key_of(argument(c, 0))), nfsu2::guest::ptr<const char>(argument(c, 1)), nfsu2::guest::ptr<HKEY>(argument(c, 2))));
 }
 uint32_t user_open_key_ex(Cpu& c) {
-    return uint32_t(RegOpenKeyExA(user_for(key_of(argument(c, 0))), reinterpret_cast<const char*>(uintptr_t(argument(c, 1))), argument(c, 2), argument(c, 3), reinterpret_cast<HKEY*>(uintptr_t(argument(c, 4)))));
+    return uint32_t(RegOpenKeyExA(user_for(key_of(argument(c, 0))), nfsu2::guest::ptr<const char>(argument(c, 1)), argument(c, 2), argument(c, 3), nfsu2::guest::ptr<HKEY>(argument(c, 4))));
 }
 
 // Creates, in the current user's registry, every setting the game expects and that is not there yet.
@@ -264,7 +265,7 @@ void add_defaults(const std::string& language) {
 
 uint32_t folder_path(Cpu& c) {
     const int csidl = int(argument(c, 1)) & ~CSIDL_FLAG_CREATE;
-    char* path = reinterpret_cast<char*>(uintptr_t(argument(c, 4)));
+    char* path = nfsu2::guest::ptr<char>(argument(c, 4));
     if (g_use_custom_user_dir && csidl == CSIDL_LOCAL_APPDATA) {
         CreateDirectoryW(g_custom_user_dir.c_str(), nullptr);
         const std::string text = g_custom_user_dir.string();
@@ -274,7 +275,7 @@ uint32_t folder_path(Cpu& c) {
     static HMODULE shell = LoadLibraryA("shell32.dll");
     using Fn = HRESULT(WINAPI*)(HWND, int, HANDLE, DWORD, LPSTR);
     static Fn real = reinterpret_cast<Fn>(GetProcAddress(shell, "SHGetFolderPathA"));
-    return real ? uint32_t(real(reinterpret_cast<HWND>(uintptr_t(argument(c, 0))), int(argument(c, 1)), reinterpret_cast<HANDLE>(uintptr_t(argument(c, 2))), argument(c, 3), path)) : uint32_t(E_FAIL);
+    return real ? uint32_t(real(nfsu2::guest::host_handle<HWND>(argument(c, 0)), int(argument(c, 1)), nfsu2::guest::host_handle<HANDLE>(argument(c, 2)), argument(c, 3), path)) : uint32_t(E_FAIL);
 }
 }  // namespace
 

@@ -1,4 +1,5 @@
 #include "platform/audio/dsound_install.hpp"
+#include "guest_memory.hpp"
 
 #include <memory>
 #include <mutex>
@@ -51,7 +52,7 @@ public:
         uint32_t remaining = bytes ? bytes : 1;
         while (remaining) {
             MEMORY_BASIC_INFORMATION info;
-            if (!VirtualQuery(reinterpret_cast<void*>(uintptr_t(cursor)), &info, sizeof(info))) return nullptr;
+            if (!VirtualQuery(nfsu2::guest::ptr<void>(cursor), &info, sizeof(info))) return nullptr;
             if (info.State != MEM_COMMIT || (info.Protect & (PAGE_NOACCESS | PAGE_GUARD))) return nullptr;
             const uintptr_t end = reinterpret_cast<uintptr_t>(info.BaseAddress) + info.RegionSize;
             const uint32_t span = uint32_t(std::min<uintptr_t>(end - cursor, remaining));
@@ -59,7 +60,7 @@ public:
             cursor += span;
             remaining -= span;
         }
-        return reinterpret_cast<uint8_t*>(uintptr_t(address));
+        return nfsu2::guest::ptr<uint8_t>(address);
     }
 
 private:
@@ -70,8 +71,8 @@ private:
 
 class WindowsHost final : public HostServices {
 public:
-    void set_event(uint32_t handle) override { SetEvent(reinterpret_cast<HANDLE>(uintptr_t(handle))); }
-    bool is_window(uint32_t hwnd) override { return IsWindow(reinterpret_cast<HWND>(uintptr_t(hwnd))) != FALSE; }
+    void set_event(uint32_t handle) override { SetEvent(nfsu2::guest::host_handle<HANDLE>(handle)); }
+    bool is_window(uint32_t hwnd) override { return IsWindow(nfsu2::guest::host_handle<HWND>(hwnd)) != FALSE; }
 };
 
 struct Runtime {

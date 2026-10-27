@@ -25,7 +25,7 @@ NFSU2_AI void w2(void* p,u16 v){st<u16>(p,v);}
 NFSU2_AI void w4(void* p,u32 v){st<u32>(p,v);}
 NFSU2_AI void w8(void* p,u64 v){st<u64>(p,v);}
 // Guest memory shares the host's 32-bit address space, so a guest address is the host address.
-NFSU2_AI void* gp(u32 a){return reinterpret_cast<void*>(static_cast<uintptr_t>(a));}
+NFSU2_AI void* gp(u32 a){return nfsu2::guest::to_host(a);}
 NFSU2_AI u8  m1(u32 a){return r1(gp(a));}
 NFSU2_AI u16 m2(u32 a){return r2(gp(a));}
 NFSU2_AI u32 m4(u32 a){return r4(gp(a));}

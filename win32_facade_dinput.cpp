@@ -104,7 +104,7 @@ void Win32Facade::Impl::install_dinput() {
     dinput = std::make_unique<DInputState>();
     plat::Input* input = input_override;
     if (!input) { input_owned = lw::host::make_windows_input(); input = input_owned.get(); }
-    di = std::make_unique<ldi::DirectInput>(*input, *clock, [](uint32_t hwnd) { return hwnd == 0 || uint32_t(uintptr_t(GetForegroundWindow())) == hwnd; });
+    di = std::make_unique<ldi::DirectInput>(*input, *clock, [](uint32_t hwnd) { return hwnd == 0 || nfsu2::guest::guest_handle(GetForegroundWindow()) == hwnd; });
     DInputState* state = dinput.get();
     Impl* self = this;
 

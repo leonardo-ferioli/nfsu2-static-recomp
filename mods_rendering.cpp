@@ -198,16 +198,16 @@ void install_rendering(const WidescreenSettings& settings) {
         g_fov_values[0] = f32_at(get_var("fov_ptr1"));
         g_fov_values[1] = f32_at(get_var("fov_ptr2"));
         g_fov_values[2] = f32_at(get_var("fov_ptr3"));
-        set_var("fov_ptr1", uint32_t(uintptr_t(&g_fov_values[0])));
-        set_var("fov_ptr2", uint32_t(uintptr_t(&g_fov_values[1])));
-        set_var("fov_ptr3", uint32_t(uintptr_t(&g_fov_values[2])));
+        set_var("fov_ptr1", nfsu2::guest::to_guest(&g_fov_values[0]));
+        set_var("fov_ptr2", nfsu2::guest::to_guest(&g_fov_values[1]));
+        set_var("fov_ptr3", nfsu2::guest::to_guest(&g_fov_values[2]));
         set_var("fov_fix", 1u);
         install_hook("fov", fov_hook);
     }
     install_hook("rain_x", rain_x_hook);
     install_hook("rain_y", rain_y_hook);
     if (settings.fix_hud) {
-        set_var("screenshot_width_ptr", uint32_t(uintptr_t(&g_screenshot_width)));
+        set_var("screenshot_width_ptr", nfsu2::guest::to_guest(&g_screenshot_width));
         install_hook("hud", hud_hook);
         install_hook("blips", blips_hook);
         install_hook("hud2", hud2_hook);
