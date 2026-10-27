@@ -83,13 +83,21 @@ the translated image of `SPEED2.EXE` as data, as before).
 
 ## After the checkpoint: HUD about 110 % in the first test folder
 
-The code that places and scales the HUD (`mods_anchor.cpp`, `mods_frontend.cpp`, `mods_widescreen.hpp`) is byte-identical to `pre-integration/bgfx`, and the display queries the mods use
-(`mods_resolution.cpp`, `mods_system.cpp` through `platform::services().display`) return exactly what the old Win32 calls returned on the test machine (same 138 modes, same
-2496x1664 current mode, same desktop size before and after the DPI call; compared by a scratch program). The cause is configuration: the earlier `launcher.ini` files used for testing carry
-`FEScale = 0.80`, and a fresh folder from the package has every value commented out, so the in-race HUD is at the default 1.00 (1.25 times larger). The game also runs in the
-scaled-window mode (1920x1080 into 2496x1404, from `fit_aspect`; the old code made a 2958x1664 window that cropped the sides), which makes the picture 0.84 times what it was on
-screen; together 1.05 to 1.10 times the HUD of the earlier tests. Put `FEScale = 0.80` back in `[MAIN]` of the new `launcher.ini` (or copy the old file: its keys still apply).
-The launcher log now says `hud on (scale X)`.
+What was checked, in the code that applies the HUD anchoring to the translated game (nothing launched; all headless):
+
+* **The mods are unchanged.** `mods_anchor.cpp`, `mods_frontend.cpp`, `mods_widescreen.hpp`, `mods/widescreen_spec.json` and `tools/mods/widescreen.py` are byte-identical to `pre-integration/bgfx`.
+* **The hook sites are unchanged.** `tools/test_hook_sites.py` (test `hud_hook_sites`) finds, in the generated code, exactly one call site for each of the 15 `fe_*` hooks, at the address the specification gives, guarded by the right slot,
+  continuing at the end of the replaced load. It passes on the integrated tree and on `pre-integration/bgfx`. The tables only grew: three data addresses (`lod_a_ratio`, `force_car_lod`, `force_tire_lod`, none near the HUD data) and one variable
+  (`world_min_pixels`, index 0, so the other variable indices moved by one; the generated code and the lookups by name are consistent, and no source file uses a literal index).
+* **The x87 hand-off is intact.** A hook pushes the moved coordinate on the host FPU stack and the translated code consumes it. In the compiled integrated build, for the 12 coordinate loads (`fe_quad_*`, `fe_line_*`)
+  the first x87 instruction after the hook call is the `fmul` that consumes it; the speed layer's precise x87 operands only change the not-hooked path.
+* **The speed layer's name cache cannot return a wrong index**: it is keyed by the name's address but confirmed by comparing the name, and the tables have no duplicate names.
+* **Display values are identical.** The resolution list, current mode and desktop size that `mods_resolution.cpp` / `mods_system.cpp` get through `platform::services().display` equal the old Win32 calls on the test machine (138 modes, 2496x1664, desktop 1664x1109 before and 2496x1664 after the DPI call), and the DPI call is in the same place in `main()`.
+* **The anchoring only exists when the interface is scaled.** `install_interface_anchoring` and `install_frontend_scale` install their hooks only if `FEScale` is not 1.00 (or `AutoFitFE` is on); only the backdrop widening is always on. The earlier test folders carry `FEScale = 0.80`; a fresh folder
+  from the package has every value commented out, so the in-race HUD is at the game's natural size, 1.25 times the one at 0.80. The scaled-window mode (1920x1080 into 2496x1404 by `fit_aspect`, where the old code made a 2958x1664 window that cropped the sides) makes the picture 0.84 times what it was; together 1.05 to 1.10 times
+  the HUD of the earlier tests. The launcher log now says `hud on (scale X)` and the package's `LEEME.txt` asks to keep the old `launcher.ini`.
+
+The decisive experiment is the log of a run with `FEScale = 0.80` put back in `[MAIN]`: it must say `hud on (scale 0.80)`. If the HUD is still wrong with that line, run the same folder with `NFSU2_SYSTEM_D3D9=1` and with `--no-speed` and send `F12` screenshots of each.
 
 ## Known open issues and what is not verified
 

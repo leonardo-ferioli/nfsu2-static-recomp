@@ -225,5 +225,7 @@ if(TARGET fast_resource_tests)
     if(Python3_Interpreter_FOUND)
         # Register-parameter shape only (generate_fast.py --reg-params): every mod patch point and function entry must be a block entry.
         add_test(NAME reg_entries COMMAND ${Python3_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/tools/test_reg_entries.py" "${CMAKE_CURRENT_SOURCE_DIR}/${FAST_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/export" "${CMAKE_CURRENT_SOURCE_DIR}/mods")
+        # The interface-anchoring hooks (HUD corners) must each have their call site in the generated code, at the specified address.
+        add_test(NAME hud_hook_sites COMMAND ${Python3_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/tools/test_hook_sites.py" "${CMAKE_CURRENT_SOURCE_DIR}/${FAST_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/mods")
     endif()
 endif()
