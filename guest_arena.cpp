@@ -20,6 +20,8 @@
 namespace nfsu2::guest {
 
 uint8_t* g_arena_base = nullptr;
+static AddressSpace* g_current = nullptr;
+AddressSpace* current_address_space() { return g_current; }
 void fault_not_in_arena(const void*) { __builtin_trap(); }
 
 #if defined(_WIN32)
@@ -57,8 +59,10 @@ class Arena final : public AddressSpace {
 public:
     Arena(uint8_t* base, const ArenaConfig& config) : base_(base), config_(config), pages_(config.arena_size / kPage, 0) {
         free_[config.alloc_begin] = config.alloc_end - config.alloc_begin;
+        g_current = this;
     }
     ~Arena() override {
+        if (g_current == this) g_current = nullptr;
         if (g_arena_base == base_) g_arena_base = nullptr;
         VirtualFree(base_, 0, MEM_RELEASE);
     }
@@ -123,7 +127,9 @@ public:
     }
     bool commit(uint32_t address, uint32_t bytes, uint32_t page_protection) override {
         std::lock_guard lock(mutex_);
-        return valid_protection(page_protection) && commit_locked(address, bytes, page_protection);
+        if (!valid_protection(page_protection) || !commit_locked(address, bytes, page_protection)) return false;
+        carve_locked(address, bytes);
+        return true;
     }
     bool decommit(uint32_t address, uint32_t bytes) override {
         std::lock_guard lock(mutex_);
@@ -137,6 +143,19 @@ public:
     bool identity() const override { return false; }
 
 private:
+    // A range committed at a fixed address (the image, the stack, a loader's heap) leaves the allocator's free list: it must never be handed out again.
+    void carve_locked(uint32_t address, uint32_t bytes) {
+        const uint64_t begin = static_cast<uint64_t>(address) & ~uint64_t(kPage - 1);
+        const uint64_t end = (static_cast<uint64_t>(address) + bytes + kPage - 1) & ~uint64_t(kPage - 1);
+        for (auto it = free_.begin(); it != free_.end();) {
+            const uint64_t block_begin = it->first, block_end = block_begin + it->second;
+            if (block_end <= begin || block_begin >= end) { ++it; continue; }
+            it = free_.erase(it);
+            if (block_begin < begin) free_[static_cast<uint32_t>(block_begin)] = static_cast<uint32_t>(begin - block_begin);
+            if (block_end > end) free_[static_cast<uint32_t>(end)] = static_cast<uint32_t>(block_end - end);
+            it = free_.lower_bound(static_cast<uint32_t>(std::min<uint64_t>(block_end, 0xffffffffull)));   // the pieces are already handled
+        }
+    }
     static bool valid_protection(uint32_t p) {
         const uint32_t base = p & ~uint32_t(kPageGuard);
         if ((p & kPageGuard) && base == kPageNoAccess) return false;

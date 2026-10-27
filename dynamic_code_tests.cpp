@@ -62,7 +62,7 @@ static int boot_digest(const std::filesystem::path& specification,const char* ex
     _putenv_s("NFSU2_DETERMINISTIC_MAP","1");_putenv_s("NFSU2_DETERMINISTIC_TIME","1");_putenv_s("NFSU2_STOP_AT_IMPORT","CreateThread");
     Cpu c;NativePlatform p(c,exports,game);
     DynamicCode interpreter(specification);
-    uint32_t image_end=0;for(const auto& region:c.memory)if(region.base==0x400000)image_end=region.base+uint32_t(region.bytes.size());
+    uint32_t image_end=0;for(const auto& region:c.memory)if(region.base==0x400000)image_end=region.base+uint32_t(region.length);
     check(image_end>0x401000,"the image region is mapped");
     interpreter.add_region(0x401000,image_end-0x401000);
     std::string stop;
@@ -80,7 +80,7 @@ static int boot_digest(const std::filesystem::path& specification,const char* ex
         const uint32_t count=uint32_t(c.memory.size());put(&count,4);
         std::vector<uint8_t> registers(c.regs.begin(),c.regs.begin()+0x1000);
         const uint32_t register_bytes=0x1000;put(&register_bytes,4);put(registers.data(),registers.size());
-        for(const auto& region:c.memory){const uint32_t base=region.base,size=uint32_t(region.bytes.size());put(&base,4);put(&size,4);put(c.pointer(base,size),size);}
+        for(const auto& region:c.memory){const uint32_t base=region.base,size=uint32_t(region.length);put(&base,4);put(&size,4);put(c.pointer(base,size),size);}
     }
     std::cout<<"DIGEST stop=\""<<stop<<"\" pc=0x"<<std::hex<<c.pc;
     for(unsigned reg:general_registers)std::cout<<" r"<<reg<<"=0x"<<uint32_t(r<4>(c,reg));

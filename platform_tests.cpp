@@ -1,11 +1,22 @@
 #include "platform.hpp"
+#include "guest_arena.hpp"
 #include <iostream>
 using namespace nfsu2raw;
 static void check(bool ok,const char* why){if(!ok)throw Fault(why);}
 int main(int argc,char** argv){
     try{
         if(argc<2)throw Fault("test requires export directory");
+        // "--arena" as the third argument: the guest's memory lives in the arena (docs/MEMORY_MODEL_64.md) instead of in vectors; same checks.
+        const bool arena=argc>3 && std::string(argv[3])=="--arena";
+        std::unique_ptr<nfsu2::guest::AddressSpace> space;
+        if(arena){const char* error=nullptr;space=nfsu2::guest::create_arena({},&error);check(space!=nullptr,error?error:"arena");}
         Cpu c;Platform p(c,argv[1],".");
+        if(arena){
+            check(c.pointer(0x00400000,4)==nfsu2::guest::arena_base()+0x00400000,"the image is in the arena");
+            check(space->readable(0x00400000,0x532000) && space->writable(0x10000000,0x04000000) && space->writable(0x7ffde000,0x3000),"image, heap and TEB are committed");
+            const uint32_t extra=space->alloc(0x1000);check(extra && (extra<0x10000000 || extra>=0x14000000),"the allocator never hands out the fixed heap region");
+            space->free(extra);
+        }
         check(c.pc==0x0075bcc7,"actual PE entry point");
         check(m<2>(c,0x00400000)==0x5a4d,"DOS header data");
         check(r<4>(c,0x110)!=0,"guest FS/TEB initialized");
@@ -41,6 +52,6 @@ int main(int argc,char** argv){
         c.pc=0xf0000fff;
         try{p.dispatch_import();}catch(const Fault&){failed=true;}
         check(failed,"unknown import token fails explicitly");
-        std::cout<<"PASS guest PE loader, TEB, IAT and stdcall boundary\n";
+        std::cout<<"PASS guest PE loader, TEB, IAT and stdcall boundary"<<(arena?" (arena)":"")<<"\n";
     }catch(const std::exception& e){std::cerr<<e.what()<<'\n';return 1;}
 }

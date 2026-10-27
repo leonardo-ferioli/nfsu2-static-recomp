@@ -18,7 +18,11 @@ using V = unsigned __int128;
 using S = __int128;
 #endif
 struct Fault : std::runtime_error { using std::runtime_error::runtime_error; };
-struct Region { uint32_t base; std::vector<uint8_t> bytes; };
+struct Region {
+    uint32_t base; std::vector<uint8_t> bytes;   // `bytes` holds the storage on the vector model; on the arena the memory is in the arena and `bytes` is empty
+    uint64_t length = 0;                         // size of the region in both models (bytes.size() is not)
+    bool from_allocator = false;                 // arena model: the base came from the allocator (freed with the processor), not from a fixed commit
+};
 // Bytes of Cpu::regs that hold guest registers (the highest one in the export ends at 0x2236; tools/generate_fast.py refuses a
 // register beyond this span). A processor starting a call clears only these (a callback used to clear all 16 KiB: half its cost).
 constexpr size_t guest_register_span = 0x2400;

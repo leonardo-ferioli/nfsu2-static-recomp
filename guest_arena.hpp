@@ -39,6 +39,9 @@ struct ArenaConfig {
 // Reserves the arena (aligned to 4 GiB when the size is 4 GiB), makes it the process' arena base (guest::set_arena_base) and returns the address space.
 // nullptr when the host refuses the reservation; `error` then says why.
 std::unique_ptr<AddressSpace> create_arena(const ArenaConfig& config, const char** error = nullptr);
+
+// The arena of this process (nullptr before create_arena and after it is destroyed): the guest processor's memory (Cpu::map / Cpu::pointer) lives there.
+AddressSpace* current_address_space();
 #endif
 
 }  // namespace nfsu2::guest

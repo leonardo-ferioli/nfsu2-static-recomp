@@ -68,6 +68,17 @@ int main() {
     space->free(0xdeadbeef);                                                               // foreign addresses are ignored
     CHECK(space->alloc(0) != 0);                                                           // alloc(0) is a valid 16-byte block
 
+    // a fixed commit inside the allocator's range leaves the free list (the loader's heap at 0x10000000 must never be handed out twice)
+    CHECK(space->commit(0x20000000u, 0x100000, kPageReadWrite));
+    for (int i = 0; i < 3000; ++i) {
+        uint32_t x = space->alloc(0x1000);
+        CHECK(x && (x + 0x1000 <= 0x20000000u || x >= 0x20100000u));
+        if (!x) break;
+    }
+    CHECK(space->commit(0x20000800u, 0x100, kPageReadWrite));                            // a commit that straddles nothing new is still fine
+    uint32_t spanning = space->alloc_aligned(0x200000, 0x1000);
+    CHECK(spanning && (spanning + 0x200000 <= 0x20000000u || spanning >= 0x20100000u));
+
     // protections live in the software table
     uint32_t page = space->alloc_aligned(0x3000, 0x1000);
     CHECK(space->protection(page) == kPageReadWrite);
