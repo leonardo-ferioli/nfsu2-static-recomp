@@ -4,7 +4,7 @@ Status: design and stage 1 (2026-10-27). Starts from the tag `checkpoint-pre-64b
 
 ## Goal and invariants
 
-Run the translated game on a 64-bit host (Windows x64 first, then Linux and Android arm64/x64) without changing what the game computes.
+Run the translated game on **any** 64-bit little-endian host with a clang toolchain, without changing what the game computes: x86-64 and arm64, on Windows, Linux, Android, macOS and iOS (Android is one target among them, not the shape of the design). Nothing in the model may name an operating system or an instruction set; what differs per host is chosen by a small, explicit host description (see "Portability"). Windows x64 is the first target only because it is where the tests run.
 
 1. The guest is a 32-bit program: its registers hold 32-bit addresses, its image is at `0x00400000`, its stack, heap, TEB and every object it can point to live below 4 GiB.
 2. On a 64-bit host the guest lives in an **arena**: a reserved 4 GiB range at a 4 GiB-aligned `base`. Guest address `a` is host address `base + a`.
@@ -35,11 +35,30 @@ Run the translated game on a 64-bit host (Windows x64 first, then Linux and Andr
 * Generated code: `gp(a) = base + a`. With the base in a register (`Cpu`-adjacent global, `__restrict`) this is one `lea`; the cost is to be measured (stage 3). The x87 asm passes `base + a` in RAX.
 * The bridge does not forward guest pointers to Windows on 64 bits. Every import is answered by a Level A module (reached: 130 of 249 imports, see `docs/NUE_HANDOVER_WIN32_DINPUT.md`) or by a logged failure. The imports with host effects (window, input, files, time) go through `platform::services()`.
 
+## Portability: what a host has to provide
+
+Measured on the tree at `checkpoint-pre-64bit` (a generated page compiled for `x86_64-pc-windows-msvc` passes; for `aarch64-pc-windows-msvc` it stops on the x86 intrinsics headers):
+
+| Dependence on x86 | Size today | General answer |
+|---|---|---|
+| x87 instructions passed to the host FPU as inline asm (`.byte` encodings, address in EAX) | 110,732 sites in 699 of 899 generated pages (D9 52,524, D8 34,386, DE 8,009, DD 6,101, DF 5,732 ...) | `generate_fast.py --x87 host\|double\|soft80`. `host` only where the ISA is x86 (today's mode). `soft80`: exact 80-bit software arithmetic (reference quality, also the oracle for the other modes). `double`: fast, differs in the last bits; to be chosen per game hot path after measuring. The P-code stack model that `--no-x87-passthrough` already lowers through is the starting point. |
+| SSE/MMX integer user operations as `_mm_*` intrinsics (`userops.cpp`, `userops_pure.hpp`, `runtime.hpp`) | ~7 files include the x86 headers | portable C++ (generic vector extensions) or a header-only translation layer; one implementation, tested against the reference `eval<>` |
+| `cpuid`, `rdtsc`, `__cpuidex`, `_mm_pause` | `userops.cpp` | answered from a table (the guest sees a fixed CPU) and the platform clock |
+| Calling convention of the page functions (`PN`) | `regcall` on x86-32, `preserve_none` on x86-64 and arm64 | already one macro (`fast_regs.hpp`); arm64 uses `preserve_none` |
+| Inline asm in hooks (`push_float` = `flds`, `fstps` in mods and tests) | ~14 sites | the hook ABI moves the value through the register file / a guest FPU stack model, not the host FPU |
+| Memory ordering | the guest is x86 (TSO); arm64 is weaker | locked instructions use seq_cst atomics; plain guest accesses stay plain except on shared structures. Decide with a litmus test on arm64 before the first multi-thread run (the game has an audio thread and a loading thread). |
+| Page size | the guest sees 4 KiB pages; Apple silicon and many Android devices use 16 KiB | guest page protections (VirtualProtect, guard pages, no-access) are kept in a software table checked by the Level A memory module, never by the host MMU |
+| Address space | the arena needs 4 GiB of reserved, uncommitted address space | all 64-bit hosts allow it (`PROT_NONE` reservation); the 2 GiB memory budget is about committed memory. A host that cannot reserve 4 GiB uses a smaller arena with a mask (guest addresses above the arena are unmapped) |
+| 32-bit non-x86 hosts (armv7) | -- | out of scope (identity model needs the image at 0x400000) |
+| Endianness | little | only little-endian hosts |
+
+The host description is one header (`host.hpp`: ISA, OS, `NFSU2_GUEST_IDENTITY`, x87 mode, arena size) plus the arguments of `generate_fast.py`; the generated code is the same C++ for every host except the points above.
+
 ## Stages
 
 1. **Abstraction, identity only (this commit).** `guest_memory.hpp`; `fast.hpp` `gp` and the casts in `native32.cpp`, `mods_*.cpp`, `dynamic_code.cpp`, the facades go through it. 32-bit result identical: same tests (50 of 50), same generated code (the pages are not regenerated).
 2. **Arena on the 32-bit host as a switch off, 64-bit raw backend.** Build the reference backend with the arena allocator and run its tests at 64 bits (already green without it); `guest::Memory` implementation `ArenaMemory`.
-3. **x64 fast backend.** `generate_fast.py --host x64`: `gp` with the base, x87 asm address in RAX, `gen_regs.set_target('x64')` (all 8 guest registers in host registers), `ent_native` / predicted returns adapted, tail calls. Compile all pages for x64 and run `fast_*` tests that do not need the bridge (`fast_dynamic`, `fast_resources`, `reg_entries`, `x87_host_fpu`).
+3. **Portable fast backend.** `generate_fast.py --host x86_64|aarch64` with the base in `gp`, `--x87 host|double|soft80`, portable user operations, `preserve_none` page functions, `gen_regs.set_target('x64')` (all 8 guest registers in host registers). Gate: all 899 pages compile for `x86_64` and `aarch64` (cross-compiled on the Windows PC), and the `fast_*` tests that do not need the bridge (`fast_dynamic`, `fast_resources`, `reg_entries`, `x87_host_fpu`) pass on x86_64; arm64 is run on a device or under emulation when one is available.
 4. **`NativePlatform64`.** Image mapping in the arena, TEB/stack/heap in guest memory, guest threads, SEH, timer callbacks, the SLEIGH interpreter over the arena; imports from the Level A modules only. The three layers below move to their final shape here.
 5. **Run on Windows x64** (menu first), then Linux, then Android.
 6. **Zero run-time code** (needed for iOS): the audio modules translated ahead of time or replaced natively, and the coverage of the main image proven (see "No interpreter and no JIT on iOS").
