@@ -2,6 +2,7 @@
 #define NOMINMAX
 #define CINTERFACE
 #include <windows.h>
+#include "guest_memory.hpp"
 #include <d3d9.h>
 #include "d3d9_recorder.hpp"
 #include <algorithm>
@@ -21,7 +22,7 @@ namespace {
 #define SLOT(Vtbl, Name) (unsigned(offsetof(Vtbl, Name) / sizeof(void*)))
 enum class Kind : uint8_t { device, d3d9, vertex_buffer, index_buffer, texture, cube_texture, surface, declaration, vertex_shader, pixel_shader, state_block };
 
-uint32_t u32_at(uint32_t address) { uint32_t v; std::memcpy(&v, reinterpret_cast<const void*>(uintptr_t(address)), 4); return v; }
+uint32_t u32_at(uint32_t address) { uint32_t v; std::memcpy(&v, nfsu2::guest::ptr<const void>(address), 4); return v; }
 uint32_t bits(float f) { uint32_t b; std::memcpy(&b, &f, 4); return b; }
 
 bool compressed(uint32_t format) { return format >= 0x31545844 && format <= 0x35545844; }   // 'DXT1'..'DXT5'
@@ -38,7 +39,7 @@ uint32_t shader_size(uint32_t address) {   // bytes of a Direct3D 9 shader: vers
     return 0;
 }
 uint32_t declaration_size(uint32_t address) {   // D3DVERTEXELEMENT9 array up to and including D3DDECL_END (Stream 0xFF)
-    for (uint32_t n = 0; n < 128; ++n) { uint16_t stream; std::memcpy(&stream, reinterpret_cast<const void*>(uintptr_t(address + n * 8)), 2); if (stream == 0xFF) return (n + 1) * 8; }
+    for (uint32_t n = 0; n < 128; ++n) { uint16_t stream; std::memcpy(&stream, nfsu2::guest::ptr<const void>(address + n * 8), 2); if (stream == 0xFF) return (n + 1) * 8; }
     return 0;
 }
 }  // namespace
@@ -159,7 +160,7 @@ struct D3d9Recorder::Impl {
         writer.record(op, head);
     }
     Kind kind_of(uint32_t object, bool& known) const {
-        if (device && object == uint32_t(uintptr_t(device))) { known = true; return Kind::device; }
+        if (device && object == nfsu2::guest::guest_handle(device)) { known = true; return Kind::device; }
         if (object == d3d9_object) { known = true; return Kind::d3d9; }
         auto it = objects.find(object);
         known = it != objects.end();
@@ -211,7 +212,7 @@ struct D3d9Recorder::Impl {
     template <class T> void release(T* p) { if (p) p->lpVtbl->Release(p); }
     // A surface the trace has not met (the implicit back buffer and automatic depth buffer exist from device creation): described to the trace.
     void ensure_surface(IDirect3DSurface9* surface) {
-        const uint32_t object = uint32_t(uintptr_t(surface));
+        const uint32_t object = nfsu2::guest::guest_handle(surface);
         if (!surface || objects.count(object)) return;
         D3DSURFACE_DESC desc;
         if (FAILED(surface->lpVtbl->GetDesc(surface, &desc))) return;
@@ -229,17 +230,17 @@ struct D3d9Recorder::Impl {
         for (uint32_t t : transforms) { D3DMATRIX m; if (SUCCEEDED(d->lpVtbl->GetTransform(d, D3DTRANSFORMSTATETYPE(t), &m))) { std::vector<uint32_t> w{t}; for (int i = 0; i < 16; ++i) w.push_back(bits(reinterpret_cast<const float*>(&m)[i])); writer.record(uint8_t(Method::set_transform), w); } }
         D3DVIEWPORT9 vp;
         if (SUCCEEDED(d->lpVtbl->GetViewport(d, &vp))) writer.record(uint8_t(Method::set_viewport), {vp.X, vp.Y, vp.Width, vp.Height, bits(vp.MinZ), bits(vp.MaxZ)});
-        for (uint32_t s = 0; s < 16; ++s) { IDirect3DBaseTexture9* t = nullptr; if (SUCCEEDED(d->lpVtbl->GetTexture(d, s, &t))) { writer.record(uint8_t(Method::set_texture), {s, uint32_t(uintptr_t(t))}); release(t); } }
-        for (uint32_t s = 0; s < 4; ++s) { IDirect3DVertexBuffer9* vb = nullptr; UINT offset = 0, stride = 0; if (SUCCEEDED(d->lpVtbl->GetStreamSource(d, s, &vb, &offset, &stride)) && vb) { writer.record(uint8_t(Method::set_stream_source), {s, uint32_t(uintptr_t(vb)), offset, stride}); release(vb); } }
-        { IDirect3DIndexBuffer9* ib = nullptr; if (SUCCEEDED(d->lpVtbl->GetIndices(d, &ib)) && ib) { writer.record(uint8_t(Method::set_indices), {uint32_t(uintptr_t(ib))}); release(ib); } }
-        { IDirect3DVertexDeclaration9* v = nullptr; if (SUCCEEDED(d->lpVtbl->GetVertexDeclaration(d, &v)) && v) { writer.record(uint8_t(Method::set_vertex_declaration), {uint32_t(uintptr_t(v))}); release(v); } }
+        for (uint32_t s = 0; s < 16; ++s) { IDirect3DBaseTexture9* t = nullptr; if (SUCCEEDED(d->lpVtbl->GetTexture(d, s, &t))) { writer.record(uint8_t(Method::set_texture), {s, nfsu2::guest::guest_handle(t)}); release(t); } }
+        for (uint32_t s = 0; s < 4; ++s) { IDirect3DVertexBuffer9* vb = nullptr; UINT offset = 0, stride = 0; if (SUCCEEDED(d->lpVtbl->GetStreamSource(d, s, &vb, &offset, &stride)) && vb) { writer.record(uint8_t(Method::set_stream_source), {s, nfsu2::guest::guest_handle(vb), offset, stride}); release(vb); } }
+        { IDirect3DIndexBuffer9* ib = nullptr; if (SUCCEEDED(d->lpVtbl->GetIndices(d, &ib)) && ib) { writer.record(uint8_t(Method::set_indices), {nfsu2::guest::guest_handle(ib)}); release(ib); } }
+        { IDirect3DVertexDeclaration9* v = nullptr; if (SUCCEEDED(d->lpVtbl->GetVertexDeclaration(d, &v)) && v) { writer.record(uint8_t(Method::set_vertex_declaration), {nfsu2::guest::guest_handle(v)}); release(v); } }
         { DWORD fvf = 0; if (SUCCEEDED(d->lpVtbl->GetFVF(d, &fvf)) && fvf) writer.record(uint8_t(Method::set_fvf), {fvf}); }
-        { IDirect3DVertexShader9* v = nullptr; if (SUCCEEDED(d->lpVtbl->GetVertexShader(d, &v)) && v) { writer.record(uint8_t(Method::set_vertex_shader), {uint32_t(uintptr_t(v))}); release(v); } }
-        { IDirect3DPixelShader9* v = nullptr; if (SUCCEEDED(d->lpVtbl->GetPixelShader(d, &v)) && v) { writer.record(uint8_t(Method::set_pixel_shader), {uint32_t(uintptr_t(v))}); release(v); } }
+        { IDirect3DVertexShader9* v = nullptr; if (SUCCEEDED(d->lpVtbl->GetVertexShader(d, &v)) && v) { writer.record(uint8_t(Method::set_vertex_shader), {nfsu2::guest::guest_handle(v)}); release(v); } }
+        { IDirect3DPixelShader9* v = nullptr; if (SUCCEEDED(d->lpVtbl->GetPixelShader(d, &v)) && v) { writer.record(uint8_t(Method::set_pixel_shader), {nfsu2::guest::guest_handle(v)}); release(v); } }
         { static float c[256 * 4]; if (SUCCEEDED(d->lpVtbl->GetVertexShaderConstantF(d, 0, c, 256))) { std::vector<uint32_t> w{0, 256}; for (int i = 0; i < 1024; ++i) w.push_back(bits(c[i])); writer.record(uint8_t(Method::set_vertex_shader_constants_f), w); } }
         { static float c[224 * 4]; if (SUCCEEDED(d->lpVtbl->GetPixelShaderConstantF(d, 0, c, 224))) { std::vector<uint32_t> w{0, 224}; for (int i = 0; i < 896; ++i) w.push_back(bits(c[i])); writer.record(uint8_t(Method::set_pixel_shader_constants_f), w); } }
-        for (uint32_t i = 0; i < 4; ++i) { IDirect3DSurface9* s = nullptr; if (SUCCEEDED(d->lpVtbl->GetRenderTarget(d, i, &s)) && s) { ensure_surface(s); writer.record(uint8_t(Method::set_render_target), {i, uint32_t(uintptr_t(s))}); release(s); } }
-        { IDirect3DSurface9* s = nullptr; if (SUCCEEDED(d->lpVtbl->GetDepthStencilSurface(d, &s)) && s) { ensure_surface(s); writer.record(uint8_t(Method::set_depth_stencil), {uint32_t(uintptr_t(s))}); release(s); } }
+        for (uint32_t i = 0; i < 4; ++i) { IDirect3DSurface9* s = nullptr; if (SUCCEEDED(d->lpVtbl->GetRenderTarget(d, i, &s)) && s) { ensure_surface(s); writer.record(uint8_t(Method::set_render_target), {i, nfsu2::guest::guest_handle(s)}); release(s); } }
+        { IDirect3DSurface9* s = nullptr; if (SUCCEEDED(d->lpVtbl->GetDepthStencilSurface(d, &s)) && s) { ensure_surface(s); writer.record(uint8_t(Method::set_depth_stencil), {nfsu2::guest::guest_handle(s)}); release(s); } }
     }
 
     void image_note(const char* what, HRESULT hr) {
@@ -332,7 +333,7 @@ void D3d9Recorder::before(uint32_t target, uint32_t sp) {
     Impl& r = *impl_;
     std::lock_guard<std::recursive_mutex> lock(r.io_mutex);
     if (!ok_ || !r.writer.is_open()) return;
-    const uint32_t* a = reinterpret_cast<const uint32_t*>(uintptr_t(sp + 4));
+    const uint32_t* a = nfsu2::guest::ptr<const uint32_t>(sp + 4);
     bool known;
     const Kind kind = r.kind_of(a[0], known);
     if (!known) return;
@@ -349,7 +350,7 @@ void D3d9Recorder::before(uint32_t target, uint32_t sp) {
         const unsigned unlock = SLOT(IDirect3DVertexBuffer9Vtbl, Unlock);
         if (uint32_t(r.slot_of(a[0], target, 14)) == unlock) {
             auto it = r.buffer_locks.find(a[0]);
-            if (it != r.buffer_locks.end()) { r.emit_with_blob(uint8_t(Method::unlock_buffer), {a[0]}, reinterpret_cast<const void*>(uintptr_t(it->second.data)), it->second.bytes); r.buffer_locks.erase(it); }
+            if (it != r.buffer_locks.end()) { r.emit_with_blob(uint8_t(Method::unlock_buffer), {a[0]}, nfsu2::guest::ptr<const void>(it->second.data), it->second.bytes); r.buffer_locks.erase(it); }
         }
         break;
     }
@@ -359,7 +360,7 @@ void D3d9Recorder::before(uint32_t target, uint32_t sp) {
             const uint32_t face = cube ? a[1] : 0, level = cube ? a[2] : a[1];
             auto it = r.texture_locks.find({a[0], level, face});
             if (it != r.texture_locks.end()) {
-                r.emit_with_blob(uint8_t(Method::unlock_texture), {a[0], level, face, it->second.pitch}, reinterpret_cast<const void*>(uintptr_t(it->second.bits)), it->second.bytes);
+                r.emit_with_blob(uint8_t(Method::unlock_texture), {a[0], level, face, it->second.pitch}, nfsu2::guest::ptr<const void>(it->second.bits), it->second.bytes);
                 r.texture_locks.erase(it);
             }
         }
@@ -373,7 +374,7 @@ void D3d9Recorder::after(uint32_t target, uint32_t sp, uint32_t eax, uint64_t in
     Impl& r = *impl_;
     std::lock_guard<std::recursive_mutex> lock(r.io_mutex);
     if (!ok_ || !r.writer.is_open()) return;
-    const uint32_t* a = reinterpret_cast<const uint32_t*>(uintptr_t(sp + 4));
+    const uint32_t* a = nfsu2::guest::ptr<const uint32_t>(sp + 4);
     r.instructions = instructions;
     ++r.calls;
     if ((r.calls & 2047) == 0) {   // a few times per frame: the hotkey, the START file and the heartbeat of the log
@@ -390,8 +391,8 @@ void D3d9Recorder::after(uint32_t target, uint32_t sp, uint32_t eax, uint64_t in
     if (a[0] == r.d3d9_object && r.d3d9_object && !r.device) {
         if (uint32_t(Impl::slot_of(a[0], target, 17)) == SLOT(IDirect3D9Vtbl, CreateDevice) && eax == 0) {
             const uint32_t device = u32_at(a[6]);
-            r.device = reinterpret_cast<IDirect3DDevice9*>(uintptr_t(device));
-            r.game_window = u32_at(a[5] + 28) ? reinterpret_cast<HWND>(uintptr_t(u32_at(a[5] + 28))) : reinterpret_cast<HWND>(uintptr_t(a[3]));
+            r.device = nfsu2::guest::host_handle<IDirect3DDevice9*>(device);
+            r.game_window = u32_at(a[5] + 28) ? nfsu2::guest::host_handle<HWND>(u32_at(a[5] + 28)) : nfsu2::guest::host_handle<HWND>(a[3]);
             if (r.game_window) GetWindowTextA(r.game_window, r.original_title, sizeof r.original_title);
             const uint32_t params = a[5];
             r.writer.record(op_device_created, {a[1], a[4], u32_at(params), u32_at(params + 4), u32_at(params + 8), u32_at(params + 40), u32_at(params + 16), u32_at(params + 12), u32_at(params + 32), u32_at(params + 52)});
@@ -437,14 +438,14 @@ void D3d9Recorder::after(uint32_t target, uint32_t sp, uint32_t eax, uint64_t in
         else if (s == SLOT(V, CreateRenderTarget)) created(a[7], Kind::surface, uint8_t(Method::create_render_target), {a[1], a[2], a[3], a[4], a[6]});
         else if (s == SLOT(V, CreateDepthStencilSurface)) created(a[7], Kind::surface, uint8_t(Method::create_depth_stencil), {a[1], a[2], a[3], a[4]});
         else if (s == SLOT(V, CreateVertexDeclaration)) {
-            if (ok_result) { const uint32_t o = u32_at(a[2]); r.add(o, Kind::declaration); r.emit_with_blob(uint8_t(Method::create_vertex_declaration), {o}, reinterpret_cast<const void*>(uintptr_t(a[1])), declaration_size(a[1])); }
+            if (ok_result) { const uint32_t o = u32_at(a[2]); r.add(o, Kind::declaration); r.emit_with_blob(uint8_t(Method::create_vertex_declaration), {o}, nfsu2::guest::ptr<const void>(a[1]), declaration_size(a[1])); }
         }
         else if (s == SLOT(V, CreateVertexShader) || s == SLOT(V, CreatePixelShader)) {
             if (ok_result) {
                 const bool vs = s == SLOT(V, CreateVertexShader);
                 const uint32_t o = u32_at(a[2]);
                 r.add(o, vs ? Kind::vertex_shader : Kind::pixel_shader);
-                r.emit_with_blob(uint8_t(vs ? Method::create_vertex_shader : Method::create_pixel_shader), {o}, reinterpret_cast<const void*>(uintptr_t(a[1])), shader_size(a[1]));
+                r.emit_with_blob(uint8_t(vs ? Method::create_vertex_shader : Method::create_pixel_shader), {o}, nfsu2::guest::ptr<const void>(a[1]), shader_size(a[1]));
             }
         }
         else if (s == SLOT(V, StretchRect)) {
@@ -467,7 +468,7 @@ void D3d9Recorder::after(uint32_t target, uint32_t sp, uint32_t eax, uint64_t in
         else if (s == SLOT(V, SetTextureStageState)) r.emit(uint8_t(Method::set_texture_stage_state), {a[1], a[2], a[3]});
         else if (s == SLOT(V, SetSamplerState)) r.emit(uint8_t(Method::set_sampler_state), {a[1], a[2], a[3]});
         else if (s == SLOT(V, DrawIndexedPrimitive)) r.emit(uint8_t(Method::draw_indexed), {a[1], a[2], a[3], a[4], a[5], a[6]});
-        else if (s == SLOT(V, DrawPrimitiveUP)) r.emit_with_blob(uint8_t(Method::draw_up), {a[1], a[2], a[4]}, reinterpret_cast<const void*>(uintptr_t(a[3])), vertex_count(a[1], a[2]) * a[4]);
+        else if (s == SLOT(V, DrawPrimitiveUP)) r.emit_with_blob(uint8_t(Method::draw_up), {a[1], a[2], a[4]}, nfsu2::guest::ptr<const void>(a[3]), vertex_count(a[1], a[2]) * a[4]);
         else if (s == SLOT(V, SetVertexDeclaration)) r.emit(uint8_t(Method::set_vertex_declaration), {a[1]});
         else if (s == SLOT(V, SetFVF)) r.emit(uint8_t(Method::set_fvf), {a[1]});
         else if (s == SLOT(V, SetVertexShader)) r.emit(uint8_t(Method::set_vertex_shader), {a[1]});

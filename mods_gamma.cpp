@@ -3,6 +3,7 @@
 // the Xbox 360 gamma curve. The shader is the mod's (X360GammaApprox), compiled here with the system's HLSL compiler (d3dcompiler_47).
 // Unlike the mod, no D3DX library is needed.
 #include "mods_internal.hpp"
+#include "guest_memory.hpp"
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
 #include <windows.h>
@@ -85,7 +86,7 @@ bool create_targets(IDirect3DDevice9* device) {
 
 void render_gamma() {
     if (g_failed) return;
-    auto* device = reinterpret_cast<IDirect3DDevice9*>(uintptr_t(u32_at(address_of("d3d_device"))));
+    auto* device = nfsu2::guest::host_handle<IDirect3DDevice9*>(u32_at(address_of("d3d_device")));
     if (!device) return;
     if (!compile_shader(device) || !create_targets(device)) { g_failed = true; return; }
 
@@ -161,7 +162,7 @@ bool detect_msaa(IDirect3DDevice9* device) {
 }
 
 void hide_aa_border() {
-    auto* device = reinterpret_cast<IDirect3DDevice9*>(uintptr_t(u32_at(address_of("d3d_device"))));
+    auto* device = nfsu2::guest::host_handle<IDirect3DDevice9*>(u32_at(address_of("d3d_device")));
     if (!device) return;
     if (!g_msaa_checked) { g_msaa = detect_msaa(device); g_msaa_checked = true; }
     if (!g_msaa) return;

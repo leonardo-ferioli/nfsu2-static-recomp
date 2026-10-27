@@ -1,5 +1,6 @@
 // Resolution list, options-menu entry, label, saved value and window placement (the mod's Resolution module).
 #include "mods_internal.hpp"
+#include "guest_memory.hpp"
 #include "platform/services.hpp"
 namespace platform = nfsu2::platform;
 #define WIN32_LEAN_AND_MEAN
@@ -93,7 +94,7 @@ void get_racing_resolution_values(int* width, int* height) {
 }
 
 void get_racing_resolution(Cpu& c) {
-    get_racing_resolution_values(reinterpret_cast<int*>(uintptr_t(argument(c, 0))), reinterpret_cast<int*>(uintptr_t(argument(c, 1))));
+    get_racing_resolution_values(nfsu2::guest::ptr<int>(argument(c, 0)), nfsu2::guest::ptr<int>(argument(c, 1)));
     set_reg(c, EAX, 0);
 }
 
@@ -128,11 +129,11 @@ void inc_screen_res(Cpu& c) {
 // The label of the resolution entry of the options menu.
 void label_hook(Cpu& c) {
     const uint32_t self = reg(c, ECX);
-    const auto* object = reinterpret_cast<const uint32_t*>(uintptr_t(self));
+    const auto* object = nfsu2::guest::ptr<const uint32_t>(self);
     call_function("fn_set_language_hash", 0, 0, {object[11], 0xA9A76BBAu});
     const int index = selected();
     g_label = (index < 0 || index >= int(g_text.size())) ? "undefined" : g_text[index];
-    call_function("fn_set_string", object[12], reg(c, EDX), {uint32_t(uintptr_t(g_label.c_str()))});
+    call_function("fn_set_string", object[12], reg(c, EDX), {nfsu2::guest::to_guest(g_label.c_str())});
     set_reg(c, EAX, 0);
 }
 
@@ -142,7 +143,7 @@ void saved_value_hook(Cpu& c) {
     const int index = selected();
     if (index >= 0 && index < int(g_list.size())) {
         packed = (uint32_t(g_list[index].width) << 16) | (uint32_t(g_list[index].height) & 0xFFFFu) | 0x80000000u;
-        u32_at(reg(c, ESP)) = uint32_t(uintptr_t(&packed));
+        u32_at(reg(c, ESP)) = nfsu2::guest::to_guest(&packed);
     }
 }
 
@@ -178,7 +179,7 @@ void window_placement(Cpu& c) {
 }
 
 void window_procedure(Cpu& c) {
-    HWND window = reinterpret_cast<HWND>(uintptr_t(argument(c, 0)));
+    HWND window = nfsu2::guest::host_handle<HWND>(argument(c, 0));
     const UINT message = argument(c, 1);
     const WPARAM wparam = argument(c, 2);
     const LPARAM lparam = LPARAM(int32_t(argument(c, 3)));
@@ -214,8 +215,8 @@ void install_resolution(const WidescreenSettings& settings) {
     g_text.clear();
     g_supported.assign(g_list.size(), 1);
     for (const auto& r : g_list) g_text.push_back(std::to_string(r.width) + "x" + std::to_string(r.height) + (r.is_virtual ? " (scaled)" : ""));
-    set_var("supported_res_1", uint32_t(uintptr_t(g_supported.data())));
-    set_var("supported_res_2", uint32_t(uintptr_t(g_supported.data())));
+    set_var("supported_res_1", nfsu2::guest::to_guest(g_supported.data()));
+    set_var("supported_res_2", nfsu2::guest::to_guest(g_supported.data()));
     set_var("res_store_nop", 1u);
     install_hook("get_racing_resolution", get_racing_resolution);
     install_hook("inc_screen_res", inc_screen_res);

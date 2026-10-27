@@ -1,4 +1,5 @@
 #include "platform/audio/dsound_install.hpp"
+#include "guest_memory.hpp"
 
 #include <memory>
 #include <mutex>
@@ -26,10 +27,11 @@ using nfsu2raw::NativePlatform;
 
 class WindowsHost final : public HostServices {
 public:
-    // Kernel and window handles the guest holds are 32-bit significant values (Windows sign-extends them on 64-bit hosts); they are not guest
-    // addresses. When the bridge gives way to the Level A Win32 module these two calls resolve the guest's handle through its handle table.
-    void set_event(uint32_t handle) override { SetEvent(LongToHandle(static_cast<long>(handle))); }
-    bool is_window(uint32_t hwnd) override { return IsWindow(static_cast<HWND>(LongToHandle(static_cast<long>(hwnd)))) != FALSE; }
+    // Kernel and window handles the guest holds are 32-bit significant values, never guest addresses: they cross through guest::host_handle (declared
+    // only on an arena host, so the linker finds what still needs a token or a handle table). When the bridge gives way to the Level A Win32
+    // module these two calls resolve the guest's handle through its handle table.
+    void set_event(uint32_t handle) override { SetEvent(nfsu2::guest::host_handle<HANDLE>(handle)); }
+    bool is_window(uint32_t hwnd) override { return IsWindow(nfsu2::guest::host_handle<HWND>(hwnd)) != FALSE; }
 };
 
 struct Runtime {

@@ -2,6 +2,7 @@
 // (the mod's Misc and Windowed modules). The windowed modes act on the game's window calls, which this program implements
 // natively (NativePlatform::override_import) instead of patching an import table.
 #include "nue/window_fit.hpp"
+#include "guest_memory.hpp"
 #include "mods_internal.hpp"
 #include "platform/services.hpp"
 namespace platform = nfsu2::platform;
@@ -99,30 +100,30 @@ void center_window_position(int width, int height) {
 
 uint32_t create_window_ex_a(Cpu& c) {
     const DWORD ex_style = argument(c, 0);
-    const char* class_name = reinterpret_cast<const char*>(uintptr_t(argument(c, 1)));
-    const char* window_name = reinterpret_cast<const char*>(uintptr_t(argument(c, 2)));
+    const char* class_name = nfsu2::guest::ptr<const char>(argument(c, 1));
+    const char* window_name = nfsu2::guest::ptr<const char>(argument(c, 2));
     const DWORD style = argument(c, 3);
     int x = int(argument(c, 4)), y = int(argument(c, 5)), width = int(argument(c, 6)), height = int(argument(c, 7));
-    HWND parent = reinterpret_cast<HWND>(uintptr_t(argument(c, 8)));
-    HMENU menu = reinterpret_cast<HMENU>(uintptr_t(argument(c, 9)));
-    HINSTANCE instance = reinterpret_cast<HINSTANCE>(uintptr_t(argument(c, 10)));
-    void* parameter = reinterpret_cast<void*>(uintptr_t(argument(c, 11)));
+    HWND parent = nfsu2::guest::host_handle<HWND>(argument(c, 8));
+    HMENU menu = nfsu2::guest::host_handle<HMENU>(argument(c, 9));
+    HINSTANCE instance = nfsu2::guest::host_handle<HINSTANCE>(argument(c, 10));
+    void* parameter = nfsu2::guest::host_handle<void*>(argument(c, 11));   // lpParam: an opaque value the guest gets back in WM_CREATE
     if (parent && parent != GetDesktopWindow())
-        return uint32_t(uintptr_t(CreateWindowExA(ex_style, class_name, window_name, style, x, y, width, height, parent, menu, instance, parameter)));
+        return nfsu2::guest::guest_handle(CreateWindowExA(ex_style, class_name, window_name, style, x, y, width, height, parent, menu, instance, parameter));
     if (!windowed_active()) {   // not in a windowed mode (yet): the game's own window, remembered for later
         HWND created = CreateWindowExA(ex_style, class_name, window_name, style, x, y, width, height, parent, menu, instance, parameter);
         remember_game_window(created);
-        return uint32_t(uintptr_t(created));
+        return nfsu2::guest::guest_handle(created);
     }
     std::tie(x, y, width, height) = before_create_window(width, height);
     HWND created = CreateWindowExA(ex_style, class_name, window_name, style, x, y, width, height, parent, menu, instance, parameter);
     remember_game_window(created);
     after_create_window();
-    return uint32_t(uintptr_t(created));
+    return nfsu2::guest::guest_handle(created);
 }
 
 uint32_t set_window_long_a(Cpu& c) {
-    HWND window = reinterpret_cast<HWND>(uintptr_t(argument(c, 0)));
+    HWND window = nfsu2::guest::host_handle<HWND>(argument(c, 0));
     const int index = int(argument(c, 1));
     LONG value = LONG(argument(c, 2));
     if (index != GWL_STYLE || !windowed_active()) return uint32_t(SetWindowLongA(window, index, value));
@@ -139,7 +140,7 @@ uint32_t set_window_long_a(Cpu& c) {
 }
 
 uint32_t adjust_window_rect(Cpu& c) {
-    RECT* rect = reinterpret_cast<RECT*>(uintptr_t(argument(c, 0)));
+    RECT* rect = nfsu2::guest::ptr<RECT>(argument(c, 0));
     const BOOL menu = BOOL(argument(c, 2));
     if (!windowed_active()) return uint32_t(AdjustWindowRect(rect, DWORD(argument(c, 1)), menu));
     if (!g_borderless) {
@@ -201,7 +202,7 @@ void install_system(const WidescreenSettings& settings) {
 
     if (settings.skip_intro) {
         static const char skip_this[] = "SkipThis";
-        for (int i = 0; i < 4; ++i) set_var(("skip_intro_string_" + std::to_string(i)).c_str(), uint32_t(uintptr_t(skip_this)));
+        for (int i = 0; i < 4; ++i) set_var(("skip_intro_string_" + std::to_string(i)).c_str(), nfsu2::guest::to_guest(skip_this));
     }
 
     const unsigned fps = resolved_fps_limit(settings);
@@ -257,7 +258,7 @@ bool virtual_mode_active() { return g_virtual; }
 // Places the game's window for an output of width x height after the game placed it (windowed modes only).
 void place_game_window(int width, int height) {
     if (!windowed_active()) return;
-    HWND window = reinterpret_cast<HWND>(uintptr_t(u32_at(address_of("hwnd"))));
+    HWND window = nfsu2::guest::host_handle<HWND>(u32_at(address_of("hwnd")));
     if (!window) return;
     remember_game_window(window);
     if (g_borderless) {
@@ -270,7 +271,7 @@ void place_game_window(int width, int height) {
         game_window().place_client_centered(width, height, desktop_w, desktop_h, true);   // centred by the client area, shown, not topmost
     }
     const platform::Rect outer = game_window().outer_rect();
-    RECT* rect = reinterpret_cast<RECT*>(uintptr_t(address_of("window_rect")));
+    RECT* rect = nfsu2::guest::ptr<RECT>(address_of("window_rect"));
     *rect = RECT{outer.left, outer.top, outer.right, outer.bottom};   // the game keeps its own copy of the window rectangle
 }
 }  // namespace nfsu2raw::mods
