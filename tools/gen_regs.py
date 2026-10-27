@@ -372,7 +372,7 @@ def emit_page_regs(GF, RegEmitter, prog, page, insns, live_out):
         body = "".join(em.instruction(i) for i in fn)
         referenced |= em.referenced
         pieces.append(emit_function(GF, prog, start, fn, written, dyn, body))
-    head = ['#include "fast_regs.hpp"', "namespace nfsu2raw {", "#define EXIT(T) do{nx=u32(T);goto XIT;}while(0)"]
+    head = [(GF.x87_defines() + '#include "fast_regs.hpp"').strip(), "namespace nfsu2raw {", "#define EXIT(T) do{nx=u32(T);goto XIT;}while(0)"]
     head.append("PN u32 ent_dispatch(%s);" % declare_args())
     head.append("PN u32 ent_native(%s);" % declare_args())
     head.append("PN u32 ent_missing(%s);" % declare_args())   # the switch default, a tail call (see dispatch.cpp)

@@ -332,10 +332,19 @@ def apply_mod_patches(ins):
                         op[i] = ["modptr", format(slot * 4, "x"), node[2]]
 
 
+def x87_defines():
+    """Lines that select the virtual FPU in a generated file (empty for the host FPU, so the default output is unchanged)."""
+    if X87_MODE == "double":
+        return "#define NFSU2_X87_VIRTUAL 1\n#include " + chr(34) + "x87v.hpp" + chr(34) + "\n"
+    if X87_MODE == "soft80":
+        return "#define NFSU2_X87_VIRTUAL 1\n#define NFSU2_X87_SOFT80 1\n#include " + chr(34) + "x87v.hpp" + chr(34) + "\n"
+    return ""
+
+
 def x87_encoding(ins):
     """The FPU opcode bytes of an x87 instruction (optionally after FWAIT), or None for anything else."""
     mnemonic = ins.asm.split()[0] if ins.asm else ""
-    if not X87_PASSTHROUGH or not TEXT or not mnemonic.startswith("F") or mnemonic == "FEMMS":
+    if not (X87_PASSTHROUGH or X87_MODE in ("double", "soft80")) or not TEXT or not mnemonic.startswith("F") or mnemonic == "FEMMS":
         return None
     start = ins.addr - TEXT_BASE
     if not 0 <= start < len(TEXT):
@@ -613,7 +622,32 @@ class Emitter:
         out.append("}")
         return "\n".join(out) + "\n"
 
+    def x87_virtual(self, ins, raw):
+        """One x87 instruction on the virtual FPU of x87v.hpp (--x87 double | soft80): a template instance per encoding."""
+        a = ins.addr
+        out = [self.head(a)]
+        out.extend(self.mod_prologue(a, ins.length))
+        memory = x87_address(raw, self.reg)
+        if memory is not None:
+            prefix, opcode, reg, expression = memory
+            if ins.mod_addresses:
+                expression = f"u32(r4(MODV+{ins.mod_addresses[0][1] * 4}))"
+            out.append(f"{{u32 ea_={expression};x87v::insn<0x{opcode:02x},0x{reg << 3:02x}>(R,gp(ea_));}}")
+        else:
+            body = raw[1:] if raw[:1] == bytes([0x9b]) else raw
+            if body[0] == 0xdf and body[1] == 0xe0:     # FNSTSW AX: the status word goes to the guest's AX
+                out.append(f"w2({self.reg(0, 2)},u16(x87v::insn<0xdf,0xe0>(R,nullptr)));")
+            else:
+                out.append(f"x87v::insn<0x{body[0]:02x},0x{body[1]:02x}>(R,nullptr);")
+        nxt = a + ins.length
+        if nxt not in self.page_addrs or (nxt >> 12) != self.page:
+            out.append(self.exit_static(nxt))
+        out.append("}")
+        return "\n".join(out) + "\n"
+
     def x87(self, ins, raw):
+        if X87_MODE in ("double", "soft80"):
+            return self.x87_virtual(ins, raw)
         a = ins.addr
         out = [self.head(a)]
         out.extend(self.mod_prologue(a, ins.length))
@@ -814,7 +848,7 @@ def emit_page(page, insns, live_out=None):
     load = "".join(f"__builtin_memcpy(R+{s},c.regs.data()+{s},{e - s});" for s, e in loads)
     spill = "".join(f"__builtin_memcpy(c.regs.data()+{s},R+{s},{e - s});" for s, e in spills)
     head = io.StringIO()
-    head.write('#include "fast.hpp"\nnamespace nfsu2raw {\n')
+    head.write(x87_defines() + '#include "fast.hpp"\nnamespace nfsu2raw {\n')
     head.write("#define EXIT(T) do{nx=u32(T);goto XIT;}while(0)\n")
     if TAIL_CALLS and MEMORY_REGS:
         referenced = sorted({int(m, 16) for m in re.findall(r"TAIL_STATIC\(0x[0-9a-f]+u,([0-9a-f]+)\)", "".join(body))})

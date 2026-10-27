@@ -6,7 +6,7 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
-#include <xmmintrin.h>
+#include "host.hpp"
 
 namespace nfsu2raw {
 #if defined(_M_IX86) || defined(__i386__)
@@ -53,10 +53,10 @@ V user_op(Cpu& c,unsigned id,std::initializer_list<V> args);
 // The guest's x87 control word and MXCSR drive the host FPU: FLDCW/LDMXCSR (a write to the register) program the
 // host, and FNSTCW/STMXCSR (a read) observe it. Rounding for FIST/FRNDINT, precision control and exception
 // masks therefore behave as on the original CPU, including the CRT's temporary switch to truncation.
-inline uint16_t x87_store_control(){uint16_t cw;asm volatile("fnstcw %0":"=m"(cw));return cw;}
-inline void x87_load_control(uint16_t cw){asm volatile("fldcw %0"::"m"(cw));}
-inline uint32_t mxcsr_store(){return _mm_getcsr();}
-inline void mxcsr_load(uint32_t value){_mm_setcsr(value);}
+inline uint16_t x87_store_control(){return host::x87_control_get();}
+inline void x87_load_control(uint16_t cw){host::x87_control_set(cw);}
+inline uint32_t mxcsr_store(){return host::mxcsr_get();}
+inline void mxcsr_load(uint32_t value){host::mxcsr_set(value);}
 constexpr uint32_t reg_fpu_control=0x10a0,reg_mxcsr=0x1094;
 [[noreturn]] void missing_instruction(uint32_t address);
 
