@@ -248,7 +248,7 @@ void run_device(Rig& r) {
     const HRESULT cr = r.rds->GetCaps(&rc);
     const uint32_t cp = r.g.arena.alloc(96);
     const uint32_t cs = 96;
-    std::memcpy(r.g.arena.ptr(cp, 4), &cs, 4);
+    std::memcpy(r.g.arena.host(cp, 4), &cs, 4);
     const uint32_t cm = r.g.call(r.mds, ds_slot::GetCaps, {cp});
     same_hr("GetCaps", cr, cm);
     std::printf("        (info) real DSCAPS flags 0x%x min rate %lu max rate %lu primary buffers %lu; mine 0x%x %u %u\n", unsigned(rc.dwFlags), rc.dwMinSecondarySampleRate,
@@ -257,7 +257,7 @@ void run_device(Rig& r) {
     same_hr("GetCaps wrong dwSize", [&] { DSCAPS bad{}; bad.dwSize = 40; return r.rds->GetCaps(&bad); }(), [&] {
         const uint32_t tiny = r.g.arena.alloc(96);
         const uint32_t wrong = 40;
-        std::memcpy(r.g.arena.ptr(tiny, 4), &wrong, 4);
+        std::memcpy(r.g.arena.host(tiny, 4), &wrong, 4);
         return r.g.call(r.mds, ds_slot::GetCaps, {tiny});
     }());
     same_hr("GetSpeakerConfig null", r.rds->GetSpeakerConfig(nullptr), r.g.call(r.mds, ds_slot::GetSpeaker, {0}));
@@ -311,7 +311,7 @@ void run_secondary_creation(Rig& r) {
             DWORD rb = 0;
             const DWORD rf = caps_flags(p.real, &rb);
             const uint32_t caps = r.g.arena.alloc(20), sz = 20;
-            std::memcpy(r.g.arena.ptr(caps, 4), &sz, 4);
+            std::memcpy(r.g.arena.host(caps, 4), &sz, 4);
             r.g.call(p.mine, buf_slot::GetCaps, {caps});
             same_u32(std::string("GetCaps bytes: ") + c.name, rb, r.g.get32(caps + 8));
             same_u32(std::string("GetCaps flags: ") + c.name, rf, r.g.get32(caps + 4));
@@ -449,7 +449,7 @@ void run_transport_static(Rig& r) {
     DWORD bytes = 0;
     const DWORD rf = caps_flags(b.real, &bytes);
     const uint32_t caps = r.g.arena.alloc(20), sz = 20;
-    std::memcpy(r.g.arena.ptr(caps, 4), &sz, 4);
+    std::memcpy(r.g.arena.host(caps, 4), &sz, 4);
     r.g.call(b.mine, buf_slot::GetCaps, {caps});
     same_u32("buffer caps flags", rf, r.g.get32(caps + 4));
     // Duplicate.
@@ -531,8 +531,9 @@ void run_realtime(Rig& r) {
         std::printf("        %5llu   %8lu / %-8lu            %8u / %-8u\n", static_cast<unsigned long long>(elapsed), play / 4, write / 4, mp / 4, mw / 4);
         real_margin_sum += double((write + bytes - play) % bytes) / 4.0 / 44.1;
         mine_margin_sum += double((mw + bytes - mp) % bytes) / 4.0 / 44.1;
-        real_monotone = real_monotone && play >= last_real_play;
-        mine_monotone = mine_monotone && mp >= last_mine_play;
+        // The ring is one second long and the machine may be busy (a step of 100 ms can take 250 ms): "forward" is judged modulo the ring.
+        real_monotone = real_monotone && (play + bytes - last_real_play) % bytes < bytes * 6 / 10;
+        mine_monotone = mine_monotone && (mp + bytes - last_mine_play) % bytes < bytes * 6 / 10;
         last_real_play = play;
         last_mine_play = mp;
     }
@@ -541,9 +542,12 @@ void run_realtime(Rig& r) {
     report("play cursor advances monotonically (mine)", mine_monotone, "");
     DWORD play = 0;
     b.real->GetCurrentPosition(&play, nullptr);
-    report("real play cursor is near 0.8 s after 8 x 100 ms (within 150 ms)", std::fabs(double(play) / 4.0 / 44.1 - 800.0) < 150.0, "");
+    const double elapsed_ms = double(GetTickCount64() - t0);
+    // The real cursor follows the wall clock (it starts about 50 ms behind it); compared on the circle of the 1 s ring, whatever the load.
+    auto circular_ms = [](double a, double b) { double d = std::fmod(std::fabs(a - b), 1000.0); return d > 500.0 ? 1000.0 - d : d; };
+    report("real play cursor follows the clock (within 200 ms of elapsed time, modulo the ring)", circular_ms(double(play) / 4.0 / 44.1, elapsed_ms - 50.0) < 200.0, "");
     r.g.call(b.mine, buf_slot::GetCurrentPosition, {c1, 0});
-    report("mine play cursor is near 0.8 s (within 60 ms)", std::fabs(double(r.g.get32(c1)) / 4.0 / 44.1 - 800.0) < 60.0, "");
+    report("mine play cursor is where 8 x 100 ms of our time put it (within 60 ms)", std::fabs(double(r.g.get32(c1)) / 4.0 / 44.1 - 800.0) < 60.0, "");
     // Stop keeps the position; a stopped buffer does not move.
     same_hr("Stop", b.real->Stop(), r.g.call(b.mine, buf_slot::Stop));
     DWORD p1 = 0, p2 = 0;
@@ -611,7 +615,7 @@ void run_game_sequence(Rig& r) {
     same_hr("game Lock whole ring, no second region", ring.real->Lock(0, bytes, &p1, &l1, nullptr, nullptr, 0), r.g.call(ring.mine, buf_slot::Lock, {0, bytes, mp, ml, 0, 0, 0}));
     same_u32("game Lock length", l1, r.g.get32(ml));
     std::memset(p1, 0, l1);
-    std::memset(r.g.arena.ptr(r.g.get32(mp), l1), 0, l1);
+    std::memset(r.g.arena.host(r.g.get32(mp), l1), 0, l1);
     same_hr("game Unlock(p, n, 0, 0)", ring.real->Unlock(p1, l1, nullptr, 0), r.g.call(ring.mine, buf_slot::Unlock, {r.g.get32(mp), l1, 0, 0}));
     same_hr("game Play looping", ring.real->Play(0, 0, DSBPLAY_LOOPING), r.g.call(ring.mine, buf_slot::Play, {0, 0, 1}));
     DWORD status = 0;

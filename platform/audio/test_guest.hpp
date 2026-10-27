@@ -18,7 +18,7 @@ namespace nfsu2::platform::audio::testing {
 inline constexpr uint32_t HR_OK = 0, HR_INVALIDARG = 0x80070057, HR_NOINTERFACE = 0x80004002, HR_NODRIVER = 0x88780078, HR_NOAGG = 0x80040110, HR_INVALIDCALL = 0x88780032,
                    HR_PRIOLEVELNEEDED = 0x88780046, HR_BADFORMAT = 0x88780064, HR_CONTROLUNAVAIL = 0x8878001E, HR_ALREADYINIT = 0x88780082;
 
-// A guest arena: a flat byte array at 32-bit addresses starting at 0x10000.
+// A guest arena: a flat byte array at 32-bit addresses starting at 0x10000 (host pointer = vector + (address - 0x10000): guest != host, the 64-bit shape).
 class Arena final : public GuestMemory {
 public:
     Arena() : mem_(32u << 20, 0) {}
@@ -32,9 +32,13 @@ public:
         return a;
     }
     void free(uint32_t) override { --live; }
-    uint8_t* ptr(uint32_t a, uint32_t bytes) override {
-        if (a < base_ || size_t(a) - base_ + bytes > mem_.size()) return nullptr;
+    uint8_t* host(uint32_t a, uint32_t bytes) override {
+        if (a < base_ || size_t(a) - base_ + (bytes ? bytes : 1) > mem_.size()) return nullptr;
         return mem_.data() + (a - base_);
+    }
+    uint32_t address_of(const void* p) override {
+        const uint8_t* q = static_cast<const uint8_t*>(p);
+        return (q >= mem_.data() && q < mem_.data() + mem_.size()) ? base_ + uint32_t(q - mem_.data()) : 0;
     }
     int live = 0;
 
@@ -53,12 +57,13 @@ struct Host final : HostServices {
 inline constexpr uint32_t token_base = 0xf1000000u;
 
 struct Guest {
-    Arena arena;
+    Arena own_arena;
+    GuestMemory& arena;   // the memory the guest lives in: the fake arena unless a real guest::Memory is given
     Host host;
     std::unique_ptr<Engine> engine;
     NullSink* sink = nullptr;
     std::unique_ptr<DsoundFacade> facade;
-    Guest() {
+    explicit Guest(GuestMemory* memory = nullptr) : arena(memory ? *memory : static_cast<GuestMemory&>(own_arena)) {
         auto s = std::make_unique<NullSink>(480, 480);
         sink = s.get();
         EngineConfig cfg;
@@ -71,13 +76,13 @@ struct Guest {
     // ---- memory helpers
     uint32_t put(const void* p, uint32_t n) {
         const uint32_t a = arena.alloc(n);
-        std::memcpy(arena.ptr(a, n), p, n);
+        std::memcpy(arena.host(a, n), p, n);
         return a;
     }
     uint32_t cell(uint32_t value = 0) { return put(&value, 4); }
     uint32_t get32(uint32_t a) {
         uint32_t v;
-        std::memcpy(&v, arena.ptr(a, 4), 4);
+        std::memcpy(&v, arena.host(a, 4), 4);
         return v;
     }
     uint32_t guid(const uint8_t (&g)[16]) { return put(g, 16); }

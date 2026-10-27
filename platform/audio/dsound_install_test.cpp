@@ -7,6 +7,7 @@
 #include <string>
 #include <vector>
 
+#include "guest_memory.hpp"
 #include "native32.hpp"
 #include "platform/audio/dsound_install.hpp"
 #include "platform/audio/null_sink.hpp"
@@ -64,7 +65,7 @@ int main(int argc, char** argv) try {
     if (call_token(create_token, {0, pds, 0}) != 0) throw Fault("DirectSoundCreate through the import slot");
     const uint32_t ds = uint32_t(m<4>(c, pds));
     if (!ds) throw Fault("DirectSoundCreate returned no object");
-    if (method(ds, 6, {uint32_t(uintptr_t(GetDesktopWindow())), 2}) != 0) throw Fault("SetCooperativeLevel with the desktop window (the game's fallback)");
+    if (method(ds, 6, {uint32_t(HandleToLong(GetDesktopWindow())), 2}) != 0) throw Fault("SetCooperativeLevel with the desktop window (the game's fallback)");
 
     // Primary buffer, then a 2-channel 44.1 kHz format (plain WAVEFORMATEX), then the 0.5 s ring exactly as the game asks for it.
     const uint32_t desc_primary = block(36);
@@ -88,7 +89,7 @@ int main(int argc, char** argv) try {
     // Fill the ring with a tone through Lock/Unlock (guest pointers are host pointers on this host) and play it.
     const uint32_t pp1 = cell(), pn1 = cell();
     if (method(ring, 11, {0, ring_bytes, pp1, pn1, 0, 0, 0}) != 0) throw Fault("Lock");
-    int16_t* samples = reinterpret_cast<int16_t*>(uintptr_t(uint32_t(m<4>(c, pp1))));
+    int16_t* samples = nfsu2::guest::ptr<int16_t>(uint32_t(m<4>(c, pp1)));
     for (uint32_t i = 0; i < ring_bytes / 4; ++i) samples[2 * i] = samples[2 * i + 1] = int16_t(12000.0 * std::sin(2.0 * 3.14159265358979 * 440.0 * i / 44100.0));
     if (method(ring, 19, {uint32_t(m<4>(c, pp1)), ring_bytes, 0, 0}) != 0) throw Fault("Unlock");
     if (method(ring, 12, {0, 0, 1}) != 0) throw Fault("Play");

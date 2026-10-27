@@ -130,7 +130,7 @@ struct DsoundFacade::Impl {
     static void on_notify(void* self, uint64_t token) { static_cast<Impl*>(self)->host.set_event(uint32_t(token)); }
 
     // ---- guest memory helpers
-    uint8_t* at(uint32_t address, uint32_t bytes) { return address ? memory.ptr(address, bytes) : nullptr; }
+    uint8_t* at(uint32_t address, uint32_t bytes) { return address ? memory.host(address, bytes) : nullptr; }
     bool rd32(uint32_t a, uint32_t& v) {
         const uint8_t* p = at(a, 4);
         if (!p) return false;
@@ -569,7 +569,7 @@ struct DsoundFacade::Impl {
         const uint8_t* p1 = at(pv1, cb1 ? cb1 : 1);
         const uint8_t* p2 = cb2 ? at(pv2, cb2) : nullptr;
         if ((cb1 && !p1) || (cb2 && !p2)) return hr::invalid_param;
-        return device.unlock(o.id, written, Bytes(reinterpret_cast<const std::byte*>(p1), cb1), Bytes(reinterpret_cast<const std::byte*>(p2), cb2));
+        return device.unlock(o.id, written, ds::as_bytes(p1, cb1), ds::as_bytes(p2, cb2));
     }
 
     // ---- 3D buffer / listener / notify

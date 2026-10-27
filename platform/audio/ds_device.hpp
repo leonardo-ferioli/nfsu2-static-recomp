@@ -20,6 +20,9 @@
 namespace nfsu2::platform::audio::ds {
 
 using Hr = int32_t;
+
+// A span of host bytes for Unlock (host memory only: guest addresses never reach this layer).
+inline Bytes as_bytes(const void* data, size_t size) { return Bytes(static_cast<const std::byte*>(data), size); }
 constexpr bool succeeded(Hr h) { return h >= 0; }
 
 // DirectSound HRESULTs (dsound.h; the values Windows returns).

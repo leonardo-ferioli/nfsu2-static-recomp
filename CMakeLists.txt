@@ -16,7 +16,7 @@ endif()
 set(AUDIO_SOURCES platform/audio/ds_device.cpp platform/audio/spatial_renderers.cpp platform/audio/reverb.cpp platform/audio/null_sink.cpp
     platform/audio/audio_engine.cpp platform/audio/dsound_facade.cpp)
 if(WIN32)
-    list(APPEND AUDIO_SOURCES platform/audio/win32/wasapi_sink.cpp)
+    list(APPEND AUDIO_SOURCES platform/audio/win32/wasapi_sink.cpp platform/audio/port_guest_memory.cpp)
 endif()
 add_library(nfsu2_audio STATIC ${AUDIO_SOURCES})
 target_include_directories(nfsu2_audio PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
