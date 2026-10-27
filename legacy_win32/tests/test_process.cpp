@@ -32,6 +32,11 @@ static void test_process() {
     CHECK_EQ(p.get_module_handle("KERNEL32").value, k32);                                    // case and extension are free
     CHECK_EQ(p.get_proc_address(k32, "CreateEventA").value, 0xF0001000u);
     CHECK_EQ(p.get_proc_address(k32, "NoSuchFunction").error, uint32_t(err::proc_not_found));
+    p.set_proc_resolver([](std::string_view module, std::string_view name) -> uint32_t { return module == "kernel32" && name == "SetEvent" ? 0xF0003000u : 0u; });
+    CHECK_EQ(p.get_proc_address(k32, "SetEvent").value, 0xF0003000u);                                       // not registered: the binder answers
+    CHECK_EQ(p.get_proc_address(k32, "CreateEventA").value, 0xF0001000u);                                   // registered exports win
+    CHECK_EQ(p.get_proc_address(k32, "NoSuchFunction").error, uint32_t(err::proc_not_found));               // the binder says no
+    p.set_proc_resolver({});
     CHECK_EQ(p.get_proc_address_ordinal(k32, 1).value, 0xF0002000u);
     CHECK_EQ(p.get_proc_address(0x1234, "x").error, uint32_t(err::invalid_handle));
     CHECK_EQ(p.load_library("nonexistent.dll").error, uint32_t(err::mod_not_found));

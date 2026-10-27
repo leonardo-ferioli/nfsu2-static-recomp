@@ -10,6 +10,7 @@
 #pragma once
 #include "guest_memory.hpp"
 #include "legacy_win32/common.hpp"
+#include <functional>
 #include <map>
 #include <memory>
 #include <mutex>
@@ -46,6 +47,29 @@ std::unique_ptr<AddressSpace> make_arena_address_space(guest::Memory& memory, ui
 bool is_bad_read_ptr(AddressSpace&, uint32_t address, uint32_t size);
 bool is_bad_write_ptr(AddressSpace&, uint32_t address, uint32_t size);
 bool is_bad_code_ptr(AddressSpace&, uint32_t address);
+
+// VirtualAlloc / VirtualProtect / VirtualFree / VirtualQuery as the guest calls them, over any address space, with one policy for the execution engine:
+// memory that becomes executable outside the main image holds run-time generated code (a decompressed or relocated module, a thunk), so the engine is told
+// where it is ("register only": what is done with it, an interpreter on a desktop or nothing on a host that forbids run-time code, is decided elsewhere).
+class VirtualApi {
+public:
+    using RegionListener = std::function<void(uint32_t base, uint32_t size)>;
+    struct Region { uint32_t base = 0, size = 0; };
+    VirtualApi(AddressSpace& space, uint32_t image_base, uint32_t image_size, RegionListener on_executable = {}, RegionListener on_released = {});
+    Ret<uint32_t> virtual_alloc(uint32_t address, uint32_t size, uint32_t type, uint32_t protect);   // the base, 0 on failure
+    Ret<bool> virtual_protect(uint32_t address, uint32_t size, uint32_t protect, uint32_t* old_protect);
+    Ret<bool> virtual_free(uint32_t address, uint32_t size, uint32_t type);
+    Ret<RegionInfo> virtual_query(uint32_t address);
+    std::vector<Region> executable_regions() const;                  // the regions announced and not released since
+    bool in_executable_region(uint32_t address) const;
+private:
+    bool outside_image(uint32_t base, uint32_t size) const { return uint64_t(base) + size <= image_base_ || base >= uint64_t(image_base_) + image_size_; }
+    AddressSpace& space_;
+    uint32_t image_base_, image_size_;
+    RegionListener on_executable_, on_released_;
+    mutable std::mutex m_;
+    std::vector<Region> regions_;
+};
 
 using HeapId = Handle;
 

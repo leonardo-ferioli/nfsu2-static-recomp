@@ -151,6 +151,41 @@ static void test_arena_memory() {
 }
 REGISTER_TEST("arena_memory", test_arena_memory);
 
+// VirtualApi: memory that becomes executable outside the main image is announced (register only), released regions are retired.
+static void test_virtual_api() {
+    ArenaMemory memory(96u << 20, 64u << 20);
+    auto space = make_arena_address_space(memory, 64u << 20);
+    std::vector<std::pair<uint32_t, uint32_t>> announced, released;
+    VirtualApi api(*space, 0x400000, 0x300000, [&](uint32_t b, uint32_t s) { announced.push_back({b, s}); }, [&](uint32_t b, uint32_t s) { released.push_back({b, s}); });
+    auto data = api.virtual_alloc(0, 8192, mem::reserve | mem::commit, page::readwrite);
+    CHECK(data && data.value != 0 && announced.empty());                                                       // data is not announced
+    auto code = api.virtual_alloc(0, 3 * 4096, mem::reserve | mem::commit, page::execute_readwrite);
+    CHECK(code && announced.size() == 1 && announced[0].first == code.value && announced[0].second == 3 * 4096u);
+    CHECK(api.in_executable_region(code.value + 100) && !api.in_executable_region(data.value));
+    // Data that is made executable later is announced at the VirtualProtect (a decompressed module).
+    uint32_t old = 0;
+    CHECK(api.virtual_protect(data.value, 4096, page::execute_read, &old));
+    CHECK_EQ(old, uint32_t(page::readwrite));
+    CHECK(announced.size() == 2 && announced[1].first == data.value);
+    // The same inside the main image is not announced (translated code covers it).
+    auto in_image = api.virtual_alloc(0x400000, 4096, mem::reserve | mem::commit, page::execute_readwrite);
+    CHECK(!in_image || announced.size() == 2);                                                                  // the window starts below the image, so this may be refused: never announced
+    // Errors pass through.
+    auto bad = api.virtual_protect(0x1000, 4096, page::readwrite, &old);
+    CHECK(!bad && bad.error != 0);
+    CHECK(!api.virtual_alloc(0, 0, mem::commit, page::readwrite));
+    // Releasing the allocation retires its regions, including one made by VirtualProtect inside it.
+    CHECK(api.virtual_free(code.value, 0, mem::release));
+    CHECK(released.size() == 1 && released[0].first == code.value);
+    CHECK(!api.in_executable_region(code.value));
+    CHECK(api.virtual_free(data.value, 0, mem::release));
+    CHECK_EQ(released.size(), 2u);
+    CHECK(!api.virtual_free(data.value, 0, mem::release));                                                     // twice
+    auto info = api.virtual_query(0x20000);
+    CHECK(info);
+}
+REGISTER_TEST("virtual_api", test_virtual_api);
+
 #if defined(_WIN32)
 namespace {
 // An operation script over a region: `base` is whatever the allocator returns, every address in the log is relative to it.

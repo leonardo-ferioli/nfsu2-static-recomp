@@ -206,6 +206,74 @@ bool is_bad_code_ptr(AddressSpace& s, uint32_t address) {
     return s.virtual_query(address, r) != 0 || r.state != mem::commit || !(executable(r.protect) || readable(r.protect));
 }
 
+// ------------------------------------------------------------------------------------------------------------------------------ VirtualApi
+VirtualApi::VirtualApi(AddressSpace& space, uint32_t image_base, uint32_t image_size, RegionListener on_executable, RegionListener on_released)
+    : space_(space), image_base_(image_base), image_size_(image_size), on_executable_(std::move(on_executable)), on_released_(std::move(on_released)) {}
+
+Ret<uint32_t> VirtualApi::virtual_alloc(uint32_t address, uint32_t size, uint32_t type, uint32_t protect) {
+    uint32_t result = 0;
+    const uint32_t error = space_.virtual_alloc(address, size, type, protect, result);
+    if (error) return fail<uint32_t>(error);
+    if (result && (protect & 0xF0) && outside_image(result, size)) {
+        { std::lock_guard lock(m_); regions_.push_back({result, size}); }
+        if (on_executable_) on_executable_(result, size);
+    }
+    return ok(result);
+}
+
+Ret<bool> VirtualApi::virtual_protect(uint32_t address, uint32_t size, uint32_t protect, uint32_t* old_protect) {
+    uint32_t old = 0;
+    const uint32_t error = space_.virtual_protect(address, size, protect, old);
+    if (old_protect) *old_protect = old;
+    if (error) return fail<bool>(error);
+    if ((protect & 0xF0) && outside_image(address, size)) {
+        { std::lock_guard lock(m_); regions_.push_back({address, size}); }
+        if (on_executable_) on_executable_(address, size);
+    }
+    return ok(true);
+}
+
+Ret<bool> VirtualApi::virtual_free(uint32_t address, uint32_t size, uint32_t type) {
+    // The extent of what a release frees, measured before it happens: the whole allocation that starts at `address`.
+    uint32_t end = address;
+    if (type & mem::release) {
+        RegionInfo info;
+        if (space_.virtual_query(address, info) == 0 && info.allocation_base == address) {
+            for (uint64_t a = address; a < 0xFFFF0000ull; a = uint64_t(info.base_address) + info.region_size) {
+                if (space_.virtual_query(uint32_t(a), info) != 0 || info.allocation_base != address) break;
+                end = uint32_t(uint64_t(info.base_address) + info.region_size);
+            }
+        }
+    }
+    const uint32_t error = space_.virtual_free(address, size, type);
+    if (error) return fail<bool>(error);
+    if (type & mem::release) {
+        std::vector<Region> gone;
+        {
+            std::lock_guard lock(m_);
+            for (auto it = regions_.begin(); it != regions_.end();) {
+                if (it->base >= address && it->base < end) { gone.push_back(*it); it = regions_.erase(it); } else ++it;
+            }
+        }
+        if (on_released_) for (const auto& r : gone) on_released_(r.base, r.size);
+    }
+    return ok(true);
+}
+
+Ret<RegionInfo> VirtualApi::virtual_query(uint32_t address) {
+    RegionInfo info;
+    const uint32_t error = space_.virtual_query(address, info);
+    if (error) return fail<RegionInfo>(error);
+    return ok(info);
+}
+
+std::vector<VirtualApi::Region> VirtualApi::executable_regions() const { std::lock_guard lock(m_); return regions_; }
+bool VirtualApi::in_executable_region(uint32_t address) const {
+    std::lock_guard lock(m_);
+    for (const auto& r : regions_) if (address >= r.base && uint64_t(address) < uint64_t(r.base) + r.size) return true;
+    return false;
+}
+
 // ------------------------------------------------------------------------------------------------------------------------------ heaps
 struct HeapManager::Heap {
     struct Header { uint32_t size, cookie; };   // 8 bytes before every block: the user size and a cookie that says "allocated by this heap"

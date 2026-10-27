@@ -24,13 +24,27 @@ struct Waitable : Object {
     // All members below are protected by the global lock of the Sync that owns the object.
     virtual bool can_acquire(uint64_t thread) const = 0;
     virtual bool acquire(uint64_t thread, bool& abandoned) = 0;   // consumes the signal where the object type does
+    // PulseEvent: a pulse releases the threads that are blocked on the object when it happens, and only those. A waiter takes a mark when it starts to wait.
+    virtual void enter_wait() {}
+    virtual void leave_wait() {}
+    virtual uint64_t pulse_mark() const { return 0; }
+    virtual bool pulse_ready(uint64_t) const { return false; }
+    virtual void pulse_take(uint64_t) {}
 };
 
 struct EventObject : Waitable {
     EventObject(bool manual_reset, bool initial) : Waitable(ObjectKind::event), manual(manual_reset), signaled(initial) {}
     bool manual, signaled;
+    int waiters = 0;
+    uint64_t pulses = 0;
+    bool pulse_token = false;                   // an auto-reset event releases one waiter per pulse
     bool can_acquire(uint64_t) const override { return signaled; }
     bool acquire(uint64_t, bool&) override { if (!signaled) return false; if (!manual) signaled = false; return true; }
+    void enter_wait() override { ++waiters; }
+    void leave_wait() override { --waiters; }
+    uint64_t pulse_mark() const override { return pulses; }
+    bool pulse_ready(uint64_t mark) const override { return pulses != mark && (manual || pulse_token); }
+    void pulse_take(uint64_t) override { if (!manual) pulse_token = false; }
 };
 
 struct MutexObject : Waitable {
@@ -128,19 +142,24 @@ struct Sync::Impl {
         const uint64_t me = this->me();
         Guard lock(*this);
         const int64_t start = clock.time_ns();
+        std::vector<uint64_t> marks(objects.size());
+        for (size_t i = 0; i < objects.size(); ++i) { marks[i] = objects[i]->pulse_mark(); objects[i]->enter_wait(); }
+        struct Leave { const std::vector<std::shared_ptr<Waitable>>& objects; ~Leave() { for (auto& o : objects) o->leave_wait(); } } leave{objects};
+        auto ready = [&](size_t i) { return objects[i]->can_acquire(me) || objects[i]->pulse_ready(marks[i]); };
+        auto take = [&](size_t i, bool& ab) { if (objects[i]->acquire(me, ab)) return true; if (objects[i]->pulse_ready(marks[i])) { objects[i]->pulse_take(marks[i]); return true; } return false; };
         for (;;) {
             if (all) {
                 bool every = true;
-                for (auto& o : objects) if (!o->can_acquire(me)) { every = false; break; }
+                for (size_t i = 0; i < objects.size(); ++i) if (!ready(i)) { every = false; break; }
                 if (every) {
                     uint32_t result = kWaitObject0;
-                    for (size_t i = 0; i < objects.size(); ++i) { bool ab = false; objects[i]->acquire(me, ab); if (ab && result == kWaitObject0) result = kWaitAbandoned0 + uint32_t(i); }
+                    for (size_t i = 0; i < objects.size(); ++i) { bool ab = false; take(i, ab); if (ab && result == kWaitObject0) result = kWaitAbandoned0 + uint32_t(i); }
                     return ok(result);
                 }
             } else {
                 for (size_t i = 0; i < objects.size(); ++i) {
                     bool ab = false;
-                    if (objects[i]->acquire(me, ab)) return ok((ab ? kWaitAbandoned0 : kWaitObject0) + uint32_t(i));
+                    if (take(i, ab)) return ok((ab ? kWaitAbandoned0 : kWaitObject0) + uint32_t(i));
                 }
             }
             if (ms == 0) return ok(kWaitTimeout);
@@ -156,8 +175,8 @@ struct Sync::Impl {
             const platform::Status s = threads.cond_wait(global_cond, global_mutex, slice_ns);
             if (s == platform::Status::timed_out && last_slice) {
                 // One last look: the object may have been signalled just as the time ran out.
-                if (all) { bool every = true; for (auto& o : objects) if (!o->can_acquire(me)) { every = false; break; } if (!every) return ok(kWaitTimeout); }
-                else { bool any = false; for (auto& o : objects) if (o->can_acquire(me)) { any = true; break; } if (!any) return ok(kWaitTimeout); }
+                if (all) { bool every = true; for (size_t i = 0; i < objects.size(); ++i) if (!ready(i)) { every = false; break; } if (!every) return ok(kWaitTimeout); }
+                else { bool any = false; for (size_t i = 0; i < objects.size(); ++i) if (ready(i)) { any = true; break; } if (!any) return ok(kWaitTimeout); }
             }
         }
     }
@@ -213,11 +232,12 @@ Ret<bool> Sync::pulse_event(Handle h) {
     Impl::Guard lock(*impl_);
     auto e = impl_->handles.get_as<EventObject>(h, ObjectKind::event);
     if (!e) return fail<bool>(err::invalid_handle);
-    e->signaled = true;
-    impl_->broadcast();
-    // Waiters woken by the broadcast take the signal themselves; whatever is left is cleared once the lock is released. The wait loop re-checks under
-    // the lock, so a waiter that has not run yet may miss the pulse: that is the documented behaviour of PulseEvent.
+    // PulseEvent releases the threads blocked on the event right now (all of them for a manual-reset event, one for an auto-reset event) and leaves it
+    // non-signalled. A thread that starts waiting after the call is not released: the wait loop compares the pulse count it saw when it started.
+    ++e->pulses;
+    e->pulse_token = e->waiters > 0;
     e->signaled = false;
+    impl_->broadcast();
     return ok(true);
 }
 
