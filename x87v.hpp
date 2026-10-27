@@ -20,17 +20,17 @@
 
 namespace nfsu2raw::x87v {
 using x87soft::Ctl;
-enum : u32 { O_C0 = 0x1090, O_CW = 0x10a0, O_SW = 0x10a2, O_TW = 0x10a4, O_DEPTH = 0x10b0, O_ST = 0x1100 };
+enum : u32 { O_C0 = 0x1090, O_CW = 0x10a0, O_SW = 0x10a2, O_TW = 0x10a4, O_DEPTH = 0x10b0, O_TOP = 0x10b1, O_ST = 0x1100 };
 
 inline u16 control_word(const u8* R) { const u16 c = r2(R + O_CW); return c ? c : u16(0x27f); }
-inline unsigned top(const u8* R) { return (r2(R + O_SW) >> 11) & 7; }
-inline void set_top(u8* R, unsigned t) { w2(R + O_SW, u16((r2(R + O_SW) & ~0x3800) | ((t & 7) << 11))); }
+inline unsigned top(const u8* R) { return R[O_TOP]; }                      // TOP lives in its own byte; the status word is composed on demand
+inline void set_top(u8* R, unsigned t) { R[O_TOP] = u8(t & 7); }
 inline u8* slot(u8* R, unsigned i) { return R + O_ST + 16 * ((top(R) + i) & 7); }
-inline u16 status_word(const u8* R) {
-    return u16((r2(R + O_SW) & ~0x4700) | (R[O_C0] << 8) | (R[O_C0 + 1] << 9) | (R[O_C0 + 2] << 10) | (R[O_C0 + 3] << 14));
+inline u16 status_word(const u8* R) {   // the stored word keeps the exception flags (only the sticky stack fault is ever set)
+    return u16((r2(R + O_SW) & 0xff) | (top(R) << 11) | (R[O_C0] << 8) | (R[O_C0 + 1] << 9) | (R[O_C0 + 2] << 10) | (R[O_C0 + 3] << 14));
 }
 inline void set_status_word(u8* R, u16 sw) {
-    w2(R + O_SW, sw); R[O_C0] = (sw >> 8) & 1; R[O_C0 + 1] = (sw >> 9) & 1; R[O_C0 + 2] = (sw >> 10) & 1; R[O_C0 + 3] = (sw >> 14) & 1;
+    w2(R + O_SW, sw & 0xff); set_top(R, (sw >> 11) & 7); R[O_C0] = (sw >> 8) & 1; R[O_C0 + 1] = (sw >> 9) & 1; R[O_C0 + 2] = (sw >> 10) & 1; R[O_C0 + 3] = (sw >> 14) & 1;
 }
 inline void set_cc(u8* R, unsigned c0, unsigned c1, unsigned c2, unsigned c3) { R[O_C0] = u8(c0); R[O_C0 + 1] = u8(c1); R[O_C0 + 2] = u8(c2); R[O_C0 + 3] = u8(c3); }
 

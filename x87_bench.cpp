@@ -28,8 +28,10 @@ int main(int argc, char** argv) {
             instructions = 0;
             const auto started = std::chrono::steady_clock::now();
             for (unsigned i = 0; i < calls; ++i) {
-                wr<4>(c, 16, sp); wm<4>(c, sp, stop); wm<4>(c, sp + 4, a1); wm<4>(c, sp + 8, a2); wm<4>(c, sp + 12, a3);
-                wr<4>(c, 4, a1); wr<4>(c, 8, a3);   // ECX / EDX for functions that take their operands there
+                // guest memory is the process' memory on this host: plain stores, no Cpu::pointer lookups in the timed loop
+                uint32_t* stack = reinterpret_cast<uint32_t*>(uintptr_t(sp));
+                stack[0] = stop; stack[1] = a1; stack[2] = a2; stack[3] = a3;
+                std::memcpy(c.regs.data() + 16, &sp, 4); std::memcpy(c.regs.data() + 4, &a1, 4); std::memcpy(c.regs.data() + 8, &a3, 4);   // ESP; ECX / EDX for functions that take their operands there
                 c.pc = entry;
                 const uint64_t before = c.instructions;
                 nfsu2raw::run(c, stop, 100000);

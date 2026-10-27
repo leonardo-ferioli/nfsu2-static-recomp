@@ -60,7 +60,7 @@ int main(int argc,char** argv){try{
 #endif
         std::memset(c.regs.data()+0x1100,0,0x80);wr<2>(c,0x10a4,0xffff);wr<2>(c,0x10a0,0x027f);
 #ifdef NFSU2_X87_VIRTUAL
-        std::memset(c.regs.data()+0x1090,0,4);wr<2>(c,0x10a2,0);c.regs[0x10b0]=0;
+        std::memset(c.regs.data()+0x1090,0,4);wr<2>(c,0x10a2,0);c.regs[0x10b0]=0;c.regs[0x10b1]=0;
 #endif
         {   // Some routines take their operands on the FPU stack: start with two values (ST0, ST1).
             double inputs[2];for(auto& v:inputs){uint32_t b=random_float_bits();float f;std::memcpy(&f,&b,4);v=double(f);}
