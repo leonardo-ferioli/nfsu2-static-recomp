@@ -1,5 +1,6 @@
 // Internals shared by the parts of the Win32 facade (win32_facade.cpp, win32_facade_dinput.cpp): the guest calling-convention helpers and the state.
 #pragma once
+#include "guest_memory.hpp"
 #include "win32_facade.hpp"
 #include "legacy_win32/dinput.hpp"
 #include "legacy_win32/files.hpp"
@@ -22,16 +23,17 @@
 #include <unordered_map>
 
 namespace nfsu2raw {
+namespace guest = nfsu2::guest;
 namespace lw = nfsu2::legacy::win32;
 namespace ldi = nfsu2::legacy::dinput;
 namespace plat = nfsu2::platform;
 
 namespace {
 
-// ---- the guest's calling convention: stdcall words on the guest stack, a 32-bit guest address is a host address
+// ---- the guest's calling convention: stdcall words on the guest stack. A guest address becomes a host pointer only through guest::to_host / guest::ptr.
 inline uint32_t sp(Cpu& c) { return uint32_t(r<4>(c, 16)); }
-inline uint32_t arg(Cpu& c, unsigned i) { uint32_t v; std::memcpy(&v, reinterpret_cast<const void*>(uintptr_t(sp(c) + 4 + 4 * i)), 4); return v; }
-template <class T> inline T* ptr(uint32_t address) { return reinterpret_cast<T*>(uintptr_t(address)); }
+inline uint32_t arg(Cpu& c, unsigned i) { uint32_t v; std::memcpy(&v, guest::to_host(sp(c) + 4 + 4 * i), 4); return v; }
+template <class T> inline T* ptr(uint32_t address) { return guest::ptr<T>(address); }
 inline uint32_t* last_error_slot(Cpu& c) { return ptr<uint32_t>(uint32_t(r<4>(c, 0x110)) + 0x34); }
 inline void set_error(Cpu& c, uint32_t e) { *last_error_slot(c) = e; }
 inline std::string cstr(uint32_t address) { return address ? std::string(ptr<const char>(address)) : std::string(); }
@@ -52,9 +54,15 @@ struct Win32Facade::Impl {
     Impl(NativePlatform& p, const Win32LayerOptions& o)
         : platform(p), options(o), clock(plat::stdlib::make_clock()), threads(plat::stdlib::make_threads()), system(plat::stdlib::make_system()), storage(plat::stdlib::make_storage()),
           handles(kHandleBias), time(*clock), text(system->info().ansi_code_page, system->info().oem_code_page, system->info().user_lcid),
-          sync(*threads, *clock, handles), space(lw::host::make_identity_address_space()), heaps(*space), process(*system, handles, process_config(*system)),
+          sync(*threads, *clock, handles), space(make_space(o)), heaps(*space), process(*system, handles, process_config(*system)),
           files(*storage, handles, file_config()) {}
 
+    // The address space of the guest: the portable one over the guest memory the port gives (any host), or, without one, the real VirtualAlloc of a 32-bit
+    // Windows process (identity model: today's behaviour).
+    static std::unique_ptr<lw::AddressSpace> make_space(const Win32LayerOptions& o) {
+        if (o.guest_memory) return lw::make_arena_address_space(*o.guest_memory, o.address_space_bytes);
+        return lw::host::make_identity_address_space();
+    }
     static lw::ProcessConfig process_config(plat::System& system) {
         lw::ProcessConfig c;
         c.process_id = GetCurrentProcessId();

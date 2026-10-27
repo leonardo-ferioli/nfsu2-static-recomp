@@ -18,7 +18,8 @@ add_library(nfsu2_platform_std STATIC
     ${PLATFORM_DIR}/storage_path.cpp
     ${PLATFORM_DIR}/std/std_clock.cpp ${PLATFORM_DIR}/std/std_threads.cpp ${PLATFORM_DIR}/std/std_storage.cpp ${PLATFORM_DIR}/std/std_config_system.cpp
     ${PLATFORM_DIR}/null/null_services.cpp ${PLATFORM_DIR}/null/null_platform.cpp)
-target_include_directories(nfsu2_platform_std PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/..")
+# platform/types.hpp forwards to the common value types of nue_d3d9 (nue::Status, nue::Result, ...): header-only
+target_include_directories(nfsu2_platform_std PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/.." "${CMAKE_CURRENT_SOURCE_DIR}/../nue_d3d9/include")
 
 file(GLOB LEGACY_WIN32_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
 add_library(legacy_win32 STATIC ${LEGACY_WIN32_SOURCES})
@@ -41,7 +42,7 @@ if(WIN32)
     target_link_libraries(legacy_win32_tests PRIVATE legacy_win32_host advapi32 user32 winmm dinput8 dxguid)   # the differential tests compare with the real Windows API
 endif()
 
-set(LEGACY_WIN32_TEST_MODULES handles time text registry sync files window window_platform dinput process memory)
+set(LEGACY_WIN32_TEST_MODULES handles time text registry sync files window window_platform dinput process memory arena_memory)
 if(WIN32)
     list(APPEND LEGACY_WIN32_TEST_MODULES time_windows text_codepages_windows text_classes_windows text_collation_windows text_locale_windows text_wsprintf_windows registry_windows sync_windows files_windows window_windows dinput_windows process_windows memory_windows)
 endif()

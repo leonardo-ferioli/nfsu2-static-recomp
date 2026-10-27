@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <cstdlib>
 #include <cstring>
+#include <stdexcept>
 
 namespace nfsu2::legacy::win32 {
 namespace {
@@ -24,10 +25,12 @@ bool executable(uint32_t p) { if (p & (page::guard | page::noaccess)) return fal
 
 class Arena final : public AddressSpace {
 public:
-    explicit Arena(uint32_t bytes) : size_(round_up(bytes, kGranularity)), pages_(size_ / kPage) {
-        memory_ = static_cast<std::byte*>(std::calloc(size_, 1));    // zero pages the OS gives lazily
+    // The window [kBaseAddress, kBaseAddress + bytes) of the guest's address space belongs to this object: the host (guest::Memory) must map all of it
+    // contiguously. Region state and page protections are kept here, in software, in 4 KiB guest pages: the host's own page size and MMU play no part.
+    Arena(guest::Memory& memory, uint32_t bytes) : size_(round_up(bytes, kGranularity)), pages_(size_ / kPage) {
+        memory_ = reinterpret_cast<std::byte*>(memory.host(kBaseAddress, size_));
+        if (!memory_) throw std::runtime_error("the guest memory does not map the Win32 address-space window");
     }
-    ~Arena() override { std::free(memory_); }
 
     uint32_t virtual_alloc(uint32_t address, uint32_t size, uint32_t type, uint32_t protect, uint32_t& result) override {
         std::lock_guard lock(m_);
@@ -180,7 +183,7 @@ private:
 
 }  // namespace
 
-std::unique_ptr<AddressSpace> make_arena_address_space(uint32_t bytes) { return std::make_unique<Arena>(bytes); }
+std::unique_ptr<AddressSpace> make_arena_address_space(guest::Memory& memory, uint32_t window_bytes) { return std::make_unique<Arena>(memory, window_bytes); }
 
 bool is_bad_read_ptr(AddressSpace& s, uint32_t address, uint32_t size) {
     if (size == 0) return false;

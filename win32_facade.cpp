@@ -134,10 +134,13 @@ void Win32Facade::Impl::install_text() {
     on("EnumSystemLocalesA", 2, [this](Cpu& c) {
         const uint32_t callback = arg(c, 0);
         for (const auto& s : text.enum_system_locales(arg(c, 1))) {
-            std::string text_copy = s;
-            text_copy.push_back('\0');
-            // The string has to live in guest-visible memory for the duration of the callback: host memory is guest memory here.
-            if (platform.callback(callback, {uint32_t(uintptr_t(text_copy.data()))}) == 0) break;
+            // The string has to live in guest memory for the duration of the callback.
+            const uint32_t guest_text = heaps.heap_alloc(heaps.get_process_heap(), lw::heap_flag::zero_memory, uint32_t(s.size() + 1)).value;
+            if (!guest_text) break;
+            std::memcpy(ptr<char>(guest_text), s.c_str(), s.size() + 1);
+            const uint32_t keep_going = platform.callback(callback, {guest_text});
+            heaps.heap_free(heaps.get_process_heap(), 0, guest_text);
+            if (keep_going == 0) break;
         }
         return 1u;
     });
@@ -197,7 +200,7 @@ void Win32Facade::Impl::install_process() {
     });
     on("IsProcessorFeaturePresent", 1, [this](Cpu& c) { return process.is_processor_feature_present(arg(c, 0)) ? 1u : 0u; });
     on("GetCurrentProcessId", 0, [this](Cpu&) { return process.get_current_process_id(); });
-    on("GetStartupInfoA", 1, [](Cpu& c) { uint8_t* out = ptr<uint8_t>(arg(c, 0)); std::memset(out, 0, 68); *reinterpret_cast<uint32_t*>(out) = 68; return 0u; });
+    on("GetStartupInfoA", 1, [](Cpu& c) { uint8_t* out = ptr<uint8_t>(arg(c, 0)); std::memset(out, 0, 68); const uint32_t size = 68; std::memcpy(out, &size, 4); return 0u; });
     on("SetErrorMode", 1, [this](Cpu& c) { return process.set_error_mode(arg(c, 0)); });
     on("OutputDebugStringA", 1, [this](Cpu& c) { process.output_debug_string(cstr(arg(c, 0))); return 0u; });   // a sink that costs nothing: no debugger is listening
     on("IsDebuggerPresent", 0, [this](Cpu&) { return process.is_debugger_present() ? 1u : 0u; });

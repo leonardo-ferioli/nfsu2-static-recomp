@@ -6,6 +6,7 @@
 // Groups: time, text, process, sync, memory, files, dinput. A group never answers a function for a handle or an object that belongs to another source:
 // handles of the library live in a range of their own (HandleTable bias) and a call with a handle of the real system is passed to the real function.
 #pragma once
+#include "guest_memory.hpp"
 #include "native32.hpp"
 #include <memory>
 #include <string>
@@ -16,6 +17,10 @@ namespace nfsu2raw {
 
 struct Win32LayerOptions {
     bool time = false, text = false, process = false, sync = false, memory = false, files = false, dinput = false;
+    // The guest's memory when the guest does not share the process' address space (any 64-bit host). Null: identity model (32-bit Windows host).
+    // The address-space window [0x10000, 0x10000 + address_space_bytes) of it belongs to VirtualAlloc and the heaps (make_arena_address_space).
+    nfsu2::guest::Memory* guest_memory = nullptr;
+    uint32_t address_space_bytes = 256u << 20;
     bool any() const { return time || text || process || sync || memory || files || dinput; }
 };
 

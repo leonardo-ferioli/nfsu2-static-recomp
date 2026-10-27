@@ -16,6 +16,7 @@
 #include <vector>
 
 using namespace nfsu2raw;
+namespace guest = nfsu2::guest;
 namespace fs = std::filesystem;
 
 namespace {
@@ -49,8 +50,8 @@ struct Guest {
     uint32_t com(uint32_t object, unsigned slot, std::initializer_list<uint32_t> args) {   // a call through the vtable of a COM object
         static const bool trace = std::getenv("NFSU2_FACADE_TEST_TRACE") != nullptr;
         if (trace) std::cerr << "com object=" << std::hex << object << std::dec << " slot=" << slot << std::endl;
-        const uint32_t vtable = *reinterpret_cast<uint32_t*>(uintptr_t(object));
-        const uint32_t token = *reinterpret_cast<uint32_t*>(uintptr_t(vtable + slot * 4));
+        const uint32_t vtable = *guest::ptr<uint32_t>(object);
+        const uint32_t token = *guest::ptr<uint32_t>(vtable + slot * 4);
         std::vector<uint32_t> all{object};
         all.insert(all.end(), args.begin(), args.end());
         uint32_t sp = base_sp;
@@ -63,7 +64,7 @@ struct Guest {
         return uint32_t(r<4>(cpu, 0));
     }
 };
-uint32_t A(const void* p) { return uint32_t(uintptr_t(p)); }
+uint32_t A(const void* p) { return nfsu2::guest::to_guest(p); }   // the test objects live in host memory: this is the identity model
 
 }  // namespace
 
@@ -191,10 +192,10 @@ int main(int argc, char** argv) try {
     check(g.call("TlsGetValue", {tls}) == 0 && g.call("TlsSetValue", {tls, 0x1234}) == 1 && g.call("TlsGetValue", {tls}) == 0x1234 && g.call("TlsFree", {tls}) == 1, "TLS");
     const uint32_t heap = g.call("GetProcessHeap", {});
     const uint32_t block = g.call("HeapAlloc", {heap, 8, 100});
-    check(block != 0 && g.call("HeapSize", {heap, 0, block}) == 100 && *reinterpret_cast<uint8_t*>(uintptr_t(block + 99)) == 0, "heap block, size and zeroing");
-    std::memset(reinterpret_cast<void*>(uintptr_t(block)), 0x5A, 100);
+    check(block != 0 && g.call("HeapSize", {heap, 0, block}) == 100 && *guest::ptr<uint8_t>(block + 99) == 0, "heap block, size and zeroing");
+    std::memset(guest::ptr<void>(block), 0x5A, 100);
     const uint32_t bigger = g.call("HeapReAlloc", {heap, 0, block, 4000});
-    check(bigger != 0 && *reinterpret_cast<uint8_t*>(uintptr_t(bigger + 99)) == 0x5A && g.call("HeapSize", {heap, 0, bigger}) == 4000, "heap realloc keeps the data");
+    check(bigger != 0 && *guest::ptr<uint8_t>(bigger + 99) == 0x5A && g.call("HeapSize", {heap, 0, bigger}) == 4000, "heap realloc keeps the data");
     check(g.call("HeapFree", {heap, 0, bigger}) == 1, "heap free");
 
     // Files: a real temporary file read, written, listed and measured through the facade.
