@@ -19,6 +19,7 @@
 #include <atomic>
 #include <cstring>
 #include <mutex>
+#include <set>
 #include <sstream>
 #include <unordered_map>
 
@@ -46,12 +47,14 @@ template <class F> inline uint32_t real(Cpu& c, F&& f) {
     set_error(c, GetLastError());
     return v;
 }
+template <class F> inline uint32_t real_wait(Cpu& c, F&& f) { return real(c, std::forward<F>(f)); }
 inline uint32_t foreign_wait_zero(uint32_t h) { return WaitForSingleObject(H(h), 0); }
 #else
 // A 64-bit host: the guest holds no handle of the real system (a host object reaches it as a token of the library), so a handle that the library
 // does not own is a bug or an object nobody serves yet. Say so instead of answering something.
-template <class F> [[noreturn]] inline uint32_t real(Cpu&, F&&) { throw Fault("a handle the Win32 layer does not own reached the pass-through to the real system (not available on a 64-bit host)"); }
-[[noreturn]] inline uint32_t foreign_wait_zero(uint32_t) { throw Fault("a handle the Win32 layer does not own was waited on (not available on a 64-bit host)"); }
+template <class F> inline uint32_t real(Cpu& c, F&&) { set_error(c, 6 /* ERROR_INVALID_HANDLE */); return 0; }   // the call fails: there is no such handle
+template <class F> inline uint32_t real_wait(Cpu& c, F&&) { set_error(c, 6); return 0xFFFFFFFFu; }                  // WAIT_FAILED
+inline uint32_t foreign_wait_zero(uint32_t) { return 0xFFFFFFFFu; }
 #endif
 
 constexpr uint32_t kHandleBias = 0x00C00000u;   // the library's handles live above the range of the real system's (which are small)
@@ -128,6 +131,7 @@ struct Win32Facade::Impl {
     void on(const char* name, unsigned argc, GuestPlatform::NativeHook hook) {
         if (!platform.has_import(name)) return;
         platform.override_import(name, argc, std::move(hook));
+        served.insert(name);
         report += name; report += ' ';
     }
     void install_time();
@@ -137,6 +141,9 @@ struct Win32Facade::Impl {
     void install_memory();
     void install_files();
     void install_dinput();   // win32_facade_dinput.cpp
+    void install_loader();   // win32_facade_loader.cpp (a 64-bit host only)
+    uint32_t command_line_address = 0, unhandled_filter = 0;   // the loader group: GetCommandLineA's guest copy, SetUnhandledExceptionFilter's value
+    std::set<std::string> served;      // the imports this facade answers (GetProcAddress hands out a token only for those)
     plat::Input* input_override = nullptr;          // tests give the DirectInput part a scripted input instead of the Windows one
     std::unique_ptr<plat::Input> input_owned;
     std::unique_ptr<ldi::DirectInput> di;

@@ -19,7 +19,8 @@ namespace nfsu2raw {
 
 struct Win32LayerOptions {
     bool time = false, text = false, process = false, sync = false, memory = false, files = false, dinput = false;
-    bool any() const { return time || text || process || sync || memory || files || dinput; }
+    bool loader = false;   // modules, threads, timers, VirtualAlloc, exit: what the 32-bit host leaves to its own bridge; installed only on a 64-bit host (Platform64)
+    bool any() const { return time || text || process || sync || memory || files || dinput || loader; }
 };
 
 // "all", "none", or a comma separated list of group names. `error` receives the first name that is not a group.

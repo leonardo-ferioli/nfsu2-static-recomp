@@ -27,6 +27,8 @@ public:
     // The token a guest function pointer for `name` has (what GetProcAddress returns for a function that is served natively): the import slot
     // token when the game imports it, otherwise a token of its own. A call of a token nobody serves fails explicitly. 0 when this platform has none.
     virtual uint32_t token_for(const char* name) { (void)name; return 0; }
+    // A guest thread or timer callback failed: the platform records `what`, stops, and the main run reports it.
+    virtual void guest_fault(const std::string& what) { (void)what; }
     // Raises a Fault when the platform is shutting down (a long guest wait calls it between slices).
     virtual void throw_if_stopping(const char* what) const = 0;
 };

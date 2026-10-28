@@ -12,7 +12,7 @@ Win32LayerOptions parse_win32_layer(const std::string& spec, std::string& error)
         while (!name.empty() && name.front() == ' ') name.erase(name.begin());
         while (!name.empty() && name.back() == ' ') name.pop_back();
         if (name.empty() || name == "none") continue;
-        if (name == "all") { o.time = o.text = o.process = o.sync = o.memory = o.files = o.dinput = true; }
+        if (name == "all") { o.time = o.text = o.process = o.sync = o.memory = o.files = o.dinput = o.loader = true; }
         else if (name == "time") o.time = true;
         else if (name == "text") o.text = true;
         else if (name == "process") o.process = true;
@@ -20,6 +20,7 @@ Win32LayerOptions parse_win32_layer(const std::string& spec, std::string& error)
         else if (name == "memory") o.memory = true;
         else if (name == "files") o.files = true;
         else if (name == "dinput") o.dinput = true;
+        else if (name == "loader") o.loader = true;
         else if (error.empty()) error = name;
     }
     return o;
@@ -309,7 +310,7 @@ void Win32Facade::Impl::install_sync() {
                 if (r.error) { set_error(c, r.error); return lw::kWaitFailed; }
                 value = r.value;
             } else {
-                value = real(c, [&] { return WaitForSingleObject(H(handle), part); });
+                value = real_wait(c, [&] { return WaitForSingleObject(H(handle), part); });
             }
             if (value != lw::kWaitTimeout) return value;
             if (remaining != lw::kInfinite) { if (remaining <= 100) return value; remaining -= 100; }
@@ -327,7 +328,7 @@ void Win32Facade::Impl::install_sync() {
         if (owned == 0) {
             for (;;) {
                 const uint32_t part = ms == INFINITE ? 100u : std::min(ms, 100u);
-                const DWORD v = real(c, [&] { return WaitForMultipleObjects(count, reinterpret_cast<const HANDLE*>(list), all, part); });
+                const DWORD v = real_wait(c, [&] { return WaitForMultipleObjects(count, reinterpret_cast<const HANDLE*>(list), all, part); });
                 if (v != WAIT_TIMEOUT) return v;
                 if (ms != INFINITE) { if (ms <= 100) return v; ms -= 100; }
                 platform.throw_if_stopping("guest wait");
@@ -509,6 +510,7 @@ Win32Facade::Win32Facade(GuestPlatform& platform, const Win32LayerOptions& optio
     if (options.sync) impl_->install_sync();
     if (options.files) impl_->install_files();
     if (options.dinput) impl_->install_dinput();
+    if (options.loader) impl_->install_loader();
 }
 Win32Facade::~Win32Facade() = default;
 const std::string& Win32Facade::installed_report() const { return impl_->report; }
