@@ -104,7 +104,13 @@ void Win32Facade::Impl::install_dinput() {
     dinput = std::make_unique<DInputState>();
     plat::Input* input = input_override;
     if (!input) { input_owned = lw::host::make_windows_input(); input = input_owned.get(); }
+#ifdef NFSU2_GUEST_IDENTITY
     di = std::make_unique<ldi::DirectInput>(*input, *clock, [](uint32_t hwnd) { return hwnd == 0 || nfsu2::guest::guest_handle(GetForegroundWindow()) == hwnd; });
+#else
+    // A 64-bit host: the guest's window handle is a token of the window layer, not the system's HWND. Until that layer answers which window has the focus,
+    // every window of the guest counts as the foreground one (nothing else competes for the input of a headless run).
+    di = std::make_unique<ldi::DirectInput>(*input, *clock, [](uint32_t) { return true; });
+#endif
     DInputState* state = dinput.get();
     Impl* self = this;
 
@@ -127,7 +133,7 @@ void Win32Facade::Impl::install_dinput() {
     auto device_of = [find](uint32_t address) -> std::shared_ptr<ldi::Device> { auto o = find(address); return o && o->is_device ? o->device : nullptr; };
 
     // ---- the vtables: one token per slot, in the order of the SDK headers
-    auto token = [self](unsigned argc, NativePlatform::NativeHook hook) { return self->platform.add_method_token(argc, std::move(hook)); };
+    auto token = [self](unsigned argc, GuestPlatform::NativeHook hook) { return self->platform.add_method_token(argc, std::move(hook)); };
     auto unimplemented = [] (Cpu&) -> uint32_t { return ldi::hr::unsupported; };
     auto add_ref = [find](Cpu& c) -> uint32_t { auto o = find(arg(c, 0)); return o ? uint32_t(++o->refs) : 0u; };
     auto release = [self, state, find](Cpu& c) -> uint32_t {

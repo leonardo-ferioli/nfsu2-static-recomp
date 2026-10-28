@@ -6,7 +6,10 @@
 // Groups: time, text, process, sync, memory, files, dinput. A group never answers a function for a handle or an object that belongs to another source:
 // handles of the library live in a range of their own (HandleTable bias) and a call with a handle of the real system is passed to the real function.
 #pragma once
-#include "native32.hpp"
+#include "guest_platform.hpp"
+#ifdef NFSU2_NATIVE32
+#include "native32.hpp"   // tests and tools that build the facade over the 32-bit platform
+#endif
 #include <memory>
 #include <string>
 
@@ -25,7 +28,7 @@ Win32LayerOptions parse_win32_layer(const std::string& spec, std::string& error)
 class Win32Facade {
 public:
     // `input` (optional, not owned) is the input of the DirectInput part; null means the Windows one. It must be given before the group is installed, so it is a constructor argument.
-    Win32Facade(NativePlatform& platform, const Win32LayerOptions& options, nfsu2::platform::Input* input = nullptr);
+    Win32Facade(GuestPlatform& platform, const Win32LayerOptions& options, nfsu2::platform::Input* input = nullptr);
     ~Win32Facade();
     // Names of the imports that were taken over (for the log and the tests).
     const std::string& installed_report() const;

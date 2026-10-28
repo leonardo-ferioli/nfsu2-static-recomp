@@ -55,6 +55,10 @@ uint8_t* Cpu::pointer(uint32_t a,size_t n) {
 #else
     for(auto& region:memory)if(a>=region.base && uint64_t(a)-region.base+n<=region.length)
         return region.bytes.empty()?nfsu2::guest::ptr<uint8_t>(a):region.bytes.data()+(a-region.base);   // empty: the region lives in the arena
+#ifndef NFSU2_GUEST_IDENTITY
+    if(auto* space=nfsu2::guest::current_address_space())   // memory the guest got from the platform (VirtualAlloc, heaps) is not a mapped region: ask the address space
+        if(space->host(a,uint32_t(n)))return nfsu2::guest::ptr<uint8_t>(a);
+#endif
 #endif
     char msg[100];std::snprintf(msg,sizeof(msg),"unmapped guest memory 0x%08x (%zu bytes), PC=0x%08x",a,n,pc);
     throw Fault(msg);

@@ -348,7 +348,7 @@ void Win32Facade::Impl::install_sync() {
             for (uint32_t i = 0; i < count; ++i) {
                 uint32_t value;
                 if (handles.owns(list[i])) { auto r = sync.wait_for_single_object(list[i], 0); value = r.value; }
-                else value = WaitForSingleObject(H(list[i]), 0);
+                else value = foreign_wait_zero(list[i]);
                 if (!all && value != WAIT_TIMEOUT) return value + i;
             }
             if (ms == 0) return WAIT_TIMEOUT;
@@ -500,7 +500,7 @@ void Win32Facade::Impl::install_files() {
 
 Win32Facade::Impl::~Impl() = default;
 
-Win32Facade::Win32Facade(NativePlatform& platform, const Win32LayerOptions& options, nfsu2::platform::Input* input) : impl_(std::make_unique<Impl>(platform, options)) {
+Win32Facade::Win32Facade(GuestPlatform& platform, const Win32LayerOptions& options, nfsu2::platform::Input* input) : impl_(std::make_unique<Impl>(platform, options)) {
     impl_->input_override = input;
     if (options.time) impl_->install_time();
     if (options.text) impl_->install_text();

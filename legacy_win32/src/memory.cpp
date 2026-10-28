@@ -24,10 +24,13 @@ bool executable(uint32_t p) { if (p & (page::guard | page::noaccess)) return fal
 
 class Arena final : public AddressSpace {
 public:
-    explicit Arena(uint32_t bytes) : size_(round_up(bytes, kGranularity)), pages_(size_ / kPage) {
+    explicit Arena(uint32_t bytes) : base_(kBaseAddress), size_(round_up(bytes, kGranularity)), pages_(size_ / kPage) {
         memory_ = static_cast<std::byte*>(std::calloc(size_, 1));    // zero pages the OS gives lazily
+        owned_ = true;
     }
-    ~Arena() override { std::free(memory_); }
+    // The window [base, base + bytes) of an address space somebody else owns: `memory` is the host memory of address `base`, already committed and zero.
+    Arena(std::byte* memory, uint32_t base, uint32_t bytes) : base_(base), size_(round_up(bytes, kGranularity)), pages_(size_ / kPage), memory_(memory) {}
+    ~Arena() override { if (owned_) std::free(memory_); }
 
     uint32_t virtual_alloc(uint32_t address, uint32_t size, uint32_t type, uint32_t protect, uint32_t& result) override {
         std::lock_guard lock(m_);
@@ -83,7 +86,7 @@ public:
             if (p.state == 0 || p.allocation != address) return kErrorInvalidAddress;       // only the base of an allocation can be released
             const uint32_t a = address;
             uint32_t end = a;
-            while (end < kBaseAddress + size_ && page_at(end).state != 0 && page_at(end).allocation == a) end += kPage;
+            while (end < base_ + size_ && page_at(end).state != 0 && page_at(end).allocation == a) end += kPage;
             for (uint32_t x = a; x < end; x += kPage) page_at(x) = Page{};
             return 0;
         }
@@ -93,12 +96,12 @@ public:
         if (size == 0) {                                                                   // decommit the whole allocation: the address must be its base
             if (!in_range(address, kPage) || page_at(address).state == 0 || page_at(address).allocation != address) return err::invalid_parameter;
             uint32_t end = address;
-            while (end < kBaseAddress + size_ && page_at(end).state != 0 && page_at(end).allocation == address) end += kPage;
+            while (end < base_ + size_ && page_at(end).state != 0 && page_at(end).allocation == address) end += kPage;
             length = end - address;
         } else length = round_up(uint64_t(address) + size - first, kPage);
         if (!in_range(first, length)) return kErrorInvalidAddress;
         for (uint32_t a = first; a < first + length; a += kPage) if (page_at(a).state == 0) return kErrorInvalidAddress;
-        for (uint32_t a = first; a < first + length; a += kPage) { Page& p = page_at(a); p.state = 1; p.protect = 0; std::memset(memory_ + (a - kBaseAddress), 0, kPage); }
+        for (uint32_t a = first; a < first + length; a += kPage) { Page& p = page_at(a); p.state = 1; p.protect = 0; std::memset(memory_ + (a - base_), 0, kPage); }
         return 0;
     }
 
@@ -118,9 +121,9 @@ public:
         std::lock_guard lock(m_);
         out = RegionInfo{};
         const uint32_t first = address & ~(kPage - 1);
-        if (address >= kBaseAddress + size_) { return err::invalid_parameter; }
-        if (address < kBaseAddress) {                                                        // below the arena: free space up to its start
-            out.base_address = first; out.state = mem::free_; out.protect = page::noaccess; out.region_size = kBaseAddress - first;
+        if (address >= base_ + size_) { return err::invalid_parameter; }
+        if (address < base_) {                                                        // below the arena: free space up to its start
+            out.base_address = first; out.state = mem::free_; out.protect = page::noaccess; out.region_size = base_ - first;
             return 0;
         }
         const Page p = page_at(first);
@@ -131,7 +134,7 @@ public:
         out.protect = p.state == 2 ? p.protect : (p.state == 0 ? page::noaccess : 0);
         out.type = p.state == 0 ? 0 : mem::private_;
         uint32_t end = first + kPage;
-        while (end < kBaseAddress + size_) {
+        while (end < base_ + size_) {
             const Page& q = page_at(end);
             if (q.state != p.state || (p.state != 0 && (q.allocation != p.allocation || q.protect != p.protect))) break;
             end += kPage;
@@ -143,20 +146,20 @@ public:
 
     std::byte* host(uint32_t address, uint32_t size) override {
         std::lock_guard lock(m_);
-        if (address < kBaseAddress) return nullptr;
+        if (address < base_) return nullptr;
         const uint64_t end = uint64_t(address) + size;
-        if (end > uint64_t(kBaseAddress) + size_) return nullptr;
+        if (end > uint64_t(base_) + size_) return nullptr;
         for (uint32_t a = address & ~(kPage - 1); a < end; a += kPage) if (page_at(a).state != 2) return nullptr;
-        return memory_ + (address - kBaseAddress);
+        return memory_ + (address - base_);
     }
 
 private:
     struct Page { uint8_t state = 0; uint32_t protect = 0, allocation = 0, allocation_protect = 0; };   // state 0 free, 1 reserved, 2 committed
-    Page& page_at(uint32_t address) { return pages_[(address - kBaseAddress) / kPage]; }
-    bool in_range(uint32_t address, uint32_t length) const { return address >= kBaseAddress && uint64_t(address) + length <= uint64_t(kBaseAddress) + size_; }
+    Page& page_at(uint32_t address) { return pages_[(address - base_) / kPage]; }
+    bool in_range(uint32_t address, uint32_t length) const { return address >= base_ && uint64_t(address) + length <= uint64_t(base_) + size_; }
     uint32_t find_free(uint32_t length) {
         uint32_t run = 0, start = 0;
-        for (uint32_t a = kBaseAddress; a < kBaseAddress + size_; a += kPage) {
+        for (uint32_t a = base_; a < base_ + size_; a += kPage) {
             if (page_at(a).state == 0) {
                 if (run == 0) { if (a % kGranularity) continue; start = a; }
                 run += kPage;
@@ -169,18 +172,20 @@ private:
         for (uint32_t a = base; a < base + length; a += kPage) { Page& p = page_at(a); p.state = 1; p.allocation = base; p.allocation_protect = protect; p.protect = 0; }
     }
     void mark_committed(uint32_t first, uint32_t length, uint32_t protect) {
-        for (uint32_t a = first; a < first + length; a += kPage) { Page& p = page_at(a); if (p.state != 2) { std::memset(memory_ + (a - kBaseAddress), 0, kPage); } p.state = 2; p.protect = protect; }
+        for (uint32_t a = first; a < first + length; a += kPage) { Page& p = page_at(a); if (p.state != 2) { std::memset(memory_ + (a - base_), 0, kPage); } p.state = 2; p.protect = protect; }
     }
 
     std::mutex m_;
-    uint32_t size_;
+    uint32_t base_ = kBaseAddress, size_;
     std::vector<Page> pages_;
     std::byte* memory_ = nullptr;
+    bool owned_ = false;
 };
 
 }  // namespace
 
 std::unique_ptr<AddressSpace> make_arena_address_space(uint32_t bytes) { return std::make_unique<Arena>(bytes); }
+std::unique_ptr<AddressSpace> make_arena_address_space_over(std::byte* memory, uint32_t base_address, uint32_t bytes) { return std::make_unique<Arena>(memory, base_address, bytes); }
 
 bool is_bad_read_ptr(AddressSpace& s, uint32_t address, uint32_t size) {
     if (size == 0) return false;
