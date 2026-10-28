@@ -55,7 +55,7 @@ public:
     uint32_t last_error_slot(Cpu& c) const { return uint32_t(r<4>(c, 0x110)) + 0x34; }   // the guest address of GetLastError's cell
 
 private:
-    struct Handler { unsigned argc; NativeHook fn; };
+    struct Handler { unsigned argc; NativeHook fn; bool raw = false; };   // raw: the handler sets the registers and pc itself (the structured exception machinery)
     struct Context;                                              // a guest processor with its stack and thread block
     std::unique_ptr<Context> make_context();
     void initialize(Cpu& c, uint32_t stack, uint32_t teb);
@@ -76,6 +76,30 @@ private:
     std::vector<std::string> dynamic_names_;                     // token_for(): tokens 0xf0010000 + 16 * index
     std::vector<std::unique_ptr<Handler>> methods_;
     std::map<std::string, bool> traced_;
+
+    // Structured exceptions (platform64_seh.cpp): RaiseException, RtlUnwind and UnhandledExceptionFilter run as a state machine on the dispatch loop, not as nested
+    // C++ calls: each guest handler is entered with a return address in a reserved token range and its return lands in exception_return(). A handler that
+    // never returns (an __except block unwinding the stack) leaves a state behind, which purge_dead_exceptions() removes once the guest stack has moved past it.
+    struct ExceptionState {
+        enum Kind { Raise, Unwind, Filter } kind;
+        uint32_t record, context, pointers, frame, target_frame, target_ip, return_value, guest_return, resume_sp, call_base;
+        bool import_return;   // Filter: return the filter's value to the guest caller of UnhandledExceptionFilter
+        uint32_t saved[4];    // EBX, EBP, ESI, EDI preserved across an unwind
+    };
+    static constexpr uint32_t exception_handler_token = 0xf0ffff00u, exception_unwind_token = 0xf0ffff10u, exception_filter_token = 0xf0ffff20u;
+    std::map<Cpu*, std::vector<ExceptionState>> exceptions_;
+    std::atomic<uint32_t> exception_filter_{0};
+    void install_exception_imports();
+    void add_raw(const char* name, NativeHook hook);
+    void note(const std::string& text);
+    void purge_dead_exceptions(Cpu& c);
+    void build_exception_context(Cpu& c, uint32_t context, uint32_t eip, uint32_t esp);
+    void finish_with_context(Cpu& c, uint32_t context);
+    void call_exception_handler(Cpu& c, ExceptionState& s, uint32_t handler, uint32_t frame, uint32_t token);
+    void exception_import(Cpu& c, const std::string& name, uint32_t guest_return);
+    bool exception_return(Cpu& c);
+    void continue_raise(Cpu& c);
+    void continue_unwind(Cpu& c);
 };
 
 }  // namespace nfsu2raw

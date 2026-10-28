@@ -142,7 +142,7 @@ struct Win32Facade::Impl {
     void install_files();
     void install_dinput();   // win32_facade_dinput.cpp
     void install_loader();   // win32_facade_loader.cpp (a 64-bit host only)
-    uint32_t command_line_address = 0, unhandled_filter = 0;   // the loader group: GetCommandLineA's guest copy, SetUnhandledExceptionFilter's value
+    uint32_t command_line_address = 0;   // the loader group: GetCommandLineA's guest copy
     std::set<std::string> served;      // the imports this facade answers (GetProcAddress hands out a token only for those)
     plat::Input* input_override = nullptr;          // tests give the DirectInput part a scripted input instead of the Windows one
     std::unique_ptr<plat::Input> input_owned;

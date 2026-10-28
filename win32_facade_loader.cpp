@@ -176,7 +176,7 @@ void Win32Facade::Impl::install_loader() {
     on("ExitProcess", 1, [](Cpu& c) -> uint32_t { throw Fault("translated process requested ExitProcess(" + std::to_string(arg(c, 0)) + ")"); });
     on("TerminateProcess", 2, [](Cpu& c) -> uint32_t { throw Fault("translated process requested TerminateProcess(" + std::to_string(arg(c, 1)) + ")"); });
     on("DebugBreak", 0, [](Cpu&) -> uint32_t { throw Fault("translated process executed DebugBreak"); });
-    on("SetUnhandledExceptionFilter", 1, [this](Cpu& c) { const uint32_t old = unhandled_filter; unhandled_filter = arg(c, 0); return old; });
+    // SetUnhandledExceptionFilter, RaiseException, RtlUnwind and UnhandledExceptionFilter belong to the platform (they change the processor's control flow).
 }
 #endif
 
