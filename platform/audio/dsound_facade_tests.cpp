@@ -412,6 +412,7 @@ void test_3d_and_notify_via_abi(GuestMemory* memory = nullptr) {
 // guest address != host pointer, which is what the 64-bit model needs. On the 32-bit host this is the identity model.
 #ifndef NFSU2_GUEST_IDENTITY
 uint8_t* nfsu2::guest::g_arena_base = nullptr;
+uint64_t nfsu2::guest::g_arena_size = 0x100000000ull;
 #endif
 
 bool prepare_arena() {

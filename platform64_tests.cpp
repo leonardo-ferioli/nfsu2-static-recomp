@@ -50,7 +50,7 @@ int main(int argc, char** argv) {
     try {
         if (argc < 3) throw Fault("platform64_tests <export dir> <game dir>");
         const char* error = nullptr;
-        auto arena = nfsu2::guest::create_arena({}, &error);
+        auto arena = nfsu2::guest::create_arena(nfsu2::guest::arena_config_from_environment(), &error);
         if (!arena) throw Fault(std::string("arena: ") + (error ? error : "?"));
         Cpu c;
         Platform64 p(c, argv[1], argv[2]);
