@@ -80,12 +80,14 @@ class Program:
         self.jumps = []            # (instruction, static target) of every direct unconditional BRANCH (tail calls among them)
         self.returns = set()       # RETURN instructions
         self.ret_candidates = {}   # RETURN instruction -> likely return sites (speed layer: predicted returns)
+        self.tight = False         # --leaders tight: the constants of x87 instructions that equal their own address are not code pointers
 
     def note(self, raw):
         a, n = raw["a"], raw["n"]
         self.addrs.append(a)
         self.lengths[a] = n
         ops = raw["p"]
+        x87 = self.tight and (raw["asm"] or " ").split()[0].startswith("F")
         for op in ops:
             if op[0] == "CALL" and op[2][0] == "ram":
                 self.calls.append((a, a + n, int(op[2][1], 16)))
@@ -98,7 +100,7 @@ class Program:
             for node in op[2:]:
                 if node and node[0] == "const" and node[2] == 4:
                     v = int(node[1], 16)
-                    if TEXT_LO <= v < TEXT_HI:
+                    if TEXT_LO <= v < TEXT_HI and not (x87 and v == a):   # the SLEIGH x87 model stores each instruction's own address in FIP
                         self.address_taken.add(v)
             if name in ("BRANCH", "CBRANCH", "CALL") and op[2][0] == "ram":
                 self.static_targets.add(int(op[2][1], 16))
@@ -372,7 +374,7 @@ def emit_page_regs(GF, RegEmitter, prog, page, insns, live_out):
         body = "".join(em.instruction(i) for i in fn)
         referenced |= em.referenced
         pieces.append(emit_function(GF, prog, start, fn, written, dyn, body))
-    head = ['#include "fast_regs.hpp"', "namespace nfsu2raw {", "#define EXIT(T) do{nx=u32(T);goto XIT;}while(0)"]
+    head = [(GF.x87_defines() + '#include "fast_regs.hpp"').strip(), "namespace nfsu2raw {", "#define EXIT(T) do{nx=u32(T);goto XIT;}while(0)"]
     head.append("PN u32 ent_dispatch(%s);" % declare_args())
     head.append("PN u32 ent_native(%s);" % declare_args())
     head.append("PN u32 ent_missing(%s);" % declare_args())   # the switch default, a tail call (see dispatch.cpp)

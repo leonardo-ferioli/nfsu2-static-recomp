@@ -1,12 +1,14 @@
 #include "runtime.hpp"
 #include "userops_pure.hpp"
 #include <map>
-#include <intrin.h>
-#include <xmmintrin.h>
+#include "host.hpp"
+#if defined(NFSU2_ISA_X86)
 #include <mmintrin.h>
 #include <emmintrin.h>
+#endif
 #include <algorithm>
 #include <cstdio>
+#include <cstdlib>
 #include <mutex>
 #include <atomic>
 #if defined(NFSU2_NATIVE32) || defined(_WIN32)
@@ -20,10 +22,12 @@ namespace {
 struct F80{uint8_t bytes[10];};
 F80 ext(V v){F80 f{};std::memcpy(&f,&v,10);return f;}
 V val(const F80& f){V v=0;std::memcpy(&v,&f,10);return v;}
+#if defined(NFSU2_ISA_X86)
 __m128 simd(V v){return std::bit_cast<__m128>(v);}
 V bits(__m128 v){return std::bit_cast<V>(v);}
 __m64 mm(V v){return std::bit_cast<__m64>(uint64_t(v));}
 V bits(__m64 v){auto z=std::bit_cast<uint64_t>(v);_mm_empty();return z;}
+#endif
 std::recursive_mutex guest_bus;
 }
 V user_op(Cpu& c,unsigned id,std::initializer_list<V> input){
@@ -38,17 +42,18 @@ V user_op(Cpu& c,unsigned id,std::initializer_list<V> input){
         bool mapped=false;for(const auto& region:c.memory)if(region.base==scratch)mapped=true;
         if(!mapped)c.map(scratch,4096);
 #endif
-        int result[4];__cpuidex(result,int(uint32_t(a)),int(uint32_t(r<4>(c,4))));
-        wm<4>(c,scratch,uint32_t(result[0]));wm<4>(c,scratch+4,uint32_t(result[1]));
-        wm<4>(c,scratch+8,uint32_t(result[3]));wm<4>(c,scratch+12,uint32_t(result[2]));return scratch;
+        uint32_t result[4];host::cpuid(uint32_t(a),uint32_t(r<4>(c,4)),result);
+        wm<4>(c,scratch,result[0]);wm<4>(c,scratch+4,result[1]);
+        wm<4>(c,scratch+8,result[3]);wm<4>(c,scratch+12,result[2]);return scratch;
     }
     if(name=="rdtsc"){
-        static const bool deterministic=GetEnvironmentVariableA("NFSU2_DETERMINISTIC_TIME",nullptr,0)!=0;
+        static const bool deterministic=std::getenv("NFSU2_DETERMINISTIC_TIME")!=nullptr;
         static std::atomic<uint64_t> fake{4000000000ull};
-        return deterministic?fake.fetch_add(5000):__rdtsc();
+        return deterministic?fake.fetch_add(5000):host::cycle_counter();
     }
     if(name=="LOCK"){guest_bus.lock();return 0;}
     if(name=="UNLOCK"){guest_bus.unlock();return 0;}
+#if defined(NFSU2_ISA_X86)
     if(name=="movdq2q")return b&mask(8);
     if(width==16){
         const __m128i x=std::bit_cast<__m128i>(a),y=std::bit_cast<__m128i>(b);
@@ -95,6 +100,27 @@ V user_op(Cpu& c,unsigned id,std::initializer_list<V> input){
         else asm volatile("fld1; fldt %1; fyl2x; fstpt %0":"=m"(z):"m"(x):"st");
         return val(z);
     }
+#else
+    // Portable operations (userops_pure.hpp): the same table for the MMX (8-byte) and SSE2 (16-byte) widths.
+    {
+        using Op=V(*)(V,V);
+        struct Row{const char* name;Op w8,w16;};
+        static const Row rows[]={
+            {"packssdw",uo::packssdw<8>,uo::packssdw<16>},{"packsswb",uo::packsswb<8>,uo::packsswb<16>},
+            {"paddsb",uo::paddsb<8>,uo::paddsb<16>},{"paddsw",uo::paddsw<8>,uo::paddsw<16>},
+            {"paddusb",uo::paddusb<8>,uo::paddusb<16>},{"paddusw",uo::paddusw<8>,uo::paddusw<16>},
+            {"psubsb",uo::psubsb<8>,uo::psubsb<16>},{"psubsw",uo::psubsw<8>,uo::psubsw<16>},
+            {"psubusb",uo::psubusb<8>,uo::psubusb<16>},{"psubusw",uo::psubusw<8>,uo::psubusw<16>},
+            {"pmaddwd",uo::pmaddwd<8>,uo::pmaddwd<16>},{"pmulhw",uo::pmulhw<8>,uo::pmulhw<16>},
+            {"psllw",uo::psllw<8>,uo::psllw<16>},{"psraw",uo::psraw<8>,uo::psraw<16>},
+            {"movdq2q",uo::movdq2q<8>,uo::movdq2q<8>},{"rcpps",uo::rcpps<16>,uo::rcpps<16>},
+            {"rcpss",uo::rcpss<16>,uo::rcpss<16>},{"rsqrtss",uo::rsqrtss<16>,uo::rsqrtss<16>},
+            {"fsin",uo::fsin<10>,uo::fsin<10>},{"fcos",uo::fcos<10>,uo::fcos<10>},{"f2xm1",uo::f2xm1<10>,uo::f2xm1<10>},
+            {"fptan",uo::fptan<10>,uo::fptan<10>},{"fpatan",uo::fpatan<10>,uo::fpatan<10>},{"fscale",uo::fscale<10>,uo::fscale<10>},
+            {"log2",uo::log2<10>,uo::log2<10>}};
+        for(const auto& row:rows)if(name==row.name)return (width==16?row.w16:row.w8)(a,b);
+    }
+#endif
     // AMD 3DNow! and x87/MMX state operations. The game reaches these only on a CPU that reports 3DNow!.
     using Operation=V(*)(V,V);
     static const std::map<std::string,Operation> three_dnow={
