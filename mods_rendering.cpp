@@ -1,6 +1,7 @@
 // HUD placement, field of view, rain droplets, video quad, cutscene bars, radar masks, rear-view mirror (the mod's Rendering and
 // Frontend modules, minus the front-end/video scaling in mods_frontend.cpp).
 #include "mods_internal.hpp"
+#include "x87_hooks.hpp"
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
 #include <windows.h>
@@ -104,8 +105,6 @@ void resolution_changed(int width, int height) {
 }
 
 // ---- hooks (each runs instead of the instructions named in tools/mods/widescreen.py and does what they did, modified) ----------------
-void push_float(float value) { asm volatile("flds %0" ::"m"(value)); }
-
 // MOV EAX,[EBP+58h]; FILD dword [EAX+18h]  ->  EAX = [EBP+58h]; push a scale factor instead of the integer.
 void fov_hook(Cpu& c) {
     set_reg(c, EAX, u32_at(reg(c, EBP) + 0x58));
@@ -121,14 +120,14 @@ void fov_hook(Cpu& c) {
         g_fov_values[0] = f1;
         g_fov_values[1] = 0.5f;
         g_fov_values[2] = 1.0f;
-        push_float(f1);
+        x87_push_f32(c, f1);
         return;
     } else {
         g_fov_values[0] = 1.0f;
         g_fov_values[1] = 0.5f;
         g_fov_values[2] = 1.0f;
     }
-    push_float(mode == 3 ? mirror_scale : ver_3d_scale);   // 3: rear-view mirror
+    x87_push_f32(c, mode == 3 ? mirror_scale : ver_3d_scale);   // 3: rear-view mirror
 }
 
 // FLD [ESP+0Ch]; FADD [ESP+10h]  ->  the horizontal droplet size follows the aspect ratio.
@@ -136,13 +135,17 @@ void rain_x_hook(Cpu& c) {
     const float scale_x = ((0.75f / aspect_ratio()) * (4.0f / 3.0f));
     const uint32_t esp = reg(c, ESP);
     const float a = f32_at(esp + 0x0c), b = f32_at(esp + 0x10), droplets = g_settings.rain_droplets_scale;
-    asm volatile("flds %0; fmuls %1; fmuls %2; fadds %3" ::"m"(a), "m"(scale_x), "m"(droplets), "m"(b));
+    x87_push_f32(c, a);
+    x87_mul_f32(c, scale_x);
+    x87_mul_f32(c, droplets);
+    x87_add_f32(c, b);
 }
 // MOV [ESP+38h],EAX; FADD [ESP+8]
 void rain_y_hook(Cpu& c) {
     const uint32_t esp = reg(c, ESP);
     const float a = f32_at(esp + 0x08), droplets = g_settings.rain_droplets_scale;
-    asm volatile("fmuls %0; fadds %1" ::"m"(droplets), "m"(a));
+    x87_mul_f32(c, droplets);
+    x87_add_f32(c, a);
     u32_at(esp + 0x38) = reg(c, EAX);
 }
 // MOV [ESP+60h],ECX; MOV [ESP+64h],EDX  (HUD element position)
@@ -166,9 +169,7 @@ void blips_hook(Cpu& c) {
 // FST [ESI+48h]; MOV ECX,[ESI+1Ch]
 void hud2_hook(Cpu& c) {
     const uint32_t esi = reg(c, ESI);
-    float st0 = 0.0f;
-    asm volatile("fsts %0" : "=m"(st0));
-    f32_at(esi + 0x48) = st0;
+    f32_at(esi + 0x48) = x87_st0_f32(c);
     uint32_t x = u32_at(esi + 0x1c), y = u32_at(esi + 0x20);
     set_reg(c, EDX, y);
     widescreen_hud(x, y);
@@ -181,10 +182,9 @@ void stop_sign_hook(Cpu& c) {
     uint32_t x = u32_at(edx), y = u32_at(edx + 4);
     widescreen_hud(x, y);
     const float x_float = as_float(x);
-    float out = 0.0f;
-    asm volatile("fadds %1; fstps %0" : "=m"(out) : "m"(x_float));
-    f32_at(esi) = out;
-    asm volatile("flds %0" ::"m"(ecx4));
+    x87_add_f32(c, x_float);
+    f32_at(esi) = x87_pop_f32(c);
+    x87_push_f32(c, ecx4);
 }
 }  // namespace
 

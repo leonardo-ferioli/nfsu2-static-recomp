@@ -19,6 +19,7 @@
 // Everywhere else (menus, dialogs, loading screens) nothing is scaled; a backdrop that is as tall as the screen and as wide as the
 // 4:3 area is stretched to the full width, so the picture has no black bars at the sides.
 #include "mods_internal.hpp"
+#include "x87_hooks.hpp"
 #include <algorithm>
 #include <array>
 #include <cmath>
@@ -32,8 +33,6 @@ bool fe_movie_active();        // a video is playing (its own scale applies)
 namespace {
 WidescreenSettings g_settings;
 uint32_t g_frame = 0;
-
-void push_float(float value) { asm volatile("flds %0" ::"m"(value)); }
 
 struct Screen { float width, height; };
 // The virtual size of the interface space, from the factors the game itself multiplies positions with.
@@ -145,7 +144,7 @@ template <int Corner, bool Y>
 void quad_load(Cpu& c) {
     const uint32_t quad = reg(c, ESI);
     const float value = f32_at(quad + 0x10 * Corner + (Y ? 4 : 0));
-    if (g_batch_active) { push_float(apply(g_batch, value, Y)); return; }
+    if (g_batch_active) { x87_push_f32(c, apply(g_batch, value, Y)); return; }
     if (Corner == 0 && !Y) {
         Extent box{std::numeric_limits<float>::max(), -std::numeric_limits<float>::max(), std::numeric_limits<float>::max(), -std::numeric_limits<float>::max()};
         for (int corner = 0; corner < 4; ++corner) {
@@ -154,7 +153,7 @@ void quad_load(Cpu& c) {
         }
         g_quad = decide(box, true);
     }
-    push_float(apply(g_quad, value, Y));
+    x87_push_f32(c, apply(g_quad, value, Y));
 }
 
 // One coordinate of an end point of a line/arc segment: the points are at EBX and EBP; the first coordinate read (x of the first point)
@@ -166,7 +165,7 @@ void line_load(Cpu& c) {
         const float ax = f32_at(a), ay = f32_at(a + 4), bx = f32_at(b), by = f32_at(b + 4);
         g_line = decide({std::min(ax, bx), std::max(ax, bx), std::min(ay, by), std::max(ay, by)}, false);
     }
-    push_float(apply(g_line, f32_at((B ? b : a) + (Y ? 4 : 0)), Y));
+    x87_push_f32(c, apply(g_line, f32_at((B ? b : a) + (Y ? 4 : 0)), Y));
 }
 }  // namespace
 
