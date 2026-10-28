@@ -91,3 +91,7 @@ Stage 4 (`NativePlatform64`) therefore keeps the interpreter as a desktop-only f
 | ABI and guest memory in `nue-engine` | `nue-core` | the ptr32 / ptr64 references in `nue_engine/docs/ABI.md` reconciled with `guest::Memory` |
 
 Integration works both ways: the port consumes the NUE libraries once they build against `guest::Memory`; a failure found in the port is fixed in the port and in the NUE copy in the same round, and each side commits.
+
+## Note: x87 state on a virtual-FPU build (from the D3D9 layer, docs/D3D9_BGFX.md "Floating point state")
+
+`IDirect3D9::CreateDevice` and `Reset` without `D3DCREATE_FPU_PRESERVE` write the **whole** guest control word as 0x007F (24-bit precision, round to nearest, all exceptions masked); with `FPU_PRESERVE` they keep precision and rounding but OR in 0x001D. On a virtual-FPU build that is a write to guest register 0x10a0, not the host FPU. The mod hooks that use inline `flds/fstps` (mods_anchor.cpp:36,148,157,169; mods_rendering.cpp:107,124,131,139,145,170,185,187) go through `x87_hooks.hpp` (`Cpu&`-based) when compiled with `-DNFSU2_X87_VIRTUAL`. Neither is wired yet: the 32-bit product uses the host FPU.
