@@ -51,9 +51,9 @@ clang that has `preserve_none` and `musttail`. The default output (no arguments)
 | `host`, conservative leaders (today) | 70-76 | ~32 | 1.0 |
 | `host`, tight leaders | 64-68 | ~26 | 0.8 |
 | `double` | 149-151 | ~110 | 3.4 (vs today) |
+| `soft80` (check build) | ~4,800 | ~4,760 | ~150 (vs today), ~43 (vs `double`) |
 
-`double` costs about 3x the host FPU on x87-dense code; the host FPU is not available on arm64, so the useful comparison there is `double` against `soft80`
-(the exact mode compiles to calls: about 940 aarch64 instructions for six x87 instructions against ~85 for `double`). Recommendation (the user's decision):
+`double` costs about 3x the host FPU on x87-dense code; `soft80` is a reference, not a product mode (about 75 ns per x87 operation: ~940 aarch64 instructions for six x87 instructions against ~85 for `double`). Recommendation (the user's decision):
 **x86 hosts keep `--x87 host`; arm64 defaults to `--x87 double`** (bit-exact for the Win32 precision settings except in the cases above) **and
 `--x87 soft80` stays available as the exact reference** and as the mode of an `--x87-shadow`-style comparison. If the arm64 profile shows x87 as the
 hot path, the next step is a static TOP per block (slots as locals) rather than more rounding tricks.
