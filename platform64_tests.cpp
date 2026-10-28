@@ -3,9 +3,12 @@
 //     platform64_tests <export dir> <game dir>
 #include "platform64.hpp"
 #include "win32_facade.hpp"
+#include <atomic>
+#include <chrono>
 #include <cstring>
 #include <iostream>
 #include <string>
+#include <thread>
 
 using namespace nfsu2raw;
 namespace {
@@ -98,6 +101,17 @@ int main(int argc, char** argv) {
 
         // a callback from native code into the guest, on a processor of its own, from inside a handler (nesting)
         check(p.callback(0x00575330, {name}) == 0xbdc1d1f3u, "callback runs guest code and returns EAX");
+
+        // a multimedia timer: its callback (a method token standing in for guest code) runs on a guest processor of its own with the guest's arguments
+        {
+            std::atomic<uint32_t> user_seen{0}, id_seen{0};
+            const uint32_t callback = p.add_method_token(5, [&](Cpu& cc) { id_seen = uint32_t(m<4>(cc, r<4>(cc, 16) + 4)); user_seen = uint32_t(m<4>(cc, r<4>(cc, 16) + 12)); return 0u; });
+            const uint32_t id = g.call("timeSetEvent", {10, 0, callback, 0x1234, 0});
+            check(id != 0, "timeSetEvent");
+            for (int i = 0; i < 200 && !user_seen; ++i) std::this_thread::sleep_for(std::chrono::milliseconds(10));
+            check(user_seen == 0x1234 && id_seen == id, "the timer callback ran with the user value");
+            g.call("timeKillEvent", {id});
+        }
 
         // structured exceptions: a guest handler (a method token standing in for guest code) on the guest's exception chain
         {
