@@ -1,4 +1,7 @@
 #include "runtime.hpp"
+#ifndef NFSU2_GUEST_IDENTITY
+#include "guest_arena.hpp"
+#endif
 #include "difftrace.hpp"
 #ifdef NFSU2_NATIVE32
 #include "native32.hpp"
@@ -16,6 +19,11 @@ using ActivePlatform=nfsu2raw::Platform;
 using namespace nfsu2raw;
 int main(int argc,char** argv){
     try {
+#ifndef NFSU2_GUEST_IDENTITY
+        // NFSU2_GUEST_ARENA=1: the guest processor's memory lives in the 64-bit arena (docs/MEMORY_MODEL_64.md) instead of in vectors; results must not change.
+        std::unique_ptr<nfsu2::guest::AddressSpace> arena;
+        if(std::getenv("NFSU2_GUEST_ARENA")){const char* error=nullptr;arena=nfsu2::guest::create_arena({},&error);if(!arena)throw Fault(std::string("arena: ")+(error?error:"?"));_putenv("NFSU2_GUEST_ARENA=");}   // the guest reads the environment block: the switch must not be part of it
+#endif
         if(argc==5 && std::string(argv[1])=="--boot"){
             Cpu c;ActivePlatform p(c,argv[2],argv[3]);
             const auto log=std::filesystem::absolute(argv[2]).parent_path()/"logs/boot_trace.log";

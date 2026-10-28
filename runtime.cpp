@@ -29,8 +29,7 @@ Cpu::~Cpu(){
 #elif !defined(NFSU2_GUEST_IDENTITY)
     if(auto* space=nfsu2::guest::current_address_space())
         for(auto& region:memory){
-            if(region.from_allocator)space->free(region.base);
-            else space->decommit(region.base,uint32_t(region.length));
+            space->decommit(region.base,uint32_t(region.length));
         }
 #endif
 }
@@ -88,16 +87,15 @@ void Cpu::map(uint32_t base,size_t size) {
         base=nfsu2::guest::to_guest(mapped);
     }
 #else
+    // Automatic placement is the same in both models (guest pointers are part of what the code computes with: hash tables, alignment-dependent paths).
+    if(!base){base=0x02000000;for(auto& r:memory)if(uint64_t(r.base)+r.length<0x70000000)base=std::max(base,uint32_t((uint64_t(r.base)+r.length+0xffff)&~0xffffull));}
 #ifndef NFSU2_GUEST_IDENTITY
-    if(auto* space=nfsu2::guest::current_address_space()){   // the guest lives in the arena (docs/MEMORY_MODEL_64.md): fixed addresses are committed there, the others allocated
-        const bool allocate=!base;
-        if(allocate){base=space->alloc_aligned(uint32_t(size),0x10000);if(!base)throw Fault("the guest arena has no room for the mapping");}
-        else if(!space->commit(base,uint32_t(size),nfsu2::guest::kPageReadWrite))throw Fault("cannot commit guest memory at the requested address");
-        memory.push_back(Region{base,{},size,allocate});
+    if(auto* space=nfsu2::guest::current_address_space()){   // the guest lives in the arena (docs/MEMORY_MODEL_64.md): the range is committed there
+        if(!space->commit(base,uint32_t(size),nfsu2::guest::kPageReadWrite))throw Fault("cannot commit guest memory at the requested address");
+        memory.push_back(Region{base,{},size});
         return;
     }
 #endif
-    if(!base){base=0x02000000;for(auto& r:memory)if(uint64_t(r.base)+r.length<0x70000000)base=std::max(base,uint32_t((uint64_t(r.base)+r.length+0xffff)&~0xffffull));}
 #endif
     memory.push_back(Region{base,std::vector<uint8_t>(size),size});
 }
