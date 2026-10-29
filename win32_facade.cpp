@@ -14,7 +14,7 @@ Win32LayerOptions parse_win32_layer(const std::string& spec, std::string& error)
         while (!name.empty() && name.front() == ' ') name.erase(name.begin());
         while (!name.empty() && name.back() == ' ') name.pop_back();
         if (name.empty() || name == "none") continue;
-        if (name == "all") { o.time = o.text = o.process = o.sync = o.memory = o.files = o.dinput = o.loader = true; o.registry = o.traps = !kRealOs; }
+        if (name == "all") { o.time = o.text = o.process = o.sync = o.memory = o.files = o.dinput = o.loader = true; o.registry = o.traps = o.resources = o.user32 = o.system = !kRealOs; }
         else if (name == "time") o.time = true;
         else if (name == "text") o.text = true;
         else if (name == "process") o.process = true;
@@ -25,6 +25,9 @@ Win32LayerOptions parse_win32_layer(const std::string& spec, std::string& error)
         else if (name == "loader") o.loader = true;
         else if (name == "registry") o.registry = true;
         else if (name == "traps") o.traps = true;
+        else if (name == "resources") o.resources = true;
+        else if (name == "user32") o.user32 = true;
+        else if (name == "system") o.system = true;
         else if (error.empty()) error = name;
     }
     return o;
@@ -539,7 +542,7 @@ void Win32Facade::Impl::install_files() {
     // Drive queries, resources and file mappings stay with the real system (they describe the host, or the real image).
 }
 
-Win32Facade::Impl::~Impl() = default;
+Win32Facade::Impl::~Impl() { windows.reset(); }   // before the input it listens to (a member declared later) goes
 
 Win32Facade::Win32Facade(GuestPlatform& platform, const Win32LayerOptions& options, nfsu2::platform::Input* input) : impl_(std::make_unique<Impl>(platform, options)) {
     impl_->input_override = input;
@@ -552,6 +555,9 @@ Win32Facade::Win32Facade(GuestPlatform& platform, const Win32LayerOptions& optio
     if (options.dinput) impl_->install_dinput();
     if (options.loader) impl_->install_loader();
     if (options.registry) impl_->install_registry();
+    if (options.resources) impl_->install_resources();
+    if (options.system) impl_->install_system();
+    if (options.user32) impl_->install_user32();
     if (options.traps) impl_->install_traps();
 }
 Win32Facade::~Win32Facade() = default;

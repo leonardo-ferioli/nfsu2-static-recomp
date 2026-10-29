@@ -3,7 +3,7 @@
 // (NativePlatform::override_import) for the groups of functions that are switched on; every group that is off keeps the pass-through to the real
 // Windows, which is the default, so the behaviour of a launcher that does not ask for the layer is unchanged.
 //
-// Groups: time, text, process, sync, memory, files, dinput, registry, traps. A group never answers a function for a handle or an object that belongs to another source:
+// Groups: time, text, process, sync, memory, files, dinput, loader, registry, resources, user32, system, traps. A group never answers a function for a handle or an object that belongs to another source:
 // handles of the library live in a range of their own (HandleTable bias) and a call with a handle of the real system is passed to the real function.
 #pragma once
 #include "guest_memory.hpp"
@@ -14,7 +14,7 @@
 #include <memory>
 #include <string>
 
-namespace nfsu2::platform { class Input; }
+namespace nfsu2::platform { class Input; class Window; class Display; }
 
 namespace nfsu2raw {
 
@@ -31,7 +31,14 @@ struct Win32LayerOptions {
     nfsu2::guest::Memory* guest_memory = nullptr;
     uint32_t address_space_bytes = 256u << 20;
     bool loader = false;   // modules, threads, timers, VirtualAlloc, exit: what the 32-bit host leaves to its own bridge; installed only on a 64-bit host (Platform64)
-    bool any() const { return time || text || process || sync || memory || files || dinput || loader || registry || traps; }
+    // More groups of a host without a real Windows ("all" includes them only there): resources (FindResource and friends over the guest image's PE resources), user32 (windows
+    // and messages over legacy_win32's window system; handles are library tokens and the guest's window procedures run through GuestPlatform::callback), system (CreateFileW,
+    // file mappings, toolhelp, drive queries, the shell of a machine that has none).
+    bool resources = false, user32 = false, system = false;
+    // The platform window and display the user32 group listens to (not owned, optional): null means headless fixtures that report a 1280x720 display and no events.
+    nfsu2::platform::Window* window = nullptr;
+    nfsu2::platform::Display* display = nullptr;
+    bool any() const { return time || text || process || sync || memory || files || dinput || loader || registry || traps || resources || user32 || system; }
 };
 
 // "all", "none", or a comma separated list of group names. `error` receives the first name that is not a group.

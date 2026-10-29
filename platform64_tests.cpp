@@ -3,7 +3,11 @@
 //     platform64_tests <export dir> <game dir>
 #include "platform64.hpp"
 #include "win32_facade.hpp"
+#include "legacy_win32/resources.hpp"
+#include <cstdio>
 #include <cstring>
+#include <filesystem>
+#include <fstream>
 #include <iostream>
 #include <string>
 
@@ -33,6 +37,13 @@ struct Guest {
         return call_token(token, args);
     }
     uint32_t last_error() { return call("GetLastError", {}); }
+    uint32_t alloc(uint32_t n) { return call("HeapAlloc", {call("GetProcessHeap", {}), 8, n}); }     // zeroed guest memory
+    uint32_t wide(const std::string& s) {                                                              // an ASCII string as UTF-16 in guest memory
+        const uint32_t a = alloc(uint32_t(s.size() + 1) * 2);
+        for (size_t i = 0; i < s.size(); ++i) wm<2>(cpu, a + uint32_t(i) * 2, uint16_t(s[i]));
+        return a;
+    }
+    std::string string_at(uint32_t a) { return std::string(reinterpret_cast<const char*>(cpu.pointer(a, 1))); }
     uint32_t text(const char* s) {                     // a string in guest memory
         const uint32_t n = uint32_t(std::strlen(s)) + 1;
         const uint32_t heap = call("GetProcessHeap", {});
@@ -98,6 +109,113 @@ int main(int argc, char** argv) {
 
         // a callback from native code into the guest, on a processor of its own, from inside a handler (nesting)
         check(p.callback(0x00575330, {name}) == 0xbdc1d1f3u, "callback runs guest code and returns EAX");
+
+
+        // ---- registry: the game's own keys exist with their defaults; writes are seen by the next read; a handle that was closed is invalid
+        {
+            const uint32_t cell = g.alloc(4), type = g.alloc(4), size = g.alloc(4), buffer = g.alloc(64);
+            const uint32_t local_machine = 0x80000002u;
+            check(g.call("RegOpenKeyA", {local_machine, g.text("Software\\EA Games\\Need for Speed Underground 2"), cell}) == 0 && m<4>(c, cell) != 0, "RegOpenKeyA opens the game's key");
+            const uint32_t key = m<4>(c, cell);
+            wm<4>(c, size, 64);
+            check(g.call("RegQueryValueExA", {key, g.text("Language"), 0, type, buffer, size}) == 0 && m<4>(c, type) == 1 && g.string_at(buffer) == "English US" && m<4>(c, size) == 11, "a string value");
+            wm<4>(c, size, 4);
+            check(g.call("RegQueryValueExA", {key, g.text("CacheSize"), 0, type, buffer, size}) == 0 && m<4>(c, type) == 4 && m<4>(c, buffer) == 1879040000u, "a DWORD value");
+            wm<4>(c, size, 64);
+            check(g.call("RegQueryValueExA", {key, g.text("NoSuchValue"), 0, type, buffer, size}) == 2, "a missing value is ERROR_FILE_NOT_FOUND");
+            wm<4>(c, buffer, 77);
+            check(g.call("RegSetValueExA", {key, g.text("TestValue"), 0, 4, buffer, 4}) == 0, "RegSetValueExA");
+            wm<4>(c, buffer, 0);
+            wm<4>(c, size, 4);
+            check(g.call("RegQueryValueExA", {key, g.text("TestValue"), 0, type, buffer, size}) == 0 && m<4>(c, buffer) == 77, "the value written is read back");
+            check(g.call("RegOpenKeyA", {local_machine, g.text("Software\\NoSuchVendor"), cell}) == 2, "a missing key is ERROR_FILE_NOT_FOUND");
+            check(g.call("RegCreateKeyA", {0x80000001u, g.text("Software\\Nue Test"), cell}) == 0 && g.call("RegCloseKey", {uint32_t(m<4>(c, cell))}) == 0, "RegCreateKeyA and RegCloseKey");
+            check(g.call("RegCloseKey", {key}) == 0 && g.call("RegCloseKey", {key}) != 0, "a closed key is invalid");
+        }
+
+        // ---- resources of the guest image: the library's lookup over the image and the facade agree, the bytes stay in the image
+        {
+            const uint32_t image_size = 0x532000;
+            nfsu2::legacy::win32::PeResources resources(nfsu2::legacy::win32::Bytes(reinterpret_cast<const std::byte*>(c.pointer(0x400000, image_size)), image_size));
+            auto expected = resources.find(nfsu2::legacy::win32::ResourceId::id(3) /* RT_ICON */, nfsu2::legacy::win32::ResourceId::id(1));
+            check(bool(expected) && expected.value.size == 0x34A8, "the image has the icon the test expects");
+            const uint32_t module = g.call("GetModuleHandleA", {0});
+            const uint32_t found = g.call("FindResourceA", {module, 1 /* MAKEINTRESOURCE(1) */, 3 /* RT_ICON */});
+            check(found == 0x400000 + expected.value.entry_rva, "FindResourceA returns the address of the data entry");
+            const uint32_t loaded = g.call("LoadResource", {module, found});
+            check(loaded == 0x400000 + expected.value.data_rva && g.call("LockResource", {loaded}) == loaded, "LoadResource / LockResource point into the image");
+            check(g.call("SizeofResource", {module, found}) == 0x34A8 && m<4>(c, loaded) == 0x28, "SizeofResource, and the bytes are the icon's");
+            check(g.call("FindResourceA", {module, 2, 3}) == 0 && g.last_error() == 1814, "a missing name is ERROR_RESOURCE_NAME_NOT_FOUND");
+            check(g.call("FindResourceA", {module, 1, 24}) == 0 && g.last_error() == 1813, "a missing type is ERROR_RESOURCE_TYPE_NOT_FOUND");
+            check(g.call("FindResourceA", {g.call("GetModuleHandleA", {g.text("kernel32.dll")}), 1, 3}) == 0, "a system library holds no resources");
+            check(g.call("SizeofResource", {module, 0x12345}) == 0, "an HRSRC that is not one");
+        }
+
+        // ---- user32: a window, its messages, and the guest's window procedure called back (the game's own tiny routine that returns 1 stands in for it)
+        {
+            const uint32_t proc = 0x005bfe59;                                      // mov eax, 1 ; ret 16
+            const uint32_t cls = g.alloc(48), msg = g.alloc(28), rect = g.alloc(16);
+            wm<4>(c, cls, 48); wm<4>(c, cls + 8, proc); wm<4>(c, cls + 40, g.text("NueTestClass"));
+            const uint32_t atom = g.call("RegisterClassExA", {cls});
+            check(atom != 0 && g.call("RegisterClassExA", {cls}) == 0 && g.last_error() == 1410, "RegisterClassExA, and a second registration is ERROR_CLASS_ALREADY_EXISTS");
+            const uint32_t window = g.call("CreateWindowExA", {0, g.text("NueTestClass"), g.text("Test"), 0x10CF0000 /* WS_VISIBLE | WS_OVERLAPPEDWINDOW */, 10, 20, 640, 480, 0, 0, 0x400000, 0});
+            check(window >= 0x00C00000u && window < 0xFFFF0000u, "CreateWindowExA returns a token of the library (and called the guest's procedure for WM_NCCREATE)");
+            check(g.call("GetWindowRect", {window, rect}) == 1 && m<4>(c, rect) == 10 && m<4>(c, rect + 4) == 20 && m<4>(c, rect + 8) == 650, "GetWindowRect");
+            check(g.call("GetClientRect", {window, rect}) == 1 && m<4>(c, rect) == 0 && m<4>(c, rect + 8) > 0, "GetClientRect");
+            check(g.call("IsIconic", {window}) == 0 && g.call("SetForegroundWindow", {window}) == 1 && g.call("GetForegroundWindow", {}) == window, "foreground window");
+            check(g.call("GetSystemMetrics", {0}) == 1280 && g.call("GetSystemMetrics", {1}) == 720, "the display of the headless fixture");
+            check(g.call("PostMessageA", {window, 0x400, 5, 6}) == 1, "PostMessageA");
+            check(g.call("PeekMessageA", {msg, window, 0, 0, 1}) == 1 && m<4>(c, msg) == window && m<4>(c, msg + 4) == 0x400 && m<4>(c, msg + 8) == 5 && m<4>(c, msg + 12) == 6, "PeekMessageA removes the message");
+            check(g.call("PeekMessageA", {msg, window, 0, 0, 1}) == 0, "the queue is empty");
+            g.call("PostMessageA", {window, 0x401, 0, 0});
+            check(g.call("GetMessageA", {msg, 0, 0, 0}) == 1 && m<4>(c, msg + 4) == 0x401 && g.call("DispatchMessageA", {msg}) == 1, "DispatchMessageA runs the guest's window procedure and returns its result");
+            check(g.call("DefWindowProcA", {window, 0x400, 0, 0}) == 0, "DefWindowProcA");
+            g.call("PostQuitMessage", {3});
+            check(g.call("GetMessageA", {msg, 0, 0, 0}) == 0 && m<4>(c, msg + 4) == 0x12 && m<4>(c, msg + 8) == 3, "GetMessageA returns 0 for WM_QUIT with its exit code");
+            check(g.call("SetFocus", {window}) == window && g.call("ShowCursor", {0}) == uint32_t(-1) && g.call("SetCapture", {window}) == 0 && g.call("ReleaseCapture", {}) == 1, "focus, cursor, capture");
+            check(g.call("DestroyWindow", {window}) == 1 && g.call("DestroyWindow", {window}) == 0 && g.last_error() == 1400, "DestroyWindow, and a destroyed window is ERROR_INVALID_WINDOW_HANDLE");
+            check(g.call("UnregisterClassA", {g.text("NueTestClass"), 0x400000}) == 1, "UnregisterClassA");
+            check(g.call("MessageBoxA", {0, g.text("text"), g.text("caption"), 4 /* MB_YESNO */}) == 6, "MessageBoxA answers its default button");
+        }
+
+        // ---- files, mappings, toolhelp, drives and the shell of a machine that has none
+        {
+            const std::string name = "nfsu2_platform64_mapping.bin";                                   // relative: the guest's current directory is the game folder (drive C:)
+            const std::string path = (std::filesystem::path(argv[2]) / name).string();
+            std::remove(path.c_str());
+            const uint32_t data = g.text("0123456789abcdef"), written = g.alloc(4);
+            const uint32_t file = g.call("CreateFileA", {g.text(name.c_str()), 0xC0000000u, 3, 0, 2 /* CREATE_ALWAYS */, 0x80, 0});
+            check(file != 0 && file != 0xFFFFFFFFu && g.call("WriteFile", {file, data, 16, written, 0}) == 1 && g.call("CloseHandle", {file}) == 1, "a file to map");
+            const uint32_t wide_file = g.call("CreateFileW", {g.wide(name), 0xC0000000u, 3, 0, 3 /* OPEN_EXISTING */, 0x80, 0});
+            check(wide_file != 0 && wide_file != 0xFFFFFFFFu, "CreateFileW opens it by its UTF-16 name");
+            const uint32_t mapping = g.call("CreateFileMappingA", {wide_file, 0, 4 /* PAGE_READWRITE */, 0, 0, 0});
+            check(mapping != 0, "CreateFileMappingA");
+            const uint32_t view = g.call("MapViewOfFile", {mapping, 2 /* FILE_MAP_WRITE */, 0, 0, 0});
+            check(view != 0 && nfsu2::guest::is_guest(nfsu2::guest::ptr<void>(view)) && g.string_at(view).substr(0, 16) == "0123456789abcdef", "MapViewOfFile gives a block of guest memory with the file's bytes");
+            wm<1>(c, view, 'X');
+            check(g.call("UnmapViewOfFile", {view}) == 1 && g.call("IsBadReadPtr", {view, 1}) == 1, "UnmapViewOfFile releases the block");
+            check(g.call("UnmapViewOfFile", {view}) == 0, "a view is unmapped once");
+            g.call("CloseHandle", {mapping});
+            g.call("CloseHandle", {wide_file});
+            std::ifstream in(path, std::ios::binary);
+            std::string back((std::istreambuf_iterator<char>(in)), std::istreambuf_iterator<char>());
+            in.close();
+            check(back == "X123456789abcdef", "what was written through the view reached the file");
+            std::remove(path.c_str());
+
+            const uint32_t snapshot = g.call("CreateToolhelp32Snapshot", {2 /* TH32CS_SNAPPROCESS */, 0});
+            const uint32_t entry = g.alloc(296);
+            wm<4>(c, entry, 296);
+            check(snapshot != 0xFFFFFFFFu && g.call("Process32First", {snapshot, entry}) == 1 && m<4>(c, entry + 8) != 0 && !g.string_at(entry + 36).empty(), "toolhelp lists the game itself");
+            check(g.call("Process32Next", {snapshot, entry}) == 0 && g.last_error() == 18, "and nothing else (ERROR_NO_MORE_FILES)");
+            check(g.call("CloseHandle", {snapshot}) == 1, "the snapshot is closed like any handle");
+
+            check((g.call("GetLogicalDrives", {}) & 4) != 0 && g.call("GetDriveTypeA", {g.text("C:\\")}) == 3 && g.call("GetDriveTypeA", {g.text("Q:\\")}) == 1, "drive queries");
+            const uint32_t space = g.alloc(24);
+            check(g.call("GetDiskFreeSpaceExA", {g.text("C:\\"), space, space + 8, space + 16}) == 1 && m<4>(c, space + 4) == 0x40 && m<4>(c, space + 12) == 0x80, "GetDiskFreeSpaceExA");
+            check(g.call("SHGetFolderPathA", {0, 0x1a, 0, 0, entry}) == 0x80004005u && m<1>(c, entry) == 0, "SHGetFolderPathA fails like a machine without a shell");
+            check(g.call("ShellExecuteA", {0, 0, g.text("http://example.invalid"), 0, 0, 1}) <= 32, "ShellExecuteA reports an error");
+        }
 
         if (failures) { std::cerr << failures << " check(s) failed\n"; return 1; }
         std::cout << "PASS platform64 and the loader group\n";

@@ -9,6 +9,7 @@
 #include "legacy_win32/registry.hpp"
 #include "legacy_win32/sync.hpp"
 #include "legacy_win32/text.hpp"
+#include "legacy_win32/window.hpp"
 #include "legacy_win32/time.hpp"
 #include "guest_arena.hpp"
 #include "platform/input.hpp"
@@ -72,10 +73,10 @@ constexpr uint32_t kHandleBias = 0x00C00000u;   // the library's handles live ab
 
 struct Win32Facade::Impl {
     Impl(GuestPlatform& p, const Win32LayerOptions& o)
-        : platform(p), options(o), clock(plat::stdlib::make_clock()), threads(plat::stdlib::make_threads()), system(plat::stdlib::make_system()), storage(plat::stdlib::make_storage()),
+        : platform(p), options(o), clock(plat::stdlib::make_clock()), threads(plat::stdlib::make_threads()), system(plat::stdlib::make_system()), storage(make_game_storage(p)),
           handles(kHandleBias), time(*clock), text(system->info().ansi_code_page, system->info().oem_code_page, system->info().user_lcid),
           sync(*threads, *clock, handles), space(make_space(o)), heaps(*space), process(*system, handles, process_config(*system)),
-          files(*storage, handles, file_config()) {}
+          files(*storage, handles, file_config(p)) {}
 
     // The address space the library's heaps and VirtualAlloc run in: the process' own on the 32-bit Windows host (identity); on a 64-bit host a window of the guest arena
     // (committed here, so the processor's Cpu::pointer reaches it), whose Win32 region rules are the library's.
@@ -110,15 +111,35 @@ struct Win32Facade::Impl {
         (void)system;
         return c;
     }
-    static lw::FileSystemConfig file_config() {
+    // Without a real Windows the guest's world is the game's folder: it is the storage root "data" and the guest's drive C: and current directory (the game opens its
+    // files relative to where it was started, and checks that its disc is in).
+    static std::unique_ptr<plat::Storage> make_game_storage(GuestPlatform& p) {
+        auto storage = plat::stdlib::make_storage();
+#ifndef NFSU2_FACADE_REAL_OS
+        if (!p.game_directory().empty()) {
+            plat::MountDesc mount;
+            mount.root = "data";
+            mount.native_path = p.game_directory().string();
+            storage->mount(mount);
+        }
+#else
+        (void)p;
+#endif
+        return storage;
+    }
+    static lw::FileSystemConfig file_config(GuestPlatform& p) {
         lw::FileSystemConfig c;
 #ifdef NFSU2_FACADE_REAL_OS
         char cwd[MAX_PATH];
         const DWORD n = GetCurrentDirectoryA(MAX_PATH, cwd);
         c.current_directory = n ? std::string(cwd, n) : "C:\\";
         c.logical_drives_mask = GetLogicalDrives();
-#endif
+        (void)p;
         return c;                                   // no drive mapping: every path is a native path
+#else
+        if (!p.game_directory().empty()) c.drives['C'] = "data:";
+        return c;
+#endif
     }
 
     GuestPlatform& platform;
@@ -160,6 +181,14 @@ struct Win32Facade::Impl {
     void install_loader();   // win32_facade_loader.cpp (a 64-bit host only)
     void install_registry(); // win32_facade_extra.cpp
     void install_traps();    // win32_facade_extra.cpp
+    void install_resources();  // win32_facade_system.cpp
+    void install_system();     // win32_facade_system.cpp
+    void install_user32();     // win32_facade_window.cpp
+    std::unique_ptr<lw::WindowSystem> windows;     // the user32 group
+    plat::Window* window = nullptr;                // the platform's window and display (null fixtures when the host gave none), owned or not
+    plat::Display* display = nullptr;
+    std::unique_ptr<plat::Window> window_owned;
+    std::unique_ptr<plat::Display> display_owned;
     std::unique_ptr<plat::Config> config;
     std::unique_ptr<lw::Registry> registry;
     std::atomic<uint32_t> wsa_error{0};

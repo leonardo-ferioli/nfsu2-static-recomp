@@ -260,3 +260,19 @@ Plug in a game controller before starting, then start the game with the environm
 controller or controls screen in Options if there is one, and quit. Send the lines of `logs/native_trace.log` that start with `DI action format` and `DI action[`
 (PowerShell: `Select-String -Path logs\native_trace.log -Pattern "DI action" | ForEach-Object Line`). They hold the game's genre and the semantic of every action; the genre tables cannot be written without them.
 
+
+## 12. Facade groups of a host without a real Windows (added 2026-10-27)
+
+The facade takes `GuestPlatform&` (the 32-bit `NativePlatform` or `Platform64` on a 64-bit host with the guest in the arena). On a host without a real Windows `parse_win32_layer("all")` switches on,
+besides the groups of sections 4 and 11, the groups below; on 32-bit Windows `all` does not include them (the real functions and the mods are in place there), and each one can be named on its own.
+A handle the library does not own fails with `ERROR_INVALID_HANDLE` on such a host: nothing reaches the real system and no host pointer is ever written into guest memory.
+
+| Group | File | Imports | Notes |
+|---|---|---|---|
+| `registry` | `win32_facade_extra.cpp` | `Reg*` (6) | `ConfigRegistry` seeded with the game's keys; `Win32Facade::registry_text()` persists it |
+| `resources` | `win32_facade_system.cpp` | `FindResourceA/W`, `LoadResource`, `LockResource`, `SizeofResource` | `legacy_win32/resources.hpp` walks the PE resource directory in the guest image; an HRSRC is the guest address of the data entry, the HGLOBAL the address of the bytes in the image (nothing is copied) |
+| `user32` | `win32_facade_window.cpp` | 36 | `WindowSystem`; HWNDs are tokens of the handle table; `GetMessageA` waits in 1 ms slices; the guest's WNDPROC runs through `GuestPlatform::callback`; `Win32LayerOptions::window/display` give the platform's, null fixtures (1280x720, no events) otherwise |
+| `system` | `win32_facade_system.cpp` | `CreateFileW`, file mappings, toolhelp, drive queries, `SHGetFolderPathA`, `ShellExecuteA` | a view is a block of the guest's VirtualAlloc space holding a copy, written back by `UnmapViewOfFile`; the shell answers like a machine without one (E_FAIL, SE_ERR_FNF) |
+| `traps` | `win32_facade_extra.cpp` | GDI drawing, serial, NetBIOS, TAPI, Winsock (52) | logged failure, never a silent success |
+
+`GuestPlatform` gained two non-pure virtuals the groups need: `game_directory()` and `log_line()`.

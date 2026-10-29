@@ -37,10 +37,10 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 4)
     target_compile_options(sleigh_runtime PRIVATE -O2 -w -Wno-c++11-narrowing)
     set_target_properties(sleigh_runtime PROPERTIES CXX_STANDARD 17)
     set_source_files_properties(dynamic_code.cpp PROPERTIES INCLUDE_DIRECTORIES "${CMAKE_CURRENT_SOURCE_DIR}/third_party/sleigh;${CMAKE_CURRENT_SOURCE_DIR}/third_party/zlib_shim")
-    set(PLATFORM_SOURCE native32.cpp native32_reservation.cpp speed.cpp dynamic_code.cpp platform/services.cpp platform/win32/win32_services.cpp platform/null/null_platform.cpp nue_d3d9/src/d3d9_trace.cpp nue_d3d9/src/null_gpu.cpp d3d9_recorder.cpp win32_facade.cpp win32_facade_dinput.cpp win32_facade_extra.cpp win32_facade_loader.cpp platform/audio/dsound_install.cpp)
+    set(PLATFORM_SOURCE native32.cpp native32_reservation.cpp speed.cpp dynamic_code.cpp platform/services.cpp platform/win32/win32_services.cpp platform/null/null_platform.cpp nue_d3d9/src/d3d9_trace.cpp nue_d3d9/src/null_gpu.cpp d3d9_recorder.cpp win32_facade.cpp win32_facade_dinput.cpp win32_facade_extra.cpp win32_facade_loader.cpp win32_facade_system.cpp win32_facade_window.cpp platform/audio/dsound_install.cpp)
     add_link_options(-Wl,/BASE:0x00400000 -Wl,/DYNAMICBASE:NO -Wl,/LARGEADDRESSAWARE:NO -Wl,/SAFESEH:NO "-Wl,/sectionlayout:@${CMAKE_CURRENT_SOURCE_DIR}/native32_sections.txt")
 else()
-    set(PLATFORM_SOURCE platform.cpp platform64.cpp guest_arena.cpp win32_facade.cpp win32_facade_dinput.cpp win32_facade_extra.cpp win32_facade_loader.cpp)   # the guest lives in vectors or, when an arena exists, in the arena; the Win32 facade serves both hosts
+    set(PLATFORM_SOURCE platform.cpp platform64.cpp guest_arena.cpp win32_facade.cpp win32_facade_dinput.cpp win32_facade_extra.cpp win32_facade_loader.cpp win32_facade_system.cpp win32_facade_window.cpp)   # the guest lives in vectors or, when an arena exists, in the arena; the Win32 facade serves both hosts
 endif()
 add_library(nfsu2_raw STATIC runtime.cpp userops.cpp ${PLATFORM_SOURCE} generated/dispatch.cpp ${RAW_UNITS})
 if(TRUE)

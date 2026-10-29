@@ -5,7 +5,7 @@
 #ifdef NFSU2_FACADE_REAL_OS
 #include "host/windows_input.hpp"
 #endif
-#include "platform/services.hpp"
+#include "platform/null/null_services.hpp"
 #include <atomic>
 #include <stdexcept>
 #include <map>
@@ -111,10 +111,14 @@ void Win32Facade::Impl::install_dinput() {
     if (!input) { input_owned = lw::host::make_windows_input(); input = input_owned.get(); }
     auto foreground = [](uint32_t hwnd) { return hwnd == 0 || nfsu2::guest::guest_handle(GetForegroundWindow()) == hwnd; };
 #else
-    if (!input) throw std::runtime_error("Win32 layer: DirectInput needs a platform::Input on this host");
-    // The guest's window handle is a token of the window layer, not the system's HWND: every guest window counts as the foreground one while the platform window
-    // has the focus (a headless run has none: nothing else competes for the input).
-    auto foreground = [](uint32_t) { auto* window = plat::services().window; return window == nullptr || window->focused(); };
+    if (!input) { if (!input_owned) input_owned = std::make_unique<plat::null::NullInput>(); input = input_owned.get(); }   // headless: events arrive through NullInput::push
+    // The guest's window handle is a token of the window layer, not the system's HWND. With the user32 group the foreground window decides (no window yet: nothing else
+    // competes for the input, so every window counts); without it every guest window is the foreground one.
+    auto foreground = [this](uint32_t hwnd) {
+        if (!windows) return true;
+        const uint32_t current = windows->get_foreground_window();
+        return hwnd == 0 || current == 0 || current == hwnd;
+    };
 #endif
     di = std::make_unique<ldi::DirectInput>(*input, *clock, foreground);
     DInputState* state = dinput.get();

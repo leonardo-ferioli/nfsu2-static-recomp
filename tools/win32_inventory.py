@@ -71,7 +71,7 @@ def mod_overrides():
 def facade_groups():
     """name -> group of win32_facade*.cpp that answers it when the layer is on (the `on("Name", ...)` calls inside each install_<group>)."""
     out = {}
-    for fn in ("win32_facade.cpp", "win32_facade_dinput.cpp", "win32_facade_extra.cpp"):
+    for fn in ("win32_facade.cpp", "win32_facade_dinput.cpp", "win32_facade_extra.cpp", "win32_facade_loader.cpp", "win32_facade_system.cpp", "win32_facade_window.cpp"):
         path = os.path.join(ROOT, fn)
         if not os.path.exists(path):
             continue
