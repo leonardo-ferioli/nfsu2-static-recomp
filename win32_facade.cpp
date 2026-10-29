@@ -560,7 +560,12 @@ Win32Facade::Win32Facade(GuestPlatform& platform, const Win32LayerOptions& optio
     if (options.user32) impl_->install_user32();
     if (options.traps) impl_->install_traps();
 }
-Win32Facade::~Win32Facade() = default;
+Win32Facade::~Win32Facade() {
+    // The library joins its threads when it goes: waits and sleeps of the guest must be told first, or a guest thread waiting for ever never returns.
+    if (impl_) { impl_->platform.stop_guest(); impl_->sync.stopping = true; impl_->time.stopping = true; }
+}
 const std::string& Win32Facade::installed_report() const { return impl_->report; }
+bool Win32Facade::set_event(uint32_t handle) { return impl_->sync.set_event(handle).error == 0; }
+bool Win32Facade::is_window(uint32_t handle) { return impl_->windows && impl_->windows->is_window(handle); }
 
 }  // namespace nfsu2raw

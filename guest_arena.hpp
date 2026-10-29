@@ -40,6 +40,11 @@ struct ArenaConfig {
 // nullptr when the host refuses the reservation; `error` then says why.
 std::unique_ptr<AddressSpace> create_arena(const ArenaConfig& config, const char** error = nullptr);
 
+// The configuration for an arena of `arena_size` bytes (16 MiB to 4 GiB): the allocator covers it except the top 16 MiB (all but 0xE0000000 and above at 4 GiB).
+ArenaConfig arena_config(uint64_t arena_size);
+// The same, with the size from the environment variable NFSU2_ARENA_MIB (mebibytes; default 4096). The variable is removed from the environment afterwards.
+ArenaConfig arena_config_from_environment();
+
 // The arena of this process (nullptr before create_arena and after it is destroyed): the guest processor's memory (Cpu::map / Cpu::pointer) lives there.
 AddressSpace* current_address_space();
 #endif

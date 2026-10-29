@@ -9,7 +9,7 @@ int main(int argc,char** argv){
         // "--arena" as the third argument: the guest's memory lives in the arena (docs/MEMORY_MODEL_64.md) instead of in vectors; same checks.
         const bool arena=argc>3 && std::string(argv[3])=="--arena";
         std::unique_ptr<nfsu2::guest::AddressSpace> space;
-        if(arena){const char* error=nullptr;space=nfsu2::guest::create_arena({},&error);check(space!=nullptr,error?error:"arena");}
+        if(arena){const char* error=nullptr;space=nfsu2::guest::create_arena(nfsu2::guest::arena_config_from_environment(),&error);check(space!=nullptr,error?error:"arena");}
         Cpu c;Platform p(c,argv[1],".");
         if(arena){
             check(c.pointer(0x00400000,4)==nfsu2::guest::arena_base()+0x00400000,"the image is in the arena");

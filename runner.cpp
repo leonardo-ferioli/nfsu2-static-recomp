@@ -24,12 +24,12 @@ int main(int argc,char** argv){
 #ifndef NFSU2_GUEST_IDENTITY
         // NFSU2_GUEST_ARENA=1: the guest processor's memory lives in the 64-bit arena (docs/MEMORY_MODEL_64.md) instead of in vectors; results must not change.
         std::unique_ptr<nfsu2::guest::AddressSpace> arena;
-        if(std::getenv("NFSU2_GUEST_ARENA")){const char* error=nullptr;arena=nfsu2::guest::create_arena({},&error);if(!arena)throw Fault(std::string("arena: ")+(error?error:"?"));_putenv("NFSU2_GUEST_ARENA=");}   // the guest reads the environment block: the switch must not be part of it
+        if(std::getenv("NFSU2_GUEST_ARENA")){const char* error=nullptr;arena=nfsu2::guest::create_arena(nfsu2::guest::arena_config_from_environment(),&error);if(!arena)throw Fault(std::string("arena: ")+(error?error:"?"));_putenv("NFSU2_GUEST_ARENA=");}   // the guest reads the environment block: the switch must not be part of it
 #endif
 #ifndef NFSU2_NATIVE32
         if(argc>=5 && std::string(argv[1])=="--boot64"){
             // The 64-bit platform: the guest in the arena, imports served by the Win32 facade over legacy_win32 (all groups). Stops at the first import nobody serves.
-            if(!arena){const char* error=nullptr;arena=nfsu2::guest::create_arena({},&error);if(!arena)throw Fault(std::string("arena: ")+(error?error:"?"));}
+            if(!arena){const char* error=nullptr;arena=nfsu2::guest::create_arena(nfsu2::guest::arena_config_from_environment(),&error);if(!arena)throw Fault(std::string("arena: ")+(error?error:"?"));}
             Cpu c;Platform64 p(c,argv[2],argv[3]);
             std::string error;auto options=parse_win32_layer(argc>5?argv[5]:"all",error);if(!error.empty())throw Fault("unknown Win32 group "+error);
             Win32Facade facade(p,options);

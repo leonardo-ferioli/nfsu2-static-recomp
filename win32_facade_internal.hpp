@@ -192,7 +192,7 @@ struct Win32Facade::Impl {
     std::unique_ptr<plat::Config> config;
     std::unique_ptr<lw::Registry> registry;
     std::atomic<uint32_t> wsa_error{0};
-    uint32_t command_line_address = 0, unhandled_filter = 0;   // the loader group: GetCommandLineA's guest copy, SetUnhandledExceptionFilter's value
+    uint32_t command_line_address = 0;   // the loader group: GetCommandLineA's guest copy
     std::set<std::string> served;      // the imports this facade answers (GetProcAddress hands out a token only for those)
     plat::Input* input_override = nullptr;          // tests give the DirectInput part a scripted input instead of the Windows one
     std::unique_ptr<plat::Input> input_owned;

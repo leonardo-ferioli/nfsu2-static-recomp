@@ -9,6 +9,7 @@
 #include <map>
 #include <mutex>
 #include <vector>
+#include <cstdlib>
 #include <cstring>
 
 #if defined(_WIN32)
@@ -20,6 +21,7 @@
 namespace nfsu2::guest {
 
 uint8_t* g_arena_base = nullptr;
+uint64_t g_arena_size = 0x100000000ull;
 static AddressSpace* g_current = nullptr;
 AddressSpace* current_address_space() { return g_current; }
 void fault_not_in_arena(const void*) { __builtin_trap(); }
@@ -63,7 +65,7 @@ public:
     }
     ~Arena() override {
         if (g_current == this) g_current = nullptr;
-        if (g_arena_base == base_) g_arena_base = nullptr;
+        if (g_arena_base == base_) { g_arena_base = nullptr; g_arena_size = 0x100000000ull; }
         VirtualFree(base_, 0, MEM_RELEASE);
     }
 
@@ -206,6 +208,23 @@ private:
 };
 }  // namespace
 
+ArenaConfig arena_config(uint64_t arena_size) {
+    ArenaConfig config;
+    config.arena_size = arena_size;
+    config.alloc_end = arena_size >= 0x100000000ull ? 0xE0000000u : static_cast<uint32_t>(arena_size - 0x01000000ull);   // keep the top 16 MiB free below a smaller arena
+    return config;
+}
+ArenaConfig arena_config_from_environment() {
+    uint64_t mebibytes = 4096;
+    if (const char* text = std::getenv("NFSU2_ARENA_MIB")) {
+        mebibytes = std::strtoull(text, nullptr, 10);
+        std::vector<char> clear(std::strlen("NFSU2_ARENA_MIB=") + 1);
+        std::strcpy(clear.data(), "NFSU2_ARENA_MIB=");
+        _putenv(clear.data());                                                      // the guest reads the environment block: the switch must not be part of it
+    }
+    return arena_config(mebibytes * 0x100000ull);
+}
+
 std::unique_ptr<AddressSpace> create_arena(const ArenaConfig& config, const char** error) {
     auto fail = [&](const char* text) { if (error) *error = text; return std::unique_ptr<AddressSpace>(); };
     if (config.arena_size < 0x01000000ull || config.arena_size > 0x100000000ull || config.alloc_begin >= config.alloc_end || config.alloc_end > config.arena_size) return fail("bad arena configuration");
@@ -213,6 +232,7 @@ std::unique_ptr<AddressSpace> create_arena(const ArenaConfig& config, const char
     uint8_t* base = reserve_aligned(config.arena_size, 0x100000000ull);
     if (!base) return fail("the host refused the address space reservation");
     g_arena_base = base;
+    g_arena_size = config.arena_size;
     return std::make_unique<Arena>(base, config);
 }
 #else

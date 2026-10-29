@@ -26,11 +26,12 @@ inline uint32_t to_guest(const void* host) { return static_cast<uint32_t>(reinte
 inline bool is_guest(const void*) { return true; }
 #else
 inline constexpr bool identity = false;
-extern uint8_t* g_arena_base;                       // start of the reserved 4 GiB range (4 GiB aligned)
+extern uint8_t* g_arena_base;                       // start of the reserved range (4 GiB aligned)
+extern uint64_t g_arena_size;                       // bytes reserved from the base (at most 4 GiB): host pointers beyond it are not the guest's
 inline void set_arena_base(void* base) { g_arena_base = static_cast<uint8_t*>(base); }
 inline uint8_t* arena_base() { return g_arena_base; }
 inline void* to_host(uint32_t address) { return g_arena_base + address; }
-inline bool is_guest(const void* host) { return static_cast<uint64_t>(static_cast<const uint8_t*>(host) - g_arena_base) <= 0xffffffffull; }
+inline bool is_guest(const void* host) { return static_cast<uint64_t>(static_cast<const uint8_t*>(host) - g_arena_base) < g_arena_size; }
 [[noreturn]] void fault_not_in_arena(const void* host);   // a host-owned buffer was handed to the guest: it must be allocated in the arena
 inline uint32_t to_guest(const void* host) { if (!is_guest(host)) fault_not_in_arena(host); return static_cast<uint32_t>(static_cast<const uint8_t*>(host) - g_arena_base); }
 #endif

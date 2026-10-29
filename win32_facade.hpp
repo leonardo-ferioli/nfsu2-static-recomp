@@ -51,6 +51,9 @@ public:
     ~Win32Facade();
     // Names of the imports that were taken over (for the log and the tests).
     const std::string& installed_report() const;
+    // What the guest's handles mean, for the layers that live outside the facade (the DirectSound layer signals the guest's events and checks its window).
+    bool set_event(uint32_t handle);
+    bool is_window(uint32_t handle);
     // The text of the registry's Config store ("key=value" lines) so that a host can keep it between runs and give it back as Win32LayerOptions::registry_text.
     std::string registry_text() const;
     struct Impl;

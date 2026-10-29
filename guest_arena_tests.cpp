@@ -122,6 +122,8 @@ int main() {
         CHECK(masked->alloc(16) >= 0x1000000u);
         CHECK(!masked->commit(0x40000000u, 0x1000, kPageReadWrite));
         CHECK(masked->host(0x7fffff00u, 16) == nullptr);
+        CHECK(is_guest(arena_base() + 0x3fffffffull) && !is_guest(arena_base() + 0x40000000ull));      // host memory beyond a smaller reservation is not the guest's
+        CHECK(arena_config(0x80000000ull).alloc_end == 0x7F000000u && arena_config(0x100000000ull).alloc_end == 0xE0000000u);
     }
     if (g_failures) return 1;
     std::puts("PASS guest memory (arena)");

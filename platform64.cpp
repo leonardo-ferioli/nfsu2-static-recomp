@@ -54,6 +54,7 @@ Platform64::Platform64(Cpu& main,const std::filesystem::path& exports,const std:
     initialize(main_,main_context_->stack,main_context_->teb);
     for(const auto& imp:imports)wm<4>(main_,imp.iat,imp.token);
     main_.pc=entry_point;
+    install_exception_imports();
     g_current=this;
 }
 Platform64::~Platform64(){
@@ -87,6 +88,12 @@ uint32_t Platform64::import_token(const char* name) const{
     for(const auto& imp:imports)if(std::strcmp(imp.name,name)==0)return imp.token;
     return 0;
 }
+void Platform64::add_raw(const char* name,NativeHook hook){
+    std::lock_guard lock(mutex_);
+    for(size_t i=0;i<std::size(imports);++i)if(std::strcmp(imports[i].name,name)==0)slots_[i]=std::make_unique<Handler>(Handler{0,hook,true});
+    by_name_[name]=std::make_unique<Handler>(Handler{0,std::move(hook),true});
+}
+void Platform64::note(const std::string& text){std::lock_guard lock(mutex_);if(trace_)trace_<<text<<'\n';}
 void Platform64::override_import(const char* name,unsigned argument_count,NativeHook hook){
     std::lock_guard lock(mutex_);
     auto handler=std::make_unique<Handler>(Handler{argument_count,std::move(hook)});
@@ -144,6 +151,7 @@ void Platform64::note_import(const std::string& label,Cpu& c){
 bool Platform64::dispatch(Cpu& c){
     const uint32_t token=c.pc;
     if(token<import_token_base)return false;
+    if(token==exception_handler_token || token==exception_unwind_token || token==exception_filter_token)return exception_return(c);
     std::string label;
     Handler* handler=find_handler(token,label);
     if(label.empty())return false;                         // not a token of this platform (the range check above is only a fast reject)
@@ -152,6 +160,7 @@ bool Platform64::dispatch(Cpu& c){
         std::ostringstream message;message<<"unimplemented guest import "<<label<<" (token "<<hex(token)<<", return="<<hex(uint32_t(m<4>(c,r<4>(c,16))))<<")";
         throw Fault(message.str());
     }
+    if(handler->raw){handler->fn(c);return true;}
     const uint32_t value=handler->fn(c);
     const uint32_t sp=uint32_t(r<4>(c,16)),back=uint32_t(m<4>(c,sp));
     wr<4>(c,0,value);wr<4>(c,16,sp+4+handler->argc*4);c.pc=back;wr<4>(c,644,back);

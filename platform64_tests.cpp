@@ -3,6 +3,8 @@
 //     platform64_tests <export dir> <game dir>
 #include "platform64.hpp"
 #include "win32_facade.hpp"
+#include <atomic>
+#include <chrono>
 #include "legacy_win32/resources.hpp"
 #include <cstdio>
 #include <cstring>
@@ -10,6 +12,7 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <thread>
 
 using namespace nfsu2raw;
 namespace {
@@ -58,7 +61,7 @@ int main(int argc, char** argv) {
     try {
         if (argc < 3) throw Fault("platform64_tests <export dir> <game dir>");
         const char* error = nullptr;
-        auto arena = nfsu2::guest::create_arena({}, &error);
+        auto arena = nfsu2::guest::create_arena(nfsu2::guest::arena_config_from_environment(), &error);
         if (!arena) throw Fault(std::string("arena: ") + (error ? error : "?"));
         Cpu c;
         Platform64 p(c, argv[1], argv[2]);
@@ -110,6 +113,54 @@ int main(int argc, char** argv) {
         // a callback from native code into the guest, on a processor of its own, from inside a handler (nesting)
         check(p.callback(0x00575330, {name}) == 0xbdc1d1f3u, "callback runs guest code and returns EAX");
 
+        // a multimedia timer: its callback (a method token standing in for guest code) runs on a guest processor of its own with the guest's arguments
+        {
+            std::atomic<uint32_t> user_seen{0}, id_seen{0};
+            const uint32_t callback = p.add_method_token(5, [&](Cpu& cc) { id_seen = uint32_t(m<4>(cc, r<4>(cc, 16) + 4)); user_seen = uint32_t(m<4>(cc, r<4>(cc, 16) + 12)); return 0u; });
+            const uint32_t id = g.call("timeSetEvent", {10, 0, callback, 0x1234, 0});
+            check(id != 0, "timeSetEvent");
+            for (int i = 0; i < 200 && !user_seen; ++i) std::this_thread::sleep_for(std::chrono::milliseconds(10));
+            check(user_seen == 0x1234 && id_seen == id, "the timer callback ran with the user value");
+            g.call("timeKillEvent", {id});
+        }
+
+        // structured exceptions: a guest handler (a method token standing in for guest code) on the guest's exception chain
+        {
+            const uint32_t heap = g.call("GetProcessHeap", {}), teb = uint32_t(r<4>(c, 0x110));
+            auto frame_with = [&](uint32_t handler, uint32_t next) { const uint32_t f = g.call("HeapAlloc", {heap, 8, 16}); wm<4>(c, f, next); wm<4>(c, f + 4, handler); return f; };
+            auto frame_call = [&](const char* name, std::initializer_list<uint32_t> args) {     // run a call of an import on the main processor until it returns to the sentinel
+                const uint32_t sp = g.base_sp - 0x2000;
+                wr<4>(c, 16, sp); wm<4>(c, sp, Platform64::return_sentinel);
+                unsigned i = 0; for (uint32_t a : args) wm<4>(c, sp + 4 + 4 * i++, a);
+                c.pc = p.import_token(name);
+                p.execute(c, Platform64::return_sentinel, 1000000);
+                return sp;
+            };
+            uint32_t seen_code = 0, seen_flags = 0; int calls = 0;
+            const uint32_t t_continue = p.add_method_token(4, [&](Cpu& cc) { const uint32_t record = uint32_t(m<4>(cc, r<4>(cc, 16) + 4)); seen_code = uint32_t(m<4>(cc, record)); seen_flags = uint32_t(m<4>(cc, record + 4)); ++calls; return 0u; });
+            const uint32_t t_search = p.add_method_token(4, [&](Cpu& cc) { const uint32_t record = uint32_t(m<4>(cc, r<4>(cc, 16) + 4)); seen_flags = uint32_t(m<4>(cc, record + 4)); ++calls; return 1u; });
+            const uint32_t previous = uint32_t(m<4>(c, teb));
+
+            wm<4>(c, teb, frame_with(t_continue, 0xffffffff));                                   // ExceptionContinueExecution of a continuable exception
+            uint32_t sp = frame_call("RaiseException", {0xE0001234, 0, 0, 0});
+            check(calls == 1 && seen_code == 0xE0001234 && c.pc == Platform64::return_sentinel && uint32_t(r<4>(c, 16)) == sp + 20, "RaiseException: the handler runs and execution continues after the call");
+
+            calls = 0;                                                                           // ContinueSearch to the end of the chain: no filter, so fatal
+            wm<4>(c, teb, frame_with(t_search, 0xffffffff));
+            bool fatal = false;
+            try { frame_call("RaiseException", {0xE0005678, 0, 0, 0}); } catch (const Fault& e) { fatal = std::string(e.what()).find("unhandled guest exception code=0xe0005678") != std::string::npos; }
+            check(fatal && calls == 1, "RaiseException: an exception nobody handles is fatal");
+
+            calls = 0;                                                                           // RtlUnwind to the outer frame: the inner handler is told, the value comes back in EAX
+            const uint32_t outer = frame_with(t_search, 0xffffffff), inner = frame_with(t_search, outer);
+            wm<4>(c, teb, inner);
+            sp = frame_call("RtlUnwind", {outer, 0, 0, 7});
+            check(calls == 1 && (seen_flags & 2) && uint32_t(r<4>(c, 0)) == 7 && uint32_t(m<4>(c, teb)) == outer && uint32_t(r<4>(c, 16)) == sp + 20 && c.pc == Platform64::return_sentinel, "RtlUnwind: unwinding handler called, frame unlinked, EAX = return value");
+
+            wm<4>(c, teb, previous);
+            check(g.call("SetUnhandledExceptionFilter", {0x1000}) == 0 && g.call("SetUnhandledExceptionFilter", {0}) == 0x1000, "SetUnhandledExceptionFilter returns the previous filter");
+            check(g.call("UnhandledExceptionFilter", {0}) == 1, "UnhandledExceptionFilter without a filter: EXCEPTION_EXECUTE_HANDLER");
+        }
 
         // ---- registry: the game's own keys exist with their defaults; writes are seen by the next read; a handle that was closed is invalid
         {
