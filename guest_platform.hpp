@@ -6,8 +6,10 @@
 // A handler is called with the processor of the guest thread that made the call; it reads its stdcall arguments from the guest stack (guest::ptr),
 // and returns EAX. The stdcall words are removed by the platform (`argument_count` at registration).
 #include "runtime.hpp"
+#include <filesystem>
 #include <functional>
 #include <initializer_list>
+#include <iostream>
 
 namespace nfsu2raw {
 
@@ -29,6 +31,10 @@ public:
     virtual uint32_t token_for(const char* name) { (void)name; return 0; }
     // A guest thread or timer callback failed: the platform records `what`, stops, and the main run reports it.
     virtual void guest_fault(const std::string& what) { (void)what; }
+    // The folder of the game's files (the registry group's InstallDir comes from it). Empty when the platform has none.
+    virtual const std::filesystem::path& game_directory() const { static const std::filesystem::path none; return none; }
+    // One line for the run's log (NativePlatform: logs/native_trace.log). Platforms without a log write it to stderr.
+    virtual void log_line(const std::string& text) { std::cerr << text << "\n"; }
     // Raises a Fault when the platform is shutting down (a long guest wait calls it between slices).
     virtual void throw_if_stopping(const char* what) const = 0;
 };

@@ -58,6 +58,10 @@ public:
     Ret<bool> free_library(Handle);
     Ret<uint32_t> get_proc_address(Handle module, std::string_view name);
     Ret<uint32_t> get_proc_address_ordinal(Handle module, uint16_t ordinal);
+    // What GetProcAddress answers for a name the module did not register (the module name is lower-case, without ".dll"): the port's import binder (an import token of the host for functions the
+    // guest's import table has, a logged-failure token for anything else). Returning 0 keeps ERROR_PROC_NOT_FOUND.
+    using ProcResolver = std::function<uint32_t(std::string_view module, std::string_view name)>;
+    void set_proc_resolver(ProcResolver resolver) { proc_resolver_ = std::move(resolver); }
     void register_ordinal(Handle module, uint16_t ordinal, uint32_t address);
     Ret<std::string> get_module_file_name(Handle module);              // the main image's path; a registered DLL's C:\WINDOWS\system32 path
 
@@ -109,6 +113,7 @@ private:
     uint64_t affinity_ = 0, debug_strings_ = 0;
     std::function<void(std::string_view)> debug_sink_;
     std::function<void(uint32_t)> exit_handler_;
+    ProcResolver proc_resolver_;
 };
 
 }  // namespace nfsu2::legacy::win32

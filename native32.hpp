@@ -86,6 +86,8 @@ public:
     void set_vsync(bool on){vsync_on=on;}
     // Logs the frame rate and frame-time percentiles every 5 s to the trace log (one QueryPerformanceCounter per frame; no sampling).
     void set_fps_log(bool on){fps_log_on=on;}
+    // One line in the trace log (what the Win32 facade reports when the guest calls something that is not supported).
+    void log_line(const std::string& text){record(text);}
     // Records the game's Direct3D 9 calls and data (d3d9_recorder.hpp). Turns the state cache off (the trace should hold every call). Returns an error text, empty on success.
     std::string set_d3d9_recorder(const RecorderOptions& options);
     void finish_d3d9_recorder(){if(auto* r=d3d9_recorder_ptr.load())r->finish();}

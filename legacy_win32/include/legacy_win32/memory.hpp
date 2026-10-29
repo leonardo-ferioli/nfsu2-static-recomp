@@ -2,12 +2,15 @@
 // HeapDestroy, GetProcessHeap) and GlobalAlloc / GlobalFree.
 //
 // The guest's memory is an `AddressSpace`: a 32-bit address space the library asks for pages (reserve, commit, protect...) and that tells it where a
-// guest address lives in the host (`host()`), which is how the facade reads and writes guest data. Two implementations: `ArenaAddressSpace` (portable,
-// deterministic: one block of host memory standing for the 4 GiB window, the model of NUE's WINDOW64 / INDIRECT guests) and, on Windows, the real
-// VirtualAlloc of a 32-bit process (identity mapping, legacy_win32/host). The Win32 rules (alignment, errors, state machine of a region) live in the arena;
-// the heap manager on top is independent of which address space it runs in.
+// guest address lives in the host (`host()`), which is how the facade reads and writes guest data. Two implementations: the portable one
+// (make_arena_address_space: a window of the guest's address range that a guest::Memory maps, the model of NUE's WINDOW64 / INDIRECT guests) and, on Windows,
+// the real VirtualAlloc of a 32-bit process (identity mapping, legacy_win32/host). The Win32 rules (alignment, errors, state machine of a region) and the page
+// protections (software table in 4 KiB guest pages, never the host MMU: hosts have 4 or 16 KiB pages) live in the portable one; the heap manager on top is
+// independent of which address space it runs in. No guest address is ever taken for a host address here: host() is the only way to a pointer.
 #pragma once
+#include "guest_memory.hpp"
 #include "legacy_win32/common.hpp"
+#include <functional>
 #include <map>
 #include <memory>
 #include <mutex>
@@ -36,7 +39,9 @@ public:
     virtual std::byte* host(uint32_t address, uint32_t size) = 0;
 };
 
-std::unique_ptr<AddressSpace> make_arena_address_space(uint32_t arena_bytes = 256u << 20);
+// The address space over the window [0x10000, 0x10000 + window_bytes) of `memory` (which must map it contiguously: host(0x10000, window_bytes) not null).
+// `memory` must outlive the result. Throws std::runtime_error when the window is not mapped.
+std::unique_ptr<AddressSpace> make_arena_address_space(guest::Memory& memory, uint32_t window_bytes = 256u << 20);
 // The same rules over a window of memory somebody else owns (the port's 64-bit guest arena): `memory` is the host memory of guest address `base_address` (64 KiB aligned),
 // already committed and zero for `bytes` bytes. Nothing is allocated or freed by the returned object.
 std::unique_ptr<AddressSpace> make_arena_address_space_over(std::byte* memory, uint32_t base_address, uint32_t bytes);
@@ -45,6 +50,29 @@ std::unique_ptr<AddressSpace> make_arena_address_space_over(std::byte* memory, u
 bool is_bad_read_ptr(AddressSpace&, uint32_t address, uint32_t size);
 bool is_bad_write_ptr(AddressSpace&, uint32_t address, uint32_t size);
 bool is_bad_code_ptr(AddressSpace&, uint32_t address);
+
+// VirtualAlloc / VirtualProtect / VirtualFree / VirtualQuery as the guest calls them, over any address space, with one policy for the execution engine:
+// memory that becomes executable outside the main image holds run-time generated code (a decompressed or relocated module, a thunk), so the engine is told
+// where it is ("register only": what is done with it, an interpreter on a desktop or nothing on a host that forbids run-time code, is decided elsewhere).
+class VirtualApi {
+public:
+    using RegionListener = std::function<void(uint32_t base, uint32_t size)>;
+    struct Region { uint32_t base = 0, size = 0; };
+    VirtualApi(AddressSpace& space, uint32_t image_base, uint32_t image_size, RegionListener on_executable = {}, RegionListener on_released = {});
+    Ret<uint32_t> virtual_alloc(uint32_t address, uint32_t size, uint32_t type, uint32_t protect);   // the base, 0 on failure
+    Ret<bool> virtual_protect(uint32_t address, uint32_t size, uint32_t protect, uint32_t* old_protect);
+    Ret<bool> virtual_free(uint32_t address, uint32_t size, uint32_t type);
+    Ret<RegionInfo> virtual_query(uint32_t address);
+    std::vector<Region> executable_regions() const;                  // the regions announced and not released since
+    bool in_executable_region(uint32_t address) const;
+private:
+    bool outside_image(uint32_t base, uint32_t size) const { return uint64_t(base) + size <= image_base_ || base >= uint64_t(image_base_) + image_size_; }
+    AddressSpace& space_;
+    uint32_t image_base_, image_size_;
+    RegionListener on_executable_, on_released_;
+    mutable std::mutex m_;
+    std::vector<Region> regions_;
+};
 
 using HeapId = Handle;
 

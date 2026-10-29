@@ -2,8 +2,12 @@
 // model of legacy_win32 (legacy_win32/include/legacy_win32/dinput.hpp). A COM object is {vtable pointer, id}; the vtable is an array of call tokens
 // (NativePlatform::add_method_token), so a guest `call [vtable + slot]` lands in a handler below that decodes the stdcall arguments and the guest structures.
 #include "win32_facade_internal.hpp"
+#ifdef NFSU2_FACADE_REAL_OS
 #include "host/windows_input.hpp"
+#endif
+#include "platform/null/null_services.hpp"
 #include <atomic>
+#include <stdexcept>
 #include <map>
 
 namespace nfsu2raw {
@@ -103,14 +107,20 @@ void write_action_results(uint32_t address, const ldi::ActionFormat& f) {
 void Win32Facade::Impl::install_dinput() {
     dinput = std::make_unique<DInputState>();
     plat::Input* input = input_override;
+#ifdef NFSU2_FACADE_REAL_OS
     if (!input) { input_owned = lw::host::make_windows_input(); input = input_owned.get(); }
-#ifdef NFSU2_GUEST_IDENTITY
-    di = std::make_unique<ldi::DirectInput>(*input, *clock, [](uint32_t hwnd) { return hwnd == 0 || nfsu2::guest::guest_handle(GetForegroundWindow()) == hwnd; });
+    auto foreground = [](uint32_t hwnd) { return hwnd == 0 || nfsu2::guest::guest_handle(GetForegroundWindow()) == hwnd; };
 #else
-    // A 64-bit host: the guest's window handle is a token of the window layer, not the system's HWND. Until that layer answers which window has the focus,
-    // every window of the guest counts as the foreground one (nothing else competes for the input of a headless run).
-    di = std::make_unique<ldi::DirectInput>(*input, *clock, [](uint32_t) { return true; });
+    if (!input) { if (!input_owned) input_owned = std::make_unique<plat::null::NullInput>(); input = input_owned.get(); }   // headless: events arrive through NullInput::push
+    // The guest's window handle is a token of the window layer, not the system's HWND. With the user32 group the foreground window decides (no window yet: nothing else
+    // competes for the input, so every window counts); without it every guest window is the foreground one.
+    auto foreground = [this](uint32_t hwnd) {
+        if (!windows) return true;
+        const uint32_t current = windows->get_foreground_window();
+        return hwnd == 0 || current == 0 || current == hwnd;
+    };
 #endif
+    di = std::make_unique<ldi::DirectInput>(*input, *clock, foreground);
     DInputState* state = dinput.get();
     Impl* self = this;
 

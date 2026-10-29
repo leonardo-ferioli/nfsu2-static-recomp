@@ -16,6 +16,7 @@
 #include <vector>
 
 using namespace nfsu2raw;
+namespace guest = nfsu2::guest;
 namespace fs = std::filesystem;
 
 namespace {
@@ -49,8 +50,8 @@ struct Guest {
     uint32_t com(uint32_t object, unsigned slot, std::initializer_list<uint32_t> args) {   // a call through the vtable of a COM object
         static const bool trace = std::getenv("NFSU2_FACADE_TEST_TRACE") != nullptr;
         if (trace) std::cerr << "com object=" << std::hex << object << std::dec << " slot=" << slot << std::endl;
-        const uint32_t vtable = *reinterpret_cast<uint32_t*>(uintptr_t(object));
-        const uint32_t token = *reinterpret_cast<uint32_t*>(uintptr_t(vtable + slot * 4));
+        const uint32_t vtable = *guest::ptr<uint32_t>(object);
+        const uint32_t token = *guest::ptr<uint32_t>(vtable + slot * 4);
         std::vector<uint32_t> all{object};
         all.insert(all.end(), args.begin(), args.end());
         uint32_t sp = base_sp;
@@ -63,7 +64,7 @@ struct Guest {
         return uint32_t(r<4>(cpu, 0));
     }
 };
-uint32_t A(const void* p) { return uint32_t(uintptr_t(p)); }
+uint32_t A(const void* p) { return nfsu2::guest::to_guest(p); }   // the test objects live in host memory: this is the identity model
 
 }  // namespace
 
@@ -191,10 +192,10 @@ int main(int argc, char** argv) try {
     check(g.call("TlsGetValue", {tls}) == 0 && g.call("TlsSetValue", {tls, 0x1234}) == 1 && g.call("TlsGetValue", {tls}) == 0x1234 && g.call("TlsFree", {tls}) == 1, "TLS");
     const uint32_t heap = g.call("GetProcessHeap", {});
     const uint32_t block = g.call("HeapAlloc", {heap, 8, 100});
-    check(block != 0 && g.call("HeapSize", {heap, 0, block}) == 100 && *reinterpret_cast<uint8_t*>(uintptr_t(block + 99)) == 0, "heap block, size and zeroing");
-    std::memset(reinterpret_cast<void*>(uintptr_t(block)), 0x5A, 100);
+    check(block != 0 && g.call("HeapSize", {heap, 0, block}) == 100 && *guest::ptr<uint8_t>(block + 99) == 0, "heap block, size and zeroing");
+    std::memset(guest::ptr<void>(block), 0x5A, 100);
     const uint32_t bigger = g.call("HeapReAlloc", {heap, 0, block, 4000});
-    check(bigger != 0 && *reinterpret_cast<uint8_t*>(uintptr_t(bigger + 99)) == 0x5A && g.call("HeapSize", {heap, 0, bigger}) == 4000, "heap realloc keeps the data");
+    check(bigger != 0 && *guest::ptr<uint8_t>(bigger + 99) == 0x5A && g.call("HeapSize", {heap, 0, bigger}) == 4000, "heap realloc keeps the data");
     check(g.call("HeapFree", {heap, 0, bigger}) == 1, "heap free");
 
     // Files: a real temporary file read, written, listed and measured through the facade.
@@ -275,6 +276,54 @@ int main(int argc, char** argv) try {
     check(g.com(keyboard, 8, {}) == 0, "Unacquire");
     check(g.com(keyboard, 2, {}) == 0, "Release of the device");
     check(g.com(di, 2, {}) == 0, "Release of DirectInput");
+
+    // ---- registry over the Config store, seeded with the game's own keys; and the traps
+    {
+        Win32LayerOptions ro;
+        ro.registry = true;
+        ro.traps = true;
+        std::string saved;
+        {
+            Win32Facade reg(p, ro);
+            check(reg.installed_report().find("RegQueryValueExA") != std::string::npos && reg.installed_report().find("socket") != std::string::npos, "the registry and trap groups installed their imports");
+            uint32_t key = 0;
+            const char* main_key = "Software\\EA Games\\Need for Speed Underground 2";
+            check(g.call("RegOpenKeyA", {0x80000002u, A(main_key), A(&key)}) == 0 && key != 0, "the game's key exists with its defaults");
+            uint32_t type = 0, value = 0, size = 4;
+            check(g.call("RegQueryValueExA", {key, A("g_FSAALevel"), 0, A(&type), A(&value), A(&size)}) == 0 && type == 4 && value == 7 && size == 4, "a numeric default is a DWORD");
+            char text[64] = {};
+            size = sizeof text;
+            check(g.call("RegQueryValueExA", {key, A("Language"), 0, A(&type), A(text), A(&size)}) == 0 && type == 1 && std::string(text) == "English US", "a text default is a string");
+            size = 3;
+            check(g.call("RegQueryValueExA", {key, A("Language"), 0, A(&type), A(text), A(&size)}) == 234 && size == 11, "ERROR_MORE_DATA reports the size needed");
+            check(g.call("RegQueryValueExA", {key, A("NoSuchValue"), 0, A(&type), A(text), A(&size)}) == 2, "a missing value is ERROR_FILE_NOT_FOUND");
+            const uint32_t laps = 5;
+            check(g.call("RegSetValueExA", {key, A("Laps"), 0, 4, A(&laps), 4}) == 0, "set a DWORD");
+            check(g.call("RegCloseKey", {key}) == 0, "close");
+            check(g.call("RegCloseKey", {key}) != 0, "a closed key is invalid");
+            uint32_t created = 0;
+            check(g.call("RegCreateKeyA", {0x80000001u, A("Software\\Test\\Sub"), A(&created)}) == 0 && created != 0, "create a key");
+            check(g.call("RegOpenKeyExA", {0x80000001u, A("Software\\Test\\Missing"), 0, 1, A(&created)}) == 2, "open a missing key");
+            saved = reg.registry_text();
+        }
+        check(saved.find("Laps") != std::string::npos, "the Config text holds what was set");
+        ro.registry_text = saved;
+        {   // a later run: the persisted value is kept, the defaults do not overwrite it
+            Win32Facade again(p, ro);
+            uint32_t key = 0, type = 0, laps = 0, size = 4;
+            check(g.call("RegOpenKeyA", {0x80000002u, A("Software\\EA Games\\Need for Speed Underground 2"), A(&key)}) == 0, "the key is still there");
+            check(g.call("RegQueryValueExA", {key, A("Laps"), 0, A(&type), A(&laps), A(&size)}) == 0 && laps == 5, "the value of the earlier run is kept");
+            // the traps: the calls fail in a way the caller can handle, with the stack cleaned by the right number of words (the helper checks it)
+            check(g.call("socket", {2, 1, 6}) == 0xFFFFFFFFu, "socket fails with INVALID_SOCKET");
+            check(g.call("WSAGetLastError", {}) == 10050, "and WSAGetLastError says the network is down");
+            uint8_t wsa_data[400] = {};
+            check(g.call("WSAStartup", {0x0202, A(wsa_data)}) == 10091, "WSAStartup says the network is not ready");
+            check(g.call("gethostbyname", {A("example")}) == 0, "gethostbyname returns NULL");
+            check(g.call("GetPixel", {1, 2, 3}) == 0xFFFFFFFFu, "GetPixel returns CLR_INVALID");
+            check(g.call("DeleteObject", {1}) == 1, "DeleteObject succeeds on nothing");
+            check(g.call("lineInitialize", {0, 0, 0, 0, 0}) == 0x80000048u, "TAPI says the operation is unavailable");
+        }
+    }
 
     std::cout << (failures ? "FAIL" : "PASS") << " win32 facade: " << failures << " failures\n";
     return failures ? 1 : 0;

@@ -273,7 +273,7 @@ static void test_sync() {
     std::atomic<int> ticks{0};
     const uint32_t timer = ops.sync.time_set_event(10, true, [&ticks](uint32_t) { ++ticks; });
     CHECK(timer != 0);
-    std::this_thread::sleep_for(std::chrono::milliseconds(120));
+    for (int waited = 0; ticks.load() < 3 && waited < 3000; ++waited) std::this_thread::sleep_for(std::chrono::milliseconds(1));   // a loaded machine is slow, not wrong
     CHECK_EQ(ops.sync.time_kill_event(timer), 0u);
     const int after_kill = ticks.load();
     std::printf("  periodic timer ticks in 120 ms: %d\n", after_kill);

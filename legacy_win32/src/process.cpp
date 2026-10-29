@@ -86,7 +86,10 @@ Ret<uint32_t> ProcessApi::get_proc_address(Handle module, std::string_view name)
     Module* m = by_handle(module);
     if (!m) return fail<uint32_t>(err::invalid_handle);
     auto it = m->exports.find(std::string(name));
-    if (it == m->exports.end()) return fail<uint32_t>(err::proc_not_found);
+    if (it == m->exports.end()) {
+        if (proc_resolver_) { if (const uint32_t address = proc_resolver_(stem(folded(m->name)), name)) return ok(address); }
+        return fail<uint32_t>(err::proc_not_found);
+    }
     return ok(it->second);
 }
 Ret<uint32_t> ProcessApi::get_proc_address_ordinal(Handle module, uint16_t ordinal) {

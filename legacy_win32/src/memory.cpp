@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <cstdlib>
 #include <cstring>
+#include <stdexcept>
 
 namespace nfsu2::legacy::win32 {
 namespace {
@@ -24,13 +25,14 @@ bool executable(uint32_t p) { if (p & (page::guard | page::noaccess)) return fal
 
 class Arena final : public AddressSpace {
 public:
-    explicit Arena(uint32_t bytes) : base_(kBaseAddress), size_(round_up(bytes, kGranularity)), pages_(size_ / kPage) {
-        memory_ = static_cast<std::byte*>(std::calloc(size_, 1));    // zero pages the OS gives lazily
-        owned_ = true;
+    // The window [kBaseAddress, kBaseAddress + bytes) of the guest's address space belongs to this object: the host (guest::Memory) must map all of it
+    // contiguously. Region state and page protections are kept here, in software, in 4 KiB guest pages: the host's own page size and MMU play no part.
+    Arena(guest::Memory& memory, uint32_t bytes) : base_(kBaseAddress), size_(round_up(bytes, kGranularity)), pages_(size_ / kPage) {
+        memory_ = reinterpret_cast<std::byte*>(memory.host(kBaseAddress, size_));
+        if (!memory_) throw std::runtime_error("the guest memory does not map the Win32 address-space window");
     }
     // The window [base, base + bytes) of an address space somebody else owns: `memory` is the host memory of address `base`, already committed and zero.
     Arena(std::byte* memory, uint32_t base, uint32_t bytes) : base_(base), size_(round_up(bytes, kGranularity)), pages_(size_ / kPage), memory_(memory) {}
-    ~Arena() override { if (owned_) std::free(memory_); }
 
     uint32_t virtual_alloc(uint32_t address, uint32_t size, uint32_t type, uint32_t protect, uint32_t& result) override {
         std::lock_guard lock(m_);
@@ -179,12 +181,11 @@ private:
     uint32_t base_ = kBaseAddress, size_;
     std::vector<Page> pages_;
     std::byte* memory_ = nullptr;
-    bool owned_ = false;
 };
 
 }  // namespace
 
-std::unique_ptr<AddressSpace> make_arena_address_space(uint32_t bytes) { return std::make_unique<Arena>(bytes); }
+std::unique_ptr<AddressSpace> make_arena_address_space(guest::Memory& memory, uint32_t window_bytes) { return std::make_unique<Arena>(memory, window_bytes); }
 std::unique_ptr<AddressSpace> make_arena_address_space_over(std::byte* memory, uint32_t base_address, uint32_t bytes) { return std::make_unique<Arena>(memory, base_address, bytes); }
 
 bool is_bad_read_ptr(AddressSpace& s, uint32_t address, uint32_t size) {
@@ -206,6 +207,74 @@ bool is_bad_write_ptr(AddressSpace& s, uint32_t address, uint32_t size) {
 bool is_bad_code_ptr(AddressSpace& s, uint32_t address) {
     RegionInfo r;
     return s.virtual_query(address, r) != 0 || r.state != mem::commit || !(executable(r.protect) || readable(r.protect));
+}
+
+// ------------------------------------------------------------------------------------------------------------------------------ VirtualApi
+VirtualApi::VirtualApi(AddressSpace& space, uint32_t image_base, uint32_t image_size, RegionListener on_executable, RegionListener on_released)
+    : space_(space), image_base_(image_base), image_size_(image_size), on_executable_(std::move(on_executable)), on_released_(std::move(on_released)) {}
+
+Ret<uint32_t> VirtualApi::virtual_alloc(uint32_t address, uint32_t size, uint32_t type, uint32_t protect) {
+    uint32_t result = 0;
+    const uint32_t error = space_.virtual_alloc(address, size, type, protect, result);
+    if (error) return fail<uint32_t>(error);
+    if (result && (protect & 0xF0) && outside_image(result, size)) {
+        { std::lock_guard lock(m_); regions_.push_back({result, size}); }
+        if (on_executable_) on_executable_(result, size);
+    }
+    return ok(result);
+}
+
+Ret<bool> VirtualApi::virtual_protect(uint32_t address, uint32_t size, uint32_t protect, uint32_t* old_protect) {
+    uint32_t old = 0;
+    const uint32_t error = space_.virtual_protect(address, size, protect, old);
+    if (old_protect) *old_protect = old;
+    if (error) return fail<bool>(error);
+    if ((protect & 0xF0) && outside_image(address, size)) {
+        { std::lock_guard lock(m_); regions_.push_back({address, size}); }
+        if (on_executable_) on_executable_(address, size);
+    }
+    return ok(true);
+}
+
+Ret<bool> VirtualApi::virtual_free(uint32_t address, uint32_t size, uint32_t type) {
+    // The extent of what a release frees, measured before it happens: the whole allocation that starts at `address`.
+    uint32_t end = address;
+    if (type & mem::release) {
+        RegionInfo info;
+        if (space_.virtual_query(address, info) == 0 && info.allocation_base == address) {
+            for (uint64_t a = address; a < 0xFFFF0000ull; a = uint64_t(info.base_address) + info.region_size) {
+                if (space_.virtual_query(uint32_t(a), info) != 0 || info.allocation_base != address) break;
+                end = uint32_t(uint64_t(info.base_address) + info.region_size);
+            }
+        }
+    }
+    const uint32_t error = space_.virtual_free(address, size, type);
+    if (error) return fail<bool>(error);
+    if (type & mem::release) {
+        std::vector<Region> gone;
+        {
+            std::lock_guard lock(m_);
+            for (auto it = regions_.begin(); it != regions_.end();) {
+                if (it->base >= address && it->base < end) { gone.push_back(*it); it = regions_.erase(it); } else ++it;
+            }
+        }
+        if (on_released_) for (const auto& r : gone) on_released_(r.base, r.size);
+    }
+    return ok(true);
+}
+
+Ret<RegionInfo> VirtualApi::virtual_query(uint32_t address) {
+    RegionInfo info;
+    const uint32_t error = space_.virtual_query(address, info);
+    if (error) return fail<RegionInfo>(error);
+    return ok(info);
+}
+
+std::vector<VirtualApi::Region> VirtualApi::executable_regions() const { std::lock_guard lock(m_); return regions_; }
+bool VirtualApi::in_executable_region(uint32_t address) const {
+    std::lock_guard lock(m_);
+    for (const auto& r : regions_) if (address >= r.base && uint64_t(address) < uint64_t(r.base) + r.size) return true;
+    return false;
 }
 
 // ------------------------------------------------------------------------------------------------------------------------------ heaps

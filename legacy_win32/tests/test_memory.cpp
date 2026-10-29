@@ -1,7 +1,10 @@
 // Memory: the arena address space and the heap manager, then the same operations through the real VirtualAlloc / HeapAlloc with outcomes compared.
+#include "legacy_win32/arena_memory.hpp"
 #include "legacy_win32/memory.hpp"
 #include "test_support.hpp"
+#include <cstdint>
 #include <cstring>
+#include <exception>
 #include <string>
 #include <thread>
 #include <vector>
@@ -14,7 +17,8 @@
 using namespace nfsu2::legacy::win32;
 
 static void test_memory() {
-    auto space = make_arena_address_space(64u << 20);
+    ArenaMemory guest_memory(96u << 20, 64u << 20);
+    auto space = make_arena_address_space(guest_memory, 64u << 20);
     uint32_t base = 0;
     CHECK_EQ(space->virtual_alloc(0, 0, mem::commit, page::readwrite, base), uint32_t(err::invalid_parameter));           // zero size
     CHECK_EQ(space->virtual_alloc(0, 4096, 0, page::readwrite, base), uint32_t(err::invalid_parameter));                   // neither reserve nor commit
@@ -100,6 +104,88 @@ static void test_memory() {
 }
 REGISTER_TEST("memory", test_memory);
 
+// The guest memory under the address space: allocation zone, window, host pointers, and a layout where no guest address is a host address.
+static void test_arena_memory() {
+    ArenaMemory memory(96u << 20, 64u << 20);
+    CHECK(memory.host(0, 16) == nullptr && memory.host(0xFFFF, 1) == nullptr);                                  // the null guard
+    CHECK(memory.host(ArenaMemory::kWindowBase, 64u << 20) != nullptr);                                         // the window the address space manages
+    CHECK(memory.host(96u << 20, 1) == nullptr && memory.host(0xFFFFFFF0u, 32) == nullptr);                     // beyond the block
+    const uint32_t a = memory.alloc(100), b = memory.alloc(1), c = memory.alloc(4096);
+    CHECK(a && b && c && a % 16 == 0 && b % 16 == 0 && c % 16 == 0);
+    CHECK(a >= ArenaMemory::kWindowBase + (64u << 20));                                                          // above the window
+    CHECK(b >= a + 112 && c >= b + 16);
+    uint8_t* pa = memory.host(a, 100);
+    CHECK(pa != nullptr);
+    bool zero = true;
+    for (int i = 0; i < 100; ++i) zero &= pa[i] == 0;
+    CHECK(zero);
+    std::memset(pa, 0xAB, 100);
+    CHECK_EQ(memory.address_of(pa + 7), a + 7);
+    int foreign = 0;
+    CHECK_EQ(memory.address_of(&foreign), 0u);
+    memory.free(a);
+    const uint32_t again = memory.alloc(100);
+    CHECK_EQ(again, a);                                                                                          // the freed range is reused
+    CHECK(memory.host(again, 100)[50] == 0);                                                                     // and handed out zeroed
+    memory.free(again); memory.free(b); memory.free(c);                                                          // coalescing: one big block again
+    const uint32_t whole = memory.alloc(30u << 20);
+    CHECK(whole != 0);
+    CHECK_EQ(memory.alloc(30u << 20), 0u);                                                                       // exhausted: fails, does not crash
+    memory.free(whole);
+    memory.free(0x1234);                                                                                         // a foreign address is ignored
+    // The address space over its window: a window the memory does not map is refused.
+    bool refused = false;
+    try { auto bad = make_arena_address_space(memory, 100u << 20); (void)bad; } catch (const std::exception&) { refused = true; }
+    CHECK(refused);
+    // Page protections live in the software table: they do not change what the host can read, they change what the library reports and allows.
+    auto space = make_arena_address_space(memory, 64u << 20);
+    uint32_t base = 0, old = 0;
+    CHECK_EQ(space->virtual_alloc(0, 16384, mem::reserve | mem::commit, page::readwrite, base), 0u);
+    CHECK(!is_bad_write_ptr(*space, base, 16384) && !is_bad_read_ptr(*space, base, 16384));
+    CHECK_EQ(space->virtual_protect(base + 4096, 4096, page::readonly, old), 0u);
+    CHECK(is_bad_write_ptr(*space, base, 16384) && !is_bad_write_ptr(*space, base, 4096) && !is_bad_read_ptr(*space, base, 16384));
+    CHECK_EQ(space->virtual_protect(base + 8192, 4096, page::noaccess, old), 0u);
+    CHECK(is_bad_read_ptr(*space, base + 8192, 1) && !is_bad_read_ptr(*space, base + 12288, 4096));
+    CHECK(reinterpret_cast<uint8_t*>(space->host(base, 4096)) == memory.host(base, 4096));                                                   // one mapping, two views of it
+    CHECK(sizeof(void*) == 4 || reinterpret_cast<uintptr_t>(memory.host(base, 1)) != base);                      // on a 64-bit host the guest address is not the host address
+}
+REGISTER_TEST("arena_memory", test_arena_memory);
+
+// VirtualApi: memory that becomes executable outside the main image is announced (register only), released regions are retired.
+static void test_virtual_api() {
+    ArenaMemory memory(96u << 20, 64u << 20);
+    auto space = make_arena_address_space(memory, 64u << 20);
+    std::vector<std::pair<uint32_t, uint32_t>> announced, released;
+    VirtualApi api(*space, 0x400000, 0x300000, [&](uint32_t b, uint32_t s) { announced.push_back({b, s}); }, [&](uint32_t b, uint32_t s) { released.push_back({b, s}); });
+    auto data = api.virtual_alloc(0, 8192, mem::reserve | mem::commit, page::readwrite);
+    CHECK(data && data.value != 0 && announced.empty());                                                       // data is not announced
+    auto code = api.virtual_alloc(0, 3 * 4096, mem::reserve | mem::commit, page::execute_readwrite);
+    CHECK(code && announced.size() == 1 && announced[0].first == code.value && announced[0].second == 3 * 4096u);
+    CHECK(api.in_executable_region(code.value + 100) && !api.in_executable_region(data.value));
+    // Data that is made executable later is announced at the VirtualProtect (a decompressed module).
+    uint32_t old = 0;
+    CHECK(api.virtual_protect(data.value, 4096, page::execute_read, &old));
+    CHECK_EQ(old, uint32_t(page::readwrite));
+    CHECK(announced.size() == 2 && announced[1].first == data.value);
+    // The same inside the main image is not announced (translated code covers it).
+    auto in_image = api.virtual_alloc(0x400000, 4096, mem::reserve | mem::commit, page::execute_readwrite);
+    CHECK(!in_image || announced.size() == 2);                                                                  // the window starts below the image, so this may be refused: never announced
+    // Errors pass through.
+    auto bad = api.virtual_protect(0x1000, 4096, page::readwrite, &old);
+    CHECK(!bad && bad.error != 0);
+    CHECK(!api.virtual_alloc(0, 0, mem::commit, page::readwrite));
+    // Releasing the allocation retires its regions, including one made by VirtualProtect inside it.
+    CHECK(api.virtual_free(code.value, 0, mem::release));
+    CHECK(released.size() == 1 && released[0].first == code.value);
+    CHECK(!api.in_executable_region(code.value));
+    CHECK(api.virtual_free(data.value, 0, mem::release));
+    CHECK_EQ(released.size(), 2u);
+    CHECK(!api.virtual_free(data.value, 0, mem::release));                                                     // twice
+    auto info = api.virtual_query(0x20000);
+    CHECK(info);
+}
+REGISTER_TEST("virtual_api", test_virtual_api);
+
 #if defined(_WIN32)
 namespace {
 // An operation script over a region: `base` is whatever the allocator returns, every address in the log is relative to it.
@@ -150,7 +236,8 @@ std::vector<std::string> virtual_script(Alloc alloc, Free free_, Protect protect
 }  // namespace
 
 static void test_memory_against_windows() {
-    auto space = make_arena_address_space(64u << 20);
+    ArenaMemory guest_memory(96u << 20, 64u << 20);
+    auto space = make_arena_address_space(guest_memory, 64u << 20);
     // Real.
     const auto expected = virtual_script(
         [](uint64_t address, uint32_t size, uint32_t type, uint32_t protect, uint64_t& out) -> uint32_t {
