@@ -47,6 +47,7 @@ public:
     // Runs the main processor from the PE entry point; `trace` receives the imports called (once each) and the reason it stopped.
     void run(uint64_t budget, const std::filesystem::path& trace);
     void stop() { stopping_ = true; }
+    void stop_guest() override { stopping_ = true; }
     bool stopping() const { return stopping_; }
     Cpu& main_cpu() { return main_; }
     const std::filesystem::path& game_directory() const { return game_; }

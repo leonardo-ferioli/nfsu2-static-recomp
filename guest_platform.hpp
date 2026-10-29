@@ -35,6 +35,8 @@ public:
     virtual const std::filesystem::path& game_directory() const { static const std::filesystem::path none; return none; }
     // One line for the run's log (NativePlatform: logs/native_trace.log). Platforms without a log write it to stderr.
     virtual void log_line(const std::string& text) { std::cerr << text << "\n"; }
+    // The layer above is shutting down: guest threads and waits must come back (throw_if_stopping raises from now on). Default: nothing to do.
+    virtual void stop_guest() {}
     // Raises a Fault when the platform is shutting down (a long guest wait calls it between slices).
     virtual void throw_if_stopping(const char* what) const = 0;
 };
