@@ -8,7 +8,12 @@
 #include <vector>
 
 #include "guest_memory.hpp"
+#ifdef NFSU2_GUEST_IDENTITY
 #include "native32.hpp"
+#else
+#include "platform64.hpp"
+#include "win32_facade.hpp"
+#endif
 #include "platform/audio/dsound_install.hpp"
 #include "platform/audio/null_sink.hpp"
 
@@ -21,8 +26,20 @@ using namespace nfsu2::platform::audio;
 
 int main(int argc, char** argv) try {
     if (argc != 3) throw Fault("requires export and game directories");
+#ifdef NFSU2_GUEST_IDENTITY
     Cpu c;
     NativePlatform p(c, argv[1], argv[2]);
+#else
+    // A 64-bit host: the guest in the arena, the Win32 layer on top (its tokens are the handles the DirectSound layer is given).
+    const char* arena_error = nullptr;
+    auto arena = nfsu2::guest::create_arena(nfsu2::guest::arena_config_from_environment(), &arena_error);
+    if (!arena) throw Fault(std::string("arena: ") + (arena_error ? arena_error : "?"));
+    Cpu c;
+    Platform64 p(c, argv[1], argv[2]);
+    std::string bad;
+    Win32Facade facade(p, parse_win32_layer("all", bad));
+    const GuestHandles handles{[&](uint32_t h) { facade.set_event(h); }, [&](uint32_t h) { return facade.is_window(h); }};
+#endif
 
     NullSink* sink = nullptr;
     AudioSettings settings;
@@ -35,7 +52,12 @@ int main(int argc, char** argv) try {
     };
     std::vector<std::string> log;
     std::string why;
-    if (!install_dsound(p, settings, [&](const std::string& t) { log.push_back(t); }, why)) throw Fault("install_dsound failed: " + why);
+#ifdef NFSU2_GUEST_IDENTITY
+    const GuestHandles* handles_pointer = nullptr;
+#else
+    const GuestHandles* handles_pointer = &handles;
+#endif
+    if (!install_dsound(p, settings, [&](const std::string& t) { log.push_back(t); }, why, handles_pointer)) throw Fault("install_dsound failed: " + why);
 
     c.map(0, 65536);
     const uint32_t scratch = c.memory.back().base;
@@ -65,7 +87,12 @@ int main(int argc, char** argv) try {
     if (call_token(create_token, {0, pds, 0}) != 0) throw Fault("DirectSoundCreate through the import slot");
     const uint32_t ds = uint32_t(m<4>(c, pds));
     if (!ds) throw Fault("DirectSoundCreate returned no object");
-    if (method(ds, 6, {uint32_t(HandleToLong(GetDesktopWindow())), 2}) != 0) throw Fault("SetCooperativeLevel with the desktop window (the game's fallback)");
+#ifdef NFSU2_GUEST_IDENTITY
+    const uint32_t desktop = uint32_t(HandleToLong(GetDesktopWindow()));
+#else
+    const uint32_t desktop = call_token(p.import_token("GetDesktopWindow"), {});
+#endif
+    if (method(ds, 6, {desktop, 2}) != 0) throw Fault("SetCooperativeLevel with the desktop window (the game's fallback)");
 
     // Primary buffer, then a 2-channel 44.1 kHz format (plain WAVEFORMATEX), then the 0.5 s ring exactly as the game asks for it.
     const uint32_t desc_primary = block(36);
