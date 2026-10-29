@@ -1,4 +1,5 @@
 #pragma once
+#include "guest_memory.hpp"
 #include <array>
 #include <bit>
 #include <cstdint>
@@ -6,7 +7,7 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
-#include <xmmintrin.h>
+#include "host.hpp"
 
 namespace nfsu2raw {
 #if defined(_M_IX86) || defined(__i386__)
@@ -17,7 +18,11 @@ using V = unsigned __int128;
 using S = __int128;
 #endif
 struct Fault : std::runtime_error { using std::runtime_error::runtime_error; };
-struct Region { uint32_t base; std::vector<uint8_t> bytes; };
+struct Region {
+    uint32_t base; std::vector<uint8_t> bytes;   // `bytes` holds the storage on the vector model; on the arena the memory is in the arena and `bytes` is empty
+    uint64_t length = 0;                         // size of the region in both models (bytes.size() is not)
+    bool from_allocator = false;                 // arena model: the base came from the allocator (freed with the processor), not from a fixed commit
+};
 // Bytes of Cpu::regs that hold guest registers (the highest one in the export ends at 0x2236; tools/generate_fast.py refuses a
 // register beyond this span). A processor starting a call clears only these (a callback used to clear all 16 KiB: half its cost).
 constexpr size_t guest_register_span = 0x2400;
@@ -53,10 +58,10 @@ V user_op(Cpu& c,unsigned id,std::initializer_list<V> args);
 // The guest's x87 control word and MXCSR drive the host FPU: FLDCW/LDMXCSR (a write to the register) program the
 // host, and FNSTCW/STMXCSR (a read) observe it. Rounding for FIST/FRNDINT, precision control and exception
 // masks therefore behave as on the original CPU, including the CRT's temporary switch to truncation.
-inline uint16_t x87_store_control(){uint16_t cw;asm volatile("fnstcw %0":"=m"(cw));return cw;}
-inline void x87_load_control(uint16_t cw){asm volatile("fldcw %0"::"m"(cw));}
-inline uint32_t mxcsr_store(){return _mm_getcsr();}
-inline void mxcsr_load(uint32_t value){_mm_setcsr(value);}
+inline uint16_t x87_store_control(){return host::x87_control_get();}
+inline void x87_load_control(uint16_t cw){host::x87_control_set(cw);}
+inline uint32_t mxcsr_store(){return host::mxcsr_get();}
+inline void mxcsr_load(uint32_t value){host::mxcsr_set(value);}
 constexpr uint32_t reg_fpu_control=0x10a0,reg_mxcsr=0x1094;
 [[noreturn]] void missing_instruction(uint32_t address);
 

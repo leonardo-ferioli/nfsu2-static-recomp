@@ -8,7 +8,7 @@ case $arch in x86) a="-m32 -msse2";; x64) a="";; *) exit 2;; esac
 flags="$a -O2 -g0 -std=c++20 -fno-fast-math -fno-strict-aliasing -mfpmath=sse -Wno-unused-label -I. -DNFSU2_FAST_BACKEND=1 -DNFSU2_NATIVE32=1 $*"
 tmp="$out.obj"; mkdir -p "$tmp"
 pids=""
-for f in "$gen"/*.cpp runtime.cpp userops.cpp tools/spike/jdlz_bench.cpp; do
+for f in "$gen"/*.cpp runtime.cpp userops.cpp speed.cpp tools/spike/jdlz_bench.cpp; do
   o="$tmp/$(basename "$f" .cpp).o"
   clang++ $flags -c "$f" -o "$o" &
   pids="$pids $!"

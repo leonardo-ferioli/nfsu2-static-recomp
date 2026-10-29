@@ -1,4 +1,5 @@
 #include "platform/audio/dsound_install.hpp"
+#include "guest_memory.hpp"
 
 #include <memory>
 #include <mutex>
@@ -6,6 +7,7 @@
 #include <unordered_map>
 
 #include "platform/audio/dsound_facade.hpp"
+#include "platform/audio/port_guest_memory.hpp"
 
 #if defined(_WIN32) && defined(NFSU2_NATIVE32)
 #include "native32.hpp"
@@ -23,59 +25,17 @@ namespace {
 using nfsu2raw::Cpu;
 using nfsu2raw::NativePlatform;
 
-// Guest memory on the 32-bit Windows host: process memory (guest addresses are host addresses), from a private heap.
-class HeapGuestMemory final : public GuestMemory {
-public:
-    HeapGuestMemory() : heap_(HeapCreate(0, 0, 0)) {}
-    ~HeapGuestMemory() override {
-        if (heap_) HeapDestroy(heap_);
-    }
-    uint32_t alloc(uint32_t bytes) override {
-        void* raw = HeapAlloc(heap_, HEAP_ZERO_MEMORY, size_t(bytes) + 16);
-        if (!raw) return 0;
-        const uintptr_t aligned = (reinterpret_cast<uintptr_t>(raw) + 15) & ~uintptr_t(15);
-        std::lock_guard lock(mutex_);
-        bases_[uint32_t(aligned)] = raw;
-        return uint32_t(aligned);
-    }
-    void free(uint32_t address) override {
-        std::lock_guard lock(mutex_);
-        auto it = bases_.find(address);
-        if (it == bases_.end()) return;
-        HeapFree(heap_, 0, it->second);
-        bases_.erase(it);
-    }
-    uint8_t* ptr(uint32_t address, uint32_t bytes) override {
-        // The address came from the guest: check that it is committed, accessible memory for the whole range.
-        uint32_t cursor = address;
-        uint32_t remaining = bytes ? bytes : 1;
-        while (remaining) {
-            MEMORY_BASIC_INFORMATION info;
-            if (!VirtualQuery(reinterpret_cast<void*>(uintptr_t(cursor)), &info, sizeof(info))) return nullptr;
-            if (info.State != MEM_COMMIT || (info.Protect & (PAGE_NOACCESS | PAGE_GUARD))) return nullptr;
-            const uintptr_t end = reinterpret_cast<uintptr_t>(info.BaseAddress) + info.RegionSize;
-            const uint32_t span = uint32_t(std::min<uintptr_t>(end - cursor, remaining));
-            if (span == 0) return nullptr;
-            cursor += span;
-            remaining -= span;
-        }
-        return reinterpret_cast<uint8_t*>(uintptr_t(address));
-    }
-
-private:
-    HANDLE heap_;
-    std::mutex mutex_;
-    std::unordered_map<uint32_t, void*> bases_;
-};
-
 class WindowsHost final : public HostServices {
 public:
-    void set_event(uint32_t handle) override { SetEvent(reinterpret_cast<HANDLE>(uintptr_t(handle))); }
-    bool is_window(uint32_t hwnd) override { return IsWindow(reinterpret_cast<HWND>(uintptr_t(hwnd))) != FALSE; }
+    // Kernel and window handles the guest holds are 32-bit significant values, never guest addresses: they cross through guest::host_handle (declared
+    // only on an arena host, so the linker finds what still needs a token or a handle table). When the bridge gives way to the Level A Win32
+    // module these two calls resolve the guest's handle through its handle table.
+    void set_event(uint32_t handle) override { SetEvent(nfsu2::guest::host_handle<HANDLE>(handle)); }
+    bool is_window(uint32_t hwnd) override { return IsWindow(nfsu2::guest::host_handle<HWND>(hwnd)) != FALSE; }
 };
 
 struct Runtime {
-    HeapGuestMemory memory;
+    PortGuestMemory memory;   // guest::Memory over guest::to_host / to_guest: the same code serves the identity host and an arena
     WindowsHost host;
     std::unique_ptr<Engine> engine;
     std::unique_ptr<DsoundFacade> facade;

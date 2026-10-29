@@ -130,7 +130,7 @@ struct DsoundFacade::Impl {
     static void on_notify(void* self, uint64_t token) { static_cast<Impl*>(self)->host.set_event(uint32_t(token)); }
 
     // ---- guest memory helpers
-    uint8_t* at(uint32_t address, uint32_t bytes) { return address ? memory.ptr(address, bytes) : nullptr; }
+    uint8_t* at(uint32_t address, uint32_t bytes) { return address ? memory.host(address, bytes) : nullptr; }
     bool rd32(uint32_t a, uint32_t& v) {
         const uint8_t* p = at(a, 4);
         if (!p) return false;
@@ -569,7 +569,7 @@ struct DsoundFacade::Impl {
         const uint8_t* p1 = at(pv1, cb1 ? cb1 : 1);
         const uint8_t* p2 = cb2 ? at(pv2, cb2) : nullptr;
         if ((cb1 && !p1) || (cb2 && !p2)) return hr::invalid_param;
-        return device.unlock(o.id, written, Bytes(reinterpret_cast<const std::byte*>(p1), cb1), Bytes(reinterpret_cast<const std::byte*>(p2), cb2));
+        return device.unlock(o.id, written, ds::as_bytes(p1, cb1), ds::as_bytes(p2, cb2));
     }
 
     // ---- 3D buffer / listener / notify
@@ -761,7 +761,10 @@ struct DsoundFacade::Impl {
         if (slot == 0) return query_interface(o, a[1], a[2]);
         if (slot != 3) return hr::unsupported;
         const uint32_t count = a[1];
-        if (count > 0 && (!a[2] || !at(a[2], count * 8))) return hr::invalid_param;
+        // The count and the array come from the guest: bound the count (a DSBPOSITIONNOTIFY is 8 bytes; `count * 8` in 32 bits would wrap) and the
+        // range inside the 32-bit guest space, then check that the whole array is mapped.
+        if (count > 0x10000) return hr::invalid_param;
+        if (count > 0 && (!a[2] || uint64_t(a[2]) + uint64_t(count) * 8 > 0x100000000ull || !at(a[2], count * 8))) return hr::invalid_param;
         std::vector<Notify> list;
         for (uint32_t i = 0; i < count; ++i) {
             uint32_t off, handle;

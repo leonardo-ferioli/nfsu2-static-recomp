@@ -42,6 +42,9 @@ public:
 // The address space over the window [0x10000, 0x10000 + window_bytes) of `memory` (which must map it contiguously: host(0x10000, window_bytes) not null).
 // `memory` must outlive the result. Throws std::runtime_error when the window is not mapped.
 std::unique_ptr<AddressSpace> make_arena_address_space(guest::Memory& memory, uint32_t window_bytes = 256u << 20);
+// The same rules over a window of memory somebody else owns (the port's 64-bit guest arena): `memory` is the host memory of guest address `base_address` (64 KiB aligned),
+// already committed and zero for `bytes` bytes. Nothing is allocated or freed by the returned object.
+std::unique_ptr<AddressSpace> make_arena_address_space_over(std::byte* memory, uint32_t base_address, uint32_t bytes);
 
 // IsBadReadPtr / IsBadWritePtr / IsBadCodePtr on any address space: true when some byte of the range cannot be accessed that way.
 bool is_bad_read_ptr(AddressSpace&, uint32_t address, uint32_t size);

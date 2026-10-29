@@ -10,6 +10,7 @@
 #include "legacy_win32/sync.hpp"
 #include "legacy_win32/text.hpp"
 #include "legacy_win32/time.hpp"
+#include "guest_arena.hpp"
 #include "platform/input.hpp"
 #include "platform/std/std_platform.hpp"
 // The real operating system is reachable only where the guest shares the process: a 32-bit Windows host (identity model). There, a handle the library does
@@ -26,6 +27,7 @@
 #include <atomic>
 #include <cstring>
 #include <mutex>
+#include <set>
 #include <sstream>
 #include <unordered_map>
 
@@ -39,24 +41,26 @@ namespace {
 
 // ---- the guest's calling convention: stdcall words on the guest stack. A guest address becomes a host pointer only through guest::to_host / guest::ptr.
 inline uint32_t sp(Cpu& c) { return uint32_t(r<4>(c, 16)); }
-inline uint32_t arg(Cpu& c, unsigned i) { uint32_t v; std::memcpy(&v, guest::to_host(sp(c) + 4 + 4 * i), 4); return v; }
-template <class T> inline T* ptr(uint32_t address) { return guest::ptr<T>(address); }
+inline uint32_t arg(Cpu& c, unsigned i) { uint32_t v; std::memcpy(&v, nfsu2::guest::ptr<const void>(sp(c) + 4 + 4 * i), 4); return v; }
+template <class T> inline T* ptr(uint32_t address) { return nfsu2::guest::ptr<T>(address); }
 inline uint32_t* last_error_slot(Cpu& c) { return ptr<uint32_t>(uint32_t(r<4>(c, 0x110)) + 0x34); }
 inline void set_error(Cpu& c, uint32_t e) { *last_error_slot(c) = e; }
 inline std::string cstr(uint32_t address) { return address ? std::string(ptr<const char>(address)) : std::string(); }
 #ifdef NFSU2_FACADE_REAL_OS
 // A call of the real Windows function from a handler: the guest's last error goes in before and comes out after, as the bridge does for every native call.
+// A HANDLE of the real system as the guest holds it: only on the 32-bit host (declared and not defined on an arena host: see guest_memory.hpp).
+inline HANDLE H(uint32_t h) { return nfsu2::guest::host_handle<HANDLE>(h); }
 template <class F> inline uint32_t real(Cpu& c, F&& f) {
     SetLastError(*last_error_slot(c));
     const uint32_t v = uint32_t(f());
     set_error(c, GetLastError());
     return v;
 }
-inline HANDLE H(uint32_t h) { return reinterpret_cast<HANDLE>(uintptr_t(h)); }
 #define FACADE_REAL(c, name, ...) real(c, [&] { return __VA_ARGS__; })
 constexpr bool kRealOs = true;
 #else
-// No real OS: the expression of the real call is not even compiled. Reaching here means a handle the library does not own: ERROR_INVALID_HANDLE.
+// No real OS (a 64-bit host, or one that is not Windows): the guest holds no handle of the real system (a host object reaches it as a token of the library), so a handle
+// the library does not own is a bug or an object nobody serves yet. The expression of the real call is not even compiled: say so instead of answering something.
 inline uint32_t no_real_os(Cpu& c) { set_error(c, 6 /* ERROR_INVALID_HANDLE */); return 0; }
 #define FACADE_REAL(c, name, ...) no_real_os(c)
 constexpr bool kRealOs = false;
@@ -67,20 +71,24 @@ constexpr uint32_t kHandleBias = 0x00C00000u;   // the library's handles live ab
 }  // namespace
 
 struct Win32Facade::Impl {
-    Impl(NativePlatform& p, const Win32LayerOptions& o)
+    Impl(GuestPlatform& p, const Win32LayerOptions& o)
         : platform(p), options(o), clock(plat::stdlib::make_clock()), threads(plat::stdlib::make_threads()), system(plat::stdlib::make_system()), storage(plat::stdlib::make_storage()),
           handles(kHandleBias), time(*clock), text(system->info().ansi_code_page, system->info().oem_code_page, system->info().user_lcid),
           sync(*threads, *clock, handles), space(make_space(o)), heaps(*space), process(*system, handles, process_config(*system)),
           files(*storage, handles, file_config()) {}
 
-    // The address space of the guest: the portable one over the guest memory the port gives (any host), or, without one, the real VirtualAlloc of a 32-bit
-    // Windows process (identity model: today's behaviour).
+    // The address space the library's heaps and VirtualAlloc run in: the process' own on the 32-bit Windows host (identity); on a 64-bit host a window of the guest arena
+    // (committed here, so the processor's Cpu::pointer reaches it), whose Win32 region rules are the library's.
+    static constexpr uint32_t kWindowBase = 0x20000000u, kWindowBytes = 0x20000000u;
     static std::unique_ptr<lw::AddressSpace> make_space(const Win32LayerOptions& o) {
         if (o.guest_memory) return lw::make_arena_address_space(*o.guest_memory, o.address_space_bytes);
 #ifdef NFSU2_FACADE_REAL_OS
         return lw::host::make_identity_address_space();
 #else
-        throw std::runtime_error("Win32 layer: this host needs the guest memory (Win32LayerOptions::guest_memory)");
+        auto* guest_space = nfsu2::guest::current_address_space();
+        if (!guest_space) throw Fault("the Win32 layer needs the guest arena (nfsu2::guest::create_arena) before it is installed");
+        if (!guest_space->commit(kWindowBase, kWindowBytes, nfsu2::guest::kPageReadWrite)) throw Fault("cannot commit the Win32 layer's address window in the guest arena");
+        return lw::make_arena_address_space_over(reinterpret_cast<std::byte*>(guest_space->host(kWindowBase, kWindowBytes)), kWindowBase, kWindowBytes);
 #endif
     }
     static lw::ProcessConfig process_config(plat::System& system) {
@@ -113,7 +121,7 @@ struct Win32Facade::Impl {
         return c;                                   // no drive mapping: every path is a native path
     }
 
-    NativePlatform& platform;
+    GuestPlatform& platform;
     Win32LayerOptions options;
     std::unique_ptr<plat::Clock> clock;
     std::unique_ptr<plat::Threads> threads;
@@ -136,9 +144,10 @@ struct Win32Facade::Impl {
 
     bool mine(uint32_t handle) const { return !kRealOs || handles.owns(handle); }   // a handle the library owns (the only kind without a real OS)
 
-    void on(const char* name, unsigned argc, NativePlatform::NativeHook hook) {
-        if (!NativePlatform::imports_function(name)) return;
+    void on(const char* name, unsigned argc, GuestPlatform::NativeHook hook) {
+        if (!platform.has_import(name)) return;
         platform.override_import(name, argc, std::move(hook));
+        served.insert(name);
         report += name; report += ' ';
     }
     void install_time();
@@ -148,11 +157,14 @@ struct Win32Facade::Impl {
     void install_memory();
     void install_files();
     void install_dinput();   // win32_facade_dinput.cpp
+    void install_loader();   // win32_facade_loader.cpp (a 64-bit host only)
     void install_registry(); // win32_facade_extra.cpp
     void install_traps();    // win32_facade_extra.cpp
     std::unique_ptr<plat::Config> config;
     std::unique_ptr<lw::Registry> registry;
     std::atomic<uint32_t> wsa_error{0};
+    uint32_t command_line_address = 0, unhandled_filter = 0;   // the loader group: GetCommandLineA's guest copy, SetUnhandledExceptionFilter's value
+    std::set<std::string> served;      // the imports this facade answers (GetProcAddress hands out a token only for those)
     plat::Input* input_override = nullptr;          // tests give the DirectInput part a scripted input instead of the Windows one
     std::unique_ptr<plat::Input> input_owned;
     std::unique_ptr<ldi::DirectInput> di;

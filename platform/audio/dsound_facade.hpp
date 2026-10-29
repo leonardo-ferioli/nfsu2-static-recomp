@@ -14,18 +14,14 @@
 #include <string>
 #include <vector>
 
+#include "guest_memory.hpp"
 #include "platform/audio/ds_device.hpp"
 
 namespace nfsu2::platform::audio {
 
-// Guest memory as the facade needs it (the guest arena; on today's 32-bit Windows host, plain process memory at the same addresses).
-class GuestMemory {
-public:
-    virtual ~GuestMemory() = default;
-    virtual uint32_t alloc(uint32_t bytes) = 0;                 // zero-filled, 16-byte aligned; 0 on failure
-    virtual void free(uint32_t address) = 0;
-    virtual uint8_t* ptr(uint32_t address, uint32_t bytes) = 0; // host pointer valid for `bytes` bytes, or nullptr when not mapped
-};
+// Guest memory is the shared contract of docs/MEMORY_MODEL_64.md (guest_memory.hpp): the facade never assumes that a guest address is a host address, it
+// reaches guest memory only through host() (checked for the whole range) and hands out only what alloc() gave it.
+using GuestMemory = nfsu2::guest::Memory;
 
 // Operating-system services the guest's handles refer to.
 class HostServices {

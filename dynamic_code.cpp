@@ -1,4 +1,5 @@
 #include "dynamic_code.hpp"
+#include "guest_memory.hpp"
 #include <cstddef>
 #include <exception>
 #include <algorithm>
@@ -153,7 +154,7 @@ V read(Cpu& c, const VarnodeRef& v, const uint8_t* scratch) {
         load_bytes(value, scratch + v.offset, v.size);
         return value;
     case VarnodeRef::Ram:
-        load_bytes(value, reinterpret_cast<const void*>(uintptr_t(uint32_t(v.offset))), v.size);
+        load_bytes(value, nfsu2::guest::ptr<const void>(uint32_t(v.offset)), v.size);
         return value;
     }
     return value;
@@ -179,7 +180,7 @@ void write(Cpu& c, const VarnodeRef& v, uint8_t* scratch, V value) {
         store_bytes(scratch + v.offset, value, v.size);
         return;
     case VarnodeRef::Ram:
-        store_bytes(reinterpret_cast<void*>(uintptr_t(uint32_t(v.offset))), value, v.size);
+        store_bytes(nfsu2::guest::ptr<void>(uint32_t(v.offset)), value, v.size);
         return;
     }
 }
@@ -211,11 +212,11 @@ public:
     // registered only after the system accepted it as executable, so no VirtualQuery per executed instruction.
     void reread(uint1* ptr, int4 size, const Address& addr) const {
         if (reader) { reader(ptr, size_t(size), uint32_t(addr.getOffset())); return; }
-        std::memcpy(ptr, reinterpret_cast<const void*>(uintptr_t(addr.getOffset())), size);
+        std::memcpy(ptr, nfsu2::guest::ptr<const void>(addr.getOffset()), size);
     }
     bool same(const uint8_t* expected, size_t size, uint32_t address) const {
         if (reader) { uint8_t now[1024]; reader(now, size, address); return std::memcmp(expected, now, size) == 0; }
-        return std::memcmp(expected, reinterpret_cast<const void*>(uintptr_t(address)), size) == 0;
+        return std::memcmp(expected, nfsu2::guest::ptr<const void>(address), size) == 0;
     }
     std::string getArchType() const override { return "guest"; }
     void adjustVma(long) override {}
@@ -528,8 +529,8 @@ void execute_data_micro(const MicroOp& m, uint8_t* regs, uint8_t* scratch) {
 #define RD(o) ((o).space == 0 ? (o).value : load_n(((o).space == 1 ? regs : scratch) + (o).offset, (o).size))
 #define WR(o, v) store_n(((o).space == 1 ? regs : scratch) + (o).offset, (v), (o).size)
     switch (m.kind) {
-        case CPUI_LOAD: WR(m.out, load_n(reinterpret_cast<const uint8_t*>(uintptr_t(uint32_t(RD(m.a)))), m.out.size)); break;
-        case CPUI_STORE: store_n(reinterpret_cast<uint8_t*>(uintptr_t(uint32_t(RD(m.a)))), RD(m.b), m.b.size); break;
+        case CPUI_LOAD: WR(m.out, load_n(nfsu2::guest::ptr<const uint8_t>(uint32_t(RD(m.a))), m.out.size)); break;
+        case CPUI_STORE: store_n(nfsu2::guest::ptr<uint8_t>(uint32_t(RD(m.a))), RD(m.b), m.b.size); break;
         case CPUI_COPY: case CPUI_INT_ZEXT: WR(m.out, RD(m.a)); break;
         case CPUI_INT_SEXT: WR(m.out, uint64_t(sext64(RD(m.a), m.a.size))); break;
         case CPUI_INT_ADD: WR(m.out, RD(m.a) + RD(m.b)); break;

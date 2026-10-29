@@ -7,6 +7,7 @@
 #include "mods.hpp"
 #include "difftrace.hpp"
 #include "userops_pure.hpp"
+#include "x87_soft.hpp"
 #include <cmath>
 
 namespace nfsu2raw {
@@ -25,7 +26,7 @@ NFSU2_AI void w2(void* p,u16 v){st<u16>(p,v);}
 NFSU2_AI void w4(void* p,u32 v){st<u32>(p,v);}
 NFSU2_AI void w8(void* p,u64 v){st<u64>(p,v);}
 // Guest memory shares the host's 32-bit address space, so a guest address is the host address.
-NFSU2_AI void* gp(u32 a){return reinterpret_cast<void*>(static_cast<uintptr_t>(a));}
+NFSU2_AI void* gp(u32 a){return nfsu2::guest::to_host(a);}
 NFSU2_AI u8  m1(u32 a){return r1(gp(a));}
 NFSU2_AI u16 m2(u32 a){return r2(gp(a));}
 NFSU2_AI u32 m4(u32 a){return r4(gp(a));}
@@ -63,6 +64,7 @@ NFSU2_AI u64 b64(double v){return std::bit_cast<u64>(v);}
 template<unsigned N> struct XM {u8 b[N];};
 // x87 80-bit helpers: the same instruction sequences as the reference float_op, minus its string dispatch.
 struct X80 {u8 b[10];};
+#if defined(NFSU2_X87_HOST_ASM)
 NFSU2_AI X80 x80(const void* p){X80 x;__builtin_memcpy(&x,p,10);return x;}
 NFSU2_AI void x80_add(void* d,const void* pa,const void* pb){X80 x=x80(pa),y=x80(pb),z;asm volatile("fldt %1; fldt %2; faddp; fstpt %0":"=m"(z):"m"(x),"m"(y):"st");__builtin_memcpy(d,&z,10);}
 NFSU2_AI void x80_sub(void* d,const void* pa,const void* pb){X80 x=x80(pa),y=x80(pb),z;asm volatile("fldt %2; fldt %1; fsubp; fstpt %0":"=m"(z):"m"(x),"m"(y):"st");__builtin_memcpy(d,&z,10);}
@@ -87,6 +89,27 @@ NFSU2_AI u32 x80_to_f32(const void* pa){X80 x=x80(pa);float z;asm volatile("fldt
 NFSU2_AI u64 x80_to_f64(const void* pa){X80 x=x80(pa);double z;asm volatile("fldt %1; fstpl %0":"=m"(z):"m"(x):"st");return b64(z);}
 NFSU2_AI void x80_from_i64(void* d,s64 v){X80 z;asm volatile("fildq %1; fstpt %0":"=m"(z):"m"(v):"st");__builtin_memcpy(d,&z,10);}
 NFSU2_AI s64 x80_trunc(const void* pa){X80 x=x80(pa);s64 n;asm volatile("fldt %1; fisttpq %0":"=m"(n):"m"(x):"st");return n;}
+#else
+// Hosts without an x87 FPU: the same helpers in software (x87_soft.hpp, bit-exact with the hardware), control word from host::x87_control_get().
+NFSU2_AI x87soft::Ctl x80_ctl(){return x87soft::control(host::x87_control_get());}
+NFSU2_AI void x80_add(void* d,const void* pa,const void* pb){x87soft::store(d,x87soft::add(x87soft::load(pa),x87soft::load(pb),x80_ctl()));}
+NFSU2_AI void x80_sub(void* d,const void* pa,const void* pb){x87soft::store(d,x87soft::add(x87soft::load(pa),x87soft::load(pb),x80_ctl(),true));}
+NFSU2_AI void x80_mul(void* d,const void* pa,const void* pb){x87soft::store(d,x87soft::mul(x87soft::load(pa),x87soft::load(pb),x80_ctl()));}
+NFSU2_AI void x80_div(void* d,const void* pa,const void* pb){x87soft::store(d,x87soft::div(x87soft::load(pa),x87soft::load(pb),x80_ctl()));}
+NFSU2_AI void x80_sqrt(void* d,const void* pa){x87soft::store(d,x87soft::sqrt(x87soft::load(pa),x80_ctl()));}
+NFSU2_AI void x80_round(void* d,const void* pa){x87soft::store(d,x87soft::rndint(x87soft::load(pa),x80_ctl()));}
+NFSU2_AI void x80_neg(void* d,const void* pa){x87soft::store(d,x87soft::negate(x87soft::load(pa)));}
+NFSU2_AI void x80_abs(void* d,const void* pa){x87soft::store(d,x87soft::absolute(x87soft::load(pa)));}
+NFSU2_AI u8 x80_nan(const void* pa){return u8(x87soft::unpack(x87soft::load(pa)).k==x87soft::NAN_);}
+struct X80Cmp {u8 eq,lt,un;};
+NFSU2_AI X80Cmp x80_cmp(const void* pa,const void* pb){const auto o=x87soft::compare(x87soft::load(pa),x87soft::load(pb));return {u8(o==x87soft::EQUAL),u8(o==x87soft::LESS),u8(o==x87soft::UNORDERED)};}
+NFSU2_AI void x80_from_f32(void* d,u32 v){x87soft::store(d,x87soft::from_f32(v));}
+NFSU2_AI void x80_from_f64(void* d,u64 v){x87soft::store(d,x87soft::from_f64(v));}
+NFSU2_AI u32 x80_to_f32(const void* pa){return x87soft::to_f32(x87soft::load(pa),x80_ctl());}
+NFSU2_AI u64 x80_to_f64(const void* pa){return x87soft::to_f64(x87soft::load(pa),x80_ctl());}
+NFSU2_AI void x80_from_i64(void* d,s64 v){x87soft::store(d,x87soft::from_int(v));}
+NFSU2_AI s64 x80_trunc(const void* pa){const auto r=x87soft::to_int(x87soft::load(pa),3,64);return r.ok?r.value:s64(0x8000000000000000ull);}
+#endif
 
 #ifdef NFSU2_DIFF_TRACE
 #define NFSU2_TR(a) diff_trace_pc(u32(a))

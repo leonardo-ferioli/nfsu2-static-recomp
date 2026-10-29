@@ -424,7 +424,7 @@ void NativePlatform::initialize_cpu(Cpu& c,uint32_t stack,uint32_t teb){
     wr<4>(c,0x110,teb);wm<4>(c,teb,0xffffffff);wm<4>(c,teb+4,stack+stack_size);wm<4>(c,teb+8,stack);
     wm<4>(c,teb+0x18,teb);wm<4>(c,teb+0x20,GetCurrentProcessId());wm<4>(c,teb+0x24,GetCurrentThreadId());wm<4>(c,teb+0x34,0);
     wr<4>(c,16,stack+stack_size-0x100);wm<4>(c,r<4>(c,16),0xdead0000);
-    wr<2>(c,0x10a0,0x037f);wr<2>(c,0x10a4,0xffff);
+    wr<2>(c,0x10a0,0x027f);wr<2>(c,0x10a4,0xffff);   // x87 control word: the Win32 default (53-bit precision); the virtual x87 (x87v.hpp) runs on this value, the host FPU on its own
 }
 void NativePlatform::record(const std::string& text){
     std::lock_guard guard(log_mutex);if(!trace)return;

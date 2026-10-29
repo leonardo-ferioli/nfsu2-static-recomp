@@ -30,11 +30,23 @@ extern uint8_t* g_arena_base;                       // start of the reserved 4 G
 inline void set_arena_base(void* base) { g_arena_base = static_cast<uint8_t*>(base); }
 inline uint8_t* arena_base() { return g_arena_base; }
 inline void* to_host(uint32_t address) { return g_arena_base + address; }
-inline uint32_t to_guest(const void* host) { return static_cast<uint32_t>(static_cast<const uint8_t*>(host) - g_arena_base); }
 inline bool is_guest(const void* host) { return static_cast<uint64_t>(static_cast<const uint8_t*>(host) - g_arena_base) <= 0xffffffffull; }
+[[noreturn]] void fault_not_in_arena(const void* host);   // a host-owned buffer was handed to the guest: it must be allocated in the arena
+inline uint32_t to_guest(const void* host) { if (!is_guest(host)) fault_not_in_arena(host); return static_cast<uint32_t>(static_cast<const uint8_t*>(host) - g_arena_base); }
 #endif
 
 template <class T> inline T* ptr(uint32_t address) { return static_cast<T*>(to_host(address)); }
+
+// A host OBJECT (HWND, HANDLE, HKEY, a COM pointer) that the 32-bit guest holds as a 32-bit value: valid only while host and guest share one
+// address space. On an arena host it is declared and never defined, so a 64-bit build links only when no code depends on it; the guest gets a
+// token for such an object instead (see "No host pointer ever reaches the guest" in docs/MEMORY_MODEL_64.md).
+#ifdef NFSU2_GUEST_IDENTITY
+template <class T> inline T host_handle(uint32_t value) { return reinterpret_cast<T>(static_cast<uintptr_t>(value)); }
+template <class T> inline uint32_t guest_handle(T handle) { return static_cast<uint32_t>(reinterpret_cast<uintptr_t>(handle)); }
+#else
+template <class T> T host_handle(uint32_t value);       // intentionally undefined
+template <class T> uint32_t guest_handle(T handle);     // intentionally undefined
+#endif
 
 // Guest memory as a library (legacy_win32, legacy_dsound, the DirectInput model, the Direct3D 9 layer's Lock memory) needs it. A library
 // never assumes a guest address is a host address; the port and NUE each provide one of these over their own memory.

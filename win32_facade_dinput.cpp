@@ -109,10 +109,11 @@ void Win32Facade::Impl::install_dinput() {
     plat::Input* input = input_override;
 #ifdef NFSU2_FACADE_REAL_OS
     if (!input) { input_owned = lw::host::make_windows_input(); input = input_owned.get(); }
-    auto foreground = [](uint32_t hwnd) { return hwnd == 0 || uint32_t(uintptr_t(GetForegroundWindow())) == hwnd; };
+    auto foreground = [](uint32_t hwnd) { return hwnd == 0 || nfsu2::guest::guest_handle(GetForegroundWindow()) == hwnd; };
 #else
     if (!input) throw std::runtime_error("Win32 layer: DirectInput needs a platform::Input on this host");
-    // The guest's window is the platform's: it is "foreground" while the platform window has the focus.
+    // The guest's window handle is a token of the window layer, not the system's HWND: every guest window counts as the foreground one while the platform window
+    // has the focus (a headless run has none: nothing else competes for the input).
     auto foreground = [](uint32_t) { auto* window = plat::services().window; return window == nullptr || window->focused(); };
 #endif
     di = std::make_unique<ldi::DirectInput>(*input, *clock, foreground);
@@ -138,7 +139,7 @@ void Win32Facade::Impl::install_dinput() {
     auto device_of = [find](uint32_t address) -> std::shared_ptr<ldi::Device> { auto o = find(address); return o && o->is_device ? o->device : nullptr; };
 
     // ---- the vtables: one token per slot, in the order of the SDK headers
-    auto token = [self](unsigned argc, NativePlatform::NativeHook hook) { return self->platform.add_method_token(argc, std::move(hook)); };
+    auto token = [self](unsigned argc, GuestPlatform::NativeHook hook) { return self->platform.add_method_token(argc, std::move(hook)); };
     auto unimplemented = [] (Cpu&) -> uint32_t { return ldi::hr::unsupported; };
     auto add_ref = [find](Cpu& c) -> uint32_t { auto o = find(arg(c, 0)); return o ? uint32_t(++o->refs) : 0u; };
     auto release = [self, state, find](Cpu& c) -> uint32_t {

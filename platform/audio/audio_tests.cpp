@@ -71,8 +71,8 @@ struct Rig {
     void write(dsx::BufferId id, uint32_t offset, const std::vector<uint8_t>& bytes) {
         dsx::Regions r;
         CHECK(dev->lock(id, offset, uint32_t(bytes.size()), 0, r) == dsx::hr::ok);
-        CHECK(dev->unlock(id, r, Bytes(reinterpret_cast<const std::byte*>(bytes.data()), r.bytes1),
-                          Bytes(reinterpret_cast<const std::byte*>(bytes.data() + r.bytes1), r.bytes2)) == dsx::hr::ok);
+        CHECK(dev->unlock(id, r, dsx::as_bytes(bytes.data(), r.bytes1),
+                          dsx::as_bytes(bytes.data() + r.bytes1, r.bytes2)) == dsx::hr::ok);
     }
     std::vector<float> render(uint32_t frames) {
         std::vector<float> out(size_t(frames) * dev->output().channels);
@@ -216,8 +216,8 @@ void test_lock_semantics() {
     CHECK(d.lock(b, 123, 8, dsx::lock_flag::from_write_cursor, r) == dsx::hr::ok && r.offset1 == 400);
     // Unlock with data moves bytes into the buffer; a short span is refused.
     std::vector<uint8_t> data(8, 0x55);
-    CHECK(d.unlock(b, r, Bytes(reinterpret_cast<const std::byte*>(data.data()), 4), Bytes{}) == dsx::hr::invalid_param);
-    CHECK(d.unlock(b, r, Bytes(reinterpret_cast<const std::byte*>(data.data()), 8), Bytes{}) == dsx::hr::ok);
+    CHECK(d.unlock(b, r, dsx::as_bytes(data.data(), 4), Bytes{}) == dsx::hr::invalid_param);
+    CHECK(d.unlock(b, r, dsx::as_bytes(data.data(), 8), Bytes{}) == dsx::hr::ok);
     // Buffer lost: Lock, Play and GetCurrentPosition report it until Restore.
     d.lose_buffers();
     uint32_t status = 0;
@@ -1109,7 +1109,7 @@ uint64_t scripted_session(uint32_t chunk, int* reopens = nullptr) {
             }
             dsx::Regions r;
             if (d.lock(ring.id, written % ring_bytes, bytes, 0, r) == dsx::hr::ok)
-                d.unlock(ring.id, r, Bytes(reinterpret_cast<const std::byte*>(tone.data()), r.bytes1), Bytes(reinterpret_cast<const std::byte*>(tone.data()) + r.bytes1, r.bytes2));
+                d.unlock(ring.id, r, dsx::as_bytes(tone.data(), r.bytes1), dsx::as_bytes(tone.data() + r.bytes1, r.bytes2));
             written = (written + bytes) % ring_bytes;
         }
     }

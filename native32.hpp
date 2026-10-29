@@ -1,5 +1,6 @@
 #pragma once
 #include "runtime.hpp"
+#include "guest_platform.hpp"
 #include "dynamic_code.hpp"
 #include "d3d9_recorder.hpp"
 #include <filesystem>
@@ -15,7 +16,7 @@
 namespace nfsu2raw {
 // A block of the guest image held as data inside the program (see tools/embed_image.py).
 struct EmbeddedImageBlock{uint32_t base,size;const uint8_t* data;};
-class NativePlatform {
+class NativePlatform : public GuestPlatform {
 public:
     // Tests and diagnostics: guest data blocks come from exported memory files.
     NativePlatform(Cpu&,const std::filesystem::path& exports,const std::filesystem::path& assets);
@@ -26,15 +27,15 @@ public:
     // The guest image comes from data held in the program itself: SPEED2.EXE is not read. Every block is still checked against its SHA-256.
     struct FromEmbedded{const EmbeddedImageBlock* blocks;unsigned count;};
     NativePlatform(Cpu&,const std::filesystem::path& game_directory,FromEmbedded);
-    ~NativePlatform();
+    ~NativePlatform() override;
     bool dispatch(Cpu&);
     // Speed layer: g_native_hook (speed.hpp), installed while a platform exists and the native_calls switch is on.
     static bool translated_native_call(Cpu&);
     // Runs translated code on `c` from its pc until it reaches `stop` (the dispatch loop; benchmarks use it directly).
     uint32_t execute(Cpu&,uint32_t stop,uint64_t budget);
     void run(uint64_t budget,const std::filesystem::path& trace);
-    using NativeHook=std::function<uint32_t(Cpu&)>;
-    uint32_t callback(uint32_t address,std::initializer_list<uint32_t> arguments);
+    using NativeHook=GuestPlatform::NativeHook;
+    uint32_t callback(uint32_t address,std::initializer_list<uint32_t> arguments) override;
     // The platform running in this process (null before one is built); mods use it to call back into translated code.
     static NativePlatform* current();
     // Names the mod-originated call this thread is inside (nullptr: none); a crash report says so.
@@ -45,19 +46,20 @@ public:
     uint32_t call_guest(uint32_t address,uint32_t ecx,uint32_t edx,std::initializer_list<uint32_t> arguments);
     // Replaces an imported Windows function by a native one (mods). The handler reads its stdcall arguments from the guest stack
     // and returns EAX; it runs on the calling thread instead of the real function. Install before run().
-    void override_import(const char* name,unsigned argument_count,NativeHook hook);
+    void override_import(const char* name,unsigned argument_count,NativeHook hook) override;
+    bool has_import(const char* name) const override{return imports_function(name);}
     // True when the game imports `name` (the Win32 facade installs only what exists), the token of its import slot (0 when absent), and the removal of an override.
     static bool imports_function(const char* name);
     static uint32_t import_token(const char* name);
     void remove_import_override(const char* name);
     // Raises a Fault when the platform is shutting down (a long guest wait or sleep calls it between slices, as the bridge's own waits do).
-    void throw_if_stopping(const char* what) const;
+    void throw_if_stopping(const char* what) const override;
     // Method tokens: the vtable slots of guest-visible objects served by the shim instead of by Windows (docs/PLATFORM_API.md, section 4).
     // A guest `call [vtable+slot]` reaches the token; the handler reads its stdcall arguments (`this` first) and returns EAX, and
     // `argument_count` words (this included) are removed from the guest stack. Returns the token to store in the vtable.
     static constexpr uint32_t method_token_base=0xf1000000u;
     static constexpr unsigned method_token_slots=8192;
-    uint32_t add_method_token(unsigned argument_count,NativeHook hook);
+    uint32_t add_method_token(unsigned argument_count,NativeHook hook) override;
     // Threads the game creates (and the one that runs the game) are restricted to this affinity mask (0 = unrestricted).
     void set_game_thread_affinity(uintptr_t mask){thread_affinity=mask;}
     const std::filesystem::path& game_directory() const{return assets;}

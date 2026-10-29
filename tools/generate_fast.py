@@ -239,6 +239,11 @@ X87_MEMORY.update({
 })
 GUEST_REG = {0: 0, 1: 4, 2: 8, 3: 12, 4: 16, 5: 20, 6: 24, 7: 28}   # EAX ECX EDX EBX ESP EBP ESI EDI -> register-file offset
 X87_PASSTHROUGH = True
+HOST = "x86_32"       # --host
+X87_MODE = "host"     # --x87
+X87_SHADOW = False     # --x87-shadow: validation build that runs every instruction on the virtual and the host FPU and compares
+X87_CHECK = False      # --x87-check: validation builds count the virtual stack depth (x87v.hpp)
+X87_EA64 = False      # the effective address of a passed-through x87 instruction is a 64-bit host address (RAX)
 # Transfers to other pages are tail calls (clang musttail) straight into the target page's body function instead of a
 # return to the dispatch loop: no loop, no platform checks, no dispatch switch for static targets. A chain counter hands
 # control back to the loop every CHAIN_LIMIT transfers so threads can still be stopped.
@@ -329,10 +334,18 @@ def apply_mod_patches(ins):
                         op[i] = ["modptr", format(slot * 4, "x"), node[2]]
 
 
+def x87_defines():
+    """Lines that select the virtual FPU in a generated file (empty for the host FPU, so the default output is unchanged)."""
+    if X87_MODE not in ("double", "soft80"):
+        return ""
+    return ("#define NFSU2_X87_VIRTUAL 1\n" + ("#define NFSU2_X87_SOFT80 1\n" if X87_MODE == "soft80" else "")
+            + ("#define NFSU2_X87_CHECK_STACK 1\n" if X87_CHECK else "") + ("#define NFSU2_X87_SHADOW 1\n" if X87_SHADOW else "") + "#include " + chr(34) + "x87v.hpp" + chr(34) + "\n")
+
+
 def x87_encoding(ins):
     """The FPU opcode bytes of an x87 instruction (optionally after FWAIT), or None for anything else."""
     mnemonic = ins.asm.split()[0] if ins.asm else ""
-    if not X87_PASSTHROUGH or not TEXT or not mnemonic.startswith("F") or mnemonic == "FEMMS":
+    if not (X87_PASSTHROUGH or X87_MODE in ("double", "soft80")) or not TEXT or not mnemonic.startswith("F") or mnemonic == "FEMMS":
         return None
     start = ins.addr - TEXT_BASE
     if not 0 <= start < len(TEXT):
@@ -610,7 +623,32 @@ class Emitter:
         out.append("}")
         return "\n".join(out) + "\n"
 
+    def x87_virtual(self, ins, raw):
+        """One x87 instruction on the virtual FPU of x87v.hpp (--x87 double | soft80): a template instance per encoding."""
+        a = ins.addr
+        out = [self.head(a)]
+        out.extend(self.mod_prologue(a, ins.length))
+        memory = x87_address(raw, self.reg)
+        if memory is not None:
+            prefix, opcode, reg, expression = memory
+            if ins.mod_addresses:
+                expression = f"u32(r4(MODV+{ins.mod_addresses[0][1] * 4}))"
+            out.append(f"{{u32 ea_={expression};x87v::insn<0x{opcode:02x},0x{reg << 3:02x}>(R,gp(ea_));}}")
+        else:
+            body = raw[1:] if raw[:1] == bytes([0x9b]) else raw
+            if body[0] == 0xdf and body[1] == 0xe0:     # FNSTSW AX: the status word goes to the guest's AX
+                out.append(f"w2({self.reg(0, 2)},u16(x87v::insn<0xdf,0xe0>(R,nullptr)));")
+            else:
+                out.append(f"x87v::insn<0x{body[0]:02x},0x{body[1]:02x}>(R,nullptr);")
+        nxt = a + ins.length
+        if nxt not in self.page_addrs or (nxt >> 12) != self.page:
+            out.append(self.exit_static(nxt))
+        out.append("}")
+        return "\n".join(out) + "\n"
+
     def x87(self, ins, raw):
+        if X87_MODE in ("double", "soft80"):
+            return self.x87_virtual(ins, raw)
         a = ins.addr
         out = [self.head(a)]
         out.extend(self.mod_prologue(a, ins.length))
@@ -621,17 +659,19 @@ class Emitter:
                 expression = f"u32(r4(MODV+{ins.mod_addresses[0][1] * 4}))"
             encoded = ",".join(f"0x{x:02x}" for x in prefix + bytes([opcode, (reg << 3)]))  # ModRM mod=00 rm=000: [eax]
             access = X87_MEMORY.get((opcode, reg)) if X87_PRECISE else None
+            # On a 64-bit host RAX carries the host address of the operand (the base is added by gp()); the 32-bit host keeps EAX.
+            ea = "uintptr_t(gp(ea_))" if X87_EA64 else "ea_"
             if access is not None and access[0] == "w" and access[1] not in X87_OUT_TYPE:
                 access = None   # clang takes only scalar asm outputs: 80-bit stores keep the full barrier
             if access is None:
-                out.append(f'{{u32 ea_={expression};__asm__ volatile(".byte {encoded}"::"a"(ea_):"memory");}}')
+                out.append(f'{{u32 ea_={expression};__asm__ volatile(".byte {encoded}"::"a"({ea}):"memory");}}')
             elif access[0] == "r":   # reads exactly these bytes of guest memory: no barrier for anything else
                 out.append(f'{{u32 ea_={expression};const XM<{access[1]}>& m_=*static_cast<const XM<{access[1]}>*>(gp(ea_));'
-                           f'__asm__ volatile(".byte {encoded}"::"a"(ea_),"m"(m_));}}')
+                           f'__asm__ volatile(".byte {encoded}"::"a"({ea}),"m"(m_));}}')
             else:                    # writes exactly these bytes (a scalar lvalue of that size)
                 t = X87_OUT_TYPE[access[1]]
                 out.append(f'{{u32 ea_={expression};{t}& m_=*static_cast<{t}*>(gp(ea_));'
-                           f'__asm__ volatile(".byte {encoded}":"=m"(m_):"a"(ea_));}}')
+                           f'__asm__ volatile(".byte {encoded}":"=m"(m_):"a"({ea}));}}')
         else:
             encoded = ",".join(f"0x{x:02x}" for x in raw)
             barrier = "" if X87_PRECISE else ':"memory"'   # register forms touch no memory
@@ -809,7 +849,7 @@ def emit_page(page, insns, live_out=None):
     load = "".join(f"__builtin_memcpy(R+{s},c.regs.data()+{s},{e - s});" for s, e in loads)
     spill = "".join(f"__builtin_memcpy(c.regs.data()+{s},R+{s},{e - s});" for s, e in spills)
     head = io.StringIO()
-    head.write('#include "fast.hpp"\nnamespace nfsu2raw {\n')
+    head.write(x87_defines() + '#include "fast.hpp"\nnamespace nfsu2raw {\n')
     head.write("#define EXIT(T) do{nx=u32(T);goto XIT;}while(0)\n")
     if TAIL_CALLS and MEMORY_REGS:
         referenced = sorted({int(m, 16) for m in re.findall(r"TAIL_STATIC\(0x[0-9a-f]+u,([0-9a-f]+)\)", "".join(body))})
@@ -872,7 +912,22 @@ def main():
     parser.add_argument("--no-tail-calls", dest="tail_calls", action="store_false",
                         help="return to the dispatch loop on every page transfer")
     parser.add_argument("--no-x87-passthrough", dest="x87_passthrough", action="store_false",
-                        help="lower x87 through the P-code stack model instead of the host FPU")
+                        help="alias of --x87 pcode")
+    parser.add_argument("--leaders", choices=("conservative", "tight"), default=None,
+                        help="conservative (default on x86_32): every 4-byte constant that is a code address makes a block entry, including the address each "
+                             "x87 instruction stores in the FPU instruction pointer (which splits every run of x87 instructions into one block per instruction). "
+                             "tight (default for the virtual x87 and the 64-bit hosts) leaves those out")
+    parser.add_argument("--x87-shadow", action="store_true", help="virtual x87 on an x86 host: run every instruction on the virtual and the host FPU in lock step, compare, and continue with the host's results (validation builds)")
+    parser.add_argument("--x87-check", action="store_true", help="virtual x87 only: count the stack depth and set the sticky stack-fault flag like the hardware (validation builds)")
+    parser.add_argument("--host", choices=("x86_32", "x86_64", "aarch64"), default="x86_32",
+                        help="processor the generated code is compiled for. x86_32 (default) is the product: guest address = host address, "
+                             "x87 on the host FPU. x86_64 and aarch64 use the 64-bit guest memory model (every access through gp(), see "
+                             "docs/MEMORY_MODEL_64.md), all eight guest registers as arguments, and (aarch64) a software x87")
+    parser.add_argument("--x87", choices=("host", "double", "soft80", "pcode"), default=None,
+                        help="host: each x87 instruction is the same instruction on the host FPU (x86 hosts only). double / soft80: a virtual x87 "
+                             "stack in Cpu::regs (x87v.hpp), arithmetic in double (fast; exact for 24- and 53-bit precision control except for "
+                             "extended-only values) or in exact 80-bit software floating point. pcode: the SLEIGH stack model (slow, any host; "
+                             "the reference). Default: host on x86 hosts, double on aarch64")
     parser.add_argument("--source-root", default=None,
                         help="folder holding binaries/SPEED2.EXE and data/text.bin (default: the parent of raw_recomp; a git worktree passes the main one)")
     parser.add_argument("--predict", type=int, default=None, metavar="N",
@@ -886,6 +941,20 @@ def main():
         # The product shape unless an option that only exists in the page shape was asked for.
         page_only = args.local_regs or args.track_pc or not args.liveness or not args.tail_calls or args.pages
         args.reg_params = "off" if page_only else "x86:3"
+    global HOST, X87_MODE, X87_EA64, X87_CHECK, X87_SHADOW
+    HOST = args.host
+    X87_SHADOW = args.x87_shadow
+    X87_CHECK = args.x87_check
+    X87_MODE = args.x87 or ("double" if HOST == "aarch64" else "host")
+    if not args.x87_passthrough:
+        X87_MODE = "pcode"
+    if X87_MODE == "host" and HOST == "aarch64":
+        raise ValueError("--x87 host needs an x86 host")
+    X87_EA64 = HOST != "x86_32"
+    if args.reg_params == "off" and HOST != "x86_32" and not args.pages:
+        raise ValueError("the 64-bit hosts use the register-parameter shape")
+    if HOST != "x86_32" and args.reg_params is None and not args.pages:
+        args.reg_params = "x64"
     global MEMORY_REGS, TRACK_PC
     MEMORY_REGS = not args.local_regs
     TRACK_PC = args.track_pc
@@ -908,7 +977,7 @@ def main():
         raise ValueError("Ghidra .text has been patched: export the original instruction stream")
     global TEXT, X87_PASSTHROUGH, TAIL_CALLS
     TEXT = (export / "memory_401000.bin").read_bytes()
-    X87_PASSTHROUGH = args.x87_passthrough
+    X87_PASSTHROUGH = X87_MODE == "host"
     global X87_PRECISE
     X87_PRECISE = args.x87_operands == "precise"
     TAIL_CALLS = args.tail_calls and MEMORY_REGS
@@ -923,6 +992,7 @@ def main():
             gen_regs.PREDICT_MAX = args.predict
         TAIL_CALLS = True
         program = gen_regs.Program()
+        program.tight = (args.leaders or ("tight" if (HOST != "x86_32" or X87_MODE in ("double", "soft80")) else "conservative")) == "tight"
     specs = []
     if args.use_mods:
         specs = args.mods or sorted(str(f) for f in (ROOT / "mods").glob("*_spec.json"))

@@ -3,6 +3,9 @@
 // tools/test_x87_diff.py can compare the outputs line by line.
 // Usage: x87_diff <export dir> <game dir> <entry hex> <trials> <seed>
 #include "native32.hpp"
+#ifdef NFSU2_X87_VIRTUAL
+#include "x87v.hpp"   // virtual FPU build (generate_fast.py --x87 double|soft80): the guest FPU stack is in Cpu::regs
+#endif
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
 #include <windows.h>
@@ -37,6 +40,9 @@ int main(int argc,char** argv){try{
     auto random_float_bits=[&]{float f=pool[rng()%std::size(pool)];if(rng()%3==0)f*=float(int(rng()%2000)-1000)/37.f;uint32_t b;std::memcpy(&b,&f,4);return b;};
     auto pointer=[&]{return buffer+0x8000+((rng()%0x4000)&~3u);};
     for(unsigned trial=0;trial<trials;++trial){
+#ifdef NFSU2_X87_VIRTUAL
+        unsigned top_in=0;uint8_t pre_bytes[10]={};
+#endif
         uint8_t* bytes=c.pointer(buffer,buffer_bytes);
         for(size_t i=0;i<buffer_bytes;i+=4){
             uint32_t v;switch(rng()%8){case 0:v=random_float_bits();break;case 1:v=pointer();break;case 2:v=pointer();break;default:v=random_float_bits();}
@@ -49,13 +55,25 @@ int main(int argc,char** argv){try{
         wm<4>(c,sp,stop);for(unsigned i=0;i<6;++i)wm<4>(c,sp+4+4*i,argument());
         c.pc=entry;
         // Clean FPU: precision/rounding as on a default Win32 thread, empty stack, reference stack model zeroed.
+#ifndef NFSU2_X87_VIRTUAL
         asm volatile("fninit");x87_load_control(0x027f);
+#endif
         std::memset(c.regs.data()+0x1100,0,0x80);wr<2>(c,0x10a4,0xffff);wr<2>(c,0x10a0,0x027f);
+#ifdef NFSU2_X87_VIRTUAL
+        std::memset(c.regs.data()+0x1090,0,4);wr<2>(c,0x10a2,0);c.regs[0x10b0]=0;c.regs[0x10b1]=0;
+#endif
         {   // Some routines take their operands on the FPU stack: start with two values (ST0, ST1).
             double inputs[2];for(auto& v:inputs){uint32_t b=random_float_bits();float f;std::memcpy(&f,&b,4);v=double(f);}
             uint8_t extended[2][10];
+#ifdef NFSU2_X87_VIRTUAL
+            for(int i=0;i<2;++i)x87soft::store(extended[i],x87soft::from_f64(std::bit_cast<uint64_t>(inputs[i])));
+#else
             for(int i=0;i<2;++i)asm volatile("fldl %1; fstpt %0":"=m"(extended[i]):"m"(inputs[i]):"memory");
-#ifdef NFSU2_FAST_BACKEND
+#endif
+#ifdef NFSU2_X87_VIRTUAL
+            for(int i=int(pre_pushed)-1;i>=0;--i)x87v::Fpu<x87v::Policy>::push(c.regs.data(),x87v::Policy::from80(extended[i]));
+            top_in=x87v::top(c.regs.data());std::memcpy(pre_bytes,extended[0],10);
+#elif defined(NFSU2_FAST_BACKEND)
             if(pre_pushed>1)asm volatile("fldt %0"::"m"(extended[1]):"memory");
             if(pre_pushed>0)asm volatile("fldt %0"::"m"(extended[0]):"memory");
 #else
@@ -65,7 +83,9 @@ int main(int argc,char** argv){try{
         }
         std::string status="ok";uint64_t steps=0;
         std::string pushed_values;{uint8_t t[10];
-#ifdef NFSU2_FAST_BACKEND
+#ifdef NFSU2_X87_VIRTUAL
+            if(pre_pushed){std::ostringstream o;for(unsigned i=10;i-->0;)o<<std::hex<<std::setw(2)<<std::setfill('0')<<unsigned(pre_bytes[i]);pushed_values=o.str();}
+#elif defined(NFSU2_FAST_BACKEND)
             if(pre_pushed){asm volatile("fstpt %0":"=m"(t)::"memory");std::ostringstream o;for(unsigned i=10;i-->0;)o<<std::hex<<std::setw(2)<<std::setfill('0')<<unsigned(t[i]);pushed_values=o.str();asm volatile("fldt %0"::"m"(t):"memory");}
 #else
             if(pre_pushed){std::ostringstream o;for(unsigned i=10;i-->0;)o<<std::hex<<std::setw(2)<<std::setfill('0')<<unsigned(c.regs[0x1100+i]);pushed_values=o.str();}
@@ -80,7 +100,18 @@ int main(int argc,char** argv){try{
         line<<"T "<<trial<<" "<<status<<std::hex;
         for(unsigned i=0;i<8;++i)line<<" r"<<i<<"="<<uint32_t(r<4>(c,i*4));
         line<<" in0="<<pushed_values<<" buf="<<fnv(c.pointer(buffer,buffer_bytes),buffer_bytes)<<std::dec<<" steps="<<steps;
-#ifdef NFSU2_FAST_BACKEND
+#ifdef NFSU2_X87_VIRTUAL
+        {   // the guest's stack is in Cpu::regs: depth from TOP, a negative depth is the stack fault the real FPU would report
+            uint8_t* R=c.regs.data();
+            int delta=(int(top_in)-int(x87v::top(R))+8)&7;if(delta>=4)delta-=8;
+            const int depth=int(pre_pushed)+delta;
+            line<<" sf="<<(((x87v::status_word(R)>>6)&1)||depth<0?1:0)<<" depth="<<(depth<0?0:depth)<<" st0=";
+            if(depth>=1){uint8_t st0[10];x87soft::store(st0,x87soft::from_f64(std::bit_cast<uint64_t>(x87v::DblP::rd(x87v::slot(R,0)))));
+                if(std::is_same_v<x87v::Policy,x87v::SoftP>)x87soft::store(st0,x87v::SoftP::rd(x87v::slot(R,0)));
+                for(unsigned i=10;i-->0;)line<<std::hex<<std::setw(2)<<std::setfill('0')<<unsigned(st0[i]);}
+            else line<<"-";
+        }
+#elif defined(NFSU2_FAST_BACKEND)
         {   // the guest's stack lives on the host FPU: read it out
             uint16_t status_word;asm volatile("fnstsw %0":"=m"(status_word)::"memory");
             line<<" sf="<<((status_word>>6)&1);   // sticky stack fault: the routine's preconditions on the FPU stack depth were not met

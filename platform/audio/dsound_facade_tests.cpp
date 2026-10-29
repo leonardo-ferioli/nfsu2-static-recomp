@@ -1,6 +1,11 @@
 // Facade tests: the guest ABI side of the DirectSound layer, driven the way translated code drives it (a COM pointer whose first word is a
 // vtable of call tokens, stdcall words, structures in guest memory), with a fake guest arena and a null sink. No game, no Windows.
 // The central test replays the exact call sequence of SPEED2.EXE's audio module (found by disassembly, see docs/NUE_HANDOVER_DSOUND.md).
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
+#ifdef _WIN32
+#include <windows.h>
+#endif
 #include <cmath>
 #include <cstdio>
 #include <cstring>
@@ -12,6 +17,7 @@
 #include "platform/audio/audio_engine.hpp"
 #include "platform/audio/dsound_facade.hpp"
 #include "platform/audio/null_sink.hpp"
+#include "platform/audio/port_guest_memory.hpp"
 #include "platform/audio/test_guest.hpp"
 
 using namespace nfsu2::platform;
@@ -77,7 +83,7 @@ struct GameAudio {
         if (probe) {   // only the probe asks for the device capabilities
             const uint32_t caps = g.arena.alloc(96);
             const uint32_t caps_size = 96;
-            std::memcpy(g.arena.ptr(caps, 4), &caps_size, 4);
+            std::memcpy(g.arena.host(caps, 4), &caps_size, 4);
             CHECK_HR(g.call(ds, ds_slot::GetCaps, {caps}), HR_OK);
             CHECK(g.get32(caps + 4) == 0xF1F);   // the formats a Windows probe reports
         }
@@ -91,7 +97,7 @@ struct GameAudio {
         const uint32_t p1 = g.cell(), n1 = g.cell();
         CHECK_HR(g.call(ring, buf_slot::Lock, {0, ring_bytes, p1, n1, 0, 0, 0}), HR_OK);
         CHECK(g.get32(n1) == ring_bytes);
-        std::memset(g.arena.ptr(g.get32(p1), ring_bytes), 0, ring_bytes);
+        std::memset(g.arena.host(g.get32(p1), ring_bytes), 0, ring_bytes);
         CHECK_HR(g.call(ring, buf_slot::Unlock, {g.get32(p1), ring_bytes, 0, 0}), HR_OK);
         CHECK_HR(g.call(ring, buf_slot::Play, {0, 0, 1}), HR_OK);
         return true;
@@ -112,8 +118,8 @@ struct GameAudio {
         const uint32_t p1 = g.cell(), n1 = g.cell(), p2 = g.cell(), n2 = g.cell();
         CHECK_HR(g.call(ring, buf_slot::Lock, {offset, uint32_t(data.size()), p1, n1, p2, n2, 0}), HR_OK);
         const uint32_t a1 = g.get32(p1), l1 = g.get32(n1), a2 = g.get32(p2), l2 = g.get32(n2);
-        std::memcpy(g.arena.ptr(a1, l1), data.data(), l1);
-        if (l2) std::memcpy(g.arena.ptr(a2, l2), data.data() + l1, l2);
+        std::memcpy(g.arena.host(a1, l1), data.data(), l1);
+        if (l2) std::memcpy(g.arena.host(a2, l2), data.data() + l1, l2);
         CHECK_HR(g.call(ring, buf_slot::Unlock, {a1, l1, a2, l2}), HR_OK);
     }
     void shutdown() {   // 0x725bb5: Release secondary, primary, DirectSound
@@ -133,15 +139,15 @@ std::vector<uint8_t> tone_stereo(uint32_t first_frame, uint32_t frames, uint32_t
     return b;
 }
 
-void test_game_sequence() {
-    Guest g;
+void test_game_sequence(GuestMemory* memory = nullptr) {
+    Guest g(memory);
     GameAudio game(g);
     CHECK(game.init(2, 44100, true));
     CHECK(game.ring_bytes == 22048 * 4);   // 0.5 s: (rate * 500 / 1000) & ~15 frames
     // The ring really is what the game asked for.
     const uint32_t caps = g.arena.alloc(20);
     const uint32_t cs = 20;
-    std::memcpy(g.arena.ptr(caps, 4), &cs, 4);
+    std::memcpy(g.arena.host(caps, 4), &cs, 4);
     CHECK_HR(g.call(game.ring, buf_slot::GetCaps, {caps}), HR_OK);
     CHECK(g.get32(caps + 4) == (0x18000u | 0x8u) && g.get32(caps + 8) == game.ring_bytes);   // + DSBCAPS_LOCSOFTWARE
     CHECK((game.poll_status() & 3) == 1);   // playing, not lost
@@ -175,18 +181,18 @@ void test_game_sequence() {
     uint32_t pos = again.play_cursor();
     CHECK(pos == 0);   // a fresh device: the new ring starts at the beginning
     again.shutdown();
-    CHECK(g.arena.live >= 0);
+    CHECK(g.own_arena.live >= 0);
 
     // 5.1 as the game's surround setting would ask: 6-channel primary and ring; the engine follows with a 6-channel output.
-    Guest g6;
+    Guest g6(memory);
     GameAudio sur(g6);
     CHECK(sur.init(6, 44100, true));
     CHECK(g6.sink->actual().channels == 6 && g6.engine->reopen_count() >= 1);
     sur.shutdown();
 }
 
-void test_com_behaviour() {
-    Guest g;
+void test_com_behaviour(GuestMemory* memory = nullptr) {
+    Guest g(memory);
     uint32_t ds = 0;
     // DirectSoundCreate argument validation.
     CHECK_HR(g.facade->direct_sound_create(0, 0, 0), HR_INVALIDARG);
@@ -214,7 +220,7 @@ void test_com_behaviour() {
     CHECK_HR(g.call(ds, ds_slot::GetCaps, {0}), HR_INVALIDARG);
     const uint32_t small = g.arena.alloc(96);
     const uint32_t wrong = 40;
-    std::memcpy(g.arena.ptr(small, 4), &wrong, 4);
+    std::memcpy(g.arena.host(small, 4), &wrong, 4);
     CHECK_HR(g.call(ds, ds_slot::GetCaps, {small}), HR_INVALIDARG);
     const uint32_t out = g.cell();
     CHECK_HR(g.call(ds, ds_slot::CreateSoundBuffer, {0, out, 0}), HR_INVALIDARG);                            // no description
@@ -299,8 +305,8 @@ void test_com_behaviour() {
     CHECK(g.facade->live_objects() == 0);   // and then nothing is left
 }
 
-void test_duplicate_and_formats_via_abi() {
-    Guest g;
+void test_duplicate_and_formats_via_abi(GuestMemory* memory = nullptr) {
+    Guest g(memory);
     uint32_t ds = 0;
     g.create(&ds);
     g.call(ds, ds_slot::SetCoop, {0x1234, 2});
@@ -314,19 +320,19 @@ void test_duplicate_and_formats_via_abi() {
     // Fill through Lock/Unlock, duplicate, check the copy has the data and its own state.
     const uint32_t p1 = g.cell(), n1 = g.cell();
     CHECK_HR(g.call(s, buf_slot::Lock, {0, 4000, p1, n1, 0, 0, 0}), HR_OK);
-    std::memset(g.arena.ptr(g.get32(p1), 4000), 0x42, 4000);
+    std::memset(g.arena.host(g.get32(p1), 4000), 0x42, 4000);
     CHECK_HR(g.call(s, buf_slot::Unlock, {g.get32(p1), 4000, 0, 0}), HR_OK);
     const uint32_t dup = g.cell();
     CHECK_HR(g.call(ds, ds_slot::Duplicate, {s, dup}), HR_OK);
     const uint32_t d = g.get32(dup);
     CHECK(d != s);
     CHECK_HR(g.call(d, buf_slot::Lock, {0, 4, p1, n1, 0, 0, 0}), HR_OK);
-    CHECK(*g.arena.ptr(g.get32(p1), 1) == 0x42);
+    CHECK(*g.arena.host(g.get32(p1), 1) == 0x42);
     CHECK_HR(g.call(ds, ds_slot::Duplicate, {0xbad, dup}), HR_INVALIDARG);
 }
 
-void test_3d_and_notify_via_abi() {
-    Guest g;
+void test_3d_and_notify_via_abi(GuestMemory* memory = nullptr) {
+    Guest g(memory);
     uint32_t ds = 0;
     g.create(&ds);
     g.call(ds, ds_slot::SetCoop, {0x1234, 2});
@@ -342,19 +348,19 @@ void test_3d_and_notify_via_abi() {
     const uint32_t vec = g.arena.alloc(12);
     CHECK_HR(g.call(listener, 7, {vec}), HR_OK);                                // GetPosition
     float pos[3];
-    std::memcpy(pos, g.arena.ptr(vec, 12), 12);
+    std::memcpy(pos, g.arena.host(vec, 12), 12);
     CHECK(pos[0] == 1 && pos[1] == 2 && pos[2] == 3);
     CHECK_HR(g.call(listener, 12, {fbits(11), 0}), HR_INVALIDARG);            // SetDopplerFactor beyond 10
     // Deferred settings apply at CommitDeferredSettings only.
     CHECK_HR(g.call(listener, 14, {fbits(9), fbits(9), fbits(9), 1}), HR_OK);   // DS3D_DEFERRED
     CHECK_HR(g.call(listener, 7, {vec}), HR_OK);
-    std::memcpy(pos, g.arena.ptr(vec, 12), 12);
+    std::memcpy(pos, g.arena.host(vec, 12), 12);
     CHECK(pos[0] == 9);                                                      // Get returns what was set (as Wine does) ...
     CHECK(g.engine->device().listener().position.x == 1);                    // ... but the mixer still has the old scene
     CHECK_HR(g.call(listener, 17), HR_OK);                                      // CommitDeferredSettings
     CHECK(g.engine->device().listener().position.x == 9);
     CHECK_HR(g.call(listener, 7, {vec}), HR_OK);
-    std::memcpy(pos, g.arena.ptr(vec, 12), 12);
+    std::memcpy(pos, g.arena.host(vec, 12), 12);
     CHECK(pos[0] == 9);
     // A 3D buffer: mono with CTRL3D, QueryInterface gives IDirectSound3DBuffer, a stereo or plain buffer does not.
     const uint32_t outb = g.cell();
@@ -368,10 +374,10 @@ void test_3d_and_notify_via_abi() {
     CHECK_HR(g.call(b3, 17, {fbits(-1), 0}), HR_INVALIDARG);                  // a negative minimum distance
     const uint32_t all = g.arena.alloc(64);
     const uint32_t size64 = 64;
-    std::memcpy(g.arena.ptr(all, 4), &size64, 4);
+    std::memcpy(g.arena.host(all, 4), &size64, 4);
     CHECK_HR(g.call(b3, 3, {all}), HR_OK);                                      // GetAllParameters
     float px;
-    std::memcpy(&px, g.arena.ptr(all + 4, 4), 4);
+    std::memcpy(&px, g.arena.host(all + 4, 4), 4);
     CHECK(px == 4);
     CHECK_HR(g.call(b3, 18, {7, 0}), HR_INVALIDARG);                          // SetMode out of range
     CHECK_HR(g.call(b, buf_slot::QI, {g.guid(IID_IDirectSoundNotify), pp}), HR_NOINTERFACE);   // no CTRLPOSITIONNOTIFY
@@ -384,6 +390,13 @@ void test_3d_and_notify_via_abi() {
     uint32_t list[4] = {2400 * 4, 0xE1, 0xFFFFFFFFu, 0xE2};   // DSBPOSITIONNOTIFY: offset, event handle
     CHECK_HR(g.call(notify, 3, {2, g.put(list, 16)}), HR_OK);
     CHECK_HR(g.call(notify, 3, {2, 0}), HR_INVALIDARG);
+    // Hostile counts: `count * 8` must not wrap in 32 bits (0x20000001 * 8 == 8), nor ask for hundreds of millions of entries.
+    const uint32_t list_ptr = g.put(list, 16);
+    CHECK_HR(g.call(notify, 3, {0x20000001u, list_ptr}), HR_INVALIDARG);
+    CHECK_HR(g.call(notify, 3, {0x20000000u, list_ptr}), HR_INVALIDARG);
+    CHECK_HR(g.call(notify, 3, {0xFFFFFFFFu, list_ptr}), HR_INVALIDARG);
+    CHECK_HR(g.call(notify, 3, {0x10001u, list_ptr}), HR_INVALIDARG);
+    CHECK_HR(g.call(notify, 3, {2, 0xFFFFFFF8u}), HR_INVALIDARG);   // 2 entries starting 8 bytes below the end of the 4 GiB space
     g.call(nb, buf_slot::Play, {0, 0, 1});
     g.sink->advance(4800);
     CHECK(g.host.events == std::vector<uint32_t>({0xE1}));
@@ -394,11 +407,66 @@ void test_3d_and_notify_via_abi() {
 
 }  // namespace
 
+#ifdef _WIN32
+// The port's guest::Memory. On a 64-bit host the guest lives in an arena (a reserved 4 GiB range at a 4 GiB-aligned base): the facade then runs with
+// guest address != host pointer, which is what the 64-bit model needs. On the 32-bit host this is the identity model.
+#ifndef NFSU2_GUEST_IDENTITY
+uint8_t* nfsu2::guest::g_arena_base = nullptr;
+#endif
+
+bool prepare_arena() {
+#ifdef NFSU2_GUEST_IDENTITY
+    return true;
+#else
+    // Reserve 8 GiB, give it back, and take the aligned 4 GiB inside it (race-free enough for a test).
+    void* probe = VirtualAlloc(nullptr, 8ull << 30, MEM_RESERVE, PAGE_NOACCESS);
+    if (!probe) return false;
+    const uintptr_t aligned = (reinterpret_cast<uintptr_t>(probe) + 0xffffffffull) & ~0xffffffffull;
+    VirtualFree(probe, 0, MEM_RELEASE);
+    void* base = VirtualAlloc(reinterpret_cast<void*>(aligned), 4ull << 30, MEM_RESERVE, PAGE_NOACCESS);
+    if (!base) return false;
+    nfsu2::guest::set_arena_base(base);
+    return true;
+#endif
+}
+
+void test_port_memory() {
+    if (!prepare_arena()) {
+        std::printf("note: could not reserve a 4 GiB arena; the port-memory runs are skipped\n");
+        return;
+    }
+    {
+        PortGuestMemory memory;
+        const uint32_t a = memory.alloc(100), b = memory.alloc(50);
+        CHECK(a && b && a != b && a % 16 == 0 && b % 16 == 0);
+        CHECK(memory.host(a, 100) != nullptr && memory.host(a, 100) == nfsu2::guest::to_host(a));   // host() is the model's own conversion
+        CHECK(memory.address_of(memory.host(a, 100)) == a && memory.address_of(memory.host(a, 100) + 99) == a + 99);
+        CHECK(memory.address_of(&a) == 0);                                  // foreign memory is not a guest address
+        CHECK(memory.host(0x0, 4) == nullptr || nfsu2::guest::identity);    // address 0 is not mapped (identity host: page zero)
+        CHECK(memory.host(0xfffffff0u, 64) == nullptr);                     // past the end of the guest address space
+        memory.free(a);
+        const uint32_t c = memory.alloc(100);
+        CHECK(c == a || nfsu2::guest::identity);                            // the arena window reuses freed ranges (first fit)
+        memory.free(b);
+        memory.free(c);
+        CHECK(memory.live_allocations() == 0);
+    }
+    PortGuestMemory memory;
+    test_game_sequence(&memory);
+    test_com_behaviour(&memory);
+    test_duplicate_and_formats_via_abi(&memory);
+    test_3d_and_notify_via_abi(&memory);
+}
+#endif
+
 int main() {
     test_game_sequence();
     test_com_behaviour();
     test_duplicate_and_formats_via_abi();
     test_3d_and_notify_via_abi();
+#ifdef _WIN32
+    test_port_memory();
+#endif
     std::printf("%s: %d checks, %d failures\n", g_failures ? "FAIL" : "PASS", g_checks, g_failures);
     return g_failures ? 1 : 0;
 }

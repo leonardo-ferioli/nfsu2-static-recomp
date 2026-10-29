@@ -17,10 +17,10 @@ enum Reg : unsigned { EAX = 0, ECX = 4, EDX = 8, EBX = 12, ESP = 16, EBP = 20, E
 
 inline uint32_t reg(Cpu& c, Reg r) { return uint32_t(nfsu2raw::r<4>(c, r)); }
 inline void set_reg(Cpu& c, Reg r, uint32_t value) { wr<4>(c, r, value); }
-inline uint32_t& u32_at(uint32_t address) { return *reinterpret_cast<uint32_t*>(uintptr_t(address)); }
-inline int32_t& i32_at(uint32_t address) { return *reinterpret_cast<int32_t*>(uintptr_t(address)); }
-inline float& f32_at(uint32_t address) { return *reinterpret_cast<float*>(uintptr_t(address)); }
-inline uint8_t& u8_at(uint32_t address) { return *reinterpret_cast<uint8_t*>(uintptr_t(address)); }
+inline uint32_t& u32_at(uint32_t address) { return *nfsu2::guest::ptr<uint32_t>(address); }
+inline int32_t& i32_at(uint32_t address) { return *nfsu2::guest::ptr<int32_t>(address); }
+inline float& f32_at(uint32_t address) { return *nfsu2::guest::ptr<float>(address); }
+inline uint8_t& u8_at(uint32_t address) { return *nfsu2::guest::ptr<uint8_t>(address); }
 inline uint32_t bits(float value) { uint32_t b; std::memcpy(&b, &value, 4); return b; }
 inline float as_float(uint32_t value) { float f; std::memcpy(&f, &value, 4); return f; }
 // The n-th stack argument of a function hook (the hook runs at the function's entry: [esp] is the return address).

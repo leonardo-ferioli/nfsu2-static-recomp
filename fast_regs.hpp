@@ -4,8 +4,9 @@
 #include "fast.hpp"
 #include "speed.hpp"
 namespace nfsu2raw {
-#if defined(__x86_64__) || defined(_M_X64)
-// All arguments (eight registers, the processor, the instruction budget) fit the preserve_none argument registers.
+#if defined(__x86_64__) || defined(_M_X64) || defined(__aarch64__) || defined(_M_ARM64)
+// 64-bit hosts (x86-64, arm64): preserve_none, so every argument (eight registers, the processor, the instruction budget) travels in
+// registers and a musttail call is a plain jump.
 #define PN __attribute__((preserve_none))
 #else
 // 32-bit: regcall passes the first five integer arguments in EAX, ECX, EDX, EDI and ESI.

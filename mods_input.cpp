@@ -1,6 +1,7 @@
 // Look-around camera (mouse / right stick), gamepad texts and dead zones, front-end button mapping, and the input states they need
 // (the mod's Camera and Controller modules).
 #include "mods_internal.hpp"
+#include "guest_memory.hpp"
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
 #include <windows.h>
@@ -53,8 +54,8 @@ void camera_data(Cpu& c) {
 void camera_look_at(Cpu& c) {
     const uint32_t esp = reg(c, ESP);
     const uint32_t out = u32_at(esp), from_address = u32_at(esp + 4), to_address = u32_at(esp + 8), up = u32_at(esp + 12);
-    auto* from = reinterpret_cast<Vector3*>(uintptr_t(from_address));
-    auto* to = reinterpret_cast<Vector3*>(uintptr_t(to_address));
+    auto* from = nfsu2::guest::ptr<Vector3>(from_address);
+    auto* to = nfsu2::guest::ptr<Vector3>(to_address);
     auto original = [&] { set_reg(c, EAX, call_function("fn_camera_look_at", 0, 0, {out, from_address, to_address, up})); };
 
     if (!game_paused()) {
@@ -127,7 +128,7 @@ struct JoyState {   // DIJOYSTATE
 };
 
 void joy_state(Cpu& c) {
-    auto* state = reinterpret_cast<JoyState*>(uintptr_t(address_of("joy_state_base") + reg(c, EBP) * 4));
+    auto* state = nfsu2::guest::ptr<JoyState>(address_of("joy_state_base") + reg(c, EBP) * 4);
     const int32_t left = int32_t(g_left_deadzone * 100.0f), right = int32_t(g_right_deadzone * 100.0f);   // values are in [-10000, 10000]
     state->lX = std::abs(state->lX) <= left ? 0 : state->lX;
     state->lY = std::abs(state->lY) <= left ? 0 : state->lY;
@@ -145,7 +146,7 @@ void joy_state(Cpu& c) {
 }
 
 void mouse_state(Cpu& c) {
-    if (reinterpret_cast<HWND>(uintptr_t(u32_at(address_of("hwnd")))) != GetForegroundWindow()) return;
+    if (nfsu2::guest::host_handle<HWND>(u32_at(address_of("hwnd"))) != GetForegroundWindow()) return;
     const uint32_t state = reg(c, ESP) + 8;
     g_mouse.delta_x = i32_at(state);
     g_mouse.delta_y = i32_at(state + 4);
@@ -169,7 +170,7 @@ bool g_quit_pressed = false;
 // The button state is copied to the game: both stick clicks together press Q (quit) in the front end.
 void catch_pad(Cpu& c) {
     set_reg(c, ECX, 0x88);   // the instruction this replaces: MOV ECX,88h
-    const auto* pad = reinterpret_cast<const PadState*>(uintptr_t(reg(c, EDI)));
+    const auto* pad = nfsu2::guest::ptr<const PadState>(reg(c, EDI));
     if (pad != nullptr && pad != reinterpret_cast<const PadState*>(1) && i32_at(address_of("game_state")) == 3) {
         if (pad->ls_click && pad->rs_click) {
             if (!g_quit_pressed) {
@@ -195,14 +196,14 @@ const wchar_t* const kControlTextsPlayStation[] = {L"Circle", L"Square", L"Trian
 // The button texts of the menus follow the last device used. Replaces MOV ECX,[menu object] and may swap the text in EAX.
 void menu_text(Cpu& c) {
     set_reg(c, ECX, u32_at(address_of("menu_text_global")));
-    const char* text = reinterpret_cast<const char*>(uintptr_t(reg(c, EAX)));
+    const char* text = nfsu2::guest::ptr<const char>(reg(c, EAX));
     if (!text) return;
     for (size_t i = 0; i < std::size(kMenuTexts); ++i) {
         if (std::strcmp(text, kMenuTexts[i]) != 0) continue;
         const char* replacement = nullptr;
         if (g_last_input_was_pad) replacement = g_settings.improve_gamepad != 2 ? kMenuTextsXbox[i] : kMenuTextsPlayStation[i];
         else if (g_settings.improve_gamepad == 3) replacement = kMenuTextsPc[i];
-        if (replacement) set_reg(c, EAX, uint32_t(uintptr_t(replacement)));
+        if (replacement) set_reg(c, EAX, nfsu2::guest::to_guest(replacement));
         break;
     }
 }
@@ -225,7 +226,7 @@ void controller_buttons(Cpu& c) {
     set_reg(c, EDI, u32_at(esp));   // POP EDI
     esp += 4;
     set_reg(c, ESP, esp);
-    auto* text = reinterpret_cast<wchar_t*>(uintptr_t(esp + 4));
+    auto* text = nfsu2::guest::ptr<wchar_t>(esp + 4);
     if (std::wcslen(text) == 0) {
         c.pc = address_of("buttons_empty");
         return;

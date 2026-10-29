@@ -1,4 +1,5 @@
 #include "win32_facade_internal.hpp"
+#include "guest_memory.hpp"
 #include <chrono>
 #include <thread>
 
@@ -13,7 +14,7 @@ Win32LayerOptions parse_win32_layer(const std::string& spec, std::string& error)
         while (!name.empty() && name.front() == ' ') name.erase(name.begin());
         while (!name.empty() && name.back() == ' ') name.pop_back();
         if (name.empty() || name == "none") continue;
-        if (name == "all") { o.time = o.text = o.process = o.sync = o.memory = o.files = o.dinput = true; o.registry = o.traps = !kRealOs; }
+        if (name == "all") { o.time = o.text = o.process = o.sync = o.memory = o.files = o.dinput = o.loader = true; o.registry = o.traps = !kRealOs; }
         else if (name == "time") o.time = true;
         else if (name == "text") o.text = true;
         else if (name == "process") o.process = true;
@@ -21,6 +22,7 @@ Win32LayerOptions parse_win32_layer(const std::string& spec, std::string& error)
         else if (name == "memory") o.memory = true;
         else if (name == "files") o.files = true;
         else if (name == "dinput") o.dinput = true;
+        else if (name == "loader") o.loader = true;
         else if (name == "registry") o.registry = true;
         else if (name == "traps") o.traps = true;
         else if (error.empty()) error = name;
@@ -298,7 +300,7 @@ void Win32Facade::Impl::install_sync() {
     });
     on("DuplicateHandle", 7, [this](Cpu& c) {
         const uint32_t source = arg(c, 1);
-        if (!mine(source)) return FACADE_REAL(c, "DuplicateHandle", DuplicateHandle(H(arg(c, 0)), H(source), H(arg(c, 2)), reinterpret_cast<LPHANDLE>(uintptr_t(arg(c, 3))), arg(c, 4), arg(c, 5), arg(c, 6)));
+        if (!mine(source)) return FACADE_REAL(c, "DuplicateHandle", DuplicateHandle(H(arg(c, 0)), H(source), H(arg(c, 2)), ptr<HANDLE>(arg(c, 3)), arg(c, 4), arg(c, 5), arg(c, 6)));
         auto r = sync.duplicate_handle(source, (arg(c, 6) & 0x1u /* DUPLICATE_CLOSE_SOURCE */) != 0);
         if (!r) { set_error(c, r.error); return 0u; }
         if (arg(c, 3)) *ptr<uint32_t>(arg(c, 3)) = r.value;
@@ -539,7 +541,7 @@ void Win32Facade::Impl::install_files() {
 
 Win32Facade::Impl::~Impl() = default;
 
-Win32Facade::Win32Facade(NativePlatform& platform, const Win32LayerOptions& options, nfsu2::platform::Input* input) : impl_(std::make_unique<Impl>(platform, options)) {
+Win32Facade::Win32Facade(GuestPlatform& platform, const Win32LayerOptions& options, nfsu2::platform::Input* input) : impl_(std::make_unique<Impl>(platform, options)) {
     impl_->input_override = input;
     if (options.time) impl_->install_time();
     if (options.text) impl_->install_text();
@@ -548,6 +550,7 @@ Win32Facade::Win32Facade(NativePlatform& platform, const Win32LayerOptions& opti
     if (options.sync) impl_->install_sync();
     if (options.files) impl_->install_files();
     if (options.dinput) impl_->install_dinput();
+    if (options.loader) impl_->install_loader();
     if (options.registry) impl_->install_registry();
     if (options.traps) impl_->install_traps();
 }

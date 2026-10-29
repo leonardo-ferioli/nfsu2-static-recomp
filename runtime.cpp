@@ -1,4 +1,6 @@
 #include "runtime.hpp"
+#include "guest_memory.hpp"
+#include "guest_arena.hpp"
 #include "difftrace.hpp"
 #include <algorithm>
 #include <cmath>
@@ -22,39 +24,48 @@ void invalidate_native_memory(){memory_epoch.store(memory_epoch.load(std::memory
 #endif
 Cpu::~Cpu(){
 #ifdef NFSU2_NATIVE32
-    for(auto& region:memory)VirtualFree(reinterpret_cast<void*>(uintptr_t(region.base)),0,MEM_RELEASE);
+    for(auto& region:memory)VirtualFree(nfsu2::guest::ptr<void>(region.base),0,MEM_RELEASE);
     invalidate_native_memory();
+#elif !defined(NFSU2_GUEST_IDENTITY)
+    if(auto* space=nfsu2::guest::current_address_space())
+        for(auto& region:memory){
+            space->decommit(region.base,uint32_t(region.length));
+        }
 #endif
 }
 uint8_t* Cpu::pointer(uint32_t a,size_t n) {
 #ifdef NFSU2_NATIVE32
     if(uint64_t(a)+n<=0x100000000ull){
-        for(auto& region:memory)if(a>=region.base && uint64_t(a)-region.base<region.bytes.size()){
-            if(uint64_t(a)-region.base+n>region.bytes.size())throw Fault("guest region boundary exceeded");
-            return reinterpret_cast<uint8_t*>(uintptr_t(a));
+        for(auto& region:memory)if(a>=region.base && uint64_t(a)-region.base<region.length){
+            if(uint64_t(a)-region.base+n>region.length)throw Fault("guest region boundary exceeded");
+            return nfsu2::guest::ptr<uint8_t>(a);
         }
         struct Cache{uint64_t base=0,end=0;};
         thread_local std::array<Cache,16> hot{};thread_local uint32_t epoch=0;thread_local unsigned next=0;
         const auto current=memory_epoch.load(std::memory_order_relaxed);
         if(epoch!=current){hot={};epoch=current;next=0;}
-        for(const auto& entry:hot)if(a>=entry.base && uint64_t(a)+n<=entry.end)return reinterpret_cast<uint8_t*>(uintptr_t(a));
+        for(const auto& entry:hot)if(a>=entry.base && uint64_t(a)+n<=entry.end)return nfsu2::guest::ptr<uint8_t>(a);
         MEMORY_BASIC_INFORMATION info{};
-        if(VirtualQuery(reinterpret_cast<void*>(uintptr_t(a)),&info,sizeof(info)) && info.State==MEM_COMMIT &&
+        if(VirtualQuery(nfsu2::guest::ptr<void>(a),&info,sizeof(info)) && info.State==MEM_COMMIT &&
            !(info.Protect&(PAGE_NOACCESS|PAGE_GUARD)) && uint64_t(a)+n<=uintptr_t(info.BaseAddress)+info.RegionSize){
             hot[next++%hot.size()]={uintptr_t(info.BaseAddress),uint64_t(uintptr_t(info.BaseAddress))+info.RegionSize};
-            return reinterpret_cast<uint8_t*>(uintptr_t(a));
+            return nfsu2::guest::ptr<uint8_t>(a);
         }
     }
 #else
-    for(auto& region:memory)if(a>=region.base && uint64_t(a)-region.base+n<=region.bytes.size())
-        return region.bytes.data()+(a-region.base);
+    for(auto& region:memory)if(a>=region.base && uint64_t(a)-region.base+n<=region.length)
+        return region.bytes.empty()?nfsu2::guest::ptr<uint8_t>(a):region.bytes.data()+(a-region.base);   // empty: the region lives in the arena
+#ifndef NFSU2_GUEST_IDENTITY
+    if(auto* space=nfsu2::guest::current_address_space())   // memory the guest got from the platform (VirtualAlloc, heaps) is not a mapped region: ask the address space
+        if(space->host(a,uint32_t(n)))return nfsu2::guest::ptr<uint8_t>(a);
+#endif
 #endif
     char msg[100];std::snprintf(msg,sizeof(msg),"unmapped guest memory 0x%08x (%zu bytes), PC=0x%08x",a,n,pc);
     throw Fault(msg);
 }
 void Cpu::map(uint32_t base,size_t size) {
     if(uint64_t(base)+size>0x100000000ull)throw Fault("guest mapping exceeds 32-bit address space");
-    for(auto& r:memory)if(uint64_t(base)<uint64_t(r.base)+r.bytes.size() && uint64_t(r.base)<uint64_t(base)+size)
+    for(auto& r:memory)if(uint64_t(base)<uint64_t(r.base)+r.length && uint64_t(r.base)<uint64_t(base)+size)
         throw Fault("overlapping guest memory mappings");
 #ifdef NFSU2_NATIVE32
     invalidate_native_memory();
@@ -73,16 +84,24 @@ void Cpu::map(uint32_t base,size_t size) {
             static std::atomic<uint32_t> next{0x10000000};
             for(unsigned tries=0;tries<64 && !mapped;++tries){
                 const uint32_t at=next.fetch_add(uint32_t((size+0x2ffff)&~size_t(0xffff)));
-                mapped=VirtualAlloc(reinterpret_cast<void*>(uintptr_t(at)),size,MEM_RESERVE|MEM_COMMIT,PAGE_READWRITE);
+                mapped=VirtualAlloc(nfsu2::guest::ptr<void>(at),size,MEM_RESERVE|MEM_COMMIT,PAGE_READWRITE);
             }
-        }else mapped=VirtualAlloc(reinterpret_cast<void*>(uintptr_t(base)),size,MEM_RESERVE|MEM_COMMIT,PAGE_READWRITE);
+        }else mapped=VirtualAlloc(nfsu2::guest::ptr<void>(base),size,MEM_RESERVE|MEM_COMMIT,PAGE_READWRITE);
         if(!mapped || (base && uintptr_t(mapped)!=base))throw Fault("cannot map non-executable guest memory at requested address");
-        base=uint32_t(uintptr_t(mapped));
+        base=nfsu2::guest::to_guest(mapped);
     }
 #else
-    if(!base){base=0x02000000;for(auto& r:memory)if(uint64_t(r.base)+r.bytes.size()<0x70000000)base=std::max(base,uint32_t((uint64_t(r.base)+r.bytes.size()+0xffff)&~0xffffull));}
+    // Automatic placement is the same in both models (guest pointers are part of what the code computes with: hash tables, alignment-dependent paths).
+    if(!base){base=0x02000000;for(auto& r:memory)if(uint64_t(r.base)+r.length<0x70000000)base=std::max(base,uint32_t((uint64_t(r.base)+r.length+0xffff)&~0xffffull));}
+#ifndef NFSU2_GUEST_IDENTITY
+    if(auto* space=nfsu2::guest::current_address_space()){   // the guest lives in the arena (docs/MEMORY_MODEL_64.md): the range is committed there
+        if(!space->commit(base,uint32_t(size),nfsu2::guest::kPageReadWrite))throw Fault("cannot commit guest memory at the requested address");
+        memory.push_back(Region{base,{},size});
+        return;
+    }
 #endif
-    memory.push_back(Region{base,std::vector<uint8_t>(size)});
+#endif
+    memory.push_back(Region{base,std::vector<uint8_t>(size),size});
 }
 [[noreturn]] void missing_instruction(uint32_t a){
     char msg[90];std::snprintf(msg,sizeof(msg),"no statically translated instruction at 0x%08x",a);throw Fault(msg);
