@@ -33,6 +33,7 @@ enum : uint32_t {
     wait_timeout = 258, no_more_items = 259, not_owner = 288, too_many_posts = 298, io_pending = 997, invalid_flags = 1004,
     invalid_window_handle = 1400, class_already_exists = 1410, class_does_not_exist = 1411, invalid_thread_id = 1444, no_token = 1008,
     invalid_cursor_handle = 1402, invalid_index = 1413, not_found = 1168, old_win_version = 1150, operation_aborted = 995, no_unicode_translation = 1113,
+    resource_data_not_found = 1812, resource_type_not_found = 1813, resource_name_not_found = 1814, resource_lang_not_found = 1815,
 };
 }
 
