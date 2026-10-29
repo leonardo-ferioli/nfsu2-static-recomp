@@ -11,10 +11,12 @@
 #ifdef NFSU2_NATIVE32
 #include "native32.hpp"   // tests and tools that build the facade over the 32-bit platform
 #endif
+#include <functional>
 #include <memory>
 #include <string>
 
 namespace nfsu2::platform { class Input; class Window; class Display; }
+namespace nue::gpu { class Gpu; }
 
 namespace nfsu2raw {
 
@@ -38,7 +40,12 @@ struct Win32LayerOptions {
     // The platform window and display the user32 group listens to (not owned, optional): null means headless fixtures that report a 1280x720 display and no events.
     nfsu2::platform::Window* window = nullptr;
     nfsu2::platform::Display* display = nullptr;
-    bool any() const { return time || text || process || sync || memory || files || dinput || loader || registry || traps || resources || user32 || system; }
+    // d3d9: Direct3DCreate9 and the Direct3D 9 objects as COM objects in guest memory over the layer nue::d3d9 (win32_facade_d3d9.cpp). A host without a real Windows only
+    // ("all" includes it there); the 32-bit Windows host keeps the drop-in d3d9.dll. `d3d9_gpu` makes the GPU the layer draws with for a device on the guest window `hwnd`
+    // (a token of the user32 group) whose client area is width x height; empty means the null GPU (draws nothing, for headless runs and tests).
+    bool d3d9 = false;
+    std::function<std::unique_ptr<nue::gpu::Gpu>(uint32_t hwnd, uint32_t width, uint32_t height, std::string& error)> d3d9_gpu;
+    bool any() const { return time || text || process || sync || memory || files || dinput || loader || registry || traps || resources || user32 || system || d3d9; }
 };
 
 // "all", "none", or a comma separated list of group names. `error` receives the first name that is not a group.

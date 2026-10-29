@@ -5,6 +5,12 @@
 
 namespace nfsu2raw {
 
+#ifdef NFSU2_FACADE_D3D9
+constexpr bool kD3D9Group = true;
+#else
+constexpr bool kD3D9Group = false;   // this build has no Direct3D 9 layer: the group exists only by name
+#endif
+
 Win32LayerOptions parse_win32_layer(const std::string& spec, std::string& error) {
     Win32LayerOptions o;
     error.clear();
@@ -14,7 +20,8 @@ Win32LayerOptions parse_win32_layer(const std::string& spec, std::string& error)
         while (!name.empty() && name.front() == ' ') name.erase(name.begin());
         while (!name.empty() && name.back() == ' ') name.pop_back();
         if (name.empty() || name == "none") continue;
-        if (name == "all") { o.time = o.text = o.process = o.sync = o.memory = o.files = o.dinput = o.loader = true; o.registry = o.traps = o.resources = o.user32 = o.system = !kRealOs; }
+        if (name == "all") { o.time = o.text = o.process = o.sync = o.memory = o.files = o.dinput = o.loader = true; o.registry = o.traps = o.resources = o.user32 = o.system = !kRealOs; o.d3d9 = !kRealOs && kD3D9Group; }
+        else if (name == "d3d9") o.d3d9 = true;
         else if (name == "time") o.time = true;
         else if (name == "text") o.text = true;
         else if (name == "process") o.process = true;
@@ -542,7 +549,7 @@ void Win32Facade::Impl::install_files() {
     // Drive queries, resources and file mappings stay with the real system (they describe the host, or the real image).
 }
 
-Win32Facade::Impl::~Impl() { windows.reset(); }   // before the input it listens to (a member declared later) goes
+Win32Facade::Impl::~Impl() { d3d9_group.reset(); windows.reset(); }   // the device before the windows; the windows before the input they listen to (a member declared later) goes
 
 Win32Facade::Win32Facade(GuestPlatform& platform, const Win32LayerOptions& options, nfsu2::platform::Input* input) : impl_(std::make_unique<Impl>(platform, options)) {
     impl_->input_override = input;
@@ -558,6 +565,13 @@ Win32Facade::Win32Facade(GuestPlatform& platform, const Win32LayerOptions& optio
     if (options.resources) impl_->install_resources();
     if (options.system) impl_->install_system();
     if (options.user32) impl_->install_user32();
+    if (options.d3d9) {
+#ifdef NFSU2_FACADE_D3D9
+        impl_->install_d3d9();
+#else
+        throw Fault("the d3d9 group is not part of this build (it needs the layer nue_d3d9 and SPIRV-Cross: git submodule update --init --recursive third_party/bgfx.cmake)");
+#endif
+    }
     if (options.traps) impl_->install_traps();
 }
 Win32Facade::~Win32Facade() = default;
