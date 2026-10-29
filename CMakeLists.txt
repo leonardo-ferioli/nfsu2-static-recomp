@@ -40,7 +40,7 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 4)
     set(PLATFORM_SOURCE native32.cpp native32_reservation.cpp speed.cpp dynamic_code.cpp platform/services.cpp platform/win32/win32_services.cpp platform/null/null_platform.cpp nue_d3d9/src/d3d9_trace.cpp nue_d3d9/src/null_gpu.cpp d3d9_recorder.cpp win32_facade.cpp win32_facade_dinput.cpp win32_facade_extra.cpp win32_facade_loader.cpp win32_facade_system.cpp win32_facade_window.cpp platform/audio/dsound_install.cpp)
     add_link_options(-Wl,/BASE:0x00400000 -Wl,/DYNAMICBASE:NO -Wl,/LARGEADDRESSAWARE:NO -Wl,/SAFESEH:NO "-Wl,/sectionlayout:@${CMAKE_CURRENT_SOURCE_DIR}/native32_sections.txt")
 else()
-    set(PLATFORM_SOURCE platform.cpp platform64.cpp platform64_seh.cpp guest_arena.cpp win32_facade.cpp win32_facade_dinput.cpp win32_facade_extra.cpp win32_facade_loader.cpp win32_facade_system.cpp win32_facade_window.cpp platform/audio/dsound_install.cpp)   # the guest lives in vectors or, when an arena exists, in the arena; the Win32 facade serves both hosts
+    set(PLATFORM_SOURCE platform.cpp platform64.cpp platform64_seh.cpp speed.cpp guest_arena.cpp win32_facade.cpp win32_facade_dinput.cpp win32_facade_extra.cpp win32_facade_loader.cpp win32_facade_system.cpp win32_facade_window.cpp platform/audio/dsound_install.cpp)   # the guest lives in vectors or, when an arena exists, in the arena; the Win32 facade serves both hosts
 endif()
 add_library(nfsu2_raw STATIC runtime.cpp userops.cpp ${PLATFORM_SOURCE} generated/dispatch.cpp ${RAW_UNITS})
 if(TRUE)
@@ -188,6 +188,24 @@ if(WIN32)
     target_link_libraries(wasapi_smoke_test PRIVATE nfsu2_audio)
     add_test(NAME wasapi_smoke COMMAND wasapi_smoke_test)
 endif()
+# Fast backend on the 64-bit host (docs/PORTABLE_BACKEND.md): the pages generated with `python tools/generate_fast.py --host x86_64 --no-mods --out generated_fast64`
+# (not tracked: 400 MB of source; the mods still need the platform interface of GuestPlatform), run by Platform64 over the guest arena.
+if(CMAKE_SIZEOF_VOID_P EQUAL 8 AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/generated_fast64/dispatch.cpp")
+    file(GLOB FAST64_UNITS CONFIGURE_DEPENDS generated_fast64/page_*.cpp)
+    add_library(nfsu2_fast64 STATIC runtime.cpp userops.cpp ${PLATFORM_SOURCE} generated_fast64/dispatch.cpp generated_fast64/mods_tables.cpp ${FAST64_UNITS})
+    target_compile_definitions(nfsu2_fast64 PUBLIC NFSU2_FAST_BACKEND=1)
+    target_include_directories(nfsu2_fast64 PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
+    target_compile_options(nfsu2_fast64 PRIVATE "-O${RAW_OPT_LEVEL}" -g0 -fno-fast-math -fno-strict-aliasing -Wno-unused-label -ffunction-sections)
+    target_link_libraries(nfsu2_fast64 PUBLIC legacy_win32_host bcrypt user32 winmm shell32 advapi32 nfsu2_audio)
+    add_executable(speed_fast64 runner.cpp)
+    target_link_libraries(speed_fast64 PRIVATE nfsu2_fast64)
+    find_package(Python3 COMPONENTS Interpreter)
+    if(Python3_Interpreter_FOUND)
+        file(MAKE_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/logs")
+        add_test(NAME fast64_boot COMMAND ${Python3_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/tools/test_fast64_boot.py" $<TARGET_FILE:speed_raw> $<TARGET_FILE:speed_fast64> "${CMAKE_CURRENT_SOURCE_DIR}/export" "${GAME_DIR}")
+    endif()
+endif()
+
 # The guest memory model: identity on the 32-bit host, the arena on a 64-bit host (docs/MEMORY_MODEL_64.md).
 add_executable(guest_arena_tests guest_arena.cpp guest_arena_tests.cpp)
 add_test(NAME guest_arena COMMAND guest_arena_tests)

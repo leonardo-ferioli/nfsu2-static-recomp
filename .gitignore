@@ -58,3 +58,5 @@ build_nue32/
 build_nue64/
 build32r/
 nue_test_game/
+
+generated_fast64/
