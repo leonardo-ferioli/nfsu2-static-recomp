@@ -10,6 +10,7 @@
 #pragma once
 #include "win32_facade.hpp"
 #include "nue/gfx.h"
+#include "nue_legacy/d3d9_gfx.hpp"   // GfxDevice complete: a host that wraps or holds the hook's result destroys it
 
 namespace nfsu2raw {
 
