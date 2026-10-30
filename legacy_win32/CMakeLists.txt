@@ -42,7 +42,7 @@ if(WIN32)
     target_link_libraries(legacy_win32_tests PRIVATE legacy_win32_host advapi32 user32 winmm dinput8 dxguid)   # the differential tests compare with the real Windows API
 endif()
 
-set(LEGACY_WIN32_TEST_MODULES handles time text registry sync files window window_platform window_drives_platform dinput process memory arena_memory seh guest_threads guest_timers virtual_api event_input resources)
+set(LEGACY_WIN32_TEST_MODULES handles time text registry sync files window window_platform window_drives_platform window_desktop_parent dinput process memory arena_memory seh guest_threads guest_timers virtual_api event_input resources)
 if(WIN32)
     list(APPEND LEGACY_WIN32_TEST_MODULES time_windows text_codepages_windows text_classes_windows text_collation_windows text_locale_windows text_wsprintf_windows registry_windows sync_windows files_windows window_windows dinput_windows process_windows memory_windows)
 endif()

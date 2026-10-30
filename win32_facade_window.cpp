@@ -64,6 +64,14 @@ void Win32Facade::Impl::install_user32() {
     windows->attach_platform(window, input, display);
 
     auto fail_with = [](Cpu& c, uint32_t error) { set_error(c, error); return 0u; };
+    if (host_os::environment_set("NFSU2_NUE_WINDOW_TRACE")) {
+        for (const auto& d : display->list(false)) {
+            char text[200];
+            std::snprintf(text, sizeof text, "display %u%s: current %ux%u, desktop %ux%u, scale %.2f", d.id, d.primary ? " (primary)" : "", d.current.width, d.current.height, d.desktop_width, d.desktop_height, double(d.content_scale));
+            platform.log_line(std::string("user32: ") + text);
+        }
+        platform.log_line("user32: screen metrics " + std::to_string(windows->get_system_metrics(0)) + "x" + std::to_string(windows->get_system_metrics(1)));
+    }
     // NFSU2_NUE_WINDOW_TRACE=1: the game's calls that decide the platform window (create, show, style, position) with their arguments.
     static const bool trace = host_os::environment_set("NFSU2_NUE_WINDOW_TRACE");
     auto note = [this](const char* format, uint32_t a = 0, uint32_t b = 0, uint32_t c2 = 0, uint32_t d = 0, uint32_t e = 0, uint32_t f = 0) {
@@ -93,13 +101,14 @@ void Win32Facade::Impl::install_user32() {
         cp.parent = arg(c, 8); cp.menu = arg(c, 9); cp.instance = arg(c, 10); cp.param = arg(c, 11);
         auto r = windows->create_window(cp);
         if (trace) note("CreateWindowExA style 0x%x ex 0x%x at %d,%d size %dx%d", cp.style, cp.ex_style, uint32_t(cp.x), uint32_t(cp.y), uint32_t(cp.width), uint32_t(cp.height));
+        if (trace) note("  parent %x (the desktop window is %x)", cp.parent, windows->get_desktop_window());
         if (!r) { set_error(c, r.error); return 0u; }
         return r.value;
     });
     on("DestroyWindow", 1, [this](Cpu& c) -> uint32_t { auto r = windows->destroy_window(arg(c, 0)); if (!r) { set_error(c, r.error); return 0u; } return 1u; });
     on("ShowWindow", 2, [this, note](Cpu& c) -> uint32_t {
         auto r = windows->show_window(arg(c, 0), arg(c, 1));
-        if (trace) { auto rect = windows->get_window_rect(arg(c, 0)); auto style = windows->get_window_long(arg(c, 0), -16); note("ShowWindow %x command %u: style 0x%x rect %d,%d-%d,%d", arg(c, 0), arg(c, 1), uint32_t(style.value), uint32_t(rect.value.left), uint32_t(rect.value.top), uint32_t(rect.value.right)); }
+        if (trace) { auto rect = windows->get_window_rect(arg(c, 0)); auto style = windows->get_window_long(arg(c, 0), -16); note("ShowWindow %x command %u: style 0x%x rect left %d top %d right %d", arg(c, 0), arg(c, 1), uint32_t(style.value), uint32_t(rect.value.left), uint32_t(rect.value.top), uint32_t(rect.value.right)); }
         if (!r) { set_error(c, r.error); return 0u; }
         return r.value ? 1u : 0u;
     });

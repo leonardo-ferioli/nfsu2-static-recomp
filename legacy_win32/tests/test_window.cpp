@@ -172,7 +172,24 @@ static void test_window_drives_platform() {
     f.windows.create_window(dialog);
     CHECK_EQ(native.mode_changes, changes);
 }
+
+// A program passes GetDesktopWindow() as the parent of its main window: that is still a top-level window.
+static void test_window_desktop_parent() {
+    null::NullInput input;
+    null::NullWindow native;
+    null::NullDisplay display(1280, 720);
+    Fixture f;
+    f.windows.attach_platform(&native, &input, &display);
+    WndClass cls; cls.name = "G"; cls.proc = 2;
+    f.windows.register_class(cls);
+    CreateParams p; p.class_name = "G"; p.style = ws::popup | ws::visible; p.width = 1280; p.height = 720; p.parent = f.windows.get_desktop_window();
+    auto w = f.windows.create_window(p);
+    CHECK(w.value != 0);
+    CHECK(native.mode == nfsu2::platform::WindowMode::borderless && native.mode_changes == 1);
+    CHECK(f.windows.get_focus() == w.value && f.windows.get_foreground_window() == w.value);          // and it is activated like one
+}
 REGISTER_TEST("window_drives_platform", test_window_drives_platform);
+REGISTER_TEST("window_desktop_parent", test_window_desktop_parent);
 
 #if defined(_WIN32)
 namespace {

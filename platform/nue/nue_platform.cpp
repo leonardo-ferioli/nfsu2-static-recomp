@@ -217,6 +217,8 @@ public:
     Status set_mode(WindowMode mode) override {
         if (!window_) return Status::invalid_argument;
         const nue_window_mode wanted = mode == WindowMode::windowed ? NUE_WINDOW_MODE_WINDOWED : mode == WindowMode::borderless ? NUE_WINDOW_MODE_BORDERLESS : NUE_WINDOW_MODE_EXCLUSIVE;
+        if (trace_window()) std::fprintf(stderr, "nue window: set_mode asked %d, NUE has %d", int(wanted), int(nue_window_get_mode(window_)));
+        if (trace_window()) std::fputc(10, stderr);
         if (nue_window_get_mode(window_) == wanted) return Status::ok;
         const nue_result r = nue_window_set_mode(window_, wanted, nullptr);
         if (trace_window()) std::fprintf(stderr, "nue window: set_mode %s -> %d", mode == WindowMode::windowed ? "windowed" : mode == WindowMode::borderless ? "borderless" : "fullscreen", int(r));

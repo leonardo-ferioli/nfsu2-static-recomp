@@ -159,13 +159,15 @@ struct WindowSystem::Impl {
 
     // The program's main window is the platform's window: its style and rectangle decide the platform window's mode, frame, size and position. The main window is
     // the first top-level window that becomes visible (until it is destroyed); a window that covers the display without a frame is the borderless full screen.
-    Handle primary = 0;
+    Handle primary = 0, desktop = 0;
+    // A window whose parent is the desktop window (or nothing) is a top-level window: GetDesktopWindow is what programs pass as the parent of their main window.
+    bool top_level(const WindowObject& w) const { return (w.parent == 0 || w.parent == desktop) && !(w.style & ws::child); }
     struct Applied { int mode = -1; uint32_t style = 0; Rect32 rect; bool valid = false; } applied;
     void drive_platform(Handle h, WindowObject& w);
 };
 
 void WindowSystem::Impl::drive_platform(Handle h, WindowObject& w) {
-    if (!window || w.parent || (w.style & ws::child) || !w.visible || (w.ex_style & ws_ex::toolwindow)) return;
+    if (!window || !top_level(w) || !w.visible || (w.ex_style & ws_ex::toolwindow)) return;
     if (!primary || !window_of(primary)) primary = h;
     if (primary != h) return;
     const int32_t width = w.rect.right - w.rect.left, height = w.rect.bottom - w.rect.top;
@@ -208,6 +210,7 @@ WindowSystem::WindowSystem(platform::Clock& clock, platform::Threads& threads, H
     desk->rect = {0, 0, impl_->screen_w, impl_->screen_h};
     desk->title = "Desktop";
     desktop_ = handles.add(desk);
+    impl_->desktop = desktop_;
 }
 
 WindowSystem::~WindowSystem() {
@@ -219,7 +222,14 @@ void WindowSystem::set_wndproc_invoker(WndProcInvoker invoker) { impl_->invoker 
 void WindowSystem::attach_platform(platform::Window* window, platform::Input* input, platform::Display* display) {
     impl_->window = window;
     impl_->display = display;
-    if (display) { auto all = display->list(false); for (auto& d : all) if (d.primary) { impl_->screen_w = int32_t(d.current.width); impl_->screen_h = int32_t(d.current.height); } }
+    // The screen is the display's area of the desktop (what window coordinates are in): equal to the current mode's size unless the system scales (a 150% desktop).
+    if (display) {
+        auto all = display->list(false);
+        for (auto& d : all) if (d.primary) {
+            impl_->screen_w = int32_t(d.desktop_width ? d.desktop_width : d.current.width);
+            impl_->screen_h = int32_t(d.desktop_height ? d.desktop_height : d.current.height);
+        }
+    }
     if (auto desk = impl_->window_of(desktop_)) desk->rect = {0, 0, impl_->screen_w, impl_->screen_h};
     impl_->input = input;
     if (input) {
@@ -320,7 +330,7 @@ Ret<bool> WindowSystem::show_window(Handle h, uint32_t command) {
     }
     w->minimized = command == sw::showminimized || command == sw::minimize;
     // A top-level window that becomes visible takes the activation and the focus when nothing else has them.
-    if (show && command != sw::shownoactivate && w->parent == 0 && !(w->style & ws::child)) {
+    if (show && command != sw::shownoactivate && impl_->top_level(*w)) {
         const Handle previous_active = impl_->active;
         if (previous_active != h) {
             impl_->active = h;
