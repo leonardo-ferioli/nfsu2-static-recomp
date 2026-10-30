@@ -2,6 +2,8 @@
 // model of legacy_win32 (legacy_win32/include/legacy_win32/dinput.hpp). A COM object is {vtable pointer, id}; the vtable is an array of call tokens
 // (NativePlatform::add_method_token), so a guest `call [vtable + slot]` lands in a handler below that decodes the stdcall arguments and the guest structures.
 #include "win32_facade_internal.hpp"
+#include "host_os.hpp"
+#include <cstdio>
 #ifdef NFSU2_FACADE_REAL_OS
 #include "host/windows_input.hpp"
 #endif
@@ -105,6 +107,10 @@ void write_action_results(uint32_t address, const ldi::ActionFormat& f) {
 }  // namespace
 
 void Win32Facade::Impl::install_dinput() {
+    // NFSU2_DINPUT_TRACE=1: the game's DirectInput calls and their results in the log (device creation, acquire, cooperative level, and the device state
+    // every time it changes), to see where input stops.
+    static const bool trace = host_os::environment_set("NFSU2_DINPUT_TRACE");
+    auto note = [this](const std::string& text) { if (trace) platform.log_line("dinput: " + text); };
     dinput = std::make_unique<DInputState>();
     plat::Input* input = input_override;
 #ifdef NFSU2_FACADE_REAL_OS
@@ -179,6 +185,11 @@ void Win32Facade::Impl::install_dinput() {
         if (!out) return E_POINTER_;
         const ldi::Hresult r = self->di->create_device(read_guid(arg(c, 1)), device);
         *ptr<uint32_t>(out) = 0;
+        if (trace) {
+            const uint32_t* g = ptr<const uint32_t>(arg(c, 1));
+            char text[96]; std::snprintf(text, sizeof text, "CreateDevice guid %08x-%08x-%08x-%08x -> 0x%08x", g[0], g[1], g[2], g[3], unsigned(r));
+            self->platform.log_line(std::string("dinput: ") + text);
+        }
         if (r != ldi::hr::ok) return r;
         *ptr<uint32_t>(out) = make_object(true, device);
         return ldi::hr::ok;
@@ -282,13 +293,32 @@ void Win32Facade::Impl::install_dinput() {
         if (h[0] != 20) return ldi::hr::invalid_param;
         return d->set_property_dword(property, h[3], h[2], ptr<const uint32_t>(header)[4]);
     }));
-    vt.push_back(token(1, [self, device_of](Cpu& c) -> uint32_t { self->di->pump(); auto d = device_of(arg(c, 0)); return d ? d->acquire() : ldi::hr::invalid_param; }));      // Acquire
+    vt.push_back(token(1, [self, device_of, note](Cpu& c) -> uint32_t {                                         // Acquire
+        self->di->pump();
+        auto d = device_of(arg(c, 0));
+        const uint32_t r = d ? d->acquire() : ldi::hr::invalid_param;
+        if (trace) { static uint32_t last = 0xffffffffu; if (r != last) { last = r; char t[64]; std::snprintf(t, sizeof t, "Acquire %08x -> 0x%08x", arg(c, 0), r); note(t); } }
+        return r;
+    }));
     vt.push_back(token(1, [device_of](Cpu& c) -> uint32_t { auto d = device_of(arg(c, 0)); return d ? d->unacquire() : ldi::hr::invalid_param; }));                       // Unacquire
-    vt.push_back(token(3, [self, device_of](Cpu& c) -> uint32_t {                                              // GetDeviceState(this, cb, data)
+    vt.push_back(token(3, [self, device_of, note](Cpu& c) -> uint32_t {                                        // GetDeviceState(this, cb, data)
         self->di->pump();
         auto d = device_of(arg(c, 0));
         if (!d) return ldi::hr::invalid_param;
-        return d->get_device_state(lw::MutableBytes(ptr<std::byte>(arg(c, 2)), arg(c, 1)));
+        const uint32_t r = d->get_device_state(lw::MutableBytes(ptr<std::byte>(arg(c, 2)), arg(c, 1)));
+        if (trace) {   // a line whenever the result or the number of non-zero bytes changes (a key pressed shows as a change)
+            static std::map<uint32_t, std::pair<uint32_t, uint32_t>> last;
+            uint32_t nonzero = 0;
+            const uint8_t* bytes = ptr<const uint8_t>(arg(c, 2));
+            for (uint32_t i = 0; r == ldi::hr::ok && i < arg(c, 1); ++i) nonzero += bytes[i] != 0;
+            auto& seen = last[arg(c, 0)];
+            if (seen != std::make_pair(r, nonzero)) {
+                seen = {r, nonzero};
+                char t[96]; std::snprintf(t, sizeof t, "GetDeviceState %08x size %u -> 0x%08x, %u bytes not zero", arg(c, 0), arg(c, 1), r, nonzero);
+                note(t);
+            }
+        }
+        return r;
     }));
     vt.push_back(token(5, [self, device_of](Cpu& c) -> uint32_t {                                              // GetDeviceData(this, cbObjectData, rgdod, pdwInOut, dwFlags)
         self->di->pump();
@@ -315,7 +345,12 @@ void Win32Facade::Impl::install_dinput() {
         return d->set_data_format(read_data_format(arg(c, 1)));
     }));
     vt.push_back(token(2, [](Cpu&) -> uint32_t { return ldi::hr::ok; }));                                      // SetEventNotification: accepted; the game polls
-    vt.push_back(token(3, [device_of](Cpu& c) -> uint32_t { auto d = device_of(arg(c, 0)); return d ? d->set_cooperative_level(arg(c, 1), arg(c, 2)) : ldi::hr::invalid_param; }));   // SetCooperativeLevel
+    vt.push_back(token(3, [device_of, note](Cpu& c) -> uint32_t {                                               // SetCooperativeLevel
+        auto d = device_of(arg(c, 0));
+        const uint32_t r = d ? d->set_cooperative_level(arg(c, 1), arg(c, 2)) : ldi::hr::invalid_param;
+        if (trace) { char t[96]; std::snprintf(t, sizeof t, "SetCooperativeLevel %08x window %08x flags 0x%x -> 0x%08x", arg(c, 0), arg(c, 1), arg(c, 2), r); note(t); }
+        return r;
+    }));
     vt.push_back(token(4, [device_of](Cpu& c) -> uint32_t {                                                    // GetObjectInfo(this, pdidoi, dwObj, dwHow)
         auto d = device_of(arg(c, 0));
         if (!d || !arg(c, 1)) return ldi::hr::invalid_param;

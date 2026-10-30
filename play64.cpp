@@ -53,6 +53,8 @@ int main(int argc, char** argv) {
     {
         // The window, its displays and input: NUE's, through the platform API the Win32 layer and the mods listen to.
         auto services = nfsu2::platform::nue_backend::make_services();
+        // The window's mode and size are the game's to choose (its window and its Direct3D device); the Win32 layer is to pass them on to this window (pending:
+        // platform-api / NUE). Until then it starts as a 1280x720 window.
         if (services.window->create("Need for Speed Underground 2", 1280, 720, nfsu2::platform::WindowMode::windowed, 0) != nfsu2::platform::Status::ok) {
             std::cerr << "the NUE window could not be created: " << nue_get_last_error_message() << "\n";
             nue_shutdown();
