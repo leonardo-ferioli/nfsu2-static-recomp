@@ -14,7 +14,7 @@ endif()
 # Audio layer (docs/NUE_HANDOVER_DSOUND.md): DirectSound semantics (Level A), spatial renderers, sinks, guest facade. Portable C++; the only
 # Windows file is the WASAPI sink. Builds in both the 32-bit and the 64-bit configuration.
 set(AUDIO_SOURCES platform/audio/ds_device.cpp platform/audio/spatial_renderers.cpp platform/audio/reverb.cpp platform/audio/null_sink.cpp
-    platform/audio/audio_engine.cpp platform/audio/dsound_facade.cpp)
+    platform/audio/audio_engine.cpp platform/audio/dsound_facade.cpp platform/audio/paced_null_sink.cpp platform/audio/host_sink.cpp)
 if(WIN32)
     list(APPEND AUDIO_SOURCES platform/audio/win32/wasapi_sink.cpp platform/audio/port_guest_memory.cpp)
 endif()
@@ -250,6 +250,26 @@ if(WIN32)
     target_link_libraries(wasapi_smoke_test PRIVATE nfsu2_audio)
     add_test(NAME wasapi_smoke COMMAND wasapi_smoke_test)
 endif()
+# The host's choice of output and the paced null sink (no sound card, no NUE).
+add_executable(host_sink_tests platform/audio/host_sink_tests.cpp)
+target_link_libraries(host_sink_tests PRIVATE nfsu2_audio)
+add_test(NAME host_sink COMMAND host_sink_tests)
+if(NFSU2_HAVE_NUE)
+    # The 64-bit host's real output: the sink over NUE's audio device (include/nue/audio.h), registered with the host selection. Own library so that the programs
+    # that do not link the engine do not pull it in. Its test runs on NUE's null backend (deterministic clock, no sound card).
+    add_library(nfsu2_audio_nue STATIC platform/audio/nue/nue_sink.cpp)
+    target_link_libraries(nfsu2_audio_nue PUBLIC nfsu2_audio nue::nue)
+    add_executable(nue_sink_tests platform/audio/nue/nue_sink_tests.cpp)
+    target_link_libraries(nue_sink_tests PRIVATE nfsu2_audio_nue)
+    add_test(NAME nue_sink COMMAND nue_sink_tests)
+    # The same chain on the real default device through NUE's SDL3 backend (silence; `--tone` plays a quiet tone). Skips itself without an output device.
+    add_executable(nue_sink_smoke_test platform/audio/nue/nue_sink_smoke_test.cpp)
+    target_link_libraries(nue_sink_smoke_test PRIVATE nfsu2_audio_nue)
+    add_test(NAME nue_sink_smoke COMMAND nue_sink_smoke_test)
+    # The runner's --boot64 picks its output with NFSU2_BOOT64_AUDIO (null by default): nue/auto need this library.
+    target_link_libraries(speed_raw PRIVATE nfsu2_audio_nue)
+    target_compile_definitions(speed_raw PRIVATE NFSU2_RUNNER_AUDIO_NUE=1)
+endif()
 # Fast backend on the 64-bit host (docs/PORTABLE_BACKEND.md): the pages generated with `python tools/generate_fast.py --host x86_64 --no-mods --out generated_fast64`
 # (not tracked: 400 MB of source; the mods still need the platform interface of GuestPlatform), run by Platform64 over the guest arena.
 if(CMAKE_SIZEOF_VOID_P EQUAL 8 AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/generated_fast64/dispatch.cpp")
@@ -266,6 +286,10 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 8 AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/generated
     add_executable(speed_fast64 runner.cpp)
     target_link_libraries(speed_fast64 PRIVATE nfsu2_fast64)
     target_compile_definitions(speed_fast64 PRIVATE NFSU2_HAS_MODS=1)
+    if(NFSU2_HAVE_NUE)
+        target_link_libraries(speed_fast64 PRIVATE nfsu2_audio_nue)
+        target_compile_definitions(speed_fast64 PRIVATE NFSU2_RUNNER_AUDIO_NUE=1)
+    endif()
     find_package(Python3 COMPONENTS Interpreter)
     if(Python3_Interpreter_FOUND)
         file(MAKE_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/logs")
