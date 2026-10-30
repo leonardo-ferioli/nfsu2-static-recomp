@@ -114,7 +114,10 @@ public:
     int32_t dispatch_message(const Msg&);                         // runs the window's procedure
     int32_t send_message(Handle hwnd, uint32_t message, uint32_t wparam, int32_t lparam);   // direct call on the owning thread's procedure
     int32_t def_window_proc(Handle hwnd, uint32_t message, uint32_t wparam, int32_t lparam);
-    void pump_platform();                                         // turns pending platform events into messages (called by get/peek)
+    void pump_platform();                                         // pumps the platform input and turns pending platform events into messages (called by get/peek)
+    // The program's top-level window drives the platform window (mode, frame, size, position) whenever it is shown, moved, resized or restyled; this applies it again
+    // (after something else, like a full-screen Direct3D device, changed the platform window).
+    void reapply_platform_window();
 
     // ---- cursor and mouse
     int32_t show_cursor(bool show);                               // the new display counter

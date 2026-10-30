@@ -35,6 +35,9 @@ public:
     virtual Status adopt(NativeSurface existing) = 0;
     virtual bool   adopted() = 0;
     virtual void   destroy() = 0;
+    // Changes the mode of an existing window: windowed (the size and position it had), borderless (covers its display at the desktop mode) or fullscreen. The Win32 layer
+    // calls it when the game's top-level window covers the display or leaves it. A platform that cannot change the mode of a window it did not create says unsupported.
+    virtual Status set_mode(WindowMode mode) { (void)mode; return Status::unsupported; }
     virtual NativeSurface native_surface() = 0;
 
     // Decoration and placement. Positions are desktop pixels.

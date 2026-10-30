@@ -2,6 +2,8 @@
 #include "nue/nue.h"
 #include <algorithm>
 #include <cmath>
+#include <cstdio>
+#include <cstdlib>
 #include <cstring>
 #include <deque>
 #include <map>
@@ -27,6 +29,18 @@ Status status_from(nue_result r) {
     case NUE_ERR_DEVICE_LOST: return Status::device_lost;
     default: return Status::io_error;
     }
+}
+
+// NFSU2_NUE_INPUT_TRACE=1: every key event NUE delivers is written to stderr, to see whether a key press reaches the layer at all.
+bool trace_input() {
+    static const bool on = std::getenv("NFSU2_NUE_INPUT_TRACE") != nullptr;
+    return on;
+}
+
+// NFSU2_NUE_WINDOW_TRACE=1: what the Win32 layer asks of the NUE window (mode, frame, size) and what NUE answers, one line each.
+bool trace_window() {
+    static const bool on = std::getenv("NFSU2_NUE_WINDOW_TRACE") != nullptr;
+    return on;
 }
 
 // ------------------------------------------------------------------------------------------------------------------------------------ event hub
@@ -82,6 +96,8 @@ private:
         case NUE_EVENT_SURFACE_CREATED: window_event(EventKind::surface_ready); break;
         case NUE_EVENT_QUIT: case NUE_EVENT_APP_TERMINATING: window_event(EventKind::terminating); break;
         case NUE_EVENT_KEY_DOWN: case NUE_EVENT_KEY_UP:
+            if (trace_input()) std::fprintf(stderr, "nue input: key %s scancode %u repeat %u (window %u)", e.type == NUE_EVENT_KEY_DOWN ? "down" : "up", e.payload.key.scancode, unsigned(e.payload.key.repeat), e.window_id);
+            if (trace_input()) std::fputc(10, stderr);
             if (e.payload.key.repeat || e.payload.key.scancode >= kScancodeCount) break;               // a held key repeats on the keyboard, not in DirectInput
             input_event(InputEventKind::key, e.timestamp_ns, e.payload.key.scancode, e.type == NUE_EVENT_KEY_DOWN ? 1 : 0);
             break;
@@ -198,6 +214,15 @@ public:
         return Status::ok;
     }
     bool adopted() override { return window_ && adopted_; }
+    Status set_mode(WindowMode mode) override {
+        if (!window_) return Status::invalid_argument;
+        const nue_window_mode wanted = mode == WindowMode::windowed ? NUE_WINDOW_MODE_WINDOWED : mode == WindowMode::borderless ? NUE_WINDOW_MODE_BORDERLESS : NUE_WINDOW_MODE_EXCLUSIVE;
+        if (nue_window_get_mode(window_) == wanted) return Status::ok;
+        const nue_result r = nue_window_set_mode(window_, wanted, nullptr);
+        if (trace_window()) std::fprintf(stderr, "nue window: set_mode %s -> %d", mode == WindowMode::windowed ? "windowed" : mode == WindowMode::borderless ? "borderless" : "fullscreen", int(r));
+        if (trace_window()) std::fputc(10, stderr);
+        return status_from(r);        // NUE_OK_PENDING: the size change is reported by NUE_EVENT_WINDOW_PIXEL_SIZE_CHANGED
+    }
     nue_window handle() const { return window_; }
     void destroy() override {
         if (!window_) return;
@@ -225,6 +250,8 @@ public:
 
     void set_frame(FrameStyle frame) override {
         if (!window_) return;
+        if (trace_window()) std::fprintf(stderr, "nue window: frame %s%s", frame.borderless ? "borderless" : "framed", frame.resizable ? " resizable" : "");
+        if (trace_window()) std::fputc(10, stderr);
         nue_window_set_bordered(window_, frame.borderless ? NUE_FALSE : NUE_TRUE);
         nue_window_set_resizable(window_, !frame.borderless && frame.resizable ? NUE_TRUE : NUE_FALSE);
     }
@@ -233,6 +260,8 @@ public:
     // rectangle placed on the desktop (exact for borderless windows, which is what the game's window modes use).
     void place_outer(int32_t x, int32_t y, int32_t width, int32_t height) override {
         if (!window_) return;
+        if (trace_window()) std::fprintf(stderr, "nue window: place %d,%d %dx%d", x, y, width, height);
+        if (trace_window()) std::fputc(10, stderr);
         nue_window_set_size(window_, width, height);
         nue_window_set_position(window_, x, y);
     }

@@ -334,6 +334,16 @@ struct D3D9Group {
     }
 
     // D3DPRESENT_PARAMETERS: width, height, format, count, multisample, quality, swap effect, window, windowed, auto depth, depth format, flags, refresh, interval.
+    // A full-screen device is a full-screen platform window; a windowed one leaves the window to the user32 group (the game's top-level window decides its mode).
+    bool fullscreen_applied = false;
+    void apply_window_mode(bool windowed) {
+        if (!impl.window) return;
+        if (!windowed) { impl.window->set_mode(nfsu2::platform::WindowMode::fullscreen); fullscreen_applied = true; }
+        else if (fullscreen_applied) {
+            fullscreen_applied = false;
+            if (impl.windows) impl.windows->reapply_platform_window(); else impl.window->set_mode(nfsu2::platform::WindowMode::windowed);
+        }
+    }
     d9::DeviceParams params_from(uint32_t* pp) {
         uint32_t w = 0, h = 0;
         window_size(pp[7] ? pp[7] : (dev ? dev->window : 0), w, h);
@@ -734,6 +744,7 @@ void D3D9Group::install() {
             return kNotAvailable;
         }
         std::memcpy(d.pp, pp, sizeof pp);
+        g->apply_window_mode(pp[8] != 0);
         const uint32_t creation[4] = {arg(c, 1), arg(c, 2), arg(c, 3), arg(c, 4)};
         std::memcpy(d.creation, creation, sizeof creation);
         Object& device = g->make(Kind::device);
@@ -786,6 +797,7 @@ void D3D9Group::install() {
         const nue::Status status = d->layer->reset(params);
         if (status != nue::Status::ok) return to_hresult(status);
         std::memcpy(d->pp, pp, sizeof pp);
+        g->apply_window_mode(pp[8] != 0);
         if (pp[7]) d->window = pp[7];
         g->reset_shadows(*d, pp[9] != 0);
         g->make_default_targets(*d);
