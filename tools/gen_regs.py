@@ -374,7 +374,7 @@ def emit_page_regs(GF, RegEmitter, prog, page, insns, live_out):
         body = "".join(em.instruction(i) for i in fn)
         referenced |= em.referenced
         pieces.append(emit_function(GF, prog, start, fn, written, dyn, body))
-    head = [(GF.x87_defines() + '#include "fast_regs.hpp"').strip(), "namespace nfsu2raw {", "#define EXIT(T) do{nx=u32(T);goto XIT;}while(0)"]
+    head = [(GF.x87_defines() + '#include "fast_regs.hpp"' + ('\n#include "fast_arena.hpp"' if GF.HOST != "x86_32" else "")).strip(), "namespace nfsu2raw {","#define EXIT(T) do{nx=u32(T);goto XIT;}while(0)"]
     head.append("PN u32 ent_dispatch(%s);" % declare_args())
     head.append("PN u32 ent_native(%s);" % declare_args())
     head.append("PN u32 ent_missing(%s);" % declare_args())   # the switch default, a tail call (see dispatch.cpp)
@@ -396,7 +396,8 @@ def emit_page_regs(GF, RegEmitter, prog, page, insns, live_out):
 
 def emit_function(GF, prog, start, fn, written, dyn, body):
     out = [f"PN u32 blk_{start:x}({declare_args()}){{"]
-    out.append("u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;")
+    # Arena hosts: the base of guest memory is read once per function (fast_arena.hpp).
+    out.append(("NFSU2_ARENA_LOCAL " if GF.HOST != "x86_32" else "") + "u8* const R=c.regs.data();u32 nx=0,fpc=0;const char* fm=nullptr;")
     out.append("alignas(4) u8 G[32];alignas(16) u8 F[32];")
     out.append("".join(f"w4(G+{4 * k},a{k});" for k in PASSED) + f"__builtin_memcpy(F,R+{F_LO},{F_HI - F_LO});")
     spill_flags = ""
