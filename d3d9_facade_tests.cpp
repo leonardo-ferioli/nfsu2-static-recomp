@@ -1,8 +1,14 @@
 // The Direct3D 9 group of the Win32 facade on Platform64, called the way translated code calls it: Direct3DCreate9 through its import token, then every
 // method through the token in the object's vtable, with stdcall words on a guest stack. The device runs on the null GPU (no window, no GPU).
-//     d3d9_facade_tests <export dir> <game dir>
+//     d3d9_facade_tests <export dir> <game dir> [--nue-gfx]
+// --nue-gfx (builds with NUE): the same calls, with the device from the host hook Win32LayerOptions::d3d9_device = NUE's Direct3D 9 layer on a nue_gfx context
+// (MANAGED, bgfx's no-op renderer: no window, no GPU), the path the 64-bit game takes into a NUE window.
 #include "platform64.hpp"
 #include "win32_facade.hpp"
+#if NFSU2_HAVE_NUE
+#include "nue/nue.h"
+#include "win32_facade_d3d9_nue.hpp"
+#endif
 #include <bit>
 #include <cstring>
 #include <iostream>
@@ -75,7 +81,8 @@ enum : unsigned { Decl_GetDeclaration = 4, Shader_GetFunction = 4 };
 
 int main(int argc, char** argv) {
     try {
-        if (argc < 3) throw Fault("d3d9_facade_tests <export dir> <game dir>");
+        if (argc < 3) throw Fault("d3d9_facade_tests <export dir> <game dir> [--nue-gfx]");
+        const bool nue_gfx_mode = argc > 3 && std::string(argv[3]) == "--nue-gfx";
         const char* error = nullptr;
         auto arena = nfsu2::guest::create_arena(nfsu2::guest::arena_config_from_environment(), &error);
         if (!arena) throw Fault(std::string("arena: ") + (error ? error : "?"));
@@ -84,6 +91,39 @@ int main(int argc, char** argv) {
         std::string bad;
         auto options = parse_win32_layer("all", bad);
         check(options.d3d9, "\"all\" includes the d3d9 group on this host");
+        int host_devices = 0;   // CreateDevice calls answered by the host hook
+#if NFSU2_HAVE_NUE
+        // The host's engine: nue_init and a MANAGED nue_gfx context on this thread (the guest's main thread), outliving the facade below.
+        struct Engine {
+            nue_gfx gfx = nullptr;
+            bool initialised = false;
+            ~Engine() { if (gfx) nue_gfx_destroy(gfx); if (initialised) nue_shutdown(); }
+        } engine;
+        if (nue_gfx_mode) {
+            nue_init_desc init;
+            NUE_STRUCT_INIT(&init);
+            init.api_version = NUE_API_VERSION;
+            init.app_name = "d3d9_facade_tests"; init.app_id = "nfsu2-d3d9-facade-tests"; init.org_name = "NUE";
+            init.flags = NUE_INIT_NO_CRASH_HANDLER | NUE_INIT_NO_LOG_FILE;
+            init.log_level = NUE_LOG_WARN;
+            if (!NUE_SUCCEEDED(nue_init(&init))) throw Fault(std::string("nue_init: ") + nue_get_last_error_message());
+            engine.initialised = true;
+            nue_gfx_desc gd;
+            NUE_STRUCT_INIT(&gd);
+            gd.window = nullptr;   // offscreen: only with the no-op renderer
+            gd.renderer = NUE_RENDERER_NOOP;
+            gd.max_texture_handles = 16384; gd.max_buffer_handles = 16384; gd.max_framebuffer_handles = 1024;
+            gd.transient_vertex_mb = 64; gd.transient_index_mb = 16;
+            if (nue_gfx_create(&gd, &engine.gfx) != NUE_OK || !engine.gfx) throw Fault(std::string("nue_gfx_create: ") + nue_get_last_error_message());
+            auto hook = d3d9_device_on_nue_gfx(engine.gfx);
+            options.d3d9_device = [hook, &host_devices](uint32_t hwnd, uint32_t w, uint32_t h, const nue::d3d9::LayerOptions& o, std::string& e) {
+                ++host_devices;
+                return hook(hwnd, w, h, o, e);
+            };
+        }
+#else
+        if (nue_gfx_mode) throw Fault("--nue-gfx needs a build with NUE (third_party/nue-engine)");
+#endif
         Win32Facade facade(p, options);
         Guest g{p, c, uint32_t(r<4>(c, 16))};
         auto in_arena = [](uint32_t a) { return a && nfsu2::guest::is_guest(nfsu2::guest::ptr<void>(a)); };
@@ -248,9 +288,11 @@ int main(int argc, char** argv) {
         check(g.com(d3d, Release, {}) == 0, "IDirect3D9 goes after its device");
         const uint32_t again = g.call("Direct3DCreate9", {32});
         check(g.com(again, D3D_CreateDevice, {0, 1, window, 0x40, pp, out}) == kOk && g.com(g.word(out), Release, {}) == 0 && g.com(again, Release, {}) == 0, "a new device after the first one is gone");
+        check(host_devices == (nue_gfx_mode ? 2 : 0), "every CreateDevice took its device from the host hook (--nue-gfx), none without it");
 
         if (failures) { std::cerr << failures << " check(s) failed\n"; return 1; }
-        std::cout << "PASS the Direct3D 9 group (guest COM objects over nue_d3d9 on the null GPU)\n";
+        std::cout << (nue_gfx_mode ? "PASS the Direct3D 9 group (guest COM objects over NUE's layer on the host's nue_gfx, no-op renderer)\n"
+                                   : "PASS the Direct3D 9 group (guest COM objects over nue_d3d9 on the null GPU)\n");
         return 0;
     } catch (const std::exception& e) {
         std::cerr << "FAIL: " << e.what() << '\n';

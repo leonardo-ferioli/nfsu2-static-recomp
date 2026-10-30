@@ -14,10 +14,18 @@
 // * One device at a time, on the game thread (the worker-thread mode of the dll is not part of this facade). Methods the dll does not support answer as it does
 //   (D3DERR_NOTAVAILABLE, logged once); a method nobody serves stops the run with its name.
 //
+// * The layer is the port's in-tree copy (nue_d3d9/) or, in builds with NUE (NFSU2_HAVE_NUE: third_party/nue-engine), NUE's (src/legacy/d3d9). With NUE the host can
+//   hand the facade the device for the game's CreateDevice (Win32LayerOptions::d3d9_device: NUE's layer on the host's nue_gfx, win32_facade_d3d9_nue.hpp); the
+//   game's calls then go through that device's Level A front, which follows nue_gfx's lost / suspended states. Without the hook: d3d9_gpu, or the null GPU.
+//
 // NFSU2_D3D9_TRACE=1 logs the first call of every method (what the game really uses).
 #include "win32_facade_internal.hpp"
 #include "layer/formats.hpp"
 #include "nue/d3d9_layer.hpp"
+#if NFSU2_HAVE_NUE
+#include "nue_legacy/d3d9_gfx.hpp"
+#include "win32_facade_d3d9_nue.hpp"
+#endif
 #include "nue/null_gpu.hpp"
 #include "nue/shader/d3d9_shader.hpp"
 #include "platform/display.hpp"
@@ -35,7 +43,7 @@ namespace {
 #include "win32_facade_d3d9_caps.inc"
 
 // HRESULTs and constants of d3d9.h (the facade does not include Windows headers).
-constexpr uint32_t kOk = 0, kInvalidCall = 0x8876086Cu, kNotAvailable = 0x8876086Au, kNotFound = 0x88760866u, kDeviceLost = 0x88760868u,
+constexpr uint32_t kOk = 0, kInvalidCall = 0x8876086Cu, kNotAvailable = 0x8876086Au, kNotFound = 0x88760866u, kDeviceLost = 0x88760868u, kDeviceNotReset = 0x88760869u,
                    kOutOfVideoMemory = 0x8876017Cu, kMoreData = 0x88760867u, kNoInterface = 0x80004002u, kPointer = 0x80004003u;
 constexpr uint32_t kFmtA8R8G8B8 = 21, kFmtX8R8G8B8 = 22, kFmtR5G6B5 = 23, kFmtX1R5G5B5 = 24, kFmtA1R5G5B5 = 25, kFmtA2R10G10B10 = 35, kFmtVertexData = 100;
 constexpr uint32_t kUsageRenderTarget = 1, kUsageDepthStencil = 2, kUsageQueryVertexTexture = 0x00100000;
@@ -114,8 +122,21 @@ struct Object {
 
 struct DeviceState {
     uint32_t address = 0, d3d = 0, window = 0;
-    std::unique_ptr<nue::gpu::Gpu> gpu;
-    std::unique_ptr<d9::Layer> layer;
+    std::unique_ptr<nue::gpu::Gpu> gpu;                    // the GPU of a layer made here (d3d9_gpu's, or the null GPU); none with a host device
+    std::unique_ptr<d9::Layer> owned_layer;                // the layer made here over `gpu`
+#if NFSU2_HAVE_NUE
+    std::unique_ptr<d9::GfxDevice> host_device;            // Win32LayerOptions::d3d9_device: NUE's layer on the host's nue_gfx
+#endif
+    d9::Device* layer = nullptr;                           // Level A, where the game's calls go: the layer made here, or the host device's front
+    d9::Layer* core = nullptr;                             // the layer itself (its report, flush)
+    void release_layer() {                                 // the layer before the GPU it draws with
+        layer = nullptr; core = nullptr;
+#if NFSU2_HAVE_NUE
+        host_device.reset();
+#endif
+        owned_layer.reset();
+        gpu.reset();
+    }
     uint32_t creation[4] = {};                             // D3DDEVICE_CREATION_PARAMETERS
     uint32_t pp[14] = {};                                  // D3DPRESENT_PARAMETERS as the device runs with them
     uint32_t back_buffer = 0, auto_depth = 0;              // surface objects the device holds a reference on
@@ -172,7 +193,7 @@ struct D3D9Group {
     void guest_free(uint32_t a) { if (auto* space = nfsu2::guest::current_address_space(); a && space) space->free(a); }   // never throws (destructors use it)
 
     // ---- objects
-    d9::Layer* layer() { return dev ? dev->layer.get() : nullptr; }
+    d9::Device* layer() { return dev ? dev->layer : nullptr; }
     Object* find(uint32_t address) { auto it = objects.find(address); return it == objects.end() ? nullptr : it->second.get(); }
     Object* find(uint32_t address, Kind k) { Object* o = find(address); return o && o->kind == k ? o : nullptr; }
     Object* texture_of(uint32_t address) { Object* o = find(address); return o && (o->kind == Kind::texture || o->kind == Kind::cube_texture) ? o : nullptr; }
@@ -211,7 +232,7 @@ struct D3D9Group {
         if (it == objects.end()) return;
         std::unique_ptr<Object> o = std::move(it->second);
         objects.erase(it);
-        d9::Layer* L = layer();
+        d9::Device* L = layer();
         switch (o->kind) {
         case Kind::texture: case Kind::cube_texture:
             for (uint32_t s : o->level_surfaces) {
@@ -249,11 +270,10 @@ struct D3D9Group {
         for (auto& r : d.render_targets) bind(r, 0);
         bind(d.indices, 0); bind(d.depth_stencil, 0); bind(d.declaration, 0); bind(d.vertex_shader, 0); bind(d.pixel_shader, 0);
         bind(d.back_buffer, 0); bind(d.auto_depth, 0);
-        if (d.layer) { impl.platform.log_line("d3d9: device released; what the translator could not do:\n" + d.layer->report()); d.layer->flush(); }
+        if (d.core) { impl.platform.log_line("d3d9: device released; what the translator could not do:\n" + d.core->report()); d.core->flush(); }
         const uint32_t d3d = d.d3d;
         std::unique_ptr<DeviceState> gone = std::move(dev);   // objects the game still holds lose their layer from here on
-        gone->layer.reset();
-        gone->gpu.reset();
+        gone->release_layer();
         release(d3d);
     }
 
@@ -267,6 +287,9 @@ struct D3D9Group {
         case nue::Status::unsupported: return kNotAvailable;
         case nue::Status::out_of_memory: return kOutOfVideoMemory;
         case nue::Status::device_lost: return kDeviceLost;
+#if NFSU2_HAVE_NUE
+        case nue::Status::device_not_reset: return kDeviceNotReset;   // NUE's layer on nue_gfx: the device came back, the game must Reset
+#endif
         default: return kInvalidCall;
         }
     }
@@ -362,7 +385,7 @@ struct D3D9Group {
     }
 
     uint32_t present() {
-        d9::Layer* L = layer();
+        d9::Device* L = layer();
         if (!L) return kDeviceLost;
         if (dev->in_scene) { L->end_scene(); dev->in_scene = false; }
         return to_hresult(L->present());
@@ -370,7 +393,7 @@ struct D3D9Group {
 
     // ---- locks
     uint32_t lock_texture(Object& t, uint32_t level, uint32_t face, uint32_t locked_out, uint32_t rect_address, uint32_t flags) {
-        d9::Layer* L = layer();
+        d9::Device* L = layer();
         const uint32_t faces = t.kind == Kind::cube_texture ? 6 : 1;
         if (!L || !locked_out || level >= t.levels || face >= faces) return kInvalidCall;
         const uint32_t key = face * t.levels + level;
@@ -401,7 +424,7 @@ struct D3D9Group {
         return kOk;
     }
     uint32_t unlock_texture(Object& t, uint32_t level, uint32_t face) {
-        d9::Layer* L = layer();
+        d9::Device* L = layer();
         const uint32_t key = face * t.levels + level;
         auto it = t.texture_locks.find(key);
         if (!L || it == t.texture_locks.end()) return kInvalidCall;
@@ -421,7 +444,7 @@ struct D3D9Group {
         return kOk;
     }
     uint32_t unlock_buffer(Object& b) {
-        d9::Layer* L = layer();
+        d9::Device* L = layer();
         if (!L || b.buffer_locks.empty()) return kInvalidCall;
         const Object::BufferLock lock = b.buffer_locks.back();
         b.buffer_locks.pop_back();
@@ -578,7 +601,7 @@ void D3D9Group::install() {
     };
     // a texture's surface of (face, level), made once and kept by the texture
     auto level_surface = [g](Object& t, uint32_t face, uint32_t level, uint32_t out) -> uint32_t {
-        d9::Layer* L = g->layer();
+        d9::Device* L = g->layer();
         const uint32_t faces = t.kind == Kind::cube_texture ? 6 : 1;
         if (!L || !out || level >= t.levels || face >= faces) return kInvalidCall;
         uint32_t& slot = t.level_surfaces[size_t(face) * t.levels + level];
@@ -684,12 +707,24 @@ void D3D9Group::install() {
         uint32_t ww = 0, wh = 0;
         g->window_size(window, ww, wh);
         std::string error;
-        if (g->impl.options.d3d9_gpu) state->gpu = g->impl.options.d3d9_gpu(window, ww ? ww : 640, wh ? wh : 480, error);
-        else state->gpu = std::make_unique<nue::NullGpu>();
-        if (!state->gpu) { g->impl.platform.log_line("d3d9: CreateDevice failed: no GPU (" + error + ")"); return kNotAvailable; }
         d9::LayerOptions options;
         options.log = layer_log;
-        state->layer = d9::create_layer(*state->gpu, options);
+#if NFSU2_HAVE_NUE
+        if (g->impl.options.d3d9_device) {   // the host's device: NUE's layer on its nue_gfx (the game draws into the NUE window)
+            state->host_device = g->impl.options.d3d9_device(window, ww ? ww : 640, wh ? wh : 480, options, error);
+            if (!state->host_device) { g->impl.platform.log_line("d3d9: CreateDevice failed: the host gave no device (" + error + ")"); return kNotAvailable; }
+            state->layer = &state->host_device->device();
+            state->core = &state->host_device->layer();
+        } else
+#endif
+        {
+            if (g->impl.options.d3d9_gpu) state->gpu = g->impl.options.d3d9_gpu(window, ww ? ww : 640, wh ? wh : 480, error);
+            else state->gpu = std::make_unique<nue::NullGpu>();
+            if (!state->gpu) { g->impl.platform.log_line("d3d9: CreateDevice failed: no GPU (" + error + ")"); return kNotAvailable; }
+            state->owned_layer = d9::create_layer(*state->gpu, options);
+            if (!state->owned_layer) { g->impl.platform.log_line("d3d9: CreateDevice failed: no layer"); return kNotAvailable; }
+            state->layer = state->core = state->owned_layer.get();
+        }
         g->dev = std::move(state);
         DeviceState& d = *g->dev;
         const d9::DeviceParams params = g->params_from(pp);
@@ -719,7 +754,7 @@ void D3D9Group::install() {
 
     // ---- IDirect3DDevice9 (d3d9.h order)
     auto D = [g]() -> DeviceState* { return g->dev.get(); };
-    auto L = [g]() -> d9::Layer* { return g->layer(); };
+    auto L = [g]() -> d9::Device* { return g->layer(); };
     std::vector<uint32_t> dv;
     unknown(dv, Kind::device);
     method(dv, "Device::TestCooperativeLevel", 1, [L](Cpu&) -> uint32_t { auto* l = L(); return l ? to_hresult(l->test_cooperative_level()) : kDeviceLost; });
@@ -848,9 +883,10 @@ void D3D9Group::install() {
         if (!D() || !from || !to) return kInvalidCall;
         if (from->surface_kind != SurfaceKind::back_buffer) return g->unsupported("GetRenderTargetData of a surface other than the back buffer");
         if (to->surface_kind != SurfaceKind::system_memory) return kInvalidCall;
+        if (!D()->gpu) return g->unsupported("GetRenderTargetData on the host's nue_gfx device (no read-back through it yet)");
         uint32_t w = 0, h = 0;
         std::vector<std::byte> bgra;
-        D()->layer->flush();
+        D()->core->flush();
         if (D()->gpu->read_back(nue::gpu::backbuffer, w, h, bgra) != nue::Status::ok) return kNotAvailable;
         const uint32_t copy_w = std::min(w, to->width), copy_h = std::min(h, to->height);
         for (uint32_t y = 0; y < copy_h; ++y) std::memcpy(ptr<uint8_t>(to->memory) + size_t(y) * to->pitch, bgra.data() + size_t(y) * w * 4, size_t(copy_w) * 4);
@@ -1004,7 +1040,7 @@ void D3D9Group::install() {
     method(dv, "Device::CreateStateBlock", 3, [g, D](Cpu& c) -> uint32_t {   // captures the current state (all three types capture the same set; the game uses Begin/End)
         DeviceState* d = D();
         if (!d || !arg(c, 2) || d->recording) return kInvalidCall;
-        d9::Layer& l = *d->layer;
+        d9::Device& l = *d->layer;
         const d9::StateBlockId id = l.begin_state_block();
         for (uint32_t i = 0; i < 256; ++i) if (d->render_state[i] || i == 7) l.set_render_state(i, d->render_state[i]);
         for (uint32_t s = 0; s < 16; ++s) for (uint32_t t = 1; t < 14; ++t) l.set_sampler_state(s, t, d->sampler[s][t]);
@@ -1398,5 +1434,14 @@ void D3D9Group::install() {
         return o.address;
     });
 }
+
+#if NFSU2_HAVE_NUE
+decltype(Win32LayerOptions::d3d9_device) d3d9_device_on_nue_gfx(nue_gfx gfx) {
+    return [gfx](uint32_t, uint32_t, uint32_t, const d9::LayerOptions& options, std::string& error) -> std::unique_ptr<d9::GfxDevice> {
+        if (!gfx) { error = "no nue_gfx context"; return nullptr; }
+        return d9::create_gfx_device(gfx, options, error);   // MANAGED context made on this thread; the back buffer size comes with the game's Reset
+    };
+}
+#endif
 
 }  // namespace nfsu2raw

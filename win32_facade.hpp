@@ -17,6 +17,7 @@
 
 namespace nfsu2::platform { class Input; class Window; class Display; }
 namespace nue::gpu { class Gpu; }
+namespace nue::d3d9 { class GfxDevice; struct LayerOptions; }   // NUE's Direct3D 9 layer on a nue_gfx context (nue_legacy/d3d9_gfx.hpp)
 
 namespace nfsu2raw {
 
@@ -45,6 +46,11 @@ struct Win32LayerOptions {
     // (a token of the user32 group) whose client area is width x height; empty means the null GPU (draws nothing, for headless runs and tests).
     bool d3d9 = false;
     std::function<std::unique_ptr<nue::gpu::Gpu>(uint32_t hwnd, uint32_t width, uint32_t height, std::string& error)> d3d9_gpu;
+    // Builds with NUE (NFSU2_HAVE_NUE): the device of the game's CreateDevice comes from the host instead, normally NUE's Direct3D 9 layer on the host's nue_gfx
+    // (d3d9_device_on_nue_gfx, win32_facade_d3d9_nue.hpp). The layer then draws into the NUE window, follows nue_gfx's lost / suspended states (TestCooperativeLevel,
+    // Present, Reset) and Present goes through nue_gfx_present. It is called on the thread that runs the guest's main thread, the one that created the nue_gfx context,
+    // with the layer options the facade wants; it wins over d3d9_gpu. Empty: d3d9_gpu or the null GPU, as before.
+    std::function<std::unique_ptr<nue::d3d9::GfxDevice>(uint32_t hwnd, uint32_t width, uint32_t height, const nue::d3d9::LayerOptions& options, std::string& error)> d3d9_device;
     bool any() const { return time || text || process || sync || memory || files || dinput || loader || registry || traps || resources || user32 || system || d3d9; }
 };
 
