@@ -118,6 +118,9 @@ public:
     // The program's top-level window drives the platform window (mode, frame, size, position) whenever it is shown, moved, resized or restyled; this applies it again
     // (after something else, like a full-screen Direct3D device, changed the platform window).
     void reapply_platform_window();
+    // A line for every key message the platform's input turns into a message (target window, message, virtual key) and for input that finds no window to go to;
+    // off by default (empty). The host decides where the lines go.
+    void set_trace(std::function<void(const std::string&)> trace);
 
     // ---- cursor and mouse
     int32_t show_cursor(bool show);                               // the new display counter

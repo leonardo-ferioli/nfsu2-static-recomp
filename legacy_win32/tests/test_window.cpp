@@ -101,6 +101,8 @@ static void test_window_platform() {
     null::NullDisplay display(1280, 720);
     Fixture f;
     f.windows.attach_platform(&native, &input, &display);
+    std::vector<std::string> trace_lines;
+    f.windows.set_trace([&](const std::string& line) { trace_lines.push_back(line); });
     CHECK_EQ(f.windows.get_system_metrics(sm::cxscreen), 1280);
     CHECK_EQ(f.windows.get_system_metrics(sm::cyscreen), 720);
     WndClass cls; cls.name = "G"; cls.proc = 2;
@@ -135,6 +137,9 @@ static void test_window_platform() {
     CHECK(f.windows.peek_message(m, 0, 0, 0, pm::remove).value && m.message == wm::close);
     native.events.push_back({nfsu2::platform::EventKind::resized, 800, 600});
     CHECK(f.windows.peek_message(m, 0, 0, 0, pm::remove).value && m.message == wm::size && (m.lparam & 0xFFFF) == 800 && (m.lparam >> 16) == 600);
+    bool traced_key = false;
+    for (const auto& line : trace_lines) if (line.find("key message to window") != std::string::npos && line.find("virtual key 0x41") != std::string::npos) traced_key = true;
+    CHECK(traced_key);                                                        // the trace names every key message the platform input made
     int32_t x, y;
     CHECK(f.windows.get_cursor_pos(x, y) && x == 100 && y == 50);
 }

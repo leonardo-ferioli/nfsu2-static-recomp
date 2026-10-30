@@ -345,7 +345,7 @@ void Win32Facade::Impl::install_dinput() {
         }
         return r;
     }));
-    vt.push_back(token(5, [self, device_of](Cpu& c) -> uint32_t {                                              // GetDeviceData(this, cbObjectData, rgdod, pdwInOut, dwFlags)
+    vt.push_back(token(5, [self, device_of, note](Cpu& c) -> uint32_t {                                        // GetDeviceData(this, cbObjectData, rgdod, pdwInOut, dwFlags)
         self->di->pump();
         auto d = device_of(arg(c, 0));
         if (!d) return ldi::hr::invalid_param;
@@ -361,6 +361,10 @@ void Win32Facade::Impl::install_dinput() {
                 if (object_size == 20) out[4] = events[i].app_data;
             }
             *ptr<uint32_t>(in_out) = count;
+        }
+        if (trace && (count || (r != ldi::hr::ok && r != ldi::hr::false_))) {
+            static std::map<uint32_t, uint32_t> reported;                 // an error once per object; every call that returned events
+            if (count || reported[arg(c, 0)]++ == 0) { char t[96]; std::snprintf(t, sizeof t, "GetDeviceData %08x -> 0x%08x, %u event(s)", arg(c, 0), r, count); note(t); }
         }
         return r;
     }));

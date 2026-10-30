@@ -62,6 +62,7 @@ void Win32Facade::Impl::install_user32() {
         return int32_t(p->callback(proc, {hwnd, message, wparam, uint32_t(lparam)}));
     });
     windows->attach_platform(window, input, display);
+    if (host_os::environment_set("NFSU2_NUE_INPUT_TRACE") || host_os::environment_set("NFSU2_NUE_WINDOW_TRACE")) windows->set_trace([p](const std::string& line) { p->log_line("user32: " + line); });
 
     auto fail_with = [](Cpu& c, uint32_t error) { set_error(c, error); return 0u; };
     if (host_os::environment_set("NFSU2_NUE_WINDOW_TRACE")) {

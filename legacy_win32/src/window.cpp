@@ -159,6 +159,7 @@ struct WindowSystem::Impl {
 
     // The program's main window is the platform's window: its style and rectangle decide the platform window's mode, frame, size and position. The main window is
     // the first top-level window that becomes visible (until it is destroyed); a window that covers the display without a frame is the borderless full screen.
+    std::function<void(const std::string&)> trace;
     Handle primary = 0, desktop = 0;
     // A window whose parent is the desktop window (or nothing) is a top-level window: GetDesktopWindow is what programs pass as the parent of their main window.
     bool top_level(const WindowObject& w) const { return (w.parent == 0 || w.parent == desktop) && !(w.style & ws::child); }
@@ -486,6 +487,11 @@ Handle WindowSystem::set_active_window(Handle h) {
 Handle WindowSystem::get_active_window() const { return impl_->active; }
 
 // ------------------------------------------------------------------------------------------------------------------------------ messages
+void WindowSystem::set_trace(std::function<void(const std::string&)> trace) {
+    Impl::Lock lock(*impl_);
+    impl_->trace = std::move(trace);
+}
+
 void WindowSystem::reapply_platform_window() {
     Impl::Lock lock(*impl_);
     impl_->applied = {};
@@ -523,7 +529,10 @@ void WindowSystem::pump_platform() {
     Impl::Lock lock(*impl_);
     const Handle target = impl_->focus ? impl_->focus : impl_->active;
     auto w = impl_->window_of(target);
-    if (!w) return;
+    if (!w) {
+        if (impl_->trace && !events.empty()) impl_->trace("input dropped: " + std::to_string(events.size()) + " event(s) and no window has the focus or is active");
+        return;
+    }
     const bool hold_capture = impl_->capture != 0;
     const Handle mouse_target = hold_capture ? impl_->capture : target;
     auto mw = impl_->window_of(mouse_target);
@@ -543,7 +552,9 @@ void WindowSystem::pump_platform() {
             else flags |= (1u << 30) | (1u << 31);                                 // previous state down, transition to up
             if (down && was_down) flags |= 1u << 30;
             const bool system = alt && vk != 0x12 && vk != 0xA4 && vk != 0xA5 ? true : (vk == 0x12 || vk == 0xA4 || vk == 0xA5 ? true : false);
-            impl_->post(target, w->thread, down ? (system ? wm::syskeydown : wm::keydown) : (system ? wm::syskeyup : wm::keyup), vk, int32_t(flags));
+            const uint32_t message = down ? (system ? wm::syskeydown : wm::keydown) : (system ? wm::syskeyup : wm::keyup);
+            impl_->post(target, w->thread, message, vk, int32_t(flags));
+            if (impl_->trace) { char text[96]; std::snprintf(text, sizeof text, "key message to window %x: message 0x%x virtual key 0x%x", target, message, vk); impl_->trace(text); }
             break;
         }
         case platform::InputEventKind::mouse_button: {

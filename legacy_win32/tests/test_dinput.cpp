@@ -203,12 +203,25 @@ static void test_dinput() {
     Action jump; jump.semantic = 0x81000039u; jump.app_data = 11;                  // DIKEYBOARD_SPACE
     Action steer; steer.semantic = 0x01008A01u; steer.app_data = 12;               // a driving-genre axis
     actions.actions = {jump, steer};
+    actions.buffer_size = 16;                                                       // as the game asks (a buffered device)
     auto kb2 = f.make(kGuidSysKeyboard);
     CHECK_EQ(kb2->build_action_map(actions, "player", 0), hr::ok);
     CHECK(actions.actions[0].how == dia::app_mapped && actions.actions[0].guid_instance == kGuidSysKeyboard && instance_of(actions.actions[0].object_id) == 0x39);
     CHECK_EQ(actions.actions[1].how, uint32_t(dia::unmapped));
     CHECK_EQ(kb2->set_action_map(actions, "player", 0), hr::ok);
     CHECK_EQ(kb2->acquire(), hr::ok);                                               // an action-mapped device is acquirable without SetCooperativeLevel (the game never calls it)
+    // Fed from the platform: Space (HID usage 44) is action 0 (offset 0, the app data 11 of the action) in the buffered data and in the state.
+    f.input.key(44, true, f.next());
+    f.di.pump();
+    std::vector<DeviceEvent> kb_events;
+    uint32_t kb_count = 8;
+    CHECK_EQ(kb2->get_device_data(&kb_events, kb_count, 0), hr::ok);
+    CHECK(kb_count == 1 && kb_events.size() == 1 && kb_events[0].offset == 0 && (kb_events[0].data & 0x80) && kb_events[0].app_data == 11);
+    std::vector<uint8_t> kb_state(8);
+    CHECK_EQ(kb2->get_device_state(MutableBytes(reinterpret_cast<std::byte*>(kb_state.data()), kb_state.size())), hr::ok);
+    CHECK(kb_state[0] & 0x80);
+    f.input.key(44, false, f.next());
+    f.di.pump();
     CHECK_EQ(kb2->unacquire(), hr::ok);
     CHECK_EQ(kb2->set_cooperative_level(100, coop::nonexclusive | coop::background), hr::ok);   // and an explicit level still works
     CHECK_EQ(f.di.enum_devices_by_semantics(actions, 0).size(), 2u);               // the keyboard (keyboard semantics) and the game controller (the genre)
