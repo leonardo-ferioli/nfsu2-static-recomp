@@ -205,6 +205,8 @@ struct Win32Facade::Impl {
         std::vector<uint32_t> di_tokens, device_tokens;
     };
     std::unique_ptr<DInputState> dinput;
+    void install_d3d9();       // win32_facade_d3d9.cpp (built where the layer nue_d3d9 is: NFSU2_FACADE_D3D9)
+    std::shared_ptr<struct D3D9Group> d3d9_group;   // the Direct3D 9 objects and the device; declared last, so it goes first (before the windows it draws into)
     ~Impl();
 };
 

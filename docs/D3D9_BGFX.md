@@ -403,6 +403,36 @@ middle of the race. The dll now keeps a list of the programs made from the game'
 loading. Measured with the captures through the dll: the first run lists 33 programs (about 2-2.5 ms each in the translator), every later run makes
 the 33 ahead in 25-35 ms at load and none at a draw; images identical.
 
+## The guest facade on a 64-bit host (`win32_facade_d3d9.cpp`, the `d3d9` group of the Win32 facade)
+
+On a 64-bit host the guest lives in the 4 GiB arena (docs/MEMORY_MODEL_64.md) and there is no d3d9.dll to load: `Direct3DCreate9` is an import served
+by the Win32 facade, and every Direct3D 9 object is a COM object in guest memory, a 16-byte block whose vtable is an array of method tokens
+(`GuestPlatform::add_method_token`, the model of win32_facade_dinput.cpp). The handlers read the stdcall arguments from the guest stack and drive the same
+Level A device as the dll (`nue::d3d9::Layer`); they are the dll's device.cpp / resources.cpp / main.cpp with guest arguments instead of COM ones, and the
+same answers where the dll does not support something (D3DERR_NOTAVAILABLE, logged once).
+
+* No host pointer reaches guest memory: the layer's handles, the GPU and the bookkeeping stay on the host side, keyed by the guest address of the object.
+* Lock memory is guest memory. A vertex or index buffer has a mirror in the arena: `Lock` returns a pointer into it and `Unlock` hands the locked range to
+  the layer (`lock_buffer` + copy + `unlock_buffer`, one copy per lock, flags passed through). A texture or surface lock goes through a block of the
+  arena that `LockRect` fills from the layer's staging (so a partial lock shows what the level holds) and `UnlockRect` copies back.
+* Capability queries cannot ask a system runtime: `GetDeviceCaps` answers a D3DCAPS9 of a Shader Model 3 GPU captured once with
+  `tools/d3d9_caps_capture.cpp` (`win32_facade_d3d9_caps.inc`: the record and the adapter identifier's numbers, no driver or GPU names); display modes
+  come from `platform::Display` (X8R8G8B8 only); `CheckDeviceFormat` / `CheckDepthStencilMatch` / `CheckDeviceFormatConversion` from the layer's format
+  table (render targets: uncompressed colour formats the GPU has; depth: the depth formats; no vertex texture fetch); multisampling 2, 4 and 8.
+* The device's window is a token of the user32 group (legacy_win32's WindowSystem); the back buffer takes its client area when the game asks for 0 x 0.
+  `Win32LayerOptions::d3d9_gpu` makes the GPU for that window; empty means the null GPU (headless runs and tests).
+* `CreateDevice` and `Reset` set the guest's x87 control word as Direct3D 9 does: 0x007F, or the caller's word | 0x001D with D3DCREATE_FPU_PRESERVE.
+  The word is written to the guest register the translated code reads (offset 0x10a0, where the virtual x87 keeps it) and to the host FPU the
+  reference backend mirrors it into.
+* One device at a time, on the game thread; the worker-thread mode of the dll is not part of the facade.
+* `NFSU2_D3D9_TRACE=1` logs the first call of every method: what the game really uses.
+
+Build: the layer's core (Direct3D 9 semantics, shader translation, null GPU) and SPIRV-Cross are compiled into `nfsu2_d3d9_layer` for the 64-bit tree
+when the bgfx.cmake submodule is checked out (`git submodule update --init --recursive --depth 1 third_party/bgfx.cmake`); without it the group is
+left out and asking for it fails with that message. The 32-bit host keeps the drop-in d3d9.dll; its build is unchanged. Test: `d3d9_facade_tests`
+(ctest `d3d9_facade`) calls `Direct3DCreate9` through its import token and every method through the object's vtable on Platform64, with the device
+on the null GPU.
+
 ## Dependencies on Windows and on the game repo (to replace with the NUE engine's native API)
 
 nue_d3d9 is planned to become the engine's `legacy_d3d9` module (nue-engine repo, LEGACY ABI). What it depends on today, by layer, so that each item
