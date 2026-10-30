@@ -1,9 +1,6 @@
-#define WIN32_LEAN_AND_MEAN
-#define NOMINMAX
-#include <windows.h>
-#include <bcrypt.h>
 #include "platform64.hpp"
 #include "audio_banks.hpp"
+#include "host_os.hpp"
 #include <algorithm>
 #include <iomanip>
 #include <limits>
@@ -16,11 +13,7 @@ struct Import{uint32_t iat,token;const char* dll;const char* name;};
 #include "generated/platform_image.inc"
 std::atomic<Platform64*> g_current{nullptr};
 constexpr uint32_t import_token_base=0xf0000000u,import_token_end=0xf0010000u,dynamic_token_base=0xf0010000u,dynamic_token_end=0xf0100000u;
-std::string sha256(const std::vector<uint8_t>& bytes){
-    uint8_t digest[32];
-    if(BCryptHash(BCRYPT_SHA256_ALG_HANDLE,nullptr,0,const_cast<uint8_t*>(bytes.data()),ULONG(bytes.size()),digest,32)<0)throw Fault("Windows SHA-256 failed");
-    std::ostringstream s;for(auto b:digest)s<<std::hex<<std::setw(2)<<std::setfill('0')<<unsigned(b);return s.str();
-}
+std::string sha256(const std::vector<uint8_t>& bytes){return audio_banks::sha256_hex(bytes.data(),bytes.size());}
 std::string hex(uint32_t v){std::ostringstream s;s<<"0x"<<std::hex<<v;return s.str();}
 }
 
@@ -38,7 +31,7 @@ Platform64::Platform64(Cpu& main,const std::filesystem::path& exports,const std:
     if(g_current)throw Fault("Platform64 supports one active game image per process");
     if(!std::filesystem::is_directory(game_))throw Fault("game asset directory does not exist");
     audio_banks::attach();
-    process_id_=GetCurrentProcessId();
+    process_id_=host_os::process_id();
     main_.map(image_base,image_size);
     for(const auto& block:image_blocks){
         std::ifstream f(exports/block.file,std::ios::binary);
@@ -176,7 +169,7 @@ bool Platform64::dispatch(Cpu& c){
     if(label.empty())return false;                         // not a token of this platform (the range check above is only a fast reject)
     if(trace_.is_open())note_import(label,c);
     // NFSU2_STOP_AT_IMPORT=<name>: the run ends (a Fault) at the first call of that import, a deterministic place for tests to compare engines.
-    static const std::string stop_at=[]{char text[64];return std::string(GetEnvironmentVariableA("NFSU2_STOP_AT_IMPORT",text,sizeof(text))?text:"");}();
+    static const std::string stop_at=host_os::environment("NFSU2_STOP_AT_IMPORT");
     if(!stop_at.empty() && label.size()>stop_at.size() && label.compare(label.size()-stop_at.size()-1,std::string::npos,"!"+stop_at)==0)
         throw Fault("stopped at import "+label+" (NFSU2_STOP_AT_IMPORT)");
     if(!handler){
@@ -186,7 +179,7 @@ bool Platform64::dispatch(Cpu& c){
     ++handler->calls;   // a diagnostic: the trace ends with the busiest imports
     if(handler->raw){handler->fn(c);return true;}
     // NFSU2_TRACE_FAILS=1: every call that sets a last error is written to the trace with its arguments (what the game was told).
-    static const bool trace_fails=[]{char text[8];return GetEnvironmentVariableA("NFSU2_TRACE_FAILS",text,sizeof(text))!=0;}();
+    static const bool trace_fails=host_os::environment_set("NFSU2_TRACE_FAILS");
     const uint32_t error_cell=last_error_slot(c),error_before=trace_fails?uint32_t(m<4>(c,error_cell)):0;
     const uint32_t value=handler->fn(c);
     if(trace_fails){
@@ -234,9 +227,9 @@ void dump_module(Cpu& c,const std::filesystem::path& folder){
 }
 }
 uint32_t Platform64::execute(Cpu& c,uint32_t stop,uint64_t budget){
-    static const std::filesystem::path dump_folder=[]{char text[512];return std::filesystem::path(GetEnvironmentVariableA("NFSU2_DUMP_MODULES",text,sizeof(text))?text:"");}();
+    static const std::filesystem::path dump_folder=host_os::environment("NFSU2_DUMP_MODULES");
     // NFSU2_WATCH=<hex guest address>: the trace says where a byte of guest memory changes (reference engine: one instruction per step; a diagnostic of the main thread).
-    static const uint32_t watch=[]{char text[32];return GetEnvironmentVariableA("NFSU2_WATCH",text,sizeof(text))?uint32_t(std::strtoul(text,nullptr,16)):0u;}();
+    static const uint32_t watch=[]{const std::string text=host_os::environment("NFSU2_WATCH");return text.empty()?0u:uint32_t(std::strtoul(text.c_str(),nullptr,16));}();
     uint8_t watched=0;if(watch && &c==&main_)watched=uint8_t(m<1>(c,watch));
     for(uint64_t i=0;i<budget;++i){
         if(watch && &c==&main_){const uint8_t now=uint8_t(m<1>(c,watch));if(now!=watched){note("WATCH "+hex(watch)+" "+std::to_string(watched)+" -> "+std::to_string(now)+" at instruction "+std::to_string(c.instructions)+", pc="+hex(c.pc)+", previous pc "+hex(last_pc_));watched=now;}last_pc_=c.pc;}

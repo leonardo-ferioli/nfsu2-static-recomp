@@ -1,7 +1,6 @@
 #include "speed.hpp"
-#define WIN32_LEAN_AND_MEAN
-#define NOMINMAX
-#include <windows.h>
+#include "host_os.hpp"
+#include <cctype>
 #include <cstring>
 
 namespace nfsu2raw {
@@ -13,10 +12,10 @@ uint8_t g_speed_bridge = 1;
 namespace {
 // NFSU2_SPEED_<NAME>=0|1 overrides a setting; NFSU2_SPEED=0 turns the whole layer off.
 bool env_flag(const char* name, bool fallback) {
-    char value[16];
-    const DWORD n = GetEnvironmentVariableA(name, value, sizeof(value));
-    if (!n || n >= sizeof(value)) return fallback;
-    return !(value[0] == '0' || !_stricmp(value, "off") || !_stricmp(value, "false") || !_stricmp(value, "no"));
+    std::string value = host_os::environment(name);
+    if (value.empty() || value.size() >= 16) return fallback;
+    for (char& ch : value) ch = char(std::tolower(static_cast<unsigned char>(ch)));
+    return !(value[0] == '0' || value == "off" || value == "false" || value == "no");
 }
 }
 

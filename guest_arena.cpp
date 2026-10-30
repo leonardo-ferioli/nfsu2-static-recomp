@@ -1,5 +1,6 @@
-// The guest's address space on a 64-bit host (guest_arena.hpp). Windows implementation; the POSIX one (mmap PROT_NONE) is not written here: the
-// canonical implementation is nue::legacy::ArenaMemory in the NUE engine, this file is the port's self-contained copy for the Windows x64 bring-up.
+// The guest's address space on a 64-bit host (guest_arena.hpp): a reserved range with a software page table. The host part is five calls (reserve,
+// release, commit, decommit, clear an environment variable), for Windows (VirtualAlloc) and POSIX (mmap PROT_NONE + mprotect: Linux, Android, macOS,
+// iOS). The canonical implementation is nue::legacy::ArenaMemory in the NUE engine; this file is the port's self-contained copy.
 #include "guest_arena.hpp"
 
 #ifndef NFSU2_GUEST_IDENTITY
@@ -16,6 +17,9 @@
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
 #include <windows.h>
+#else
+#include <sys/mman.h>
+#include <unistd.h>
 #endif
 
 namespace nfsu2::guest {
@@ -26,9 +30,10 @@ static AddressSpace* g_current = nullptr;
 AddressSpace* current_address_space() { return g_current; }
 void fault_not_in_arena(const void*) { __builtin_trap(); }
 
-#if defined(_WIN32)
 namespace {
 constexpr uint32_t kPage = 0x1000;
+
+#if defined(_WIN32)
 
 // Reserve `size` bytes aligned to `alignment` (a power of two): VirtualAlloc2 with an address requirement when the system has it, otherwise
 // reserve twice the size, release, and re-reserve at the aligned address inside it (a small race against other threads allocating).
@@ -56,6 +61,53 @@ uint8_t* reserve_aligned(uint64_t size, uint64_t alignment) {
     }
     return nullptr;
 }
+void os_release(uint8_t* base, uint64_t) { VirtualFree(base, 0, MEM_RELEASE); }
+bool os_commit(uint8_t* at, uint64_t bytes) { return VirtualAlloc(at, static_cast<SIZE_T>(bytes), MEM_COMMIT, PAGE_READWRITE) != nullptr; }
+// The guest pages [at, at + bytes) are no longer committed: Windows decommits them (they read as zeros once committed again).
+bool os_decommit(uint8_t* at, uint64_t bytes, const std::vector<uint16_t>&, uint64_t) { return VirtualFree(at, static_cast<SIZE_T>(bytes), MEM_DECOMMIT) != 0; }
+void os_clear_environment(const char* name) {
+    std::vector<char> clear(std::strlen(name) + 2);
+    std::strcpy(clear.data(), name);
+    std::strcat(clear.data(), "=");
+    _putenv(clear.data());
+}
+#else
+// POSIX: the reservation is PROT_NONE and never backed; a commit makes the host pages read-write (the guest's 4 KiB protections stay in the software
+// table, as on Windows). A host page can be 16 KiB (Android, Apple): it is committed whole, and a decommit of part of it clears the guest pages instead.
+uint64_t host_page() { static const uint64_t size = uint64_t(sysconf(_SC_PAGESIZE)); return size; }
+uint8_t* reserve_aligned(uint64_t size, uint64_t alignment) {
+    void* probe = mmap(nullptr, size + alignment, PROT_NONE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_NORESERVE, -1, 0);
+    if (probe == MAP_FAILED) return nullptr;
+    const uintptr_t start = reinterpret_cast<uintptr_t>(probe), aligned = (start + alignment - 1) & ~(static_cast<uintptr_t>(alignment) - 1);
+    if (aligned > start) munmap(probe, aligned - start);                                   // keep exactly [aligned, aligned + size)
+    const uintptr_t tail = aligned + size, end = start + size + alignment;
+    if (end > tail) munmap(reinterpret_cast<void*>(tail), end - tail);
+    return reinterpret_cast<uint8_t*>(aligned);
+}
+void os_release(uint8_t* base, uint64_t size) { munmap(base, size); }
+bool os_commit(uint8_t* at, uint64_t bytes) {
+    const uint64_t page = host_page();
+    const uintptr_t begin = reinterpret_cast<uintptr_t>(at) & ~(page - 1), end = (reinterpret_cast<uintptr_t>(at) + bytes + page - 1) & ~(page - 1);
+    return mprotect(reinterpret_cast<void*>(begin), end - begin, PROT_READ | PROT_WRITE) == 0;
+}
+// `pages` is the guest page table after the decommit and `first` the guest page `at` starts at: host pages with no committed guest page left are
+// returned to the system; the rest of the range is cleared so that it reads as zeros when it is committed again, as on Windows.
+bool os_decommit(uint8_t* at, uint64_t bytes, const std::vector<uint16_t>& pages, uint64_t first) {
+    std::memset(at, 0, static_cast<size_t>(bytes));
+    const uint64_t page = host_page(), per_host = std::max<uint64_t>(1, page / kPage);
+    const uint8_t* base = at - first * kPage;
+    for (uint64_t guest = first - first % per_host; guest * kPage < first * kPage + bytes; guest += per_host) {
+        bool in_use = false;
+        for (uint64_t g = guest; g < guest + per_host && g < pages.size(); ++g) in_use |= pages[g] != 0;
+        if (in_use) continue;
+        void* host = const_cast<uint8_t*>(base + guest * kPage);
+        madvise(host, page, MADV_DONTNEED);
+        mprotect(host, page, PROT_NONE);
+    }
+    return true;
+}
+void os_clear_environment(const char* name) { unsetenv(name); }
+#endif
 
 class Arena final : public AddressSpace {
 public:
@@ -66,7 +118,7 @@ public:
     ~Arena() override {
         if (g_current == this) g_current = nullptr;
         if (g_arena_base == base_) { g_arena_base = nullptr; g_arena_size = 0x100000000ull; }
-        VirtualFree(base_, 0, MEM_RELEASE);
+        os_release(base_, config_.arena_size);
     }
 
     uint8_t* base() const { return base_; }
@@ -138,9 +190,8 @@ public:
         if (!bytes || static_cast<uint64_t>(address) + bytes > config_.arena_size) return false;
         const uint32_t first = address / kPage;
         const uint32_t last = static_cast<uint32_t>((static_cast<uint64_t>(address) + bytes - 1) / kPage);
-        if (!VirtualFree(base_ + static_cast<uint64_t>(first) * kPage, static_cast<SIZE_T>(last - first + 1) * kPage, MEM_DECOMMIT)) return false;
         for (uint32_t page = first; page <= last; ++page) pages_[page] = 0;
-        return true;
+        return os_decommit(base_ + static_cast<uint64_t>(first) * kPage, static_cast<uint64_t>(last - first + 1) * kPage, pages_, first);
     }
     bool identity() const override { return false; }
 
@@ -193,7 +244,7 @@ private:
             if (pages_[page]) { ++page; continue; }
             uint32_t end = page;
             while (end + 1 <= last && !pages_[end + 1]) ++end;
-            if (!VirtualAlloc(base_ + static_cast<uint64_t>(page) * kPage, static_cast<SIZE_T>(end - page + 1) * kPage, MEM_COMMIT, PAGE_READWRITE)) return false;
+            if (!os_commit(base_ + static_cast<uint64_t>(page) * kPage, static_cast<uint64_t>(end - page + 1) * kPage)) return false;
             for (uint32_t p = page; p <= end; ++p) pages_[p] = static_cast<uint16_t>(page_protection);
             page = end + 1;
         }
@@ -218,9 +269,7 @@ ArenaConfig arena_config_from_environment() {
     uint64_t mebibytes = 2048;
     if (const char* text = std::getenv("NFSU2_ARENA_MIB")) {
         mebibytes = std::strtoull(text, nullptr, 10);
-        std::vector<char> clear(std::strlen("NFSU2_ARENA_MIB=") + 1);
-        std::strcpy(clear.data(), "NFSU2_ARENA_MIB=");
-        _putenv(clear.data());                                                      // the guest reads the environment block: the switch must not be part of it
+        os_clear_environment("NFSU2_ARENA_MIB");                                     // the guest reads the environment block: the switch must not be part of it
     }
     return arena_config(mebibytes * 0x100000ull);
 }
@@ -235,12 +284,6 @@ std::unique_ptr<AddressSpace> create_arena(const ArenaConfig& config, const char
     g_arena_size = config.arena_size;
     return std::make_unique<Arena>(base, config);
 }
-#else
-std::unique_ptr<AddressSpace> create_arena(const ArenaConfig&, const char** error) {
-    if (error) *error = "no arena implementation for this host in the port (use nue::legacy::ArenaMemory from the NUE engine)";
-    return nullptr;
-}
-#endif
 
 }  // namespace nfsu2::guest
 #endif
