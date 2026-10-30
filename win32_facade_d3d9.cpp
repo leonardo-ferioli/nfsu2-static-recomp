@@ -400,6 +400,15 @@ struct D3D9Group {
         if (dev->in_scene) { L->end_scene(); dev->in_scene = false; }
         return to_hresult(L->present());
     }
+    uint32_t traced_present(Cpu& c) {   // NFSU2_FRAME_TRACE (frame_trace.hpp): Present marks the game's frames
+        uint32_t result;
+        {
+            frame_trace::Scope timed(frame_trace::present);
+            result = present();
+        }
+        frame_trace::end_frame(c.instructions);
+        return result;
+    }
 
     // ---- locks
     uint32_t lock_texture(Object& t, uint32_t level, uint32_t face, uint32_t locked_out, uint32_t rect_address, uint32_t flags) {
@@ -806,7 +815,7 @@ void D3D9Group::install() {
         g->impl.platform.log_line("d3d9: Reset: " + std::to_string(pp[0]) + "x" + std::to_string(pp[1]) + " format " + std::to_string(pp[2]) + " depth " + std::to_string(pp[9] ? pp[10] : 0));
         return kOk;
     });
-    method(dv, "Device::Present", 5, [g](Cpu&) -> uint32_t { return g->present(); });
+    method(dv, "Device::Present", 5, [g](Cpu& c) -> uint32_t { return g->traced_present(c); });
     method(dv, "Device::GetBackBuffer", 5, [g, D](Cpu& c) -> uint32_t {   // (this, swap chain, index, type, IDirect3DSurface9**)
         if (!D() || !arg(c, 4) || arg(c, 1) != 0 || arg(c, 2) != 0 || !D()->back_buffer) return kInvalidCall;
         g->add_ref(D()->back_buffer);
@@ -1424,7 +1433,7 @@ void D3D9Group::install() {
     // ---- IDirect3DSwapChain9: Present, GetFrontBufferData, GetBackBuffer, GetRasterStatus, GetDisplayMode, GetDevice, GetPresentParameters
     std::vector<uint32_t> sc;
     unknown(sc, Kind::swap_chain);
-    method(sc, "SwapChain::Present", 6, [g](Cpu&) -> uint32_t { return g->present(); });
+    method(sc, "SwapChain::Present", 6, [g](Cpu& c) -> uint32_t { return g->traced_present(c); });
     method(sc, "SwapChain::GetFrontBufferData", 2, [g](Cpu&) -> uint32_t { return g->unsupported("IDirect3DSwapChain9::GetFrontBufferData"); });
     method(sc, "SwapChain::GetBackBuffer", 4, [g, D](Cpu& c) -> uint32_t {   // (this, index, type, out)
         if (!D() || !arg(c, 3) || arg(c, 1) != 0 || !D()->back_buffer) return kInvalidCall;

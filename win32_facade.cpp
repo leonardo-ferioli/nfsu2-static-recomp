@@ -334,8 +334,9 @@ void Win32Facade::Impl::install_sync() {
             platform.throw_if_stopping("guest wait");
         }
     };
-    on("WaitForSingleObject", 2, [wait_one](Cpu& c) { return wait_one(c, arg(c, 0), arg(c, 1)); });
+    on("WaitForSingleObject", 2, [wait_one](Cpu& c) { frame_trace::Scope timed(frame_trace::wait); return wait_one(c, arg(c, 0), arg(c, 1)); });
     on("WaitForMultipleObjects", 4, [this](Cpu& c) -> uint32_t {
+        frame_trace::Scope timed(frame_trace::wait);
         const uint32_t count = arg(c, 0);
         const uint32_t* list = ptr<const uint32_t>(arg(c, 1));
         const bool all = arg(c, 2) != 0;
@@ -406,6 +407,7 @@ void Win32Facade::Impl::install_files() {
         return r.value;
     });
     on("ReadFile", 5, [this](Cpu& c) {
+        frame_trace::Scope timed(frame_trace::read, arg(c, 2));
         if (!mine(arg(c, 0)) || (kRealOs && arg(c, 4))) return FACADE_REAL(c, "ReadFile", ReadFile(H(arg(c, 0)), ptr<void>(arg(c, 1)), arg(c, 2), arg(c, 3) ? ptr<DWORD>(arg(c, 3)) : nullptr, arg(c, 4) ? ptr<OVERLAPPED>(arg(c, 4)) : nullptr));
         if (arg(c, 4)) {                                                            // OVERLAPPED {Internal, InternalHigh, Offset, OffsetHigh, hEvent}: read at that offset, complete now
             uint32_t* o = ptr<uint32_t>(arg(c, 4));

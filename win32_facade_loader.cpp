@@ -188,12 +188,14 @@ void Win32Facade::Impl::install_loader() {
         }
     };
     on("Sleep", 1, [this, sleep_sliced](Cpu& c) {
+        frame_trace::Scope timed(frame_trace::sleep);
         if (arg(c, 0) == 0) time.sleep(0);
         else if (arg(c, 0) == lw::kInfinite) for (;;) sleep_sliced(100);
         else sleep_sliced(arg(c, 0));
         return 0u;
     });
     on("SleepEx", 2, [this, sleep_sliced](Cpu& c) {
+        frame_trace::Scope timed(frame_trace::sleep);
         if (arg(c, 0) == 0) time.sleep(0);
         else if (arg(c, 0) == lw::kInfinite) for (;;) sleep_sliced(100);
         else sleep_sliced(arg(c, 0));

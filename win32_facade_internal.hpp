@@ -1,6 +1,7 @@
 // Internals shared by the parts of the Win32 facade (win32_facade.cpp, win32_facade_dinput.cpp): the guest calling-convention helpers and the state.
 #pragma once
 #include "guest_memory.hpp"
+#include "frame_trace.hpp"
 #include "win32_facade.hpp"
 #include "legacy_win32/dinput.hpp"
 #include "legacy_win32/files.hpp"
