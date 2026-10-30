@@ -97,6 +97,15 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 8 AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/third_par
     add_executable(nue_window_smoke tools/nue_window_smoke.cpp)
     set_property(TARGET nue_window_smoke PROPERTY INCLUDE_DIRECTORIES "")   # NUE's headers, not the in-tree copy
     target_link_libraries(nue_window_smoke PRIVATE nue::nue nue_d3d9_gfx)
+    # The platform API (Window, Display, Input) over NUE's C API, for the 64-bit host (platform/nue/nue_platform.hpp), and its test on NUE's null backend (no window).
+    add_library(nfsu2_platform_nue STATIC platform/nue/nue_platform.cpp)
+    set_property(TARGET nfsu2_platform_nue PROPERTY INCLUDE_DIRECTORIES "")   # NUE's headers, not the in-tree copy
+    target_include_directories(nfsu2_platform_nue PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/third_party/nue-engine/src/legacy/d3d9/include")   # platform/*.hpp, and nue/types.hpp that platform/types.hpp forwards to
+    target_link_libraries(nfsu2_platform_nue PUBLIC nue::nue)
+    add_executable(nue_platform_tests platform/nue/nue_platform_tests.cpp)
+    set_property(TARGET nue_platform_tests PROPERTY INCLUDE_DIRECTORIES "")
+    target_link_libraries(nue_platform_tests PRIVATE nfsu2_platform_nue)
+    add_test(NAME nue_platform COMMAND nue_platform_tests)
 else()
     message(STATUS "NUE left out of the 64-bit build: git submodule update --init --recursive third_party/nue-engine")
 endif()
