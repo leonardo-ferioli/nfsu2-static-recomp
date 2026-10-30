@@ -4,6 +4,7 @@
 #include "guest_arena.hpp"
 
 #ifndef NFSU2_GUEST_IDENTITY
+#include <atomic>
 #include <algorithm>
 #include <bit>
 #include <iterator>
@@ -158,10 +159,9 @@ public:
         free_[begin] = size;
     }
 
-    uint8_t* host(uint32_t address, uint32_t bytes) override {
-        std::lock_guard lock(mutex_);
-        return mapped_locked(address, bytes) ? base_ + address : nullptr;
-    }
+    // No lock: the host reaches guest memory through here on every call the game makes (the return address, the arguments the layers read); the page table is
+    // written with atomic stores under the lock, after the host commit and before the host decommit, so a page seen committed here is committed.
+    uint8_t* host(uint32_t address, uint32_t bytes) override { return mapped_locked(address, bytes) ? base_ + address : nullptr; }
     uint32_t address_of(const void* host_pointer) override {
         const uint8_t* p = static_cast<const uint8_t*>(host_pointer);
         return p >= base_ && p < base_ + config_.arena_size ? static_cast<uint32_t>(p - base_) : 0;
@@ -176,7 +176,7 @@ public:
         std::lock_guard lock(mutex_);
         if (!mapped_locked(address, std::max<uint32_t>(bytes, 1)) || !valid_protection(page_protection)) return 0;
         const uint32_t old = pages_[address / kPage];
-        for (uint64_t page = address / kPage; page <= (static_cast<uint64_t>(address) + std::max<uint32_t>(bytes, 1) - 1) / kPage; ++page) pages_[page] = static_cast<uint16_t>(page_protection);
+        for (uint64_t page = address / kPage; page <= (static_cast<uint64_t>(address) + std::max<uint32_t>(bytes, 1) - 1) / kPage; ++page) set_page(page, page_protection);
         return old;
     }
     bool commit(uint32_t address, uint32_t bytes, uint32_t page_protection) override {
@@ -190,7 +190,7 @@ public:
         if (!bytes || static_cast<uint64_t>(address) + bytes > config_.arena_size) return false;
         const uint32_t first = address / kPage;
         const uint32_t last = static_cast<uint32_t>((static_cast<uint64_t>(address) + bytes - 1) / kPage);
-        for (uint32_t page = first; page <= last; ++page) pages_[page] = 0;
+        for (uint32_t page = first; page <= last; ++page) set_page(page, 0);
         return os_decommit(base_ + static_cast<uint64_t>(first) * kPage, static_cast<uint64_t>(last - first + 1) * kPage, pages_, first);
     }
     bool identity() const override { return false; }
@@ -215,11 +215,15 @@ private:
         return base == kPageNoAccess || base == kPageReadOnly || base == kPageReadWrite || base == kPageWriteCopy || base == kPageExecute ||
                base == kPageExecuteRead || base == kPageExecuteReadWrite || base == kPageExecuteWriteCopy;
     }
+    // The page table is read without the lock by host(): writes are atomic stores (made under the lock), reads atomic loads.
+    void set_page(uint64_t page, uint32_t value) { std::atomic_ref<uint16_t>(pages_[page]).store(static_cast<uint16_t>(value), std::memory_order_release); }
+    uint16_t page_value(uint64_t page) const { return std::atomic_ref<uint16_t>(const_cast<uint16_t&>(pages_[page])).load(std::memory_order_acquire); }
+    // Every page of the range committed (safe with or without the lock).
     bool mapped_locked(uint32_t address, uint32_t bytes) const {
         if (static_cast<uint64_t>(address) + bytes > config_.arena_size) return false;
         const uint64_t last = bytes ? (static_cast<uint64_t>(address) + bytes - 1) / kPage : address / kPage;
         for (uint64_t page = address / kPage; page <= last; ++page)
-            if (!pages_[page]) return false;
+            if (!page_value(page)) return false;
         return true;
     }
     bool access_ok(uint32_t address, uint32_t bytes, bool write) {
@@ -245,7 +249,7 @@ private:
             uint32_t end = page;
             while (end + 1 <= last && !pages_[end + 1]) ++end;
             if (!os_commit(base_ + static_cast<uint64_t>(page) * kPage, static_cast<uint64_t>(end - page + 1) * kPage)) return false;
-            for (uint32_t p = page; p <= end; ++p) pages_[p] = static_cast<uint16_t>(page_protection);
+            for (uint32_t p = page; p <= end; ++p) set_page(p, page_protection);
             page = end + 1;
         }
         return true;

@@ -10,6 +10,7 @@
 #include "win32_facade_d3d9_nue.hpp"
 #endif
 #include <bit>
+#include <chrono>
 #include <cstring>
 #include <iostream>
 #include <string>
@@ -180,6 +181,19 @@ int main(int argc, char** argv) {
         const uint32_t value = g.alloc(4);
         check(g.com(device, Dev_GetRenderState, {7, value}) == kOk && g.word(value) == 1, "ZENABLE is on with an automatic depth buffer");
         check(g.com(device, Dev_SetRenderState, {27, 1}) == kOk && g.com(device, Dev_GetRenderState, {27, value}) == kOk && g.word(value) == 1, "SetRenderState / GetRenderState");
+        {   // The cost of one Direct3D method call through dispatch, as the game makes ~15000 of these a frame in a race: informational, not checked.
+            const uint32_t token = uint32_t(m<4>(c, uint32_t(m<4>(c, device)) + 4 * Dev_SetRenderState)), sp = g.base_sp;
+            constexpr int kCalls = 1000000;
+            const auto start = std::chrono::steady_clock::now();
+            for (int i = 0; i < kCalls; ++i) {
+                wr<4>(c, 16, sp);
+                wm<4>(c, sp, Platform64::return_sentinel); wm<4>(c, sp + 4, device); wm<4>(c, sp + 8, 27); wm<4>(c, sp + 12, uint32_t(i & 1));
+                c.pc = token;
+                p.dispatch(c);
+            }
+            std::cout << "dispatch: " << std::chrono::duration<double, std::nano>(std::chrono::steady_clock::now() - start).count() / kCalls
+                      << " ns per Device::SetRenderState call (" << kCalls << " calls)\n";
+        }
         const uint32_t viewport = g.alloc(24);
         check(g.com(device, Dev_GetViewport, {viewport}) == kOk && g.word(viewport + 8) == back_w && g.word(viewport + 12) == back_h, "the viewport covers the back buffer");
         check(g.com(device, Dev_GetBackBuffer, {0, 0, 0, out}) == kOk, "GetBackBuffer");
