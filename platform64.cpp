@@ -222,13 +222,39 @@ bool Platform64::dispatch(Cpu& c){
     return true;
 }
 
+// NFSU2_DUMP_MODULES=<folder>: every module the game's run-time loader (0x7212e5) is given is written there before it is relocated (a build-time tool for the
+// ahead-of-time translation of those modules, docs/AUDIO_MODULES.md): the image (an ABKC bank whole, by its size at +0x14; anything else up to 64 KiB), the
+// loader's fixup table, and a line per module in modules.txt. It checks tools/extract_audio_modules.py, which reads the same banks from the game's files.
+// The reference engine reaches the loader one instruction at a time; the fast one may pass it.
+namespace{
+void dump_module(Cpu& c,const std::filesystem::path& folder){
+    static unsigned count=0;
+    auto* space=nfsu2::guest::current_address_space();
+    const uint32_t sp=uint32_t(r<4>(c,16)),image=uint32_t(m<4>(c,sp+4)),fixups=uint32_t(m<4>(c,sp+8));
+    std::error_code ec;std::filesystem::create_directories(folder,ec);
+    // An ABKC bank (the game's audio banks carry their code): its size is the word at +0x14; anything else is dumped up to 64 KiB.
+    uint32_t size=0;const bool bank=space && space->host(image,0x18) && uint32_t(m<4>(c,image))==0x434b4241u;
+    const uint32_t limit=bank?std::min<uint32_t>(uint32_t(m<4>(c,image+0x14)),16u<<20):0x10000;
+    while(size<limit && space && space->host(image+size,std::min<uint32_t>(0x100,limit-size)))size+=std::min<uint32_t>(0x100,limit-size);
+    std::vector<uint8_t> bytes(size);if(size)std::memcpy(bytes.data(),nfsu2::guest::ptr<void>(image),size);
+    const uint32_t fixup_count=space && space->host(fixups,4)?uint32_t(m<4>(c,fixups)):0;
+    std::vector<uint8_t> table(4+4*std::min<uint32_t>(fixup_count,0x4000));
+    if(space && space->host(fixups,uint32_t(table.size())))std::memcpy(table.data(),nfsu2::guest::ptr<void>(fixups),table.size());
+    const std::string stem="module_"+std::to_string(count++);
+    std::ofstream(folder/(stem+".bin"),std::ios::binary).write(reinterpret_cast<const char*>(bytes.data()),std::streamsize(bytes.size()));
+    std::ofstream(folder/(stem+"_fixups.bin"),std::ios::binary).write(reinterpret_cast<const char*>(table.data()),std::streamsize(table.size()));
+    std::ofstream(folder/"modules.txt",std::ios::app)<<stem<<(bank?" ABKC":"")<<" image="<<hex(image)<<" readable="<<hex(size)<<" fixups="<<hex(fixups)<<" fixup_count="<<fixup_count<<" sha256="<<sha256(bytes)<<'\n';
+}
+}
 uint32_t Platform64::execute(Cpu& c,uint32_t stop,uint64_t budget){
+    static const std::filesystem::path dump_folder=[]{char text[512];return std::filesystem::path(GetEnvironmentVariableA("NFSU2_DUMP_MODULES",text,sizeof(text))?text:"");}();
     // NFSU2_WATCH=<hex guest address>: the trace says where a byte of guest memory changes (reference engine: one instruction per step; a diagnostic of the main thread).
     static const uint32_t watch=[]{char text[32];return GetEnvironmentVariableA("NFSU2_WATCH",text,sizeof(text))?uint32_t(std::strtoul(text,nullptr,16)):0u;}();
     uint8_t watched=0;if(watch && &c==&main_)watched=uint8_t(m<1>(c,watch));
     for(uint64_t i=0;i<budget;++i){
         if(watch && &c==&main_){const uint8_t now=uint8_t(m<1>(c,watch));if(now!=watched){note("WATCH "+hex(watch)+" "+std::to_string(watched)+" -> "+std::to_string(now)+" at instruction "+std::to_string(c.instructions)+", pc="+hex(c.pc)+", previous pc "+hex(last_pc_));watched=now;}last_pc_=c.pc;}
         if(c.pc==stop)return uint32_t(r<4>(c,0));
+        if(!dump_folder.empty() && c.pc==0x7212e5u)dump_module(c,dump_folder);
         if(stopping_)throw Fault("the platform is stopping");
         if(dispatch(c))continue;
         step(c);
