@@ -291,6 +291,11 @@ int main(int argc, char** argv) try {
             check(g.call("RegOpenKeyA", {0x80000002u, A(main_key), A(&key)}) == 0 && key != 0, "the game's key exists with its defaults");
             uint32_t type = 0, value = 0, size = 4;
             check(g.call("RegQueryValueExA", {key, A("g_FSAALevel"), 0, A(&type), A(&value), A(&size)}) == 0 && type == 4 && value == 7 && size == 4, "a numeric default is a DWORD");
+            size = 4;
+            check(g.call("RegQueryValueExA", {key, A("NotFirstTime"), 0, A(&type), A(&value), A(&size)}) == 0 && type == 4 && value == 1,
+                  "NotFirstTime is set (the game's first-start hardware detection would overwrite the settings)");
+            size = 4;
+            check(g.call("RegQueryValueExA", {key, A("g_CarEnvironmentMapEnable"), 0, A(&type), A(&value), A(&size)}) == 0 && value == 3, "car reflections on by default");
             char text[64] = {};
             size = sizeof text;
             check(g.call("RegQueryValueExA", {key, A("Language"), 0, A(&type), A(text), A(&size)}) == 0 && type == 1 && std::string(text) == "English US", "a text default is a string");

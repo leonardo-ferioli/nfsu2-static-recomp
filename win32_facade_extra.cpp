@@ -23,7 +23,11 @@ std::vector<std::pair<std::string, std::string>> registry_defaults(const std::st
         {"g_CarDamageEnable", "0"}, {"g_CrowdEnable", "1"}, {"g_RoadReflectionEnable", "3"}, {"g_FogEnable", "1"}, {"g_MotionBlurEnable", "1"}, {"g_LightStreaksEnable", "1"},
         {"g_LightGlowEnable", "1"}, {"g_AnimatedTextureEnable", "1"}, {"g_ParticleSystemEnable", "1"}, {"g_DepthOfFieldEnable", "1"}, {"g_WorldLodLevel", "3"},
         {"g_CarLodLevel", "1"}, {"g_OverBrightEnable", "1"}, {"g_BleachByPassEnable", "1"}, {"g_TintingEnable", "1"}, {"g_FSAALevel", "7"}, {"g_HorizonFogEnable", "1"},
-        {"g_RainEnable", "1"}, {"g_TextureFiltering", "2"}, {"g_RacingResolution", "4"}, {"g_PerformanceLevel", "5"}, {"g_VSyncOn", "0"}};
+        {"g_RainEnable", "1"}, {"g_TextureFiltering", "2"}, {"g_RacingResolution", "4"}, {"g_PerformanceLevel", "5"}, {"g_VSyncOn", "0"},
+        // The marks of a game that already ran here (what the player's registry holds on 32-bit Windows). Without NotFirstTime the game runs its hardware detection
+        // on its first start and writes what it decides over the settings above: it does not know today's graphics cards and picks performance level 2 (no car
+        // reflections, no road reflections, no fog). The player still changes any of these in the game's options.
+        {"NotFirstTime", "1"}, {"VERSION", "1"}, {"SIZE", "120"}};
     v.push_back({"Language", language});
     for (const char* name : {"Install Dir", "InstallDir", "Path"}) v.push_back({name, game_folder});
     return v;
