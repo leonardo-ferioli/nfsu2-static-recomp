@@ -19,7 +19,7 @@ namespace {
 struct Resolution { int width, height, refresh; bool is_virtual = false; };   // virtual: the monitor has no such mode
 std::vector<Resolution> g_list;
 std::vector<std::string> g_text;
-std::vector<int> g_supported;
+int* g_supported = nullptr;          // one flag per entry of g_list; guest memory: the game reads the table
 WidescreenSettings g_settings;
 std::string g_label;
 
@@ -116,13 +116,13 @@ void inc_screen_res(Cpu& c) {
     }
     selected() = new_index;
     const uint32_t update = u32_at(u32_at(self) + 12);   // vtable[3]
-    if (new_index >= 0 && new_index < int(g_supported.size()) && g_supported[new_index]) {
+    if (new_index >= 0 && new_index < int(g_list.size()) && g_supported[new_index]) {
         if (new_index != old_index) u8_at(address_of("options_changed")) = 1;
     } else {
         selected() = old_index;
     }
     apply_display_mode();
-    NativePlatform::current()->call_guest(update, self, 0, {});
+    GuestPlatform::active()->call_guest(update, self, 0, {});
     set_reg(c, EAX, 0);
 }
 
@@ -133,17 +133,17 @@ void label_hook(Cpu& c) {
     call_function("fn_set_language_hash", 0, 0, {object[11], 0xA9A76BBAu});
     const int index = selected();
     g_label = (index < 0 || index >= int(g_text.size())) ? "undefined" : g_text[index];
-    call_function("fn_set_string", object[12], reg(c, EDX), {nfsu2::guest::to_guest(g_label.c_str())});
+    call_function("fn_set_string", object[12], reg(c, EDX), {guest_text(g_label)});
     set_reg(c, EAX, 0);
 }
 
 // What the game saves for the resolution: the size, not the index, so it survives a change of the display's modes.
 void saved_value_hook(Cpu& c) {
-    static uint32_t packed = 0;
+    static uint32_t* packed = guest_array<uint32_t>(1);
     const int index = selected();
     if (index >= 0 && index < int(g_list.size())) {
-        packed = (uint32_t(g_list[index].width) << 16) | (uint32_t(g_list[index].height) & 0xFFFFu) | 0x80000000u;
-        u32_at(reg(c, ESP)) = nfsu2::guest::to_guest(&packed);
+        *packed = (uint32_t(g_list[index].width) << 16) | (uint32_t(g_list[index].height) & 0xFFFFu) | 0x80000000u;
+        u32_at(reg(c, ESP)) = nfsu2::guest::to_guest(packed);
     }
 }
 
@@ -179,16 +179,20 @@ void window_placement(Cpu& c) {
 }
 
 void window_procedure(Cpu& c) {
-    HWND window = nfsu2::guest::host_handle<HWND>(argument(c, 0));
+    HWND window = host_object<HWND>(argument(c, 0));
     const UINT message = argument(c, 1);
     const WPARAM wparam = argument(c, 2);
     const LPARAM lparam = LPARAM(int32_t(argument(c, 3)));
     const bool windowed = u32_at(address_of("windowed_mode")) != 0;
     if (message == WM_SYSKEYDOWN && windowed && wparam == VK_MENU) { set_reg(c, EAX, 0); return; }
+#ifdef NFSU2_GUEST_IDENTITY
     if (message == WM_SETCURSOR && windowed && LOWORD(lparam) != HTCLIENT) {
         set_reg(c, EAX, uint32_t(DefWindowProcA(window, message, wparam, lparam)));
         return;
     }
+#else
+    (void)window;
+#endif
     if (message == WM_SIZE) notify_resolution(LOWORD(lparam), HIWORD(lparam));
     set_reg(c, EAX, call_original("wndproc", 0, 0, {argument(c, 0), argument(c, 1), argument(c, 2), argument(c, 3)}));
 }
@@ -213,10 +217,11 @@ void install_resolution(const WidescreenSettings& settings) {
     if (settings.scale_all_resolutions)
         for (auto& r : g_list) r.is_virtual = true;
     g_text.clear();
-    g_supported.assign(g_list.size(), 1);
+    g_supported = guest_array<int>(g_list.size() ? g_list.size() : 1);
+    for (size_t i = 0; i < g_list.size(); ++i) g_supported[i] = 1;
     for (const auto& r : g_list) g_text.push_back(std::to_string(r.width) + "x" + std::to_string(r.height) + (r.is_virtual ? " (scaled)" : ""));
-    set_var("supported_res_1", nfsu2::guest::to_guest(g_supported.data()));
-    set_var("supported_res_2", nfsu2::guest::to_guest(g_supported.data()));
+    set_var("supported_res_1", nfsu2::guest::to_guest(g_supported));
+    set_var("supported_res_2", nfsu2::guest::to_guest(g_supported));
     set_var("res_store_nop", 1u);
     install_hook("get_racing_resolution", get_racing_resolution);
     install_hook("inc_screen_res", inc_screen_res);

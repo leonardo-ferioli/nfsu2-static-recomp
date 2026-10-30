@@ -2,7 +2,13 @@
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
 #include <windows.h>
+#include <cstdlib>
+#include <map>
 #include <mutex>
+#include <unordered_map>
+#ifndef NFSU2_GUEST_IDENTITY
+#include "guest_arena.hpp"
+#endif
 
 namespace nfsu2raw::mods {
 float actual_delta_time = 0.0f;
@@ -30,24 +36,78 @@ void install_hook(const char* name, void (*handler)(Cpu&)) {
     mod_hook_table[index] = handler;
 }
 
+// ---- memory handed to the guest -------------------------------------------------------------------------------------------------------------------
+void* guest_storage(size_t bytes) {
+#ifdef NFSU2_GUEST_IDENTITY
+    void* p = std::calloc(1, bytes ? bytes : 1);
+    if (!p) throw std::runtime_error("out of memory for a mod's guest data");
+    return p;
+#else
+    auto* space = nfsu2::guest::current_address_space();
+    if (!space) throw std::runtime_error("a mod needs guest memory before the guest arena exists");
+    const uint32_t address = space->alloc(uint32_t(bytes ? bytes : 1));
+    if (!address) throw std::runtime_error("the guest arena has no room for a mod's data");
+    return nfsu2::guest::ptr<void>(address);
+#endif
+}
+uint32_t guest_constant(const void* data, size_t bytes) {
+#ifdef NFSU2_GUEST_IDENTITY
+    (void)bytes;
+    return nfsu2::guest::to_guest(data);
+#else
+    static std::mutex mutex;
+    static std::unordered_map<const void*, uint32_t> copies;
+    std::lock_guard lock(mutex);
+    if (auto found = copies.find(data); found != copies.end()) return found->second;
+    void* copy = guest_storage(bytes);
+    std::memcpy(copy, data, bytes);
+    return copies[data] = nfsu2::guest::to_guest(copy);
+#endif
+}
+uint32_t guest_text(const std::string& text) {
+#ifdef NFSU2_GUEST_IDENTITY
+    return nfsu2::guest::to_guest(text.c_str());
+#else
+    static std::mutex mutex;
+    static std::map<std::string, uint32_t> copies;
+    std::lock_guard lock(mutex);
+    if (auto found = copies.find(text); found != copies.end()) return found->second;
+    void* copy = guest_storage(text.size() + 1);
+    std::memcpy(copy, text.c_str(), text.size() + 1);
+    return copies[text] = nfsu2::guest::to_guest(copy);
+#endif
+}
+uint32_t guest_scratch(const void* data, size_t bytes) {
+#ifdef NFSU2_GUEST_IDENTITY
+    (void)bytes;
+    return nfsu2::guest::to_guest(data);
+#else
+    thread_local uint8_t* buffer = nullptr;
+    thread_local size_t capacity = 0;
+    if (bytes > capacity) { capacity = std::max<size_t>(bytes, 256); buffer = static_cast<uint8_t*>(guest_storage(capacity)); }   // a smaller old buffer stays allocated (a few bytes)
+    std::memcpy(buffer, data, bytes);
+    return nfsu2::guest::to_guest(buffer);
+#endif
+}
+
 // ---- calls into translated code -------------------------------------------------------------------------------------------------------------------
 uint32_t call_function(const char* name, uint32_t ecx, uint32_t edx, std::initializer_list<uint32_t> arguments) {
-    auto* platform = NativePlatform::current();
+    auto* platform = GuestPlatform::active();
     if (!platform) throw std::runtime_error("no platform to run translated code");
-    NativePlatform::note_mod_call(name);
+    platform->mod_call_note(name);
     const uint32_t result = platform->call_guest(address_of(name), ecx, edx, arguments);
-    NativePlatform::note_mod_call(nullptr);
+    platform->mod_call_note(nullptr);
     return result;
 }
 uint32_t call_original(const char* hook, uint32_t ecx, uint32_t edx, std::initializer_list<uint32_t> arguments) {
     const int index = mod_hook_index(hook);
     if (index < 0) throw std::runtime_error(std::string("the translated code has no mod hook ") + hook);
-    auto* platform = NativePlatform::current();
+    auto* platform = GuestPlatform::active();
     if (!platform) throw std::runtime_error("no platform to run translated code");
     g_mod_bypass[index] = 1;
-    NativePlatform::note_mod_call(hook);
+    platform->mod_call_note(hook);
     const uint32_t result = platform->call_guest(address_of((std::string("fn_") + hook).c_str()), ecx, edx, arguments);
-    NativePlatform::note_mod_call(nullptr);
+    platform->mod_call_note(nullptr);
     g_mod_bypass[index] = 0;
     return result;
 }

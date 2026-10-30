@@ -393,7 +393,7 @@ NativePlatform::NativePlatform(Cpu& c,const std::filesystem::path& game,const Bl
         std::memcpy(c.pointer(block.base,block.size),bytes.data(),bytes.size());
     }
     prepare(c);for(const auto& i:imports)wm<4>(c,i.iat,i.token);c.pc=entry_point;
-    command_line='"'+(assets/"SPEED2.EXE").string()+'"';current_platform=this;
+    command_line='"'+(assets/"SPEED2.EXE").string()+'"';current_platform=this;GuestPlatform::set_active(this);
     exception_guard=AddVectoredExceptionHandler(1,native_fault_guard);
     apply_speed_settings();
     g_native_hook=speed_settings().native_calls?&translated_native_call:nullptr;
@@ -412,7 +412,7 @@ NativePlatform::~NativePlatform(){
     }
     if(auto* window=nfsu2::platform::services().window)window->release_cursor_clip();
     for(auto& method:method_tokens)delete method.exchange(nullptr);
-    if(exception_guard)RemoveVectoredExceptionHandler(exception_guard);current_platform=nullptr;
+    if(exception_guard)RemoveVectoredExceptionHandler(exception_guard);current_platform=nullptr;GuestPlatform::set_active(nullptr);
 }
 void NativePlatform::prepare(Cpu& c){
     c.map(0,stack_size);uint32_t stack=c.memory.back().base;

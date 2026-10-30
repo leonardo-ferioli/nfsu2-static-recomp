@@ -43,7 +43,8 @@ public:
     // Calls a function of the translated program from native code, on a pooled processor with its own guest stack: ECX and EDX are
     // set (this-call / fast-call), `arguments` are pushed as stack words (the callee pops its own or the caller ignores them, as the
     // function's convention says; the pooled stack is rebuilt for every call). Returns EAX.
-    uint32_t call_guest(uint32_t address,uint32_t ecx,uint32_t edx,std::initializer_list<uint32_t> arguments);
+    uint32_t call_guest(uint32_t address,uint32_t ecx,uint32_t edx,std::initializer_list<uint32_t> arguments) override;
+    void mod_call_note(const char* name) override{note_mod_call(name);}
     // Replaces an imported Windows function by a native one (mods). The handler reads its stdcall arguments from the guest stack
     // and returns EAX; it runs on the calling thread instead of the real function. Install before run().
     void override_import(const char* name,unsigned argument_count,NativeHook hook) override;

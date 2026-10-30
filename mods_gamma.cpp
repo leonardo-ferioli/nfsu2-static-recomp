@@ -86,7 +86,7 @@ bool create_targets(IDirect3DDevice9* device) {
 
 void render_gamma() {
     if (g_failed) return;
-    auto* device = nfsu2::guest::host_handle<IDirect3DDevice9*>(u32_at(address_of("d3d_device")));
+    auto* device = host_object<IDirect3DDevice9*>(u32_at(address_of("d3d_device")));
     if (!device) return;
     if (!compile_shader(device) || !create_targets(device)) { g_failed = true; return; }
 
@@ -162,7 +162,7 @@ bool detect_msaa(IDirect3DDevice9* device) {
 }
 
 void hide_aa_border() {
-    auto* device = nfsu2::guest::host_handle<IDirect3DDevice9*>(u32_at(address_of("d3d_device")));
+    auto* device = host_object<IDirect3DDevice9*>(u32_at(address_of("d3d_device")));
     if (!device) return;
     if (!g_msaa_checked) { g_msaa = detect_msaa(device); g_msaa_checked = true; }
     if (!g_msaa) return;
@@ -185,6 +185,10 @@ void hide_aa_border() {
 }  // namespace
 
 void install_gamma(const WidescreenSettings& settings) {
+#ifndef NFSU2_GUEST_IDENTITY
+    (void)settings;   // a 64-bit host: the gamma ramp and the anti-aliasing border act on the real Direct3D 9 device, which the layer replaces
+    return;
+#endif
     g_hide_aa = settings.hide_aa_bug < 0 ? 0 : settings.hide_aa_bug > 2 ? 2 : settings.hide_aa_bug;
     events().before_reset.push_back([] {
         release_targets();

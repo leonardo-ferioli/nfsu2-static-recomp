@@ -45,7 +45,7 @@ std::string last_component(const std::string& path) {
 }
 bool intercepted(const char* sub_key) { return sub_key && std::strstr(sub_key, "Need for Speed") != nullptr; }
 
-HKEY key_of(uint32_t value) { return nfsu2::guest::host_handle<HKEY>(int32_t(value)); }   // predefined keys are sign-extended handles
+HKEY key_of(uint32_t value) { return host_object<HKEY>(int32_t(value)); }   // predefined keys are sign-extended handles
 
 uint32_t file_close_key(Cpu& c) {
     const uint32_t key = argument(c, 0);
@@ -275,10 +275,14 @@ uint32_t folder_path(Cpu& c) {
     static HMODULE shell = LoadLibraryA("shell32.dll");
     using Fn = HRESULT(WINAPI*)(HWND, int, HANDLE, DWORD, LPSTR);
     static Fn real = reinterpret_cast<Fn>(GetProcAddress(shell, "SHGetFolderPathA"));
-    return real ? uint32_t(real(nfsu2::guest::host_handle<HWND>(argument(c, 0)), int(argument(c, 1)), nfsu2::guest::host_handle<HANDLE>(argument(c, 2)), argument(c, 3), path)) : uint32_t(E_FAIL);
+    return real ? uint32_t(real(host_object<HWND>(argument(c, 0)), int(argument(c, 1)), host_object<HANDLE>(argument(c, 2)), argument(c, 3), path)) : uint32_t(E_FAIL);
 }
 }  // namespace
 
+#ifndef NFSU2_GUEST_IDENTITY
+// A 64-bit host: the Reg* imports are answered by the Win32 layer's registry (an in-memory Config the host keeps between runs), not by the real one.
+void install_registry(const WidescreenSettings&) {}
+#else
 void install_registry(const WidescreenSettings& settings) {
     auto* platform = NativePlatform::current();
     {
@@ -348,4 +352,5 @@ void install_registry(const WidescreenSettings& settings) {
         }
     }
 }
+#endif
 }  // namespace nfsu2raw::mods

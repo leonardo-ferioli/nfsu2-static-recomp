@@ -56,10 +56,12 @@ Platform64::Platform64(Cpu& main,const std::filesystem::path& exports,const std:
     main_.pc=entry_point;
     install_exception_imports();
     g_current=this;
+    GuestPlatform::set_active(this);
 }
 Platform64::~Platform64(){
     stopping_=true;
     g_current=nullptr;
+    if(GuestPlatform::active()==this)GuestPlatform::set_active(nullptr);
     main_context_.reset();
     if(auto* space=nfsu2::guest::current_address_space())if(peb_)space->free(peb_);
 }
@@ -229,7 +231,8 @@ uint32_t Platform64::execute(Cpu& c,uint32_t stop,uint64_t budget){
     throw Fault("instruction budget exhausted");
 }
 
-uint32_t Platform64::callback(uint32_t address,std::initializer_list<uint32_t> arguments){
+uint32_t Platform64::callback(uint32_t address,std::initializer_list<uint32_t> arguments){return call_guest(address,0,0,arguments);}
+uint32_t Platform64::call_guest(uint32_t address,uint32_t ecx,uint32_t edx,std::initializer_list<uint32_t> arguments){
     // A processor per nesting level and thread that is inside a callback at the same time, kept for the next one (creating one maps a stack).
     std::unique_ptr<Context> context;
     {std::lock_guard lock(mutex_);if(!pool_.empty()){context=std::move(pool_.back());pool_.pop_back();}}
@@ -237,6 +240,7 @@ uint32_t Platform64::callback(uint32_t address,std::initializer_list<uint32_t> a
     struct Giveback{Platform64& p;std::unique_ptr<Context>& c;~Giveback(){std::lock_guard lock(p.mutex_);p.pool_.push_back(std::move(c));}} giveback{*this,context};
     Cpu& c=*context->cpu;
     initialize(c,context->stack,context->teb);
+    wr<4>(c,4,ecx);wr<4>(c,8,edx);
     const uint32_t sp=uint32_t(r<4>(c,16));
     unsigned i=0;for(uint32_t a:arguments)wm<4>(c,sp+4+4*i++,a);
     c.pc=address;

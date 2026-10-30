@@ -40,7 +40,7 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 4)
     set(PLATFORM_SOURCE native32.cpp native32_reservation.cpp speed.cpp dynamic_code.cpp platform/services.cpp platform/win32/win32_services.cpp platform/null/null_platform.cpp nue_d3d9/src/d3d9_trace.cpp nue_d3d9/src/null_gpu.cpp d3d9_recorder.cpp win32_facade.cpp win32_facade_dinput.cpp win32_facade_extra.cpp win32_facade_loader.cpp win32_facade_system.cpp win32_facade_window.cpp platform/audio/dsound_install.cpp)
     add_link_options(-Wl,/BASE:0x00400000 -Wl,/DYNAMICBASE:NO -Wl,/LARGEADDRESSAWARE:NO -Wl,/SAFESEH:NO "-Wl,/sectionlayout:@${CMAKE_CURRENT_SOURCE_DIR}/native32_sections.txt")
 else()
-    set(PLATFORM_SOURCE platform.cpp platform64.cpp platform64_seh.cpp speed.cpp dynamic_code.cpp guest_arena.cpp win32_facade.cpp win32_facade_dinput.cpp win32_facade_extra.cpp win32_facade_loader.cpp win32_facade_system.cpp win32_facade_window.cpp platform/audio/dsound_install.cpp)   # the guest lives in vectors or, when an arena exists, in the arena; the Win32 facade serves both hosts
+    set(PLATFORM_SOURCE platform.cpp platform64.cpp platform64_seh.cpp speed.cpp dynamic_code.cpp guest_arena.cpp win32_facade.cpp win32_facade_dinput.cpp win32_facade_extra.cpp win32_facade_loader.cpp win32_facade_system.cpp win32_facade_window.cpp platform/audio/dsound_install.cpp platform/services.cpp platform/win32/win32_services.cpp platform/null/null_platform.cpp)   # the guest lives in vectors or, when an arena exists, in the arena; the Win32 facade serves both hosts
     # The Direct3D 9 group of the facade (win32_facade_d3d9.cpp) over the layer nue_d3d9 (its core: Direct3D 9 semantics, shader translation, null GPU) and
     # SPIRV-Cross, vendored by the bgfx.cmake submodule. Without the submodule the group is left out and asking for it fails with a message.
     set(NUE_SPIRV_CROSS "${CMAKE_CURRENT_SOURCE_DIR}/third_party/bgfx.cmake/bgfx/3rdparty/spirv-cross")
@@ -216,7 +216,7 @@ endif()
 # (not tracked: 400 MB of source; the mods still need the platform interface of GuestPlatform), run by Platform64 over the guest arena.
 if(CMAKE_SIZEOF_VOID_P EQUAL 8 AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/generated_fast64/dispatch.cpp")
     file(GLOB FAST64_UNITS CONFIGURE_DEPENDS generated_fast64/page_*.cpp)
-    add_library(nfsu2_fast64 STATIC runtime.cpp userops.cpp ${PLATFORM_SOURCE} generated_fast64/dispatch.cpp generated_fast64/mods_tables.cpp ${FAST64_UNITS})
+    add_library(nfsu2_fast64 STATIC runtime.cpp userops.cpp ${PLATFORM_SOURCE} generated_fast64/dispatch.cpp generated_fast64/mods_tables.cpp mods_runtime.cpp mods_core.cpp mods_resolution.cpp mods_rendering.cpp mods_frontend.cpp mods_anchor.cpp mods_system.cpp mods_input.cpp mods_nos.cpp mods_registry.cpp mods_gamma.cpp mods_widescreen.cpp mods_detail.cpp ${FAST64_UNITS})
     target_compile_definitions(nfsu2_fast64 PUBLIC NFSU2_FAST_BACKEND=1)
     target_include_directories(nfsu2_fast64 PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
     target_compile_options(nfsu2_fast64 PRIVATE "-O${RAW_OPT_LEVEL}" -g0 -fno-fast-math -fno-strict-aliasing -Wno-unused-label -ffunction-sections)
@@ -227,6 +227,7 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 8 AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/generated
     endif()
     add_executable(speed_fast64 runner.cpp)
     target_link_libraries(speed_fast64 PRIVATE nfsu2_fast64)
+    target_compile_definitions(speed_fast64 PRIVATE NFSU2_HAS_MODS=1)
     find_package(Python3 COMPONENTS Interpreter)
     if(Python3_Interpreter_FOUND)
         file(MAKE_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/logs")

@@ -11,6 +11,10 @@ using ActivePlatform=nfsu2raw::NativePlatform;
 #include "platform.hpp"
 using ActivePlatform=nfsu2raw::Platform;
 #include "platform64.hpp"
+#ifdef NFSU2_HAS_MODS
+#include "mods_widescreen.hpp"
+#include "mods_detail.hpp"
+#endif
 #include "win32_facade.hpp"
 #include "platform/audio/dsound_install.hpp"
 #include "platform/audio/null_sink.hpp"
@@ -75,6 +79,10 @@ int main(int argc,char** argv){
             const nfsu2::platform::audio::GuestHandles handles{[&](uint32_t h){facade.set_event(h);},[&](uint32_t h){return facade.is_window(h);}};
             nfsu2::platform::audio::AudioSettings audio;audio.enabled=true;audio.sink_factory=[]{return std::unique_ptr<nfsu2::platform::audio::AudioSink>(std::make_unique<PacedNullSink>());};
             std::string audio_why;if(!nfsu2::platform::audio::install_dsound(p,audio,[](const std::string& t){std::cout<<t<<std::endl;},audio_why,&handles))std::cout<<"DirectSound not installed: "<<audio_why<<std::endl;
+#ifdef NFSU2_HAS_MODS
+            // NFSU2_BOOT64_MODS=1: the mods with their default settings (the launcher's [MAIN]/[MISC]/... defaults), as the product installs them before the game runs.
+            if(std::getenv("NFSU2_BOOT64_MODS"))std::cout<<install_widescreen(WidescreenSettings{})<<std::endl<<install_detail(DetailSettings{})<<std::endl;   // opt-in: the engine comparison (fast64_boot) runs the unmodded game
+#endif
             const auto log=std::filesystem::absolute(argv[2]).parent_path()/"logs/boot64_trace.log";
             std::cout<<"Platform64: "<<facade.installed_report()<<"\ntrace: "<<log<<std::endl;
             try{p.run(std::stoull(argv[4]),log);}catch(const std::exception& e){std::cout<<"STOP "<<e.what()<<"\ninstructions="<<c.instructions<<std::endl;nfsu2::platform::audio::shutdown_dsound([](const std::string& t){std::cout<<t<<std::endl;});return 0;}

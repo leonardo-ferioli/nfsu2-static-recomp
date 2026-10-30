@@ -12,6 +12,24 @@
 #include <vector>
 
 namespace nfsu2raw::mods {
+// A host object (HWND, HKEY, a COM pointer) that the guest holds as a 32-bit value: only the 32-bit Windows host can turn one into the other. On a 64-bit host the
+// guest holds none (the Win32 layer hands out tokens), the hooks that need one are not installed there, and these return an empty value.
+template <class T> inline T host_object(uint32_t value) {
+#ifdef NFSU2_GUEST_IDENTITY
+    return nfsu2::guest::host_handle<T>(value);
+#else
+    (void)value;
+    return T{};
+#endif
+}
+template <class T> inline uint32_t guest_object(T handle) {
+#ifdef NFSU2_GUEST_IDENTITY
+    return nfsu2::guest::guest_handle(handle);
+#else
+    (void)handle;
+    return 0;
+#endif
+}
 // Offsets of the general registers in Cpu::regs.
 enum Reg : unsigned { EAX = 0, ECX = 4, EDX = 8, EBX = 12, ESP = 16, EBP = 20, ESI = 24, EDI = 28 };
 
@@ -36,6 +54,13 @@ void install_hook(const char* name, void (*handler)(Cpu&));
 // ---- calls into translated code -------------------------------------------------------------------------------------------------------------
 // Runs the function at the address named `fn_<name>`-style (any address_of name) with the given registers and stack words.
 uint32_t call_function(const char* name, uint32_t ecx, uint32_t edx, std::initializer_list<uint32_t> arguments);
+// Memory a mod hands to the guest (docs/MEMORY_MODEL_64.md). On the 32-bit host the process' memory is the guest's, so a mod may give it its own data; on a
+// 64-bit host the guest reaches only the arena, so what it is given is put there.
+uint32_t guest_constant(const void* data, size_t bytes);       // constant data: a copy made once per host address, alive for the program
+uint32_t guest_text(const std::string& text);                  // a text the guest may keep: one stable copy per distinct content (the caller keeps `text` alive on the 32-bit host)
+void* guest_storage(size_t bytes);                             // zeroed memory the guest reads and the mod writes, alive for the program
+uint32_t guest_scratch(const void* data, size_t bytes);        // a per-thread copy for a call into the guest, valid until the thread's next call
+template <class T> T* guest_array(size_t count) { return static_cast<T*>(guest_storage(sizeof(T) * count)); }
 // Runs the original body of the function a function hook replaced, then returns its EAX.
 uint32_t call_original(const char* hook, uint32_t ecx, uint32_t edx, std::initializer_list<uint32_t> arguments);
 
