@@ -1,7 +1,5 @@
 #include "mods_internal.hpp"
-#define WIN32_LEAN_AND_MEAN
-#define NOMINMAX
-#include <windows.h>
+#include "mods_win32.hpp"
 #include <cstdlib>
 #include <map>
 #include <mutex>

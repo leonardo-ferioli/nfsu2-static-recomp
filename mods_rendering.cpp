@@ -2,10 +2,9 @@
 // Frontend modules, minus the front-end/video scaling in mods_frontend.cpp).
 #include "mods_internal.hpp"
 #include "x87_hooks.hpp"
-#define WIN32_LEAN_AND_MEAN
-#define NOMINMAX
-#include <windows.h>
+#include "mods_win32.hpp"
 #include <algorithm>
+#include <cstdio>
 #include <cmath>
 #include <optional>
 #include <vector>
@@ -43,10 +42,10 @@ std::optional<float> parse_hud_constraint(std::string text) {
     const float number = std::strtof(text.c_str(), &end);
     if (end != text.c_str() && *end == '\0') return number;
     int w = 0, h = 0;
-    if (sscanf_s(text.c_str(), "%dx%d", &w, &h) == 2 && w > 0) return float(w);
+    if (std::sscanf(text.c_str(), "%dx%d", &w, &h) == 2 && w > 0) return float(w);
     float a = 0, b = 0;
-    if (sscanf_s(text.c_str(), "%f:%f", &a, &b) == 2 && a > 0 && b > 0) return a / b;
-    if (sscanf_s(text.c_str(), "%f/%f", &a, &b) == 2 && a > 0 && b > 0) return a / b;
+    if (std::sscanf(text.c_str(), "%f:%f", &a, &b) == 2 && a > 0 && b > 0) return a / b;
+    if (std::sscanf(text.c_str(), "%f/%f", &a, &b) == 2 && a > 0 && b > 0) return a / b;
     return std::nullopt;
 }
 

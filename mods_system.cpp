@@ -6,9 +6,7 @@
 #include "mods_internal.hpp"
 #include "platform/services.hpp"
 namespace platform = nfsu2::platform;
-#define WIN32_LEAN_AND_MEAN
-#define NOMINMAX
-#include <windows.h>
+#include "mods_win32.hpp"
 #include <algorithm>
 #include <cmath>
 #include <tuple>
@@ -23,9 +21,11 @@ std::tuple<int, int> monitor_size() {
 }
 
 platform::Window& game_window() { return *platform::services().window; }
+#ifdef NFSU2_GUEST_IDENTITY
 // The game's window as the Windows API wants it (for the pass-through of the guest's own window calls).
 HWND game_hwnd() { return static_cast<HWND>(game_window().native_surface().a); }
 void remember_game_window(HWND window) { game_window().adopt({platform::NativeSurface::Kind::win32_hwnd, window, nullptr}); }
+#endif
 
 // ---- windowed modes (WindowedModeWrapper) --------------------------------------------------------------------------------------------------
 bool g_borderless = true, g_resizable = false, g_scale_window = false, g_stretch_window = false, g_cursor_on_frame = false;
@@ -98,6 +98,8 @@ void center_window_position(int width, int height) {
     game_window().place_outer(int((float(desktop_w) / 2.0f) - (float(new_w) / 2.0f)), int((float(desktop_h) / 2.0f) - (float(new_h) / 2.0f)), new_w, new_h);
 }
 
+#ifdef NFSU2_GUEST_IDENTITY
+// ---- the windowed modes on the 32-bit host: the game's window calls go to the real Windows -------------------------------------------------------
 uint32_t create_window_ex_a(Cpu& c) {
     const DWORD ex_style = argument(c, 0);
     const char* class_name = nfsu2::guest::ptr<const char>(argument(c, 1));
@@ -151,8 +153,7 @@ uint32_t adjust_window_rect(Cpu& c) {
     after_create_window();
     return uint32_t(AdjustWindowRect(rect, GetWindowLongA(game_hwnd(), GWL_STYLE), menu));
 }
-
-#ifndef NFSU2_GUEST_IDENTITY
+#else
 // ---- the windowed modes on a 64-bit host ---------------------------------------------------------------------------------------------------------
 // The game's window calls are the Win32 layer's (win32_facade_window.cpp, its window is the platform window that game_window() is): the same policy as
 // above changes their arguments, calls the layer's own handler ("chaining") and acts on the platform window afterwards.
@@ -273,6 +274,7 @@ void install_system(const WidescreenSettings& settings) {
         f32_at(address_of("cutscene_fps")) = float(cutscene_fps);
     }
     if (settings.single_core_affinity) {
+#if defined(_WIN32)
         DWORD_PTR process_mask, system_mask;
         if (GetProcessAffinityMask(GetCurrentProcess(), &process_mask, &system_mask)) {
             const DWORD_PTR other_cores = (process_mask - 1) & process_mask;
@@ -284,6 +286,9 @@ void install_system(const WidescreenSettings& settings) {
 #endif
             }
         }
+#else
+        GuestPlatform::active()->log_line("widescreen fix: single-core affinity is not applied on this host (no equivalent written yet)");
+#endif
     }
     if (settings.no_optical_drive_fix) set_var("no_optical_drive", 1u);
     install_hook("sound_update", sound_update);
@@ -336,7 +341,7 @@ void place_game_window(int width, int height) {
         game_window().place_client_centered(width, height, desktop_w, desktop_h, true);   // centred by the client area, shown, not topmost
     }
     const platform::Rect outer = game_window().outer_rect();
-    RECT* rect = nfsu2::guest::ptr<RECT>(address_of("window_rect"));
-    *rect = RECT{outer.left, outer.top, outer.right, outer.bottom};   // the game keeps its own copy of the window rectangle
+    int32_t* rect = nfsu2::guest::ptr<int32_t>(address_of("window_rect"));   // a RECT: the game keeps its own copy of the window rectangle
+    rect[0] = outer.left; rect[1] = outer.top; rect[2] = outer.right; rect[3] = outer.bottom;
 }
 }  // namespace nfsu2raw::mods

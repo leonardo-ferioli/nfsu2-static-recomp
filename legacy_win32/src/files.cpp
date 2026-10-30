@@ -367,7 +367,7 @@ Ret<uint64_t> FileSystem::get_file_size(Handle h) {
     if (!f) return fail<uint64_t>(err::invalid_handle, kInvalidFilePointer);
     uint64_t size = 0;
     std::lock_guard lock(f->m);
-    if (f->character_device) return ok(0ull);
+    if (f->character_device) return ok(uint64_t(0));
     f->storage.size(f->file, size);
     return ok(size);
 }

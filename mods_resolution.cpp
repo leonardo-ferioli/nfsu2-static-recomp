@@ -3,9 +3,7 @@
 #include "guest_memory.hpp"
 #include "platform/services.hpp"
 namespace platform = nfsu2::platform;
-#define WIN32_LEAN_AND_MEAN
-#define NOMINMAX
-#include <windows.h>
+#include "mods_win32.hpp"
 #include <algorithm>
 #include <string>
 #include <tuple>
@@ -179,19 +177,15 @@ void window_placement(Cpu& c) {
 }
 
 void window_procedure(Cpu& c) {
-    HWND window = host_object<HWND>(argument(c, 0));
-    const UINT message = argument(c, 1);
-    const WPARAM wparam = argument(c, 2);
-    const LPARAM lparam = LPARAM(int32_t(argument(c, 3)));
+    const uint32_t message = argument(c, 1), wparam = argument(c, 2), lparam = argument(c, 3);
     const bool windowed = u32_at(address_of("windowed_mode")) != 0;
     if (message == WM_SYSKEYDOWN && windowed && wparam == VK_MENU) { set_reg(c, EAX, 0); return; }
 #ifdef NFSU2_GUEST_IDENTITY
     if (message == WM_SETCURSOR && windowed && LOWORD(lparam) != HTCLIENT) {
-        set_reg(c, EAX, uint32_t(DefWindowProcA(window, message, wparam, lparam)));
+        HWND window = host_object<HWND>(argument(c, 0));
+        set_reg(c, EAX, uint32_t(DefWindowProcA(window, message, wparam, LPARAM(int32_t(lparam)))));
         return;
     }
-#else
-    (void)window;
 #endif
     if (message == WM_SIZE) notify_resolution(LOWORD(lparam), HIWORD(lparam));
     set_reg(c, EAX, call_original("wndproc", 0, 0, {argument(c, 0), argument(c, 1), argument(c, 2), argument(c, 3)}));

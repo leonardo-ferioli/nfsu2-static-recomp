@@ -2,13 +2,12 @@
 // (the mod's Camera and Controller modules).
 #include "mods_internal.hpp"
 #include "guest_memory.hpp"
-#define WIN32_LEAN_AND_MEAN
-#define NOMINMAX
-#include <windows.h>
+#include "mods_win32.hpp"
 #include <algorithm>
 #include <chrono>
 #include <cmath>
 #include <string>
+#include <string_view>
 #include <vector>
 
 namespace nfsu2raw::mods {
@@ -122,9 +121,9 @@ void cursor_function(Cpu& c) {
 float g_left_deadzone = 10.0f, g_right_deadzone = 10.0f;
 
 struct JoyState {   // DIJOYSTATE
-    LONG lX, lY, lZ, lRx, lRy, lRz, rglSlider[2];
-    DWORD rgdwPOV[4];
-    BYTE rgbButtons[32];
+    int32_t lX, lY, lZ, lRx, lRy, lRz, rglSlider[2];
+    uint32_t rgdwPOV[4];
+    uint8_t rgbButtons[32];
 };
 
 void joy_state(Cpu& c) {
@@ -176,8 +175,15 @@ void catch_pad(Cpu& c) {
     if (pad != nullptr && pad != reinterpret_cast<const PadState*>(1) && i32_at(address_of("game_state")) == 3) {
         if (pad->ls_click && pad->rs_click) {
             if (!g_quit_pressed) {
+#ifdef NFSU2_GUEST_IDENTITY
                 keybd_event(BYTE(VkKeyScanA('Q')), 0, KEYEVENTF_EXTENDEDKEY, 0);
                 keybd_event(BYTE(VkKeyScanA('Q')), 0, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP, 0);
+#else
+                // A 64-bit host: the game reads its keyboard from the Win32 layer's DirectInput, which a key sent to the real system never reaches.
+                // Pressing Q through the layer needs an input injection the platform's Input does not have yet (follow-up).
+                static bool noted = false;
+                if (!noted) { noted = true; GuestPlatform::active()->log_line("widescreen fix: both stick clicks (Q in the front end) are not passed to the game on this host yet"); }
+#endif
             }
             g_quit_pressed = true;
         } else {
@@ -191,9 +197,9 @@ const char* const kMenuTextsPc[] = {"[Q] Quit Game", "[Enter] Continue", "[Esc] 
 const char* const kMenuTextsXbox[] = {"(LS+RS) Quit Game", "(A) Continue", "(B) Back", "(Y) Reset Keys To Default", "(X) Activate GPS", "(X) Deactivate GPS", "(A) Install Package", "(A) Install Part", "(A) Install Paint", "(A) Install Decal", "(X) Reset To Default", "(X) Delete Tuned Car", "(B) Logoff", "(X) Cancel Changes", "(X) Customize", "(X) Host LAN Server", "(A) Read Message", "(X) Delete", "(X) Test N2O Purge", "(A) Accept", "(X) Reset to default", "(A) Select", "(X) Open/Close Doors", "(X) Open/Close Hood"};
 const char* const kMenuTextsPlayStation[] = {"(L3+R3) Quit Game", "(Cross) Continue", "(Circle) Back", "(Triangle) Reset Keys To Default", "(Square) Activate GPS", "(Square) Deactivate GPS", "(Cross) Install Package", "(Cross) Install Part", "(Cross) Install Paint", "(Cross) Install Decal", "(Square) Reset To Default", "(Square) Delete Tuned Car", "(Circle) Logoff", "(Square) Cancel Changes", "(Square) Customize", "(Square) Host LAN Server", "(Cross) Read Message", "(Square) Delete", "(Square) Test N2O Purge", "(Cross) Accept", "(Square) Reset to default", "(Cross) Select", "(Square) Open/Close Doors", "(Square) Open/Close Hood"};
 
-const wchar_t* const kControlTexts[] = {L" 2", L" 3", L" 4", L" 5", L" 6", L" 7", L" 8", L" 9", L" 10", L" 1", L" Up", L" Down", L" Left", L" Right", L"X Rotation", L"Y Rotation", L"X Axis", L"Y Axis", L"Z Axis", L"Hat Switch"};
-const wchar_t* const kControlTextsXbox[] = {L"B", L"X", L"Y", L"LB", L"RB", L"View (Select)", L"Menu (Start)", L"Left stick", L"Right stick", L"A", L"D-pad Up", L"D-pad Down", L"D-pad Left", L"D-pad Right", L"Right stick Left/Right", L"Right stick Up/Down", L"Left stick Left/Right", L"Left stick Up/Down", L"LT / RT", L"D-pad"};
-const wchar_t* const kControlTextsPlayStation[] = {L"Circle", L"Square", L"Triangle", L"L1", L"R1", L"Select", L"Start", L"L3", L"R3", L"Cross", L"D-pad Up", L"D-pad Down", L"D-pad Left", L"D-pad Right", L"Right stick Left/Right", L"Right stick Up/Down", L"Left stick Left/Right", L"Left stick Up/Down", L"L2 / R2", L"D-pad"};
+const char16_t* const kControlTexts[] = {u" 2", u" 3", u" 4", u" 5", u" 6", u" 7", u" 8", u" 9", u" 10", u" 1", u" Up", u" Down", u" Left", u" Right", u"X Rotation", u"Y Rotation", u"X Axis", u"Y Axis", u"Z Axis", u"Hat Switch"};
+const char16_t* const kControlTextsXbox[] = {u"B", u"X", u"Y", u"LB", u"RB", u"View (Select)", u"Menu (Start)", u"Left stick", u"Right stick", u"A", u"D-pad Up", u"D-pad Down", u"D-pad Left", u"D-pad Right", u"Right stick Left/Right", u"Right stick Up/Down", u"Left stick Left/Right", u"Left stick Up/Down", u"LT / RT", u"D-pad"};
+const char16_t* const kControlTextsPlayStation[] = {u"Circle", u"Square", u"Triangle", u"L1", u"R1", u"Select", u"Start", u"L3", u"R3", u"Cross", u"D-pad Up", u"D-pad Down", u"D-pad Left", u"D-pad Right", u"Right stick Left/Right", u"Right stick Up/Down", u"Left stick Left/Right", u"Left stick Up/Down", u"L2 / R2", u"D-pad"};
 
 // The button texts of the menus follow the last device used. Replaces MOV ECX,[menu object] and may swap the text in EAX.
 void menu_text(Cpu& c) {
@@ -228,16 +234,17 @@ void controller_buttons(Cpu& c) {
     set_reg(c, EDI, u32_at(esp));   // POP EDI
     esp += 4;
     set_reg(c, ESP, esp);
-    auto* text = nfsu2::guest::ptr<wchar_t>(esp + 4);
-    if (std::wcslen(text) == 0) {
+    auto* text = nfsu2::guest::ptr<char16_t>(esp + 4);   // the game's text is UTF-16 (wchar_t is 4 bytes on Linux and Android)
+    if (std::u16string_view(text).empty()) {
         c.pc = address_of("buttons_empty");
         return;
     }
     if (!g_settings.improve_gamepad) return;
     for (size_t i = 0; i < std::size(kControlTexts); ++i) {
-        if (std::wstring(text).find(kControlTexts[i]) == std::wstring::npos) continue;
-        const wchar_t* replacement = g_settings.improve_gamepad != 2 ? kControlTextsXbox[i] : kControlTextsPlayStation[i];
-        wcscpy_s(text, std::wcslen(replacement) + 1, replacement);
+        if (std::u16string_view(text).find(kControlTexts[i]) == std::u16string_view::npos) continue;
+        const std::u16string_view replacement = g_settings.improve_gamepad != 2 ? kControlTextsXbox[i] : kControlTextsPlayStation[i];
+        std::copy(replacement.begin(), replacement.end(), text);
+        text[replacement.size()] = u'\0';
         break;
     }
 }

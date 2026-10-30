@@ -4,10 +4,7 @@
 // The game's registry calls are native here (NativePlatform::override_import).
 #include "mods_internal.hpp"
 #include "guest_memory.hpp"
-#define WIN32_LEAN_AND_MEAN
-#define NOMINMAX
-#include <windows.h>
-#include <shlobj.h>
+#include "mods_win32.hpp"
 #include <filesystem>
 #include <map>
 #include <set>
@@ -27,6 +24,7 @@ std::string g_game_folder;   // with a trailing backslash
 std::map<std::string, std::string> g_defaults;
 std::set<std::string> g_path_values;
 
+#ifdef NFSU2_GUEST_IDENTITY   // the 32-bit host: the game's Reg* and SHGetFolderPathA calls reach the real Windows through this policy
 fs::path to_path(const std::string& s) { return fs::path(s); }
 
 // ---- the settings file (RegistryWrapper) ------------------------------------------------------------------------------------------------------------
@@ -277,6 +275,7 @@ uint32_t folder_path(Cpu& c) {
     static Fn real = reinterpret_cast<Fn>(GetProcAddress(shell, "SHGetFolderPathA"));
     return real ? uint32_t(real(host_object<HWND>(argument(c, 0)), int(argument(c, 1)), host_object<HANDLE>(argument(c, 2)), argument(c, 3), path)) : uint32_t(E_FAIL);
 }
+#endif
 }  // namespace
 
 #ifndef NFSU2_GUEST_IDENTITY
