@@ -5422,7 +5422,7 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51d655:L51d655:{bud-=2;NFSU2_TR(0x51d655);
-if(mod_hook_table[47]){SPILL_OUT();c.pc=0x51d655u;mod_hook_table[47](c);SPILL_IN();if(c.pc!=0x51d655u){TAIL_DYNAMIC(c.pc);}{[[clang::musttail]] return blk_51d65a(ARGS);}}
+if(mod_hook_table[48]){SPILL_OUT();c.pc=0x51d655u;mod_hook_table[48](c);SPILL_IN();if(c.pc!=0x51d655u){TAIL_DYNAMIC(c.pc);}{[[clang::musttail]] return blk_51d65a(ARGS);}}
 u8 U[4];
 __builtin_memmove((U+0),(G+4),4);
 s4(u32(r4(R+8)),r4(U+0));

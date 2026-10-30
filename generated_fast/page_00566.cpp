@@ -568,7 +568,7 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B566042:L566042:{bud-=5;NFSU2_TR(0x566042);
-if(mod_hook_table[24]){SPILL_OUT();c.pc=0x566042u;mod_hook_table[24](c);SPILL_IN();if(c.pc!=0x566042u){TAIL_DYNAMIC(c.pc);}}
+if(mod_hook_table[25]){SPILL_OUT();c.pc=0x566042u;mod_hook_table[25](c);SPILL_IN();if(c.pc!=0x566042u){TAIL_DYNAMIC(c.pc);}}
 s4(0x8383ac,u32(0x1ull));
 }
 B56604c:{NFSU2_TR(0x56604c);
@@ -1546,7 +1546,7 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B566197:L566197:{bud-=1;NFSU2_TR(0x566197);
-if(mod_hook_table[26]){SPILL_OUT();c.pc=0x566197u;mod_hook_table[26](c);SPILL_IN();if(c.pc!=0x566197u){TAIL_DYNAMIC(c.pc);}}
+if(mod_hook_table[27]){SPILL_OUT();c.pc=0x566197u;mod_hook_table[27](c);SPILL_IN();if(c.pc!=0x566197u){TAIL_DYNAMIC(c.pc);}}
 w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));
 s4(u32(r4(G+16)),u32(0x56619cull));
 {if(__builtin_expect(bud<=0,0)){EXIT(0x4022c0u);}[[clang::musttail]] return blk_4022c0(ARGS);}

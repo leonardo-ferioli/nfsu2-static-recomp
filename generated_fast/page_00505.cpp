@@ -1904,7 +1904,7 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B50516b:L50516b:{bud-=1;NFSU2_TR(0x50516b);
-if(mod_hook_table[49]){SPILL_OUT();c.pc=0x50516bu;mod_hook_table[49](c);SPILL_IN();if(c.pc!=0x50516bu){TAIL_DYNAMIC(c.pc);}{[[clang::musttail]] return blk_505172(ARGS);}}
+if(mod_hook_table[50]){SPILL_OUT();c.pc=0x50516bu;mod_hook_table[50](c);SPILL_IN();if(c.pc!=0x50516bu){TAIL_DYNAMIC(c.pc);}{[[clang::musttail]] return blk_505172(ARGS);}}
 {u32 ea_=u32(r4(R+8));const XM<4>& m_=*static_cast<const XM<4>*>(gp(ea_));__asm__ volatile(".byte 0xd8,0x00"::"a"(ea_),"m"(m_));}
 {[[clang::musttail]] return blk_50516d(ARGS);}
 }

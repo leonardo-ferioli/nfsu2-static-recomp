@@ -10934,7 +10934,7 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B5c7ce5:L5c7ce5:{bud-=1;NFSU2_TR(0x5c7ce5);
-if(mod_hook_table[44]){SPILL_OUT();c.pc=0x5c7ce5u;mod_hook_table[44](c);SPILL_IN();if(c.pc!=0x5c7ce5u){TAIL_DYNAMIC(c.pc);}{[[clang::musttail]] return blk_5c7ced(ARGS);}}
+if(mod_hook_table[45]){SPILL_OUT();c.pc=0x5c7ce5u;mod_hook_table[45](c);SPILL_IN();if(c.pc!=0x5c7ce5u){TAIL_DYNAMIC(c.pc);}{[[clang::musttail]] return blk_5c7ced(ARGS);}}
 {u32 ea_=u32(r4(G+16)+u32(12u));const XM<4>& m_=*static_cast<const XM<4>*>(gp(ea_));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_),"m"(m_));}
 {[[clang::musttail]] return blk_5c7ce9(ARGS);}
 }
@@ -11073,7 +11073,7 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B5c7d03:L5c7d03:{bud-=1;NFSU2_TR(0x5c7d03);
-if(mod_hook_table[45]){SPILL_OUT();c.pc=0x5c7d03u;mod_hook_table[45](c);SPILL_IN();if(c.pc!=0x5c7d03u){TAIL_DYNAMIC(c.pc);}{[[clang::musttail]] return blk_5c7d0b(ARGS);}}
+if(mod_hook_table[46]){SPILL_OUT();c.pc=0x5c7d03u;mod_hook_table[46](c);SPILL_IN();if(c.pc!=0x5c7d03u){TAIL_DYNAMIC(c.pc);}{[[clang::musttail]] return blk_5c7d0b(ARGS);}}
 u8 U[8];
 w4(U+0,u32(u32(u32(0x38ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),(G+0),4);
@@ -12733,7 +12733,7 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B5c7f53:L5c7f53:{bud-=1;NFSU2_TR(0x5c7f53);
-if(mod_hook_table[43]){SPILL_OUT();c.pc=0x5c7f53u;mod_hook_table[43](c);SPILL_IN();if(c.pc!=0x5c7f53u){TAIL_DYNAMIC(c.pc);}{[[clang::musttail]] return blk_5c7f59(ARGS);}}
+if(mod_hook_table[44]){SPILL_OUT();c.pc=0x5c7f53u;mod_hook_table[44](c);SPILL_IN();if(c.pc!=0x5c7f53u){TAIL_DYNAMIC(c.pc);}{[[clang::musttail]] return blk_5c7f59(ARGS);}}
 u8 U[8];
 w4(U+0,u32(u32(r4(R+20))+u32(u32(0x58ull))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
