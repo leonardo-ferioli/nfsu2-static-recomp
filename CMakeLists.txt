@@ -77,6 +77,29 @@ else()
         message(STATUS "Direct3D 9 group of the Win32 facade left out: third_party/bgfx.cmake is not checked out (git submodule update --init --recursive third_party/bgfx.cmake)")
     endif()
 endif()
+# NUE (third_party/nue-engine, a pinned submodule: git submodule update --init --recursive third_party/nue-engine): on the 64-bit host the game's window,
+# GPU, input and audio come from the engine (plan H4/H5): the SDL3 window, nue_gfx (bgfx) and NUE's Direct3D 9 layer on it. Only what links it is built.
+if(CMAKE_SIZEOF_VOID_P EQUAL 8 AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/third_party/nue-engine/third_party/SDL/CMakeLists.txt"
+   AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/third_party/nue-engine/third_party/bgfx.cmake/bgfx/src/bgfx.cpp")
+    set(NUE_WITH_GFX ON CACHE BOOL "" FORCE)
+    set(NUE_WITH_LEGACY_D3D9 ON CACHE BOOL "" FORCE)
+    set(NUE_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+    set(NUE_BUILD_SAMPLES OFF CACHE BOOL "" FORCE)
+    set(NUE_INSTALL OFF CACHE BOOL "" FORCE)
+    # The engine builds with its own headers only: the port's in-tree copy of the Direct3D 9 layer (nue_d3d9/include, a directory-wide include above)
+    # is an older version of the same files.
+    get_directory_property(NFSU2_DIRECTORY_INCLUDES INCLUDE_DIRECTORIES)
+    set_directory_properties(PROPERTIES INCLUDE_DIRECTORIES "")
+    add_subdirectory(third_party/nue-engine nue EXCLUDE_FROM_ALL)
+    set_directory_properties(PROPERTIES INCLUDE_DIRECTORIES "${NFSU2_DIRECTORY_INCLUDES}")
+    set(NFSU2_HAVE_NUE ON)
+    # The chain the game's device will use, without the game: a NUE window, nue_gfx on it, NUE's Direct3D 9 layer drawing (opens a window: not a ctest).
+    add_executable(nue_window_smoke tools/nue_window_smoke.cpp)
+    set_property(TARGET nue_window_smoke PROPERTY INCLUDE_DIRECTORIES "")   # NUE's headers, not the in-tree copy
+    target_link_libraries(nue_window_smoke PRIVATE nue::nue nue_d3d9_gfx)
+else()
+    message(STATUS "NUE left out of the 64-bit build: git submodule update --init --recursive third_party/nue-engine")
+endif()
 add_library(nfsu2_raw STATIC runtime.cpp userops.cpp ${PLATFORM_SOURCE} generated/dispatch.cpp ${RAW_UNITS})
 if(NFSU2_D3D9_GROUP)
     target_link_libraries(nfsu2_raw PUBLIC nfsu2_d3d9_layer)
