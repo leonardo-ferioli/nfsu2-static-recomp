@@ -63,11 +63,14 @@ public:
     uint32_t last_error_slot(Cpu& c) const { return uint32_t(r<4>(c, 0x110)) + 0x34; }   // the guest address of GetLastError's cell
 
 private:
-    struct Handler { unsigned argc; NativeHook fn; bool raw = false; uint64_t calls = 0; };   // raw: the handler sets the registers and pc itself (the structured exception machinery)
+    // raw: the handler sets the registers and pc itself (the structured exception machinery). noted: its first call is in the trace (read through atomic_ref).
+    struct Handler { unsigned argc; NativeHook fn; bool raw = false; uint64_t calls = 0; bool noted = false; };
     struct Context;                                              // a guest processor with its stack and thread block
     std::unique_ptr<Context> make_context();
     void initialize(Cpu& c, uint32_t stack, uint32_t teb);
-    Handler* find_handler(uint32_t token, std::string& label);
+    // The handler of a token (null when the token is this platform's but nobody serves it); `known` says whether the token is this platform's at all.
+    // `label` (optional: building it allocates, so the call path asks only when it traces or reports) receives "dll!name", "dynamic!name" or "method#n".
+    Handler* find_handler(uint32_t token, bool& known, std::string* label);
     void note_import(const std::string& label, Cpu& c);
 
     Cpu& main_;

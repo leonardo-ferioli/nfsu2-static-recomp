@@ -548,6 +548,7 @@ void D3D9Group::install() {
     // One token per vtable slot. Every handler runs under the group's lock; `name` is what the trace and a fault report.
     auto method = [g](std::vector<uint32_t>& table, const char* name, unsigned argc, std::function<uint32_t(Cpu&)> fn) {
         table.push_back(g->impl.platform.add_method_token(argc, [g, name, fn = std::move(fn)](Cpu& c) -> uint32_t {
+            frame_trace::NamedScope timed(name);   // NFSU2_FRAME_TRACE: the method by name (its time is already in the dispatch's native time)
             std::lock_guard lock(g->m);
             if (g->trace && g->traced.insert(name).second) g->impl.platform.log_line(std::string("d3d9: first call of ") + name);
             return fn(c);

@@ -1,6 +1,8 @@
 #include "platform64.hpp"
 #include "audio_banks.hpp"
+#include "frame_trace.hpp"
 #include "host_os.hpp"
+#include "speed.hpp"
 #include <algorithm>
 #include <iomanip>
 #include <limits>
@@ -12,6 +14,16 @@ struct ImageBlock{uint32_t base,size;const char* file;const char* sha;};
 struct Import{uint32_t iat,token;const char* dll;const char* name;};
 #include "generated/platform_image.inc"
 std::atomic<Platform64*> g_current{nullptr};
+// The innermost execute() of this host thread: its stop address (a call to it is not made by the hook, so that execute() sees it) and whether one runs at all.
+thread_local uint32_t t_execute_stop=0;
+thread_local bool t_in_execute=false;
+// Speed layer native_calls (speed.hpp): translated code makes its calls to imports, Direct3D methods and the audio banks' code through this hook instead of
+// returning to execute()'s loop first; false leaves the transfer to the loop, as before.
+bool native_call_hook(Cpu& c){
+    Platform64* const p=g_current.load(std::memory_order_relaxed);
+    if(!p || !t_in_execute || c.pc==t_execute_stop || p->stopping())return false;
+    return p->dispatch(c);
+}
 constexpr uint32_t import_token_base=0xf0000000u,import_token_end=0xf0010000u,dynamic_token_base=0xf0010000u,dynamic_token_end=0xf0100000u;
 std::string sha256(const std::vector<uint8_t>& bytes){return audio_banks::sha256_hex(bytes.data(),bytes.size());}
 std::string hex(uint32_t v){std::ostringstream s;s<<"0x"<<std::hex<<v;return s.str();}
@@ -52,9 +64,12 @@ Platform64::Platform64(Cpu& main,const std::filesystem::path& exports,const std:
     install_exception_imports();
     g_current=this;
     GuestPlatform::set_active(this);
+    apply_speed_settings();   // NFSU2_SPEED=0 / NFSU2_SPEED_NATIVE_CALLS=0 keep every call on the loop (the comparison run)
+    g_native_hook=speed_settings().native_calls?&native_call_hook:nullptr;
 }
 Platform64::~Platform64(){
     stopping_=true;
+    g_native_hook=nullptr;
     g_current=nullptr;
     if(GuestPlatform::active()==this)GuestPlatform::set_active(nullptr);
     if(trace_)trace_<<"AUDIO BANKS bound="<<audio_banks::banks_bound()<<" entries into their translated code="<<audio_banks::entries()<<std::endl;
@@ -126,27 +141,29 @@ void Platform64::register_dynamic_region(uint32_t base,uint32_t size){
 }
 void Platform64::throw_if_stopping(const char* what) const{if(stopping_)throw Fault(std::string("the platform is stopping (")+what+")");}
 
-Platform64::Handler* Platform64::find_handler(uint32_t token,std::string& label){
+Platform64::Handler* Platform64::find_handler(uint32_t token,bool& known,std::string* label){
+    known=false;
+    if(token&15)return nullptr;
     if(token>=import_token_base && token<import_token_end){
-        if(token&15)return nullptr;
         const size_t index=(token-import_token_base)>>4;
         if(index>=std::size(imports))return nullptr;
-        label=std::string(imports[index].dll)+"!"+imports[index].name;
+        known=true;
+        if(label)*label=std::string(imports[index].dll)+"!"+imports[index].name;
         return slots_[index].get();
     }
     if(token>=dynamic_token_base && token<dynamic_token_end){
-        if(token&15)return nullptr;
         std::lock_guard lock(mutex_);
         const size_t index=(token-dynamic_token_base)>>4;
         if(index>=dynamic_names_.size())return nullptr;
-        label="dynamic!"+dynamic_names_[index];
+        known=true;
+        if(label)*label="dynamic!"+dynamic_names_[index];
         auto found=by_name_.find(dynamic_names_[index]);
         return found==by_name_.end()?nullptr:found->second.get();
     }
     if(token>=method_token_base && token<method_token_base+method_token_slots*16){
-        if(token&15)return nullptr;
         const size_t index=(token-method_token_base)>>4;
-        label="method#"+std::to_string(index);
+        known=true;
+        if(label)*label="method#"+std::to_string(index);
         return index<methods_.size()?methods_[index].get():nullptr;
     }
     return nullptr;
@@ -164,12 +181,17 @@ bool Platform64::dispatch(Cpu& c){
     const uint32_t token=c.pc;
     if(token<import_token_base)return false;
     if(token==exception_handler_token || token==exception_unwind_token || token==exception_filter_token)return exception_return(c);
-    std::string label;
-    Handler* handler=find_handler(token,label);
-    if(label.empty())return false;                         // not a token of this platform (the range check above is only a fast reject)
-    if(trace_.is_open())note_import(label,c);
+    bool known=false;
+    Handler* handler=find_handler(token,known,nullptr);
+    if(!known)return false;                                // not a token of this platform (the range check above is only a fast reject)
     // NFSU2_STOP_AT_IMPORT=<name>: the run ends (a Fault) at the first call of that import, a deterministic place for tests to compare engines.
     static const std::string stop_at=host_os::environment("NFSU2_STOP_AT_IMPORT");
+    // The label ("dll!name") is built only when something needs it: a first call to trace, a stop to check, a fault to report. This is the path of every
+    // call the game makes (tens of thousands a frame in a race).
+    const bool first_call=trace_.is_open() && handler && !std::atomic_ref<bool>(handler->noted).load(std::memory_order_relaxed);
+    std::string label;
+    if(first_call || !stop_at.empty() || !handler)find_handler(token,known,&label);
+    if(first_call){std::atomic_ref<bool>(handler->noted).store(true,std::memory_order_relaxed);note_import(label,c);}
     if(!stop_at.empty() && label.size()>stop_at.size() && label.compare(label.size()-stop_at.size()-1,std::string::npos,"!"+stop_at)==0)
         throw Fault("stopped at import "+label+" (NFSU2_STOP_AT_IMPORT)");
     if(!handler){
@@ -177,6 +199,10 @@ bool Platform64::dispatch(Cpu& c){
         throw Fault(message.str());
     }
     ++handler->calls;   // a diagnostic: the trace ends with the busiest imports
+    // NFSU2_FRAME_TRACE: the time of every call on the presenting thread, by import name (the Direct3D methods name themselves inside)
+    const char* timed_name=token>=import_token_base && token<import_token_end?imports[(token-import_token_base)>>4].name
+                          :token>=method_token_base?"(Direct3D methods)":"(dynamic imports)";
+    frame_trace::NativeScope timed(timed_name);
     if(handler->raw){handler->fn(c);return true;}
     // NFSU2_TRACE_FAILS=1: every call that sets a last error is written to the trace with its arguments (what the game was told).
     static const bool trace_fails=host_os::environment_set("NFSU2_TRACE_FAILS");
@@ -185,6 +211,7 @@ bool Platform64::dispatch(Cpu& c){
     if(trace_fails){
         const uint32_t error_after=uint32_t(m<4>(c,error_cell));
         if(error_after && error_after!=error_before){
+            if(label.empty())find_handler(token,known,&label);
             std::ostringstream text;text<<"FAIL "<<label<<" error="<<error_after<<" result="<<hex(value)<<" args";
             for(unsigned i=0;i<4;++i){
                 const uint32_t a=uint32_t(m<4>(c,r<4>(c,16)+4+4*i));text<<' '<<hex(a);
@@ -227,6 +254,8 @@ void dump_module(Cpu& c,const std::filesystem::path& folder){
 }
 }
 uint32_t Platform64::execute(Cpu& c,uint32_t stop,uint64_t budget){
+    struct HookScope{uint32_t stop;bool in;~HookScope(){t_execute_stop=stop;t_in_execute=in;}} hook_scope{t_execute_stop,t_in_execute};
+    t_execute_stop=stop;t_in_execute=true;
     static const std::filesystem::path dump_folder=host_os::environment("NFSU2_DUMP_MODULES");
     // NFSU2_WATCH=<hex guest address>: the trace says where a byte of guest memory changes (reference engine: one instruction per step; a diagnostic of the main thread).
     static const uint32_t watch=[]{const std::string text=host_os::environment("NFSU2_WATCH");return text.empty()?0u:uint32_t(std::strtoul(text.c_str(),nullptr,16));}();

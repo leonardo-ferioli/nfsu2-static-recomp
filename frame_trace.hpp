@@ -14,7 +14,7 @@
 
 namespace nfsu2raw::frame_trace {
 
-enum Kind : unsigned { read, wait, sleep, present, kinds };
+enum Kind : unsigned { read, wait, sleep, present, native, kinds };   // native: every import and Direct3D method the game calls (includes the others)
 
 inline bool enabled() {
     static const bool on = std::getenv("NFSU2_FRAME_TRACE") != nullptr;
@@ -29,10 +29,52 @@ struct State {
     uint64_t frame = 0, last_frame_ns = 0, last_instructions = 0, start_ns = 0;
     std::array<double, 64> recent{};
     // summary window
-    uint64_t window_ns = 0, window_frames = 0, window_slow = 0;
+    uint64_t window_ns = 0, window_frames = 0, window_slow = 0, window_native_ns = 0, window_instructions = 0;
     double window_max = 0;
+    // the main thread's calls by name (static names: the import table's and the Direct3D methods'), for the top list of the summary
+    struct Call { const char* name = nullptr; uint64_t ns = 0, calls = 0; };
+    std::array<Call, 1024> table{};
 };
 inline State& state() { static State s; return s; }
+inline bool on_main_thread() { return std::this_thread::get_id() == state().main_thread.load(std::memory_order_relaxed); }
+
+// One call of the main thread by name (open addressing on the name's address; names are static strings).
+inline void note_call(const char* name, uint64_t ns) {
+    State& s = state();
+    size_t i = (reinterpret_cast<uintptr_t>(name) >> 3) % s.table.size();
+    for (size_t probe = 0; probe < s.table.size(); ++probe, i = (i + 1) % s.table.size()) {
+        auto& slot = s.table[i];
+        if (slot.name == name || !slot.name) { slot.name = name; slot.ns += ns; slot.calls += 1; return; }
+    }
+}
+
+// Time spent inside one native call (an import or a Direct3D method): counted for the frame on the main thread, by name when one is given.
+class NativeScope {
+public:
+    explicit NativeScope(const char* name) : name_(name), start_(enabled() && on_main_thread() ? now_ns() : 0) {}
+    ~NativeScope() {
+        if (!start_) return;
+        const uint64_t spent = now_ns() - start_;
+        State& s = state();
+        s.ns[native] += spent;
+        s.calls[native] += 1;
+        if (name_) note_call(name_, spent);
+    }
+
+private:
+    const char* name_;
+    uint64_t start_;
+};
+// A call already timed by an outer NativeScope, attributed by a more precise name (a Direct3D method inside the method dispatch).
+class NamedScope {
+public:
+    explicit NamedScope(const char* name) : name_(name), start_(enabled() && on_main_thread() ? now_ns() : 0) {}
+    ~NamedScope() { if (start_) note_call(name_, now_ns() - start_); }
+
+private:
+    const char* name_;
+    uint64_t start_;
+};
 
 // Time spent by the calling thread in one kind of call: counted for the frame when it is the main thread, apart for reads of other threads.
 class Scope {
@@ -75,18 +117,21 @@ inline void end_frame(uint64_t instructions) {
     const double median = have ? sorted[have / 2] : ms;
     auto take = [&](Kind k) { return double(s.ns[k].exchange(0)) / 1e6; };
     auto count = [&](Kind k) { return s.calls[k].exchange(0); };
-    const double read_ms = take(read), wait_ms = take(wait), sleep_ms = take(sleep), present_ms = take(present);
-    const uint64_t reads = count(read), waits = count(wait), sleeps = count(sleep);
+    const double read_ms = take(read), wait_ms = take(wait), sleep_ms = take(sleep), present_ms = take(present), native_ms = take(native);
+    const uint64_t reads = count(read), waits = count(wait), sleeps = count(sleep), natives = count(native);
     count(present);
+    s.window_native_ns += uint64_t(native_ms * 1e6);
+    s.window_instructions += ran;
     const uint64_t bytes = s.read_bytes.exchange(0);
     const double other_ms = double(s.other_read_ns.exchange(0)) / 1e6;
     const uint64_t other_bytes = s.other_read_bytes.exchange(0), other_reads = s.other_reads.exchange(0);
     const bool slow = have >= 16 && ms >= 25.0 && ms > 2.0 * median;
     if (slow)
         std::fprintf(stderr,
-                     "frame trace: SLOW frame %llu at %.3f s: %.1f ms (median %.1f): guest %.1f M instructions, reads %llu (%.1f ms, %llu KB), waits %llu (%.1f ms), "
-                     "sleeps %llu (%.1f ms), present %.1f ms; other threads' reads %llu (%.1f ms, %llu KB)\n",
-                     static_cast<unsigned long long>(s.frame), double(t - s.start_ns) / 1e9, ms, median, double(ran) / 1e6, static_cast<unsigned long long>(reads),
+                     "frame trace: SLOW frame %llu at %.3f s: %.1f ms (median %.1f): guest %.1f M instructions, native calls %llu (%.1f ms), reads %llu (%.1f ms, %llu KB), "
+                     "waits %llu (%.1f ms), sleeps %llu (%.1f ms), present %.1f ms; other threads' reads %llu (%.1f ms, %llu KB)\n",
+                     static_cast<unsigned long long>(s.frame), double(t - s.start_ns) / 1e9, ms, median, double(ran) / 1e6, static_cast<unsigned long long>(natives),
+                     native_ms, static_cast<unsigned long long>(reads),
                      read_ms, static_cast<unsigned long long>(bytes / 1024), static_cast<unsigned long long>(waits), wait_ms, static_cast<unsigned long long>(sleeps),
                      sleep_ms, present_ms, static_cast<unsigned long long>(other_reads), other_ms, static_cast<unsigned long long>(other_bytes / 1024));
     s.recent[s.frame % s.recent.size()] = ms;
@@ -96,10 +141,27 @@ inline void end_frame(uint64_t instructions) {
     s.window_slow += slow ? 1 : 0;
     s.window_max = std::max(s.window_max, ms);
     if (s.window_ns >= 10'000'000'000ull) {
-        std::fprintf(stderr, "frame trace: last %.1f s: %llu frames, %.1f fps, slowest %.1f ms, %llu slow frame(s)\n", double(s.window_ns) / 1e9,
-                     static_cast<unsigned long long>(s.window_frames), double(s.window_frames) * 1e9 / double(s.window_ns), s.window_max,
-                     static_cast<unsigned long long>(s.window_slow));
-        s.window_ns = s.window_frames = s.window_slow = 0;
+        const double frames = double(std::max<uint64_t>(s.window_frames, 1));
+        std::fprintf(stderr,
+                     "frame trace: last %.1f s: %llu frames, %.1f fps, slowest %.1f ms, %llu slow frame(s); per frame %.2f ms, of it native calls %.2f ms, "
+                     "the rest (guest code) %.2f ms, %.1f M guest instructions\n",
+                     double(s.window_ns) / 1e9, static_cast<unsigned long long>(s.window_frames), double(s.window_frames) * 1e9 / double(s.window_ns), s.window_max,
+                     static_cast<unsigned long long>(s.window_slow), double(s.window_ns) / 1e6 / frames, double(s.window_native_ns) / 1e6 / frames,
+                     double(s.window_ns - std::min(s.window_ns, s.window_native_ns)) / 1e6 / frames, double(s.window_instructions) / 1e6 / frames);
+        // the busiest calls of the window, by time
+        std::array<State::Call, 12> top{};
+        for (auto& slot : s.table) {
+            if (!slot.name || !slot.calls) continue;
+            auto worst = std::min_element(top.begin(), top.end(), [](const State::Call& a, const State::Call& b) { return a.ns < b.ns; });
+            if (slot.ns > worst->ns) *worst = slot;
+            slot.ns = slot.calls = 0;
+        }
+        std::sort(top.begin(), top.end(), [](const State::Call& a, const State::Call& b) { return a.ns > b.ns; });
+        std::fprintf(stderr, "frame trace: top calls per frame:");
+        for (const auto& call : top)
+            if (call.name) std::fprintf(stderr, " %s %.3f ms/%.0f", call.name, double(call.ns) / 1e6 / frames, double(call.calls) / frames);
+        std::fputc('\n', stderr);
+        s.window_ns = s.window_frames = s.window_slow = s.window_native_ns = s.window_instructions = 0;
         s.window_max = 0;
     }
     s.last_frame_ns = t;
