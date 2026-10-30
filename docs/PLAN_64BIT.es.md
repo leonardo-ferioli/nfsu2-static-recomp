@@ -65,14 +65,16 @@ código. (Un paquete lleva solo el código máquina de su sistema; lo común es 
 | H9 | iOS arm64 | integración + nue-ios | IPA de CI firmada; prueba en iPhone | CI, cuenta Apple, iPhone |
 | H10 | Móvil: modo táctil sin teclado ni mando, controles en pantalla, HUD y menús | integración + platform-api | revisión del usuario en el teléfono | — |
 
-## 6. Lo que necesito del usuario (en este orden)
+## 6. Decisiones del usuario (2026-10-30)
 
-1. H1: portar completos los mods de ventana, registro y gamma (recomendado) o dejarlos para después.
-2. H2: aprobar que el producto de 32 bits también deje SLEIGH cuando los módulos estén traducidos.
-3. Tamaño de la arena por defecto (2 GiB recomendado) y x87 por defecto en arm64 (`double` recomendado).
-4. H4 y H5: autorización para abrir la ventana de NUE y después el juego.
-5. CI: desbloquear minutos del repositorio del juego (o compilar con el CI de NUE).
-6. Equipos: teléfono Android; iPhone y cuenta de desarrollador de Apple.
+1. H1: los mods de ventana, registro y gamma se **portan completos** en 64 bits.
+2. H2: el producto de 32 bits **también pasa a AOT** (SLEIGH fuera del producto en 32 y 64 bits).
+3. Arena: **2 GiB** por defecto al inicio.
+4. H4/H5: **autorizado** abrir la ventana de NUE y el juego para las pruebas.
+5. CI: el repositorio es público, Actions no tiene límite: los builds de Linux, Android e iOS van por CI.
+6. Android: cuando haya un paquete exportado, el usuario da acceso por `adb` para instalarlo.
+
+Pendiente: el x87 por defecto en arm64 (`double` recomendado), y la cuenta de Apple para iOS.
 
 ## 7. Riesgos
 
