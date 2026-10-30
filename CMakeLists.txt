@@ -87,6 +87,8 @@ set_source_files_properties(runtime.cpp PROPERTIES COMPILE_DEFINITIONS NFSU2_DIF
 set(FAST_DIR "generated_fast" CACHE STRING "Directory holding the generated fast pages (use generated_fast_dev for subset experiments)")
 if(CMAKE_SIZEOF_VOID_P EQUAL 4 AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${FAST_DIR}/dispatch.cpp")
     file(GLOB FAST_UNITS CONFIGURE_DEPENDS ${FAST_DIR}/page_*.cpp)
+    file(GLOB AUDIO_UNITS CONFIGURE_DEPENDS generated_audio/audio_*.cpp)   # the audio banks' code, translated (tools/gen_audio_modules.py): the same files for both hosts
+    list(APPEND FAST_UNITS ${AUDIO_UNITS})
     foreach(variant fast fast_trace)
         set(exclude "")
         if(variant STREQUAL "fast_trace")
@@ -163,6 +165,11 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 4 AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${FAST_DI
     target_link_options(fast_native_bench PRIVATE "-Wl,/MAP:$<TARGET_FILE_DIR:fast_native_bench>/fast_native_bench.map")
     add_executable(fast_dynamic_tests dynamic_code_tests.cpp)
     target_link_libraries(fast_dynamic_tests PRIVATE nfsu2_fast)
+    if(AUDIO_UNITS)
+        # The translated code of the audio banks against the SLEIGH interpreter (audio_module_tests.cpp).
+        add_executable(audio_module_tests audio_module_tests.cpp)
+        target_link_libraries(audio_module_tests PRIVATE nfsu2_fast)
+    endif()
     if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/generated_optests/optests_table.cpp")
         # Operation-level differential test (python tools/gen_fast_optests.py first).
         add_executable(fast_optests EXCLUDE_FROM_ALL optests_main.cpp generated_optests/optests_ref.cpp
@@ -216,6 +223,8 @@ endif()
 # (not tracked: 400 MB of source; the mods still need the platform interface of GuestPlatform), run by Platform64 over the guest arena.
 if(CMAKE_SIZEOF_VOID_P EQUAL 8 AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/generated_fast64/dispatch.cpp")
     file(GLOB FAST64_UNITS CONFIGURE_DEPENDS generated_fast64/page_*.cpp)
+    file(GLOB AUDIO_UNITS64 CONFIGURE_DEPENDS generated_audio/audio_*.cpp)
+    list(APPEND FAST64_UNITS ${AUDIO_UNITS64})
     add_library(nfsu2_fast64 STATIC runtime.cpp userops.cpp ${PLATFORM_SOURCE} generated_fast64/dispatch.cpp generated_fast64/mods_tables.cpp mods_runtime.cpp mods_core.cpp mods_resolution.cpp mods_rendering.cpp mods_frontend.cpp mods_anchor.cpp mods_system.cpp mods_input.cpp mods_nos.cpp mods_registry.cpp mods_gamma.cpp mods_widescreen.cpp mods_detail.cpp ${FAST64_UNITS})
     target_compile_definitions(nfsu2_fast64 PUBLIC NFSU2_FAST_BACKEND=1)
     target_include_directories(nfsu2_fast64 PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
@@ -280,6 +289,9 @@ if(TARGET fast_resource_tests)
     if(Python3_Interpreter_FOUND)
         add_test(NAME launcher_cli COMMAND ${Python3_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/tools/test_launcher.py"
             $<TARGET_FILE:nfsu2_launcher> $<TARGET_FILE:speed_fast> "${GAME_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/export")
+    endif()
+    if(TARGET audio_module_tests)
+        add_test(NAME audio_modules COMMAND audio_module_tests "${CMAKE_CURRENT_SOURCE_DIR}/third_party/sleigh_spec/x86.sla" "${GAME_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/export" 60 400)
     endif()
     add_test(NAME fast_dynamic COMMAND fast_dynamic_tests "${CMAKE_CURRENT_SOURCE_DIR}/export" "${GAME_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/third_party/sleigh_spec/x86.sla")
     if(Python3_Interpreter_FOUND)
