@@ -7,9 +7,13 @@
 #include "native32.hpp"
 #include "bench_sampler.hpp"
 using ActivePlatform=nfsu2raw::NativePlatform;
+#define NFSU2_HAS_ACTIVE_PLATFORM 1
 #else
+#if defined(_WIN32)   // the vector-based reference platform calls the real Windows: --boot exists on Windows hosts only
 #include "platform.hpp"
 using ActivePlatform=nfsu2raw::Platform;
+#define NFSU2_HAS_ACTIVE_PLATFORM 1
+#endif
 #include "platform64.hpp"
 #ifdef NFSU2_HAS_MODS
 #include "mods_widescreen.hpp"
@@ -66,7 +70,13 @@ int main(int argc,char** argv){
 #ifndef NFSU2_GUEST_IDENTITY
         // NFSU2_GUEST_ARENA=1: the guest processor's memory lives in the 64-bit arena (docs/MEMORY_MODEL_64.md) instead of in vectors; results must not change.
         std::unique_ptr<nfsu2::guest::AddressSpace> arena;
-        if(std::getenv("NFSU2_GUEST_ARENA")){const char* error=nullptr;arena=nfsu2::guest::create_arena(nfsu2::guest::arena_config_from_environment(),&error);if(!arena)throw Fault(std::string("arena: ")+(error?error:"?"));_putenv("NFSU2_GUEST_ARENA=");}   // the guest reads the environment block: the switch must not be part of it
+        if(std::getenv("NFSU2_GUEST_ARENA")){const char* error=nullptr;arena=nfsu2::guest::create_arena(nfsu2::guest::arena_config_from_environment(),&error);if(!arena)throw Fault(std::string("arena: ")+(error?error:"?"));
+#if defined(_WIN32)
+            _putenv("NFSU2_GUEST_ARENA=");
+#else
+            unsetenv("NFSU2_GUEST_ARENA");
+#endif
+        }   // the guest reads the environment block: the switch must not be part of it
 #endif
 #ifndef NFSU2_NATIVE32
         if(argc>=5 && std::string(argv[1])=="--boot64"){
@@ -93,6 +103,7 @@ int main(int argc,char** argv){
             return 0;
         }
 #endif
+#ifdef NFSU2_HAS_ACTIVE_PLATFORM
         if(argc==5 && std::string(argv[1])=="--boot"){
             Cpu c;ActivePlatform p(c,argv[2],argv[3]);
             const auto log=std::filesystem::absolute(argv[2]).parent_path()/"logs/boot_trace.log";
@@ -106,6 +117,7 @@ int main(int argc,char** argv){
             p.run(std::stoull(argv[4]),log);return 0;
 #endif
         }
+#endif
         if(argc==3 && std::string(argv[1])=="--hash"){
             std::string text=argv[2];
             if(text.size()>150)throw Fault("the original normalization routine has a fixed 160-byte buffer");
