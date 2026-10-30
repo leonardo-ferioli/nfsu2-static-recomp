@@ -102,6 +102,11 @@ void Platform64::override_import(const char* name,unsigned argument_count,Native
     for(size_t i=0;i<std::size(imports);++i)if(std::strcmp(imports[i].name,name)==0){slots_[i]=std::make_unique<Handler>(*handler);}
     by_name_[name]=std::move(handler);
 }
+Platform64::NativeHook Platform64::import_override(const char* name) const{
+    std::lock_guard lock(const_cast<std::mutex&>(mutex_));
+    auto found=by_name_.find(name);
+    return found==by_name_.end()?NativeHook{}:found->second->fn;
+}
 uint32_t Platform64::add_method_token(unsigned argument_count,NativeHook hook){
     std::lock_guard lock(mutex_);
     if(methods_.size()>=method_token_slots)throw Fault("out of method tokens");
@@ -232,7 +237,8 @@ uint32_t Platform64::execute(Cpu& c,uint32_t stop,uint64_t budget){
 }
 
 uint32_t Platform64::callback(uint32_t address,std::initializer_list<uint32_t> arguments){return call_guest(address,0,0,arguments);}
-uint32_t Platform64::call_guest(uint32_t address,uint32_t ecx,uint32_t edx,std::initializer_list<uint32_t> arguments){
+uint32_t Platform64::call_guest(uint32_t address,uint32_t ecx,uint32_t edx,std::initializer_list<uint32_t> arguments){return call_guest_words(address,ecx,edx,arguments.begin(),arguments.size());}
+uint32_t Platform64::call_guest_words(uint32_t address,uint32_t ecx,uint32_t edx,const uint32_t* words,size_t count){
     // A processor per nesting level and thread that is inside a callback at the same time, kept for the next one (creating one maps a stack).
     std::unique_ptr<Context> context;
     {std::lock_guard lock(mutex_);if(!pool_.empty()){context=std::move(pool_.back());pool_.pop_back();}}
@@ -242,7 +248,7 @@ uint32_t Platform64::call_guest(uint32_t address,uint32_t ecx,uint32_t edx,std::
     initialize(c,context->stack,context->teb);
     wr<4>(c,4,ecx);wr<4>(c,8,edx);
     const uint32_t sp=uint32_t(r<4>(c,16));
-    unsigned i=0;for(uint32_t a:arguments)wm<4>(c,sp+4+4*i++,a);
+    for(size_t i=0;i<count;++i)wm<4>(c,sp+4+4*uint32_t(i),words[i]);
     c.pc=address;
     return execute(c,return_sentinel,std::numeric_limits<uint64_t>::max());
 }

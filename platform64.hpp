@@ -33,6 +33,8 @@ public:
     uint32_t add_method_token(unsigned argument_count, NativeHook hook) override;
     uint32_t callback(uint32_t address, std::initializer_list<uint32_t> arguments) override;
     uint32_t call_guest(uint32_t address, uint32_t ecx, uint32_t edx, std::initializer_list<uint32_t> arguments) override;
+    uint32_t call_guest_words(uint32_t address, uint32_t ecx, uint32_t edx, const uint32_t* words, size_t count) override;
+    NativeHook import_override(const char* name) const override;
     uint32_t token_for(const char* name) override;
     void throw_if_stopping(const char* what) const override;
     // Code generated at run time (the audio engine's modules) is interpreted by SLEIGH (dynamic_code.hpp) over the guest arena. The specification is

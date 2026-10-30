@@ -8,6 +8,7 @@
 #include "runtime.hpp"
 #include <filesystem>
 #include <atomic>
+#include <stdexcept>
 #include <functional>
 #include <initializer_list>
 #include <iostream>
@@ -25,6 +26,13 @@ public:
     // Calls a function of the translated program from native code on a processor of its own: ECX and EDX are set (this-call / fast-call) and `arguments`
     // are pushed as stack words (the callee pops its own or the caller ignores them, as the function's convention says). Returns EAX.
     virtual uint32_t call_guest(uint32_t address, uint32_t ecx, uint32_t edx, std::initializer_list<uint32_t> arguments) = 0;
+    // The same with the stack words as an array (for callers that build the argument list, like a COM call with `this` first). Hosts that do not need it may refuse it.
+    virtual uint32_t call_guest_words(uint32_t address, uint32_t ecx, uint32_t edx, const uint32_t* words, size_t count) {
+        (void)address; (void)ecx; (void)edx; (void)words; (void)count;
+        throw std::runtime_error("this platform does not call guest code with a word array");
+    }
+    // The handler that serves an import now (empty when none): a mod that changes a call's arguments or result wraps it and calls it ("chaining").
+    virtual NativeHook import_override(const char* name) const { (void)name; return {}; }
     // Names the mod-originated call this thread is inside (nullptr: none); a crash report says so.
     virtual void mod_call_note(const char* name) { (void)name; }
 

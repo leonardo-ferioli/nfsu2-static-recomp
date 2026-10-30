@@ -152,6 +152,57 @@ uint32_t adjust_window_rect(Cpu& c) {
     return uint32_t(AdjustWindowRect(rect, GetWindowLongA(game_hwnd(), GWL_STYLE), menu));
 }
 
+#ifndef NFSU2_GUEST_IDENTITY
+// ---- the windowed modes on a 64-bit host ---------------------------------------------------------------------------------------------------------
+// The game's window calls are the Win32 layer's (win32_facade_window.cpp, its window is the platform window that game_window() is): the same policy as
+// above changes their arguments, calls the layer's own handler ("chaining") and acts on the platform window afterwards.
+GuestPlatform::NativeHook g_next_create_window, g_next_set_window_long, g_next_adjust_window_rect;
+uint32_t g_desktop_window = 0;
+uint32_t call_import(const char* name, std::initializer_list<uint32_t> arguments) {
+    auto* platform = GuestPlatform::active();
+    return platform->call_guest(platform->token_for(name), 0, 0, arguments);
+}
+void set_argument(Cpu& c, unsigned index, uint32_t value) { u32_at(reg(c, ESP) + 4 + 4 * index) = value; }
+
+uint32_t create_window_chained(Cpu& c) {
+    const uint32_t parent = argument(c, 8);
+    if (!g_desktop_window) g_desktop_window = call_import("GetDesktopWindow", {});
+    if ((parent && parent != g_desktop_window) || !windowed_active()) return g_next_create_window(c);   // a child window, or no windowed mode (yet)
+    const auto [x, y, width, height] = before_create_window(int(argument(c, 6)), int(argument(c, 7)));
+    set_argument(c, 4, uint32_t(x)); set_argument(c, 5, uint32_t(y)); set_argument(c, 6, uint32_t(width)); set_argument(c, 7, uint32_t(height));
+    const uint32_t window = g_next_create_window(c);
+    after_create_window();
+    return window;
+}
+uint32_t set_window_long_chained(Cpu& c) {
+    if (int(argument(c, 1)) != GWL_STYLE || !windowed_active()) return g_next_set_window_long(c);
+    if (g_borderless) {
+        after_create_window();
+        static int32_t* client = guest_array<int32_t>(4);   // RECT
+        call_import("GetClientRect", {argument(c, 0), nfsu2::guest::to_guest(client)});
+        center_window_position(client[2], client[3]);
+        return argument(c, 2);
+    }
+    uint32_t value = argument(c, 2) | uint32_t(WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU);
+    if (g_resizable) value |= uint32_t(WS_MAXIMIZEBOX | WS_THICKFRAME);
+    set_argument(c, 2, value);
+    return g_next_set_window_long(c);
+}
+uint32_t adjust_window_rect_chained(Cpu& c) {
+    if (!windowed_active()) return g_next_adjust_window_rect(c);
+    const int32_t* rect = nfsu2::guest::ptr<const int32_t>(argument(c, 0));
+    if (!g_borderless) {
+        g_desired_width = rect[2] - rect[0];
+        g_desired_height = rect[3] - rect[1];
+        set_argument(c, 1, uint32_t(WS_CAPTION));
+        return g_next_adjust_window_rect(c);
+    }
+    after_create_window();
+    set_argument(c, 1, uint32_t(WS_POPUP));   // a borderless window has no frame to add
+    return g_next_adjust_window_rect(c);
+}
+#endif
+
 // ---- frame time and friends -------------------------------------------------------------------------------------------------------------------------
 unsigned refresh_rate() {
     const auto displays = platform::services().display->list(false);
@@ -246,7 +297,16 @@ void install_system(const WidescreenSettings& settings) {
     platform->override_import("CreateWindowExA", 12, create_window_ex_a);
     platform->override_import("SetWindowLongA", 3, set_window_long_a);
     platform->override_import("AdjustWindowRect", 3, adjust_window_rect);
-#endif   // a 64-bit host: the window is the Win32 layer's, placed by the platform window; these calls are its own
+#else
+    // A 64-bit host: the Win32 layer serves the window calls; the windowed modes wrap its handlers.
+    auto* platform = GuestPlatform::active();
+    g_next_create_window = platform->import_override("CreateWindowExA");
+    g_next_set_window_long = platform->import_override("SetWindowLongA");
+    g_next_adjust_window_rect = platform->import_override("AdjustWindowRect");
+    if (g_next_create_window) platform->override_import("CreateWindowExA", 12, create_window_chained);
+    if (g_next_set_window_long) platform->override_import("SetWindowLongA", 3, set_window_long_chained);
+    if (g_next_adjust_window_rect) platform->override_import("AdjustWindowRect", 3, adjust_window_rect_chained);
+#endif
 }
 
 // A resolution the monitor does not offer is selected (or not): the game then runs in a borderless window scaled to the screen.
@@ -261,9 +321,11 @@ bool virtual_mode_active() { return g_virtual; }
 // Places the game's window for an output of width x height after the game placed it (windowed modes only).
 void place_game_window(int width, int height) {
     if (!windowed_active()) return;
+#ifdef NFSU2_GUEST_IDENTITY
     HWND window = host_object<HWND>(u32_at(address_of("hwnd")));
     if (!window) return;
     remember_game_window(window);
+#endif   // a 64-bit host: the game's window already is the platform window
     if (g_borderless) {
         g_desired_width = width;
         g_desired_height = height;
