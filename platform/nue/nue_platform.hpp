@@ -14,6 +14,7 @@
 #include "platform/display.hpp"
 #include "platform/input.hpp"
 #include "platform/window.hpp"
+#include "nue/window.h"
 #include <memory>
 
 namespace nfsu2::platform::nue_backend {
@@ -26,5 +27,8 @@ struct Services {
 
 // NUE must be initialised (nue_init) by the caller, on the thread that will pump events (the guest's main thread): that thread is the event thread.
 Services make_services();
+
+// The NUE window behind a Window that make_services made (null for another Window, or before create/adopt): the host creates its nue_gfx context on it.
+nue_window nue_window_of(Window& window);
 
 }  // namespace nfsu2::platform::nue_backend

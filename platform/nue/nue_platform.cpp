@@ -198,6 +198,7 @@ public:
         return Status::ok;
     }
     bool adopted() override { return window_ && adopted_; }
+    nue_window handle() const { return window_; }
     void destroy() override {
         if (!window_) return;
         nue_window_destroy(window_);                                         // an attached window is only detached
@@ -387,6 +388,11 @@ private:
 };
 
 }  // namespace
+
+nue_window nue_window_of(Window& window) {
+    auto* own = dynamic_cast<NueWindow*>(&window);
+    return own ? own->handle() : nullptr;
+}
 
 Services make_services() {
     auto hub = std::make_shared<Hub>();

@@ -333,6 +333,12 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 8 AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/generated
         target_link_libraries(speed_fast64 PRIVATE nfsu2_audio_nue)
         target_compile_definitions(speed_fast64 PRIVATE NFSU2_RUNNER_AUDIO_NUE=1)
     endif()
+    if(NFSU2_HAVE_NUE AND NFSU2_D3D9_GROUP)
+        # The game in a NUE window (plan H5): NUE's window, input, audio and nue_gfx with NUE's Direct3D 9 layer. Opens a window: not a ctest.
+        add_executable(nfsu2_play64 play64.cpp)
+        set_property(TARGET nfsu2_play64 PROPERTY INCLUDE_DIRECTORIES "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/third_party/nue-engine/src/legacy/d3d9/include")   # NUE's headers, not the in-tree copy
+        target_link_libraries(nfsu2_play64 PRIVATE nfsu2_platform_nue nfsu2_audio_nue nfsu2_fast64)
+    endif()
     find_package(Python3 COMPONENTS Interpreter)
     if(Python3_Interpreter_FOUND)
         file(MAKE_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/logs")
