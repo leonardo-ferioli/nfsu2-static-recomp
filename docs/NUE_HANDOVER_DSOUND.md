@@ -108,6 +108,8 @@ What this demands of an implementation, in order of how much it matters:
 | `dsound_facade.*` | guest ABI facade (5 COM interfaces, 75 vtable slots) | original |
 | `dsound_install.*` | launcher glue (method tokens, `override_import("#1")`, WASAPI engine) | original |
 | `audio_engine.*` | engine | original |
+| `host_sink.*`, `paced_null_sink.*` | the 64-bit host's choice of output (`null`/`wasapi`/`nue`/`auto`), a real-time null sink, fall-back to it when a real output cannot open (section 9) | original |
+| `nue/nue_sink.*`, `nue/nue_sink_tests.cpp` | `AudioSink` over `nue_audio_stream_create` (NUE submodule, 64-bit only, own library `nfsu2_audio_nue`) | original |
 | `audio_tests.cpp`, `dsound_facade_tests.cpp`, `dsound_differential_tests.cpp`, `dsound_install_test.cpp`, `wasapi_smoke_test.cpp`, `test_guest.hpp` | tests (section 5) | original |
 | `tools/dsound_inventory.py` | reproducible inventory of any executable's DirectSound use | original |
 
@@ -265,3 +267,36 @@ Permissive and usable if ever needed: miniaudio (public domain or MIT-0), SDL (z
   never compared with Windows' (DirectSound3D's algorithms are not documented well enough to do that headless).
 * `audio=nue` requires the 32-bit Windows host today (guest addresses are host addresses). The facade itself is portable (guest memory is an interface);
   the NUE `legacy_core` guest memory and handle tables replace `HeapGuestMemory`.
+
+## 9. The 64-bit host's output (H5)
+
+On the 64-bit host the game's DirectSound (`install_dsound` on the arena, `runner --boot64`, and the integration program that owns the NUE window) gets its
+output from the host, through `AudioSettings::sink_factory`. The choice lives in `platform/audio/host_sink.hpp`:
+
+| Kind | What | Opens a device? |
+|---|---|---|
+| `null` | `paced_null_sink`: a null sink whose clock follows the wall clock (a frozen clock keeps the game's audio start-up waiting for ever) | no |
+| `wasapi` | the port's WASAPI sink (section 2) | yes |
+| `nue` | `nue/nue_sink`: one callback stream on NUE's audio device (`nue_audio_stream_create`, interleaved float32, `NUE_AUDIO_START_PAUSED`, device 0 = the system default, followed when it changes) | yes |
+| `auto` | `nue` when registered, else `wasapi`, else `null` | |
+
+* **Who decides**: the host. The headless runner defaults to `null`; `NFSU2_BOOT64_AUDIO=null|wasapi|nue|auto` changes it (`nue`/`auto` need the runner built with
+  the NUE submodule: `NFSU2_RUNNER_AUDIO_NUE`). The program that opens the NUE window calls `register_nue_host_sink(false)` after its own `nue_init` and passes
+  `make_host_sink_factory(HostSink::nue, ...)` to `AudioSettings::sink_factory`.
+* **NUE initialisation**: the sink needs the audio subsystem. With `register_nue_host_sink(false)` it never initialises the engine (open fails with `Status::closed`);
+  with `true` (the window-less runner) it starts NUE for events + audio only and releases its reference at destruction. `nue_init` is reference counted and the first
+  call decides the subsystems: a program that wants a window must `nue_init` first.
+* **No sound card, or the endpoint is busy**: the first `open()` of a real output that fails falls back to the paced null sink and logs it (`audio: the 'nue' output
+  could not be opened ...`); the game keeps running silently. Once a real output has opened, a refused layout is not a fall-back: the engine reopens the layout that worked.
+* **Channels**: 1, 2, 6 and 8 channels map onto NUE's `FL FR FC LFE BL BR SL SR` order and the port's masks exactly. 3, 4, 5 and 7 are refused with `unsupported` (NUE has no
+  standard position for them); the engine keeps its current layout, so a 4-channel primary format plays on the front pair.
+* **Threads**: the sink's callback runs on NUE's audio thread and only calls `Engine::pull` (the mixer, one mutex, no allocation after start-up); all queries are lock-free.
+* **Tests without a sound card**: `host_sink_tests` (selection, paced clock, fall-back; any build) and `nue_sink_tests` (64-bit, NUE null backend in deterministic mode:
+  exact device-clock arithmetic, contract of the adapter, the game's 0.5 s ring and its cursor, a 6-channel primary reopening the stream, the host selection, and the
+  window-less initialisation on SDL's `dummy` audio driver).
+* **Real device**: `nue_sink_smoke_test` (ctest `nue_sink_smoke`, skips without an output device; `--tone` plays a quiet 440 Hz tone) drives the same chain on the
+  default device through NUE's SDL3 backend. Measured on the development machine (48 kHz stereo, device buffer 512 frames, 21 ms device latency): 25600 frames played in
+  about half a second, 0 underruns, the play cursor moved on 48 of 50 polls of 10 ms. Not run with the game itself: whether the game is *audible* in the NUE window is the
+  integration's first run (look for `audio output: nue` in the runner's log, then the device-clock statistics at shutdown).
+* Not done: following a change of the default device to a different layout (NUE does it inside the stream, untested here); channel counts 3, 4, 5 and 7 (see above);
+  the NUE-side `legacy_dsound` replaces the facade/Level A copy later, this sink stays the adapter of the port's Level A.
