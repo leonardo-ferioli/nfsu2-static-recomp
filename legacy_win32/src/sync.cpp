@@ -92,6 +92,7 @@ struct Sync::Impl {
     platform::MutexHandle global_mutex;
     platform::CondHandle global_cond;
     std::atomic<bool>* stopping = nullptr;
+    std::atomic<int> live_threads{0};                          // guest threads started by create_thread that have not finished their body yet
 
     struct Guard { Impl& i; explicit Guard(Impl& impl) : i(impl) { i.threads.mutex_lock(i.global_mutex); } ~Guard() { i.threads.mutex_unlock(i.global_mutex); } };
     void broadcast() { threads.cond_broadcast(global_cond); }
@@ -190,6 +191,14 @@ Sync::~Sync() {
     impl_->timers.clear();
     for (auto& s : impl_->sections) impl_->threads.mutex_destroy(s.second);
     for (int i = 0; i < 64; ++i) if (impl_->tls_used[i]) impl_->threads.tls_destroy(impl_->tls_slots[i]);
+}
+
+bool Sync::wait_for_threads(uint32_t milliseconds) {
+    for (uint32_t waited = 0; impl_->live_threads.load() > 0; ++waited) {
+        if (waited >= milliseconds) return false;
+        impl_->clock.sleep_ns(1000000);
+    }
+    return true;
 }
 
 // ------------------------------------------------------------------------------------------------------------------------------ events, mutexes
@@ -316,6 +325,7 @@ Ret<Handle> Sync::create_thread(std::function<uint32_t()> body, bool suspended, 
     if (!handle) return fail<Handle>(err::not_enough_memory);
     if (suspended) object->gate = impl_->threads.semaphore_create(0).value;
     Impl* impl = impl_.get();
+    ++impl->live_threads;
     platform::ThreadDesc desc;
     desc.name = "guest thread";
     desc.affinity_mask = impl_->policy.thread_affinity_mask;
@@ -340,11 +350,13 @@ Ret<Handle> Sync::create_thread(std::function<uint32_t()> body, bool suspended, 
             impl->broadcast();
         }
         if (platform_handle) impl->threads.detach(platform_handle);
+        --impl->live_threads;                           // last use of the library by this thread
         return int32_t(code);
     };
     impl_->threads.mutex_lock(impl_->global_mutex);
     auto created = impl_->threads.create_thread(desc, std::move(wrapper));
     if (!created) {
+        --impl_->live_threads;
         impl_->threads.mutex_unlock(impl_->global_mutex);
         impl_->handles.close(handle);
         return fail<Handle>(err::not_enough_memory);

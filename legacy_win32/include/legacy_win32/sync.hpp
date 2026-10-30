@@ -64,6 +64,10 @@ public:
     uint32_t current_thread_id();
     Handle current_thread_handle();                       // a real handle to the calling thread (what DuplicateHandle(GetCurrentThread()) gives)
 
+    // Waits (at most `milliseconds`) for every guest thread started with create_thread to finish its body; false when some are still running. A host
+    // that is shutting down sets `stopping`, lets the guest's own waits fail, and calls this before destroying anything the threads use.
+    bool wait_for_threads(uint32_t milliseconds);
+
     // ---- handles
     bool close_handle(Handle);                            // false: ERROR_INVALID_HANDLE
     Ret<Handle> duplicate_handle(Handle source, bool close_source);   // pseudo handles (current thread) become real ones

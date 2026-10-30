@@ -15,7 +15,9 @@ trace = os.path.join(os.path.dirname(os.path.abspath(export)), "logs", "boot64_t
 
 
 def run(exe):
-    out = subprocess.run([exe, "--boot64", export, game, "400000000", "all"], capture_output=True, text=True, timeout=900)
+    env = dict(os.environ)
+    env["NFSU2_STOP_AT_IMPORT"] = "#1"   # DirectSoundCreate: after the window, the registry, the files and the Direct3D 9 device
+    out = subprocess.run([exe, "--boot64", export, game, "400000000", "all"], capture_output=True, text=True, timeout=900, env=env)
     if out.returncode:
         sys.exit(f"{exe} failed ({out.returncode}):\n{out.stdout}{out.stderr}")
     lines = open(trace, encoding="utf-8", errors="replace").read().splitlines()

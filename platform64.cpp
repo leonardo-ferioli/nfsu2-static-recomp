@@ -31,7 +31,7 @@ struct Platform64::Context{
     }
 };
 
-Platform64::Platform64(Cpu& main,const std::filesystem::path& exports,const std::filesystem::path& game):main_(main),game_(std::filesystem::absolute(game)){
+Platform64::Platform64(Cpu& main,const std::filesystem::path& exports,const std::filesystem::path& game):main_(main),game_(std::filesystem::absolute(game)),exports_(std::filesystem::absolute(exports)){
     auto* space=nfsu2::guest::current_address_space();
     if(!space)throw Fault("Platform64 needs the guest arena (nfsu2::guest::create_arena) before it is built");
     if(g_current)throw Fault("Platform64 supports one active game image per process");
@@ -114,6 +114,27 @@ uint32_t Platform64::token_for(const char* name){
     dynamic_names_.push_back(name);
     return dynamic_token_base+uint32_t(dynamic_names_.size()-1)*16;
 }
+void Platform64::register_dynamic_region(uint32_t base,uint32_t size){
+    if(uint64_t(base)<uint64_t(image_base)+image_size && uint64_t(base)+size>image_base)return;   // the translated image is never interpreted
+    std::lock_guard lock(mutex_);
+    if(!dynamic_owner_){
+        std::filesystem::path specification=dynamic_specification_;
+        if(specification.empty()){
+            char variable[1024];
+            if(GetEnvironmentVariableA("NFSU2_SLEIGH_SPEC",variable,sizeof(variable)))specification=variable;
+            else{
+                wchar_t module[MAX_PATH*2];const DWORD n=GetModuleFileNameW(nullptr,module,DWORD(std::size(module)));
+                specification=std::filesystem::path(module,module+n).parent_path()/"sleigh"/"x86.sla";
+                if(!std::filesystem::exists(specification))specification=exports_.parent_path()/"third_party"/"sleigh_spec"/"x86.sla";
+            }
+        }
+        dynamic_owner_=std::make_unique<DynamicCode>(specification);
+        dynamic_.store(dynamic_owner_.get());
+        if(trace_)trace_<<"DYNAMIC CODE interpreter ready: "<<specification.string()<<'\n';
+    }
+    dynamic_owner_->add_region(base,size);
+    if(trace_)trace_<<"DYNAMIC CODE region registered base="<<hex(base)<<" size="<<hex(size)<<'\n';
+}
 void Platform64::throw_if_stopping(const char* what) const{if(stopping_)throw Fault(std::string("the platform is stopping (")+what+")");}
 
 Platform64::Handler* Platform64::find_handler(uint32_t token,std::string& label){
@@ -149,6 +170,10 @@ void Platform64::note_import(const std::string& label,Cpu& c){
 }
 
 bool Platform64::dispatch(Cpu& c){
+    if(auto* code=dynamic_.load();code && code->contains(c.pc)){          // interpreted code: run it while it stays in its region
+        const uint64_t before=c.instructions;code->run(c,1u<<18);dynamic_executed_+=c.instructions-before;
+        return true;
+    }
     const uint32_t token=c.pc;
     if(token<import_token_base)return false;
     if(token==exception_handler_token || token==exception_unwind_token || token==exception_filter_token)return exception_return(c);
@@ -156,19 +181,46 @@ bool Platform64::dispatch(Cpu& c){
     Handler* handler=find_handler(token,label);
     if(label.empty())return false;                         // not a token of this platform (the range check above is only a fast reject)
     if(trace_.is_open())note_import(label,c);
+    // NFSU2_STOP_AT_IMPORT=<name>: the run ends (a Fault) at the first call of that import, a deterministic place for tests to compare engines.
+    static const std::string stop_at=[]{char text[64];return std::string(GetEnvironmentVariableA("NFSU2_STOP_AT_IMPORT",text,sizeof(text))?text:"");}();
+    if(!stop_at.empty() && label.size()>stop_at.size() && label.compare(label.size()-stop_at.size()-1,std::string::npos,"!"+stop_at)==0)
+        throw Fault("stopped at import "+label+" (NFSU2_STOP_AT_IMPORT)");
     if(!handler){
         std::ostringstream message;message<<"unimplemented guest import "<<label<<" (token "<<hex(token)<<", return="<<hex(uint32_t(m<4>(c,r<4>(c,16))))<<")";
         throw Fault(message.str());
     }
+    ++handler->calls;   // a diagnostic: the trace ends with the busiest imports
     if(handler->raw){handler->fn(c);return true;}
+    // NFSU2_TRACE_FAILS=1: every call that sets a last error is written to the trace with its arguments (what the game was told).
+    static const bool trace_fails=[]{char text[8];return GetEnvironmentVariableA("NFSU2_TRACE_FAILS",text,sizeof(text))!=0;}();
+    const uint32_t error_cell=last_error_slot(c),error_before=trace_fails?uint32_t(m<4>(c,error_cell)):0;
     const uint32_t value=handler->fn(c);
+    if(trace_fails){
+        const uint32_t error_after=uint32_t(m<4>(c,error_cell));
+        if(error_after && error_after!=error_before){
+            std::ostringstream text;text<<"FAIL "<<label<<" error="<<error_after<<" result="<<hex(value)<<" args";
+            for(unsigned i=0;i<4;++i){
+                const uint32_t a=uint32_t(m<4>(c,r<4>(c,16)+4+4*i));text<<' '<<hex(a);
+                if(a>=0x10000){   // an argument that points at printable text is shown (a file name, a module name)
+                    std::string t;auto* space=nfsu2::guest::current_address_space();
+                    for(unsigned k=0;k<80 && space && space->host(a+k,1);++k){const char ch=char(*space->host(a+k,1));if(!ch)break;if(ch<32||ch>126){t.clear();break;}t+=ch;}
+                    if(t.size()>2)text<<" \""<<t<<'"';
+                }
+            }
+            note(text.str());
+        }
+    }
     const uint32_t sp=uint32_t(r<4>(c,16)),back=uint32_t(m<4>(c,sp));
     wr<4>(c,0,value);wr<4>(c,16,sp+4+handler->argc*4);c.pc=back;wr<4>(c,644,back);
     return true;
 }
 
 uint32_t Platform64::execute(Cpu& c,uint32_t stop,uint64_t budget){
+    // NFSU2_WATCH=<hex guest address>: the trace says where a byte of guest memory changes (reference engine: one instruction per step; a diagnostic of the main thread).
+    static const uint32_t watch=[]{char text[32];return GetEnvironmentVariableA("NFSU2_WATCH",text,sizeof(text))?uint32_t(std::strtoul(text,nullptr,16)):0u;}();
+    uint8_t watched=0;if(watch && &c==&main_)watched=uint8_t(m<1>(c,watch));
     for(uint64_t i=0;i<budget;++i){
+        if(watch && &c==&main_){const uint8_t now=uint8_t(m<1>(c,watch));if(now!=watched){note("WATCH "+hex(watch)+" "+std::to_string(watched)+" -> "+std::to_string(now)+" at instruction "+std::to_string(c.instructions)+", pc="+hex(c.pc)+", previous pc "+hex(last_pc_));watched=now;}last_pc_=c.pc;}
         if(c.pc==stop)return uint32_t(r<4>(c,0));
         if(stopping_)throw Fault("the platform is stopping");
         if(dispatch(c))continue;
@@ -198,6 +250,12 @@ void Platform64::run(uint64_t budget,const std::filesystem::path& log){
         execute(main_,return_sentinel,budget);
         throw Fault("guest entry point returned");
     }catch(const std::exception& e){
+        {   // the busiest imports: where a game that is not going anywhere spends its calls
+            std::vector<std::pair<uint64_t,std::string>> busy;
+            for(size_t i=0;i<slots_.size();++i)if(slots_[i] && slots_[i]->calls)busy.emplace_back(slots_[i]->calls,std::string(imports[i].dll)+"!"+imports[i].name);
+            std::sort(busy.rbegin(),busy.rend());
+            trace_<<"BUSIEST";for(size_t i=0;i<busy.size() && i<12;++i)trace_<<' '<<busy[i].second<<'='<<busy[i].first;trace_<<'\n';
+        }
         trace_<<"STOP "<<e.what()<<" instructions="<<main_.instructions<<" PC="<<hex(main_.pc)<<" ESP="<<hex(uint32_t(r<4>(main_,16)))<<'\n';trace_.flush();
         throw;
     }

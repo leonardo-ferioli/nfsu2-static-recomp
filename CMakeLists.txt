@@ -28,19 +28,19 @@ endif()
 if(WIN32)
     target_link_libraries(nfsu2_audio PUBLIC ole32 avrt)
 endif()
+# Ghidra's SLEIGH engine (Apache 2.0), used only to interpret code that is generated at run time (dynamic_code.hpp), on both hosts.
+file(GLOB SLEIGH_SOURCES third_party/sleigh/*.cc)
+add_library(sleigh_runtime STATIC ${SLEIGH_SOURCES})
+target_include_directories(sleigh_runtime PRIVATE third_party/zlib_shim third_party/sleigh)
+target_compile_definitions(sleigh_runtime PRIVATE _WINDOWS)
+target_compile_options(sleigh_runtime PRIVATE -O2 -w -Wno-c++11-narrowing)
+set_target_properties(sleigh_runtime PROPERTIES CXX_STANDARD 17)
+set_source_files_properties(dynamic_code.cpp PROPERTIES INCLUDE_DIRECTORIES "${CMAKE_CURRENT_SOURCE_DIR}/third_party/sleigh;${CMAKE_CURRENT_SOURCE_DIR}/third_party/zlib_shim")
 if(CMAKE_SIZEOF_VOID_P EQUAL 4)
-    # Ghidra's SLEIGH engine (Apache 2.0), used only to interpret code that is generated at run time (dynamic_code.hpp).
-    file(GLOB SLEIGH_SOURCES third_party/sleigh/*.cc)
-    add_library(sleigh_runtime STATIC ${SLEIGH_SOURCES})
-    target_include_directories(sleigh_runtime PRIVATE third_party/zlib_shim third_party/sleigh)
-    target_compile_definitions(sleigh_runtime PRIVATE _WINDOWS)
-    target_compile_options(sleigh_runtime PRIVATE -O2 -w -Wno-c++11-narrowing)
-    set_target_properties(sleigh_runtime PROPERTIES CXX_STANDARD 17)
-    set_source_files_properties(dynamic_code.cpp PROPERTIES INCLUDE_DIRECTORIES "${CMAKE_CURRENT_SOURCE_DIR}/third_party/sleigh;${CMAKE_CURRENT_SOURCE_DIR}/third_party/zlib_shim")
     set(PLATFORM_SOURCE native32.cpp native32_reservation.cpp speed.cpp dynamic_code.cpp platform/services.cpp platform/win32/win32_services.cpp platform/null/null_platform.cpp nue_d3d9/src/d3d9_trace.cpp nue_d3d9/src/null_gpu.cpp d3d9_recorder.cpp win32_facade.cpp win32_facade_dinput.cpp win32_facade_extra.cpp win32_facade_loader.cpp win32_facade_system.cpp win32_facade_window.cpp platform/audio/dsound_install.cpp)
     add_link_options(-Wl,/BASE:0x00400000 -Wl,/DYNAMICBASE:NO -Wl,/LARGEADDRESSAWARE:NO -Wl,/SAFESEH:NO "-Wl,/sectionlayout:@${CMAKE_CURRENT_SOURCE_DIR}/native32_sections.txt")
 else()
-    set(PLATFORM_SOURCE platform.cpp platform64.cpp platform64_seh.cpp speed.cpp guest_arena.cpp win32_facade.cpp win32_facade_dinput.cpp win32_facade_extra.cpp win32_facade_loader.cpp win32_facade_system.cpp win32_facade_window.cpp platform/audio/dsound_install.cpp)   # the guest lives in vectors or, when an arena exists, in the arena; the Win32 facade serves both hosts
+    set(PLATFORM_SOURCE platform.cpp platform64.cpp platform64_seh.cpp speed.cpp dynamic_code.cpp guest_arena.cpp win32_facade.cpp win32_facade_dinput.cpp win32_facade_extra.cpp win32_facade_loader.cpp win32_facade_system.cpp win32_facade_window.cpp platform/audio/dsound_install.cpp)   # the guest lives in vectors or, when an arena exists, in the arena; the Win32 facade serves both hosts
     # The Direct3D 9 group of the facade (win32_facade_d3d9.cpp) over the layer nue_d3d9 (its core: Direct3D 9 semantics, shader translation, null GPU) and
     # SPIRV-Cross, vendored by the bgfx.cmake submodule. Without the submodule the group is left out and asking for it fails with a message.
     set(NUE_SPIRV_CROSS "${CMAKE_CURRENT_SOURCE_DIR}/third_party/bgfx.cmake/bgfx/3rdparty/spirv-cross")
@@ -220,7 +220,7 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 8 AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/generated
     target_compile_definitions(nfsu2_fast64 PUBLIC NFSU2_FAST_BACKEND=1)
     target_include_directories(nfsu2_fast64 PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
     target_compile_options(nfsu2_fast64 PRIVATE "-O${RAW_OPT_LEVEL}" -g0 -fno-fast-math -fno-strict-aliasing -Wno-unused-label -ffunction-sections)
-    target_link_libraries(nfsu2_fast64 PUBLIC legacy_win32_host bcrypt user32 winmm shell32 advapi32 nfsu2_audio)
+    target_link_libraries(nfsu2_fast64 PUBLIC legacy_win32_host bcrypt user32 winmm shell32 advapi32 nfsu2_audio sleigh_runtime)
     if(NFSU2_D3D9_GROUP)
         target_link_libraries(nfsu2_fast64 PUBLIC nfsu2_d3d9_layer)
         target_compile_definitions(nfsu2_fast64 PRIVATE NFSU2_FACADE_D3D9=1)

@@ -35,6 +35,9 @@ public:
     virtual const std::filesystem::path& game_directory() const { static const std::filesystem::path none; return none; }
     // One line for the run's log (NativePlatform: logs/native_trace.log). Platforms without a log write it to stderr.
     virtual void log_line(const std::string& text) { std::cerr << text << "\n"; }
+    // Memory the guest made executable outside the translated image holds code generated at run time (the audio engine's relocatable modules): control that
+    // reaches it is interpreted. Default: not supported.
+    virtual void register_dynamic_region(uint32_t base, uint32_t size) { (void)base; (void)size; }
     // The layer above is shutting down: guest threads and waits must come back (throw_if_stopping raises from now on). Default: nothing to do.
     virtual void stop_guest() {}
     // Raises a Fault when the platform is shutting down (a long guest wait calls it between slices).

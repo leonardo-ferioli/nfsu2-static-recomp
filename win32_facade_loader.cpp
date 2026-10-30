@@ -66,6 +66,7 @@ void Win32Facade::Impl::install_loader() {
     on("VirtualAlloc", 4, [this](Cpu& c) {
         uint32_t result = 0;
         if (const uint32_t e = space->virtual_alloc(arg(c, 0), arg(c, 1), arg(c, 2), arg(c, 3), result)) { set_error(c, e); return 0u; }
+        if (result && (arg(c, 3) & 0xf0)) platform.register_dynamic_region(result, arg(c, 1));   // executable memory: code generated at run time
         return result;
     });
     on("VirtualFree", 3, [this](Cpu& c) { if (const uint32_t e = space->virtual_free(arg(c, 0), arg(c, 1), arg(c, 2))) { set_error(c, e); return 0u; } return 1u; });
@@ -73,6 +74,7 @@ void Win32Facade::Impl::install_loader() {
         uint32_t old = 0;
         if (const uint32_t e = space->virtual_protect(arg(c, 0), arg(c, 1), arg(c, 2), old)) { set_error(c, e); return 0u; }
         if (arg(c, 3)) *ptr<uint32_t>(arg(c, 3)) = old;
+        if (arg(c, 2) & 0xf0) platform.register_dynamic_region(arg(c, 0), arg(c, 1));            // made executable: code generated at run time
         return 1u;
     });
     on("VirtualQuery", 3, [this](Cpu& c) {

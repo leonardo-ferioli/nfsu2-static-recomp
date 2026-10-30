@@ -576,7 +576,10 @@ Win32Facade::Win32Facade(GuestPlatform& platform, const Win32LayerOptions& optio
 }
 Win32Facade::~Win32Facade() {
     // The library joins its threads when it goes: waits and sleeps of the guest must be told first, or a guest thread waiting for ever never returns.
-    if (impl_) { impl_->platform.stop_guest(); impl_->sync.stopping = true; impl_->time.stopping = true; }
+    if (impl_) {
+        impl_->platform.stop_guest(); impl_->sync.stopping = true; impl_->time.stopping = true;
+        impl_->sync.wait_for_threads(5000);   // the guest threads leave before anything they use is destroyed
+    }
 }
 const std::string& Win32Facade::installed_report() const { return impl_->report; }
 bool Win32Facade::set_event(uint32_t handle) { return impl_->sync.set_event(handle).error == 0; }
