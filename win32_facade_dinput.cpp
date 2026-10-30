@@ -314,10 +314,18 @@ void Win32Facade::Impl::install_dinput() {
         self->di->pump();
         auto d = device_of(arg(c, 0));
         const uint32_t r = d ? d->acquire() : ldi::hr::invalid_param;
-        if (trace) { static uint32_t last = 0xffffffffu; if (r != last) { last = r; char t[64]; std::snprintf(t, sizeof t, "Acquire %08x -> 0x%08x", arg(c, 0), r); note(t); } }
+        if (trace) {   // once per object and result
+            static std::set<std::pair<uint32_t, uint32_t>> seen;
+            if (seen.insert({arg(c, 0), r}).second) { char t[96]; std::snprintf(t, sizeof t, "Acquire %08x -> 0x%08x%s", arg(c, 0), r, d ? "" : " (not a device the layer made)"); note(t); }
+        }
         return r;
     }));
-    vt.push_back(token(1, [device_of](Cpu& c) -> uint32_t { auto d = device_of(arg(c, 0)); return d ? d->unacquire() : ldi::hr::invalid_param; }));                       // Unacquire
+    vt.push_back(token(1, [device_of, note](Cpu& c) -> uint32_t {                                              // Unacquire
+        auto d = device_of(arg(c, 0));
+        const uint32_t r = d ? d->unacquire() : ldi::hr::invalid_param;
+        if (trace) { char t[64]; std::snprintf(t, sizeof t, "Unacquire %08x -> 0x%08x", arg(c, 0), r); note(t); }
+        return r;
+    }));
     vt.push_back(token(3, [self, device_of, note](Cpu& c) -> uint32_t {                                        // GetDeviceState(this, cb, data)
         self->di->pump();
         auto d = device_of(arg(c, 0));
@@ -356,10 +364,12 @@ void Win32Facade::Impl::install_dinput() {
         }
         return r;
     }));
-    vt.push_back(token(2, [device_of](Cpu& c) -> uint32_t {                                                    // SetDataFormat(this, DIDATAFORMAT*)
+    vt.push_back(token(2, [device_of, note](Cpu& c) -> uint32_t {                                              // SetDataFormat(this, DIDATAFORMAT*)
         auto d = device_of(arg(c, 0));
         if (!d || !arg(c, 1)) return ldi::hr::invalid_param;
-        return d->set_data_format(read_data_format(arg(c, 1)));
+        const uint32_t r = d->set_data_format(read_data_format(arg(c, 1)));
+        if (trace) { char t[64]; std::snprintf(t, sizeof t, "SetDataFormat %08x -> 0x%08x", arg(c, 0), r); note(t); }
+        return r;
     }));
     vt.push_back(token(2, [](Cpu&) -> uint32_t { return ldi::hr::ok; }));                                      // SetEventNotification: accepted; the game polls
     vt.push_back(token(3, [device_of, note](Cpu& c) -> uint32_t {                                               // SetCooperativeLevel
@@ -406,10 +416,18 @@ void Win32Facade::Impl::install_dinput() {
         if (r == ldi::hr::ok) write_action_results(arg(c, 1), f);
         return r;
     }));
-    vt.push_back(token(4, [device_of](Cpu& c) -> uint32_t {                                                    // SetActionMap(this, DIACTIONFORMATA*, user, flags)
+    vt.push_back(token(4, [self, device_of, note](Cpu& c) -> uint32_t {                                        // SetActionMap(this, DIACTIONFORMATA*, user, flags)
         auto d = device_of(arg(c, 0));
         if (!d || !arg(c, 1)) return ldi::hr::invalid_param;
-        return d->set_action_map(read_action_format(arg(c, 1)), cstr(arg(c, 2)), arg(c, 3));
+        const ldi::ActionFormat f = read_action_format(arg(c, 1));
+        const uint32_t r = d->set_action_map(f, cstr(arg(c, 2)), arg(c, 3));
+        if (trace) {
+            size_t mapped = 0;
+            for (const auto& a : f.actions) mapped += a.how != 0;
+            char t[120]; std::snprintf(t, sizeof t, "SetActionMap %08x: %zu actions, %zu mapped -> 0x%08x", arg(c, 0), f.actions.size(), mapped, r); note(t);
+        }
+        (void)self;
+        return r;
     }));
     vt.push_back(token(2, unimplemented));          // GetImageInfo
     state->device_vtable = self->heaps.heap_alloc(self->heaps.get_process_heap(), 0, uint32_t(vt.size() * 4)).value;

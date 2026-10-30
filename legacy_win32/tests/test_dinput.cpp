@@ -208,6 +208,9 @@ static void test_dinput() {
     CHECK(actions.actions[0].how == dia::app_mapped && actions.actions[0].guid_instance == kGuidSysKeyboard && instance_of(actions.actions[0].object_id) == 0x39);
     CHECK_EQ(actions.actions[1].how, uint32_t(dia::unmapped));
     CHECK_EQ(kb2->set_action_map(actions, "player", 0), hr::ok);
+    CHECK_EQ(kb2->acquire(), hr::ok);                                               // an action-mapped device is acquirable without SetCooperativeLevel (the game never calls it)
+    CHECK_EQ(kb2->unacquire(), hr::ok);
+    CHECK_EQ(kb2->set_cooperative_level(100, coop::nonexclusive | coop::background), hr::ok);   // and an explicit level still works
     CHECK_EQ(f.di.enum_devices_by_semantics(actions, 0).size(), 2u);               // the keyboard (keyboard semantics) and the game controller (the genre)
     CHECK_EQ(f.di.get_device_status(kGuidSysKeyboard), hr::ok);
 }

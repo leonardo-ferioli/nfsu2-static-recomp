@@ -397,6 +397,10 @@ public:
         std::lock_guard lock(m_);
         for (auto& p : app) action_app_data_[p.first] = p.second;
         if (f.buffer_size) { capacity_ = f.buffer_size; }
+        // The game takes its keyboard from EnumDevicesBySemantics, maps it with BuildActionMap / SetActionMap and acquires it without ever calling SetCooperativeLevel on it
+        // (traced: SetActionMap, Unacquire, SetActionMap, Acquire). An action-mapped device therefore has a cooperative level once its map is set: non-exclusive, in the
+        // foreground, for no window in particular (so any window of the program is foreground enough). SetCooperativeLevel still overrides it.
+        if (!has_coop_) { coop_ = coop::nonexclusive | coop::foreground; hwnd_ = 0; has_coop_ = true; }
         return hr::ok;
     }
 
