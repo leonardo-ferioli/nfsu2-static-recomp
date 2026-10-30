@@ -16,6 +16,10 @@ struct ThreadExit : std::exception {
 #ifdef NFSU2_GUEST_IDENTITY
 void Win32Facade::Impl::install_loader() {}
 #else
+namespace {
+uint64_t arena_end() { return nfsu2::guest::g_arena_size; }   // guest addresses at or above it are not mapped
+}  // namespace
+
 void Win32Facade::Impl::install_loader() {
     // ---- last error: the guest's own cell in its thread block
     on("GetLastError", 0, [](Cpu& c) { return *ptr<uint32_t>(uint32_t(r<4>(c, 0x110)) + 0x34); });
@@ -77,17 +81,55 @@ void Win32Facade::Impl::install_loader() {
         if (arg(c, 2) & 0xf0) platform.register_dynamic_region(arg(c, 0), arg(c, 1));            // made executable: code generated at run time
         return 1u;
     });
-    on("VirtualQuery", 3, [this](Cpu& c) {
+    // The library's address space knows only its window (VirtualAlloc and the heaps). The rest of the guest's memory (the image and its data, stacks, thread blocks,
+    // the arena's own blocks) is the guest arena's, which knows what is committed and with which protection. Asked about the window only, the library would call a
+    // string in the image's data a bad pointer (the game's printf then writes "(badptr)" in place of a menu text).
+    const uint32_t window_begin = options.guest_memory ? 0x10000u : kWindowBase;
+    const uint64_t window_end = uint64_t(window_begin) + (options.guest_memory ? options.address_space_bytes : kWindowBytes);
+    auto bad_pointer = [this, window_begin, window_end](uint32_t address, uint32_t size, bool write) {
+        if (size == 0) return false;
+        auto* arena = nfsu2::guest::current_address_space();
+        const uint64_t end = uint64_t(address) + size;
+        for (uint64_t a = address; a < end;) {
+            const bool inside = a >= window_begin && a < window_end;
+            const uint64_t part_end = inside ? std::min(end, window_end) : (a < window_begin ? std::min<uint64_t>(end, window_begin) : end);
+            const uint32_t at = uint32_t(a), bytes = uint32_t(part_end - a);
+            if (inside || !arena) {
+                if (write ? lw::is_bad_write_ptr(*space, at, bytes) : lw::is_bad_read_ptr(*space, at, bytes)) return true;
+            } else if (part_end > arena_end() || !(write ? arena->writable(at, bytes) : arena->readable(at, bytes))) return true;
+            a = part_end;
+        }
+        return false;
+    };
+    on("VirtualQuery", 3, [this, window_begin, window_end](Cpu& c) {
         lw::RegionInfo info;
         if (arg(c, 2) < 28) { set_error(c, lw::err::invalid_parameter); return 0u; }
-        if (const uint32_t e = space->virtual_query(arg(c, 0), info)) { set_error(c, e); return 0u; }
+        const uint32_t address = arg(c, 0);
+        auto* arena = nfsu2::guest::current_address_space();
+        if ((address >= window_begin && address < window_end) || !arena) {
+            if (const uint32_t e = space->virtual_query(address, info)) { set_error(c, e); return 0u; }
+        } else {
+            // Outside the window: the arena's pages, as one region of pages with the same protection (committed private memory, or free).
+            if (address >= arena_end()) { set_error(c, lw::err::invalid_parameter); return 0u; }
+            const uint32_t first = address & ~0xfffu, protect = arena->protection(first);
+            const uint64_t limit = address < window_begin ? window_begin : arena_end();
+            uint64_t next = uint64_t(first) + 0x1000;
+            while (next < limit && next - first < (64u << 20) && arena->protection(uint32_t(next)) == protect) next += 0x1000;
+            info.base_address = first;
+            info.region_size = uint32_t(next - first);
+            info.state = protect ? lw::mem::commit : lw::mem::free_;
+            info.protect = protect ? protect : lw::page::noaccess;
+            info.allocation_base = protect ? first : 0;
+            info.allocation_protect = protect;
+            info.type = protect ? lw::mem::private_ : 0;
+        }
         const uint32_t fields[7] = {info.base_address, info.allocation_base, info.allocation_protect, info.region_size, info.state, info.protect, info.type};
         std::memcpy(ptr<uint32_t>(arg(c, 1)), fields, 28);
         return 28u;
     });
-    on("IsBadReadPtr", 2, [this](Cpu& c) { return lw::is_bad_read_ptr(*space, arg(c, 0), arg(c, 1)) ? 1u : 0u; });
-    on("IsBadWritePtr", 2, [this](Cpu& c) { return lw::is_bad_write_ptr(*space, arg(c, 0), arg(c, 1)) ? 1u : 0u; });
-    on("IsBadCodePtr", 1, [this](Cpu& c) { return lw::is_bad_code_ptr(*space, arg(c, 0)) ? 1u : 0u; });
+    on("IsBadReadPtr", 2, [bad_pointer](Cpu& c) { return bad_pointer(arg(c, 0), arg(c, 1), false) ? 1u : 0u; });
+    on("IsBadWritePtr", 2, [bad_pointer](Cpu& c) { return bad_pointer(arg(c, 0), arg(c, 1), true) ? 1u : 0u; });
+    on("IsBadCodePtr", 1, [bad_pointer](Cpu& c) { return bad_pointer(arg(c, 0), 1, false) ? 1u : 0u; });
 
     // ---- atomics (the game imports them as functions)
     on("InterlockedExchange", 2, [](Cpu& c) { return std::atomic_ref<uint32_t>(*ptr<uint32_t>(arg(c, 0))).exchange(arg(c, 1)); });

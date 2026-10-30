@@ -86,6 +86,14 @@ int main(int argc, char** argv) {
         check(g.call("VirtualQuery", {block, info, 28}) == 28 && m<4>(c, info + 16) == 0x1000 /* MEM_COMMIT */ && m<4>(c, info + 20) == 4, "VirtualQuery describes the block");
         check(g.call("IsBadWritePtr", {block, 0x10000}) == 0 && g.call("IsBadWritePtr", {0x40000000, 4}) == 1, "IsBadWritePtr");
         check(g.call("VirtualFree", {block, 0, 0x8000}) == 1 && g.call("IsBadReadPtr", {block, 4}) == 1, "VirtualFree releases it");
+        // Memory outside the library's window is the arena's: the image's data ("(badptr)" of the game's printf at 0x786d4c), the stack; nothing above what is committed.
+        check(g.call("IsBadReadPtr", {0x786d4c, 9}) == 0 && g.call("IsBadWritePtr", {0x786d4c, 9}) == 0 && g.call("IsBadCodePtr", {0x401000}) == 0,
+              "a string in the image is a good pointer");
+        const uint32_t esp = uint32_t(r<4>(c, 16));
+        check(g.call("IsBadReadPtr", {esp - 64, 64}) == 0, "the stack is a good pointer");
+        check(g.call("IsBadReadPtr", {0x7F800000, 4}) == 1 && g.call("IsBadReadPtr", {0x10000, 4}) == 1, "uncommitted memory is a bad pointer");
+        check(g.call("VirtualQuery", {0x400000, info, 28}) == 28 && m<4>(c, info) == 0x400000 && m<4>(c, info + 16) == 0x1000 /* MEM_COMMIT */ && m<4>(c, info + 12) >= 0x1000,
+              "VirtualQuery describes the image");
 
         // modules: a served function has a token, an unserved one is not found
         const uint32_t kernel = g.call("GetModuleHandleA", {g.text("kernel32.dll")});
