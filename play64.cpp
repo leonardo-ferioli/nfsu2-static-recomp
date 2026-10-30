@@ -77,6 +77,9 @@ int main(int argc, char** argv) {
             nue_shutdown();
             return 1;
         }
+        // The backbuffer follows the window: the Win32 layer turns the game's window into full screen or another size after this point, and NUE's
+        // pixel-size events reach nue_gfx only through its watcher (the Direct3D 9 layer letterboxes into the size nue_gfx reports).
+        nue_gfx_set_auto_events(gfx, NUE_TRUE);
         nue_gfx_native native;
         NUE_STRUCT_INIT(&native);
         nue_gfx_get_native(gfx, &native);
