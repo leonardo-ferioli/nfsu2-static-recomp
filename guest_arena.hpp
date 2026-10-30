@@ -31,9 +31,9 @@ public:
 
 #ifndef NFSU2_GUEST_IDENTITY
 struct ArenaConfig {
-    uint64_t arena_size = 0x100000000ull;     // 4 GiB; smaller = masked arena (addresses at or above the size are unmapped)
+    uint64_t arena_size = 0x80000000ull;      // 2 GiB (the user's default: SPEED2.EXE is not large-address-aware); up to 4 GiB; addresses at or above the size are unmapped
     uint32_t alloc_begin = 0x10000000u;       // the allocator hands out [alloc_begin, alloc_end); the image (0x400000..) and low pages are placed by the loader
-    uint32_t alloc_end = 0xE0000000u;
+    uint32_t alloc_end = 0x7F000000u;         // the top 16 MiB below the arena's end stay free (arena_config() computes it for other sizes)
 };
 
 // Reserves the arena (aligned to 4 GiB when the size is 4 GiB), makes it the process' arena base (guest::set_arena_base) and returns the address space.
@@ -42,7 +42,7 @@ std::unique_ptr<AddressSpace> create_arena(const ArenaConfig& config, const char
 
 // The configuration for an arena of `arena_size` bytes (16 MiB to 4 GiB): the allocator covers it except the top 16 MiB (all but 0xE0000000 and above at 4 GiB).
 ArenaConfig arena_config(uint64_t arena_size);
-// The same, with the size from the environment variable NFSU2_ARENA_MIB (mebibytes; default 4096). The variable is removed from the environment afterwards.
+// The same, with the size from the environment variable NFSU2_ARENA_MIB (mebibytes; default 2048). The variable is removed from the environment afterwards.
 ArenaConfig arena_config_from_environment();
 
 // The arena of this process (nullptr before create_arena and after it is destroyed): the guest processor's memory (Cpu::map / Cpu::pointer) lives there.

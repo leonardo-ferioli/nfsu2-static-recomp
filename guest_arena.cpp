@@ -215,7 +215,7 @@ ArenaConfig arena_config(uint64_t arena_size) {
     return config;
 }
 ArenaConfig arena_config_from_environment() {
-    uint64_t mebibytes = 4096;
+    uint64_t mebibytes = 2048;
     if (const char* text = std::getenv("NFSU2_ARENA_MIB")) {
         mebibytes = std::strtoull(text, nullptr, 10);
         std::vector<char> clear(std::strlen("NFSU2_ARENA_MIB=") + 1);
