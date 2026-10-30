@@ -45,7 +45,7 @@ std::string last_component(const std::string& path) {
 }
 bool intercepted(const char* sub_key) { return sub_key && std::strstr(sub_key, "Need for Speed") != nullptr; }
 
-HKEY key_of(uint32_t value) { return nfsu2::guest::host_handle<HKEY>(int32_t(value)); }   // predefined keys are sign-extended handles
+HKEY key_of(uint32_t value) { return host_object<HKEY>(int32_t(value)); }   // predefined keys are sign-extended handles
 
 uint32_t file_close_key(Cpu& c) {
     const uint32_t key = argument(c, 0);
@@ -275,10 +275,36 @@ uint32_t folder_path(Cpu& c) {
     static HMODULE shell = LoadLibraryA("shell32.dll");
     using Fn = HRESULT(WINAPI*)(HWND, int, HANDLE, DWORD, LPSTR);
     static Fn real = reinterpret_cast<Fn>(GetProcAddress(shell, "SHGetFolderPathA"));
-    return real ? uint32_t(real(nfsu2::guest::host_handle<HWND>(argument(c, 0)), int(argument(c, 1)), nfsu2::guest::host_handle<HANDLE>(argument(c, 2)), argument(c, 3), path)) : uint32_t(E_FAIL);
+    return real ? uint32_t(real(host_object<HWND>(argument(c, 0)), int(argument(c, 1)), host_object<HANDLE>(argument(c, 2)), argument(c, 3), path)) : uint32_t(E_FAIL);
 }
 }  // namespace
 
+#ifndef NFSU2_GUEST_IDENTITY
+// A 64-bit host has no real registry: the Reg* imports are answered by the Win32 layer's registry, seeded with the game's keys and its language
+// (Win32LayerOptions::registry_language), whose text the host keeps in a file between runs (Win32Facade::registry_text): the game's settings are always in a
+// file there, which is what WriteSettingsToFile asks for on the 32-bit host. What remains is the custom user folder: SHGetFolderPathA(CSIDL_LOCAL_APPDATA)
+// answers the folder inside the game directory; every other folder goes to the Win32 layer's own handler.
+void install_registry(const WidescreenSettings& settings) {
+    std::string folder = settings.custom_user_directory;
+    if (folder.empty() || folder == "0") return;
+    auto* platform = GuestPlatform::active();
+    g_custom_user_dir = platform->game_directory() / folder;
+    g_use_custom_user_dir = true;
+    static GuestPlatform::NativeHook next;
+    next = platform->import_override("SHGetFolderPathA");
+    platform->override_import("SHGetFolderPathA", 5, [](Cpu& c) -> uint32_t {
+        const int csidl = int(argument(c, 1)) & ~CSIDL_FLAG_CREATE;
+        if (g_use_custom_user_dir && csidl == CSIDL_LOCAL_APPDATA) {
+            std::error_code ec;
+            fs::create_directories(g_custom_user_dir, ec);
+            const std::string text = g_custom_user_dir.string();
+            std::memcpy(nfsu2::guest::ptr<char>(argument(c, 4)), text.c_str(), text.size() + 1);
+            return S_OK;
+        }
+        return next ? next(c) : uint32_t(E_FAIL);
+    });
+}
+#else
 void install_registry(const WidescreenSettings& settings) {
     auto* platform = NativePlatform::current();
     {
@@ -348,4 +374,5 @@ void install_registry(const WidescreenSettings& settings) {
         }
     }
 }
+#endif
 }  // namespace nfsu2raw::mods

@@ -54,9 +54,6 @@ INI = """; NFS Underground 2 - NUE - launcher configuration. Every line is optio
 ; Win32 and DirectInput functions answered by this program's own library (legacy_win32) instead of Windows: a comma-separated list of
 ; groups (time, text, process, sync, memory, files, dinput), all, or none (default: none, every call goes to Windows). Same as --win32-layer.
 ;win32_layer=none
-; Specification used to interpret code the game generates at run time (see README.txt, "Third-party component").
-; Default: sleigh\\x86.sla next to the launcher; its SHA-256 is verified at start.
-;sleigh_spec=sleigh\\x86.sla
 
 [speed]
 ; Speed layer: shortcuts in the translated game that never change what it computes. Each can be switched off to compare
@@ -176,14 +173,10 @@ Optional Direct3D 9 layer (d3d9.dll)
   over bgfx (Direct3D 11 by default, Vulkan with renderer=vulkan in nue_d3d9.ini). Without the file, or with the environment variable
   NFSU2_SYSTEM_D3D9=1, the system's Direct3D 9 is used. The layer writes nue_d3d9.log next to the dll. See LEEME.txt for the switches.
 
-Third-party component (declared dependency)
-  The game's audio engine loads x86 code modules from its data files into memory at run time. That code is not part
-  of SPEED2.EXE, so it cannot be translated ahead of time. The launcher interprets it instruction by instruction with
-  the SLEIGH engine and x86 specification of the Ghidra project (Apache License 2.0), found in the "sleigh" folder
-  (x86.sla, PROVENANCE.txt, LICENSE-Apache-2.0.txt, NOTICE-third-party.txt). Only memory the game itself makes
-  executable with VirtualProtect/VirtualAlloc outside SPEED2.EXE's image is interpreted; SPEED2.EXE's own code is never
-  interpreted. Without the "sleigh" folder the launcher still starts, but stops with an explicit message as soon as the
-  game loads such a module.
+Audio banks
+  The game's audio engine loads small x86 code modules from its sound banks (the .abk files in SOUND). That code is translated
+  ahead of time like the rest of the game (176 banks, 87 distinct pieces of code, identified by their SHA-256);
+  nothing is interpreted while the game runs.
 
 Widescreen fix (built in)
   The picture uses your desktop resolution instead of 640x480, and the options menu lists every resolution of your display.
@@ -270,17 +263,6 @@ def d3d9_ini(sample):
     return D3D9_INI_NOTE + "\n".join(out) + "\n"
 
 
-NOTICE = """Third-party components used by nfsu2_launcher.exe
-===================================================
-
-Ghidra SLEIGH (C++ decompiler/sleigh sources, compiled into nfsu2_launcher.exe) and x86.sla (processor
-specification, run through the project's tools/prepare_sleigh_spec.py, see PROVENANCE.txt).
-Copyright the Ghidra authors / National Security Agency. Licensed under the Apache License, Version 2.0
-(LICENSE-Apache-2.0.txt). https://github.com/NationalSecurityAgency/ghidra
-
-Use: decoding and interpreting x86 code that the game creates at run time. Not used for SPEED2.EXE's own code.
-"""
-
 
 def sha256(path):
     h = hashlib.sha256()
@@ -329,14 +311,6 @@ def main():
     if symbol_map.exists():
         (args.out.resolve() / "maps").mkdir(parents=True, exist_ok=True)
         shutil.copyfile(symbol_map, args.out.resolve() / "maps" / f"nfsu2_launcher-{sha256(exe)[:12]}.map")
-    # Declared dependency of the run-time P-code interpreter (dynamic_code.hpp): specification, provenance, licenses.
-    sleigh = package / "sleigh"
-    sleigh.mkdir(exist_ok=True)
-    spec_dir = ROOT / "third_party/sleigh_spec"
-    shutil.copyfile(spec_dir / "x86.sla", sleigh / "x86.sla")
-    shutil.copyfile(spec_dir / "PROVENANCE.txt", sleigh / "PROVENANCE.txt")
-    shutil.copyfile(ROOT / "third_party/sleigh/LICENSE-Apache-2.0.txt", sleigh / "LICENSE-Apache-2.0.txt")
-    (sleigh / "NOTICE-third-party.txt").write_text(NOTICE, encoding="utf-8", newline="\r\n")
     notices = package / "third-party" / "widescreen-fix"
     notices.mkdir(parents=True, exist_ok=True)
     for name in ("PROVENANCE.txt", "LICENSE-MIT.txt"):
@@ -368,14 +342,13 @@ def main():
         "embedded_guest_image_data": True,
         "contains_original_text_blob": embeds_text,
         "original_code_executed": False,
-        "runtime_interpreter": {"engine": "Ghidra SLEIGH (Apache-2.0)", "scope": "memory made executable at run time outside the SPEED2.EXE image",
-                                "specification_sha256": sha256(sleigh / "x86.sla")},
+        "runtime_interpreter": None,   # none: the audio banks' code is translated ahead of time (generated_audio/)
         "contains_game_data_files": False,
         "d3d9_dll_sha256": sha256(package / "d3d9.dll") if (package / "d3d9.dll").exists() else None,
         "status": "experimental: menu, race, cars and audio not yet validated",
     }
     (package / "VERSION.json").write_text(json.dumps(info, indent=2) + "\n", encoding="utf-8")
-    sums = [f"{sha256(package / name)}  {name}" for name in ("nfsu2_launcher.exe", "launcher.default.ini", "README.txt", "LEEME.txt", "VERSION.json", "sleigh/x86.sla", "sleigh/PROVENANCE.txt", "sleigh/LICENSE-Apache-2.0.txt", "sleigh/NOTICE-third-party.txt", "third-party/widescreen-fix/PROVENANCE.txt", "third-party/widescreen-fix/LICENSE-MIT.txt")]
+    sums = [f"{sha256(package / name)}  {name}" for name in ("nfsu2_launcher.exe", "launcher.default.ini", "README.txt", "LEEME.txt", "VERSION.json", "third-party/widescreen-fix/PROVENANCE.txt", "third-party/widescreen-fix/LICENSE-MIT.txt")]
     sums += [f"{sha256(package / name)}  {name}" for name in ("d3d9.dll", "nue_d3d9.default.ini") if (package / name).exists()]
     (package / "SHA256SUMS.txt").write_text("\n".join(sums) + "\n", encoding="utf-8")
     archive = args.out.resolve() / "NFSU2-static.zip"

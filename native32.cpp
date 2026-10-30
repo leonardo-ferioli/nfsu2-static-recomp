@@ -9,6 +9,7 @@
 #include <dinput.h>
 #include <cstddef>
 #include "native32.hpp"
+#include "audio_banks.hpp"
 #include "d3d_shadow.hpp"
 #include "speed.hpp"
 #include "platform/services.hpp"
@@ -386,6 +387,7 @@ NativePlatform::NativePlatform(Cpu& c,const std::filesystem::path& game,const Bl
     if(uintptr_t(raw_guest_reservation)!=0x00401000)throw Fault("native32 guest reservation is not at the required VA");
     if(current_platform)throw Fault("native32 supports one active game image per process");
     if(!std::filesystem::is_directory(assets))throw Fault("asset directory does not exist");
+    audio_banks::attach();
     c.map(image_base,image_size);
     for(const auto& block:image_blocks){
         std::vector<uint8_t> bytes=source(block.base,block.size,block.file);
@@ -393,7 +395,7 @@ NativePlatform::NativePlatform(Cpu& c,const std::filesystem::path& game,const Bl
         std::memcpy(c.pointer(block.base,block.size),bytes.data(),bytes.size());
     }
     prepare(c);for(const auto& i:imports)wm<4>(c,i.iat,i.token);c.pc=entry_point;
-    command_line='"'+(assets/"SPEED2.EXE").string()+'"';current_platform=this;
+    command_line='"'+(assets/"SPEED2.EXE").string()+'"';current_platform=this;GuestPlatform::set_active(this);
     exception_guard=AddVectoredExceptionHandler(1,native_fault_guard);
     apply_speed_settings();
     g_native_hook=speed_settings().native_calls?&translated_native_call:nullptr;
@@ -412,7 +414,9 @@ NativePlatform::~NativePlatform(){
     }
     if(auto* window=nfsu2::platform::services().window)window->release_cursor_clip();
     for(auto& method:method_tokens)delete method.exchange(nullptr);
-    if(exception_guard)RemoveVectoredExceptionHandler(exception_guard);current_platform=nullptr;
+    if(exception_guard)RemoveVectoredExceptionHandler(exception_guard);current_platform=nullptr;GuestPlatform::set_active(nullptr);
+    {std::ostringstream s;s<<"AUDIO BANKS bound="<<audio_banks::banks_bound()<<" entries into their translated code="<<audio_banks::entries();record(s.str());}
+    audio_banks::detach();   // the guest threads have stopped
 }
 void NativePlatform::prepare(Cpu& c){
     c.map(0,stack_size);uint32_t stack=c.memory.back().base;
@@ -653,12 +657,8 @@ thread_local Route routes[2048];
 }
 bool NativePlatform::dispatch(Cpu& c){
     if(c.pc>=image_base && c.pc<image_base+image_size)return false;
-    if(auto* code=dynamic.load();code && code->contains(c.pc)){
-        const uint64_t before=c.instructions;code->run(c,1u<<18);
-        const uint64_t total=dynamic_executed.fetch_add(c.instructions-before)+(c.instructions-before);
-        if(total>=dynamic_report_at.load()){dynamic_report_at=total*4;report_dynamic_code(total,code->decoded_count(),c.pc);}
-        return true;
-    }
+    if(audio_banks::run(c))return true;                                       // the audio banks' code, translated ahead of time
+    if(auto* code=run_time_code.load(std::memory_order_relaxed);code && code->run(c))return true;   // tests only
     if(c.pc>=0xf0ffff00 && c.pc<0xf0ffff30)return exception_return(c);
     if(const uint32_t slot=(c.pc-method_token_base)>>4;c.pc>=method_token_base && slot<method_token_slots && (c.pc&15)==0){
         if(const ImportOverride* method=method_tokens[slot].load(std::memory_order_acquire)){
@@ -691,9 +691,6 @@ bool NativePlatform::dispatch(Cpu& c){
         }
     }
     return dispatch_route(c);
-}
-__attribute__((noinline)) void NativePlatform::report_dynamic_code(uint64_t total,uint64_t decoded,uint32_t pc){
-    std::ostringstream message;message<<"DYNAMIC CODE executed "<<total<<" instructions so far ("<<decoded<<" decoded) last pc=0x"<<std::hex<<pc;record(message.str());
 }
 // Everything that depends on the call target: special imports, the device state cache, the profile, the recorder, DirectInput.
 __attribute__((noinline)) bool NativePlatform::dispatch_route(Cpu& c){
@@ -848,8 +845,8 @@ __attribute__((noinline)) bool NativePlatform::dispatch_route(Cpu& c){
     }
     if(name=="RtlUnwind" || name=="RaiseException" || name=="UnhandledExceptionFilter")return exception_import(c,name,guest_return);
     if(name=="VirtualProtect" || name=="VirtualAlloc"){
-        // Memory made executable outside the translated image holds generated code: remember it so control that
-        // reaches it is interpreted (dynamic_code.hpp). The call itself is the ordinary native call.
+        // Memory made executable outside the translated image: the audio banks' code (bound by audio_banks.hpp when their loader
+        // starts); the region is logged. The call itself is the ordinary native call.
         const bool protect=name=="VirtualProtect";
         const uint32_t address=argument(c,0),size=argument(c,1),flags=argument(c,protect?2:3);
         SetLastError(uint32_t(m<4>(c,teb+0x34)));
@@ -1126,7 +1123,12 @@ bool NativePlatform::translated_native_call(Cpu& c){
 }
 uint32_t NativePlatform::execute(Cpu& c,uint32_t stop,uint64_t budget){
     struct Restore{Cpu* previous;uint32_t stop;~Restore(){active_guest_cpu=previous;execute_stop=stop;}}restore{active_guest_cpu,execute_stop};active_guest_cpu=&c;execute_stop=stop;
-    for(uint64_t i=0;i<budget;++i){if(stopping)throw Fault("translated execution interrupted");if(c.pc==stop)return uint32_t(r<4>(c,0));if(!dispatch(c)){last_page_entry=c.pc;step(c);}}
+    for(uint64_t i=0;i<budget;++i){
+        if(stopping)throw Fault("translated execution interrupted");
+        if(c.pc==stop)return uint32_t(r<4>(c,0));
+        if(c.pc==audio_banks::kLoader)audio_banks::bank_loader_starts(c);   // an engine that reaches the loader through this loop (the fast one uses its hook)
+        if(!dispatch(c)){last_page_entry=c.pc;step(c);}
+    }
     throw Fault("native32 translated instruction budget exhausted");
 }
 NativePlatform* NativePlatform::current(){return current_platform;}
@@ -1192,20 +1194,8 @@ std::string NativePlatform::set_d3d9_recorder(const RecorderOptions& options){
     return "";
 }
 void NativePlatform::register_dynamic_region(uint32_t base,uint32_t size){
-    std::lock_guard lock(state_mutex);
-    if(!dynamic_owner){
-        std::filesystem::path specification=dynamic_specification;
-        if(specification.empty()){
-            char variable[1024];
-            if(GetEnvironmentVariableA("NFSU2_SLEIGH_SPEC",variable,sizeof(variable)))specification=variable;
-            else{wchar_t module[MAX_PATH*2];const DWORD n=GetModuleFileNameW(nullptr,module,DWORD(std::size(module)));specification=std::filesystem::path(module,module+n).parent_path()/"sleigh"/"x86.sla";}
-        }
-        dynamic_owner=std::make_unique<DynamicCode>(specification);
-        dynamic.store(dynamic_owner.get());
-        record("DYNAMIC CODE interpreter ready: "+specification.string());
-    }
-    dynamic_owner->add_region(base,size);
-    std::ostringstream message;message<<"DYNAMIC CODE region registered base=0x"<<std::hex<<base<<" size=0x"<<size;record(message.str());
+    if(auto* code=run_time_code.load())code->add_region(base,size);
+    std::ostringstream message;message<<"RUN-TIME CODE region base=0x"<<std::hex<<base<<" size=0x"<<size<<(audio_banks::bound(base)?" (an audio bank, translated)":"");record(message.str());
 }
 void NativePlatform::add_native_hook(uint32_t address,unsigned argument_count,NativeHook hook){
     std::lock_guard lock(state_mutex);native_hooks[address]={argument_count,std::move(hook)};

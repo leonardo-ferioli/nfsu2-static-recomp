@@ -7,16 +7,42 @@
 // and returns EAX. The stdcall words are removed by the platform (`argument_count` at registration).
 #include "runtime.hpp"
 #include <filesystem>
+#include <atomic>
+#include <stdexcept>
 #include <functional>
 #include <initializer_list>
 #include <iostream>
 
 namespace nfsu2raw {
 
+// Tests only: something that runs code the game makes executable at run time without a translation (the SLEIGH interpreter, which the tests compare
+// the translations with). The product plugs nothing in: such code is an error there.
+struct RunTimeCode {
+    virtual ~RunTimeCode() = default;
+    virtual void add_region(uint32_t base, uint32_t size) = 0;   // a region the guest made executable
+    virtual bool run(Cpu& c) = 0;                                // c.pc is outside the image: run it if it is yours, set c.pc to where control went
+};
+
 class GuestPlatform {
 public:
     using NativeHook = std::function<uint32_t(Cpu&)>;
     virtual ~GuestPlatform() = default;
+
+    // The platform running in this process (null before one is built): the mods use it to call back into translated code. Each platform sets and clears it.
+    static GuestPlatform* active() { return active_slot().load(); }
+    static void set_active(GuestPlatform* platform) { active_slot().store(platform); }
+    // Calls a function of the translated program from native code on a processor of its own: ECX and EDX are set (this-call / fast-call) and `arguments`
+    // are pushed as stack words (the callee pops its own or the caller ignores them, as the function's convention says). Returns EAX.
+    virtual uint32_t call_guest(uint32_t address, uint32_t ecx, uint32_t edx, std::initializer_list<uint32_t> arguments) = 0;
+    // The same with the stack words as an array (for callers that build the argument list, like a COM call with `this` first). Hosts that do not need it may refuse it.
+    virtual uint32_t call_guest_words(uint32_t address, uint32_t ecx, uint32_t edx, const uint32_t* words, size_t count) {
+        (void)address; (void)ecx; (void)edx; (void)words; (void)count;
+        throw std::runtime_error("this platform does not call guest code with a word array");
+    }
+    // The handler that serves an import now (empty when none): a mod that changes a call's arguments or result wraps it and calls it ("chaining").
+    virtual NativeHook import_override(const char* name) const { (void)name; return {}; }
+    // Names the mod-originated call this thread is inside (nullptr: none); a crash report says so.
+    virtual void mod_call_note(const char* name) { (void)name; }
 
     // True when the game imports `name` (the facade installs only what exists).
     virtual bool has_import(const char* name) const = 0;
@@ -35,10 +61,16 @@ public:
     virtual const std::filesystem::path& game_directory() const { static const std::filesystem::path none; return none; }
     // One line for the run's log (NativePlatform: logs/native_trace.log). Platforms without a log write it to stderr.
     virtual void log_line(const std::string& text) { std::cerr << text << "\n"; }
+    // Memory the guest made executable outside the translated image (VirtualProtect / VirtualAlloc). The game's only such code is in its audio banks,
+    // whose translation is generated ahead of time and bound when the bank loader starts (audio_banks.hpp); nothing is interpreted in the product.
+    // The platform logs the region and tells a RunTimeCode plugged in by a test.
+    virtual void register_dynamic_region(uint32_t base, uint32_t size) { (void)base; (void)size; }
     // The layer above is shutting down: guest threads and waits must come back (throw_if_stopping raises from now on). Default: nothing to do.
     virtual void stop_guest() {}
     // Raises a Fault when the platform is shutting down (a long guest wait calls it between slices).
     virtual void throw_if_stopping(const char* what) const = 0;
+private:
+    static std::atomic<GuestPlatform*>& active_slot() { static std::atomic<GuestPlatform*> slot{nullptr}; return slot; }
 };
 
 }  // namespace nfsu2raw

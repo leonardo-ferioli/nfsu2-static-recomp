@@ -5867,7 +5867,7 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B4c6753:L4c6753:{bud-=2;NFSU2_TR(0x4c6753);
-if(mod_hook_table[48]){SPILL_OUT();c.pc=0x4c6753u;mod_hook_table[48](c);SPILL_IN();if(c.pc!=0x4c6753u){TAIL_DYNAMIC(c.pc);}{[[clang::musttail]] return blk_4c6759(ARGS);}}
+if(mod_hook_table[49]){SPILL_OUT();c.pc=0x4c6753u;mod_hook_table[49](c);SPILL_IN();if(c.pc!=0x4c6753u){TAIL_DYNAMIC(c.pc);}{[[clang::musttail]] return blk_4c6759(ARGS);}}
 {u32 ea_=u32(r4(R+24)+u32(72u));u32& m_=*static_cast<u32*>(gp(ea_));__asm__ volatile(".byte 0xd9,0x10":"=m"(m_):"a"(ea_));}
 }
 B4c6756:{NFSU2_TR(0x4c6756);

@@ -15,8 +15,8 @@ namespace {
 WidescreenSettings g_settings;
 float g_widescreen_hud_offset = 120.0f;
 std::optional<float> g_hud_constraint;
-uint32_t g_screenshot_width = 640;        // width of the 4:3 area used for screenshots
-float g_fov_values[3] = {1.0f, 1.0f, 1.0f};
+uint32_t* g_screenshot_width = nullptr;   // width of the 4:3 area used for screenshots (guest memory: the game reads it through a pointer)
+float* g_fov_values = nullptr;            // three operands the game reads through pointers (guest memory)
 
 struct HudEntry { float x, y, offset_x, offset_y; };
 const HudEntry g_hud_table[] = {
@@ -94,7 +94,7 @@ void resolution_changed(int width, int height) {
         const uint32_t dyno = address_of("dyno_offset");
         f32_at(dyno) = 79.0f + hud_offset;
         f32_at(dyno + 4) = 60.0f;
-        g_screenshot_width = uint32_t(float(height) * (4.0f / 3.0f));
+        *g_screenshot_width = uint32_t(float(height) * (4.0f / 3.0f));
         g_widescreen_hud_offset = -calculate_widescreen_offset(float(width), float(height), 640.0f, 480.0f);
         if (g_hud_constraint) {
             const float value = *g_hud_constraint;
@@ -190,6 +190,12 @@ void stop_sign_hook(Cpu& c) {
 
 void install_rendering(const WidescreenSettings& settings) {
     g_settings = settings;
+    if (!g_fov_values) {
+        g_fov_values = guest_array<float>(3);
+        g_fov_values[0] = g_fov_values[1] = g_fov_values[2] = 1.0f;
+        g_screenshot_width = guest_array<uint32_t>(1);
+        *g_screenshot_width = 640;
+    }
     g_hud_constraint = parse_hud_constraint(settings.hud_aspect_constraint);
     events().resolution_changed.push_back(resolution_changed);
 
@@ -207,7 +213,7 @@ void install_rendering(const WidescreenSettings& settings) {
     install_hook("rain_x", rain_x_hook);
     install_hook("rain_y", rain_y_hook);
     if (settings.fix_hud) {
-        set_var("screenshot_width_ptr", nfsu2::guest::to_guest(&g_screenshot_width));
+        set_var("screenshot_width_ptr", nfsu2::guest::to_guest(g_screenshot_width));
         install_hook("hud", hud_hook);
         install_hook("blips", blips_hook);
         install_hook("hud2", hud2_hook);

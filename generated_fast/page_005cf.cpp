@@ -8567,7 +8567,7 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B5cfaac:L5cfaac:{bud-=1;NFSU2_TR(0x5cfaac);
-if(mod_hook_table[16]){SPILL_OUT();c.pc=0x5cfaacu;mod_hook_table[16](c);SPILL_IN();if(c.pc!=0x5cfaacu){TAIL_DYNAMIC(c.pc);}{[[clang::musttail]] return blk_5cfab1(ARGS);}}
+if(mod_hook_table[17]){SPILL_OUT();c.pc=0x5cfaacu;mod_hook_table[17](c);SPILL_IN();if(c.pc!=0x5cfaacu){TAIL_DYNAMIC(c.pc);}{[[clang::musttail]] return blk_5cfab1(ARGS);}}
 w4(G+4,u32(0x88ull));
 {[[clang::musttail]] return blk_5cfab1(ARGS);}
 }

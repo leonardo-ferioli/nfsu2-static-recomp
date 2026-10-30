@@ -1685,7 +1685,7 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B51b190:L51b190:{bud-=2;NFSU2_TR(0x51b190);
-if(mod_hook_table[46]){SPILL_OUT();c.pc=0x51b190u;mod_hook_table[46](c);SPILL_IN();if(c.pc!=0x51b190u){TAIL_DYNAMIC(c.pc);}{[[clang::musttail]] return blk_51b198(ARGS);}}
+if(mod_hook_table[47]){SPILL_OUT();c.pc=0x51b190u;mod_hook_table[47](c);SPILL_IN();if(c.pc!=0x51b190u){TAIL_DYNAMIC(c.pc);}{[[clang::musttail]] return blk_51b198(ARGS);}}
 u8 U[8];
 w4(U+0,u32(u32(u32(0x60ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),(G+4),4);

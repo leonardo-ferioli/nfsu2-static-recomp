@@ -11943,7 +11943,7 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B50dd2a:L50dd2a:{bud-=1;NFSU2_TR(0x50dd2a);
-if(mod_hook_table[37]){SPILL_OUT();c.pc=0x50dd2au;mod_hook_table[37](c);SPILL_IN();if(c.pc!=0x50dd2au){TAIL_DYNAMIC(c.pc);}{[[clang::musttail]] return blk_50dd2c(ARGS);}}
+if(mod_hook_table[38]){SPILL_OUT();c.pc=0x50dd2au;mod_hook_table[38](c);SPILL_IN();if(c.pc!=0x50dd2au){TAIL_DYNAMIC(c.pc);}{[[clang::musttail]] return blk_50dd2c(ARGS);}}
 {u32 ea_=u32(r4(R+12));const XM<4>& m_=*static_cast<const XM<4>*>(gp(ea_));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_),"m"(m_));}
 {[[clang::musttail]] return blk_50dd2c(ARGS);}
 }
@@ -12181,7 +12181,7 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B50dd66:L50dd66:{bud-=1;NFSU2_TR(0x50dd66);
-if(mod_hook_table[38]){SPILL_OUT();c.pc=0x50dd66u;mod_hook_table[38](c);SPILL_IN();if(c.pc!=0x50dd66u){TAIL_DYNAMIC(c.pc);}{[[clang::musttail]] return blk_50dd69(ARGS);}}
+if(mod_hook_table[39]){SPILL_OUT();c.pc=0x50dd66u;mod_hook_table[39](c);SPILL_IN();if(c.pc!=0x50dd66u){TAIL_DYNAMIC(c.pc);}{[[clang::musttail]] return blk_50dd69(ARGS);}}
 {u32 ea_=u32(r4(R+12)+u32(4u));const XM<4>& m_=*static_cast<const XM<4>*>(gp(ea_));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_),"m"(m_));}
 {[[clang::musttail]] return blk_50dd69(ARGS);}
 }
@@ -12326,7 +12326,7 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B50dd7f:L50dd7f:{bud-=1;NFSU2_TR(0x50dd7f);
-if(mod_hook_table[39]){SPILL_OUT();c.pc=0x50dd7fu;mod_hook_table[39](c);SPILL_IN();if(c.pc!=0x50dd7fu){TAIL_DYNAMIC(c.pc);}{[[clang::musttail]] return blk_50dd82(ARGS);}}
+if(mod_hook_table[40]){SPILL_OUT();c.pc=0x50dd7fu;mod_hook_table[40](c);SPILL_IN();if(c.pc!=0x50dd7fu){TAIL_DYNAMIC(c.pc);}{[[clang::musttail]] return blk_50dd82(ARGS);}}
 {u32 ea_=u32(r4(R+20));const XM<4>& m_=*static_cast<const XM<4>*>(gp(ea_));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_),"m"(m_));}
 {[[clang::musttail]] return blk_50dd82(ARGS);}
 }
@@ -12471,7 +12471,7 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B50dd96:L50dd96:{bud-=1;NFSU2_TR(0x50dd96);
-if(mod_hook_table[40]){SPILL_OUT();c.pc=0x50dd96u;mod_hook_table[40](c);SPILL_IN();if(c.pc!=0x50dd96u){TAIL_DYNAMIC(c.pc);}{[[clang::musttail]] return blk_50dd99(ARGS);}}
+if(mod_hook_table[41]){SPILL_OUT();c.pc=0x50dd96u;mod_hook_table[41](c);SPILL_IN();if(c.pc!=0x50dd96u){TAIL_DYNAMIC(c.pc);}{[[clang::musttail]] return blk_50dd99(ARGS);}}
 {u32 ea_=u32(r4(R+20)+u32(4u));const XM<4>& m_=*static_cast<const XM<4>*>(gp(ea_));__asm__ volatile(".byte 0xd9,0x00"::"a"(ea_),"m"(m_));}
 {[[clang::musttail]] return blk_50dd99(ARGS);}
 }

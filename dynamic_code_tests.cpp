@@ -8,6 +8,7 @@
 // Output bytes, general registers, stack discipline and instruction counts must agree. Unregistered heap code must
 // not be interpreted, and the interpreter must reject a region it was not told about.
 #include "native32.hpp"
+#include "dynamic_code.hpp"
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
 #include <windows.h>
@@ -55,6 +56,14 @@ constexpr uint32_t jdlz=0x00573700,jdlz_bytes=0x200,iat_virtual_protect=7877188,
 constexpr unsigned general_registers[]={0,4,8,12,16,20,24,28};  // EAX ECX EDX EBX ESP EBP ESI EDI
 
 struct Outcome{uint32_t registers[8];uint64_t instructions;double seconds;};
+
+// The interpreter plugged into the platform for this test (the product has no interpreter: guest_platform.hpp, RunTimeCode).
+struct Interpreted:RunTimeCode{
+    DynamicCode code;
+    explicit Interpreted(const std::filesystem::path& specification):code(specification){}
+    void add_region(uint32_t base,uint32_t size) override{code.add_region(base,size);}
+    bool run(Cpu& c) override{if(!code.contains(c.pc))return false;code.run(c,1u<<18);return true;}
+};
 
 // Whole-program differential: the game's startup code (original .text) up to its first CreateThread, once statically
 // translated and once interpreted from the same bytes. This is a TEST-ONLY use of the interpreter on the original image
@@ -181,7 +190,8 @@ int main(int argc,char** argv){try{
     if(argc>4)return boot_digest(specification,argv[1],argv[2],std::string(argv[4])=="boot-interpreted",argc>5?argv[5]:nullptr);
     operation_cases();
     Cpu c;NativePlatform p(c,argv[1],argv[2]);
-    p.set_dynamic_code_specification(specification);
+    Interpreted interpreted(specification);p.set_run_time_code(&interpreted);
+    struct Unplug{NativePlatform& p;~Unplug(){p.set_run_time_code(nullptr);}}unplug{p};
 
     // ---- copy of the machine code in executable-to-be heap memory -------------------------------------------------
     // Placed well above the translated image (the test process does not reserve the image's address range itself).
@@ -205,7 +215,7 @@ int main(int argc,char** argv){try{
         c.pc=region;
         bool handled=false;try{handled=p.dispatch(c);}catch(const Fault&){handled=false;}
         check(!handled,"unregistered heap code is not executed by the interpreter");
-        check(p.dynamic_instructions_decoded()==0,"nothing decoded before registration");
+        check(interpreted.code.decoded_count()==0,"nothing decoded before registration");
     }
 
     // ---- 2. the guest's VirtualProtect import registers the region -------------------------------------------------
@@ -293,8 +303,8 @@ int main(int argc,char** argv){try{
         }
         std::cout<<"PASS optimized interpreter modes equal the generic one at all "<<generic.size()-1<<" block exits ("<<generic.back()<<" instructions): registers and flags\n";
     }
-    std::cout<<"decoded "<<p.dynamic_instructions_decoded()<<" distinct instructions at run time\n";
-    check(p.dynamic_instructions_decoded()>0 && p.dynamic_instructions_decoded()<jdlz_bytes,"decoded only what was executed");
+    std::cout<<"decoded "<<interpreted.code.decoded_count()<<" distinct instructions at run time\n";
+    check(interpreted.code.decoded_count()>0 && interpreted.code.decoded_count()<jdlz_bytes,"decoded only what was executed");
     VirtualFree(heap,0,MEM_RELEASE);
     return 0;
 }catch(const std::exception& e){std::cerr<<e.what()<<'\n';return 1;}}

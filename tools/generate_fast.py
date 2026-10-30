@@ -408,6 +408,10 @@ class Emitter:
         self.userop_sites = 0
         self.block_info = {}   # address -> (starts a block, instructions from here to the end of its block)
 
+    def on_page(self, address):
+        """True if `address` is in the function being emitted (one 4 KiB page; the audio modules override this)."""
+        return (address >> 12) == self.page
+
     def dynamic_transfer(self, name, ins):
         """Statement that leaves through the dynamic target t_ (RETURN, CALLIND, BRANCHIND); gen_regs adds predictions."""
         return "TAIL_DYNAMIC(t_);"
@@ -508,13 +512,13 @@ class Emitter:
             else:
                 body = call + f"if(c.pc!=0x{a:x}u){{TAIL_DYNAMIC(c.pc);}}"
                 if mode == "replace":
-                    if end in self.page_addrs and (end >> 12) == self.page:
+                    if end in self.page_addrs and self.on_page(end):
                         body += f"goto B{end:x};"
                     else:
                         body += self.exit_static(end)
                 out.append(f"if(mod_hook_table[{hook_id}]){{{body}}}")
         if a in MOD_NOPS:
-            jump = f"goto B{nxt:x};" if nxt in self.page_addrs and (nxt >> 12) == self.page else self.exit_static(nxt)
+            jump = f"goto B{nxt:x};" if nxt in self.page_addrs and self.on_page(nxt) else self.exit_static(nxt)
             out.append(f"if(r4(MODV+{MOD_NOPS[a] * 4})){{{jump}}}")
         if a in MOD_FORCE_JUMPS:
             target, slot = MOD_FORCE_JUMPS[a]
@@ -618,7 +622,7 @@ class Emitter:
             terminal = False
         nxt = a + ins.length
         if not terminal:
-            if nxt not in self.page_addrs or (nxt >> 12) != self.page:
+            if nxt not in self.page_addrs or not self.on_page(nxt):
                 out.append(self.exit_static(nxt))
         out.append("}")
         return "\n".join(out) + "\n"
@@ -641,7 +645,7 @@ class Emitter:
             else:
                 out.append(f"x87v::insn<0x{body[0]:02x},0x{body[1]:02x}>(R,nullptr);")
         nxt = a + ins.length
-        if nxt not in self.page_addrs or (nxt >> 12) != self.page:
+        if nxt not in self.page_addrs or not self.on_page(nxt):
             out.append(self.exit_static(nxt))
         out.append("}")
         return "\n".join(out) + "\n"
@@ -680,7 +684,7 @@ class Emitter:
             else:
                 out.append(f'__asm__ volatile(".byte {encoded}"::{barrier});')
         nxt = a + ins.length
-        if nxt not in self.page_addrs or (nxt >> 12) != self.page:
+        if nxt not in self.page_addrs or not self.on_page(nxt):
             out.append(self.exit_static(nxt))
         out.append("}")
         return "\n".join(out) + "\n"
@@ -936,6 +940,10 @@ def main():
                         help="speed layer: passed-through x87 instructions name the guest memory they access (precise) or clobber all memory")
     parser.add_argument("--no-liveness", dest="liveness", action="store_false",
                         help="keep every flag computation (full-fidelity register hashes)")
+    parser.add_argument("--audio-modules", default=None, metavar="DECODER",
+                        help="also translate the x86 code of the audio banks (docs/AUDIO_MODULES_TRANSLATION.md) with tools/gen_audio_modules.py, using this "
+                             "decode_modules.exe (tools/build_decode_modules.sh), into --audio-out. Host independent: the same files serve every --host")
+    parser.add_argument("--audio-out", default="generated_audio", help="output folder of --audio-modules")
     args = parser.parse_args()
     if args.reg_params is None:
         # The product shape unless an option that only exists in the page shape was asked for.
@@ -1107,6 +1115,9 @@ def main():
         f.write(f"thread_local uint8_t g_mod_bypass[{max(len(MOD_HOOK_NAMES), 1)}]={{}};\n")
         f.write(f"const ModDataAddress mod_data_addresses[{max(len(MOD_DATA), 1)}]={{{','.join('{' + json.dumps(d['name']) + ',' + hex(d['address']) + 'u}' for d in MOD_DATA) or '{nullptr,0}'}}};\n")
         f.write(f"const unsigned mod_data_count={len(MOD_DATA)};\n}}\n")
+    if args.audio_modules:
+        import subprocess
+        subprocess.run([sys.executable, str(ROOT / "tools/gen_audio_modules.py"), "--decoder", args.audio_modules, "--out", args.audio_out], check=True)
     print(json.dumps({"instructions": count, "pages": len(pages), "ops_before": stats["ops"], "ops_after": stats["kept"]}))
 
 

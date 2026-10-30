@@ -1,7 +1,6 @@
 #pragma once
 #include "runtime.hpp"
 #include "guest_platform.hpp"
-#include "dynamic_code.hpp"
 #include "d3d9_recorder.hpp"
 #include <filesystem>
 #include <fstream>
@@ -43,7 +42,8 @@ public:
     // Calls a function of the translated program from native code, on a pooled processor with its own guest stack: ECX and EDX are
     // set (this-call / fast-call), `arguments` are pushed as stack words (the callee pops its own or the caller ignores them, as the
     // function's convention says; the pooled stack is rebuilt for every call). Returns EAX.
-    uint32_t call_guest(uint32_t address,uint32_t ecx,uint32_t edx,std::initializer_list<uint32_t> arguments);
+    uint32_t call_guest(uint32_t address,uint32_t ecx,uint32_t edx,std::initializer_list<uint32_t> arguments) override;
+    void mod_call_note(const char* name) override{note_mod_call(name);}
     // Replaces an imported Windows function by a native one (mods). The handler reads its stdcall arguments from the guest stack
     // and returns EAX; it runs on the calling thread instead of the real function. Install before run().
     void override_import(const char* name,unsigned argument_count,NativeHook hook) override;
@@ -73,9 +73,8 @@ public:
     // Test seam: a native function standing in for a guest address (stdcall, `argument_count` words).
     // Never used by the game; lets console tests exercise the SEH dispatcher without hand-written x86.
     void add_native_hook(uint32_t address,unsigned argument_count,NativeHook hook);
-    // Runtime-generated code (see dynamic_code.hpp): regions made executable with VirtualProtect/VirtualAlloc outside the
-    // translated image are interpreted. The specification defaults to NFSU2_SLEIGH_SPEC or <program folder>/sleigh/x86.sla.
-    void set_dynamic_code_specification(const std::filesystem::path& file){dynamic_specification=file;}
+    // Tests only (guest_platform.hpp): code made executable at run time that has no translation is run by `code`. The product has none.
+    void set_run_time_code(RunTimeCode* code){run_time_code.store(code);}
     // Frame-rate cap in frames per second (0 = none), applied after each IDirect3DDevice9::Present of the game's device.
     void set_frame_limit(unsigned frames_per_second){frame_limit=frames_per_second;}
     // Skip IDirect3DDevice9::SetRenderState/SetSamplerState/SetTextureStageState calls that would set the value the device
@@ -91,8 +90,7 @@ public:
     // Records the game's Direct3D 9 calls and data (d3d9_recorder.hpp). Turns the state cache off (the trace should hold every call). Returns an error text, empty on success.
     std::string set_d3d9_recorder(const RecorderOptions& options);
     void finish_d3d9_recorder(){if(auto* r=d3d9_recorder_ptr.load())r->finish();}
-    void register_dynamic_region(uint32_t base,uint32_t size);
-    uint64_t dynamic_instructions_decoded() const{auto* d=dynamic.load();return d?d->decoded_count():0;}
+    void register_dynamic_region(uint32_t base,uint32_t size) override;
 private:
     using BlockSource=std::function<std::vector<uint8_t>(uint32_t base,uint32_t size,const char* file)>;
     NativePlatform(Cpu&,const std::filesystem::path& game,const BlockSource&);
@@ -123,10 +121,7 @@ private:
     std::atomic<uint32_t> input_bloom{0};  // one bit per (address>>4)&31 of every DirectInput object ever created: a clear bit means 'not one'
     uint32_t window_procs[window_proc_slots]={};unsigned window_proc_count=0;
     uint32_t exception_filter=0;
-    std::filesystem::path dynamic_specification;
-    std::atomic<DynamicCode*> dynamic{nullptr};
-    std::atomic<uint64_t> dynamic_executed{0},dynamic_report_at{1};  // interpreted instructions, next log threshold
-    std::unique_ptr<DynamicCode> dynamic_owner;
+    std::atomic<RunTimeCode*> run_time_code{nullptr};
     std::atomic<unsigned> callbacks_created=0;
     std::map<Cpu*,std::vector<ExceptionState>> exceptions;
     std::map<uint32_t,std::pair<unsigned,NativeHook>> native_hooks;
@@ -165,6 +160,5 @@ private:
     void raise_callback_fault();
     bool dispatch_route(Cpu&);
     bool cached_call(Cpu&,uint32_t target,const char* dll,const char* resolved_name,uint32_t profile_id,uint8_t state_kind,uint8_t bind_kind);
-    void report_dynamic_code(uint64_t total,uint64_t decoded,uint32_t pc);
 };
 }

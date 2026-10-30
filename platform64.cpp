@@ -3,6 +3,7 @@
 #include <windows.h>
 #include <bcrypt.h>
 #include "platform64.hpp"
+#include "audio_banks.hpp"
 #include <algorithm>
 #include <iomanip>
 #include <limits>
@@ -31,11 +32,12 @@ struct Platform64::Context{
     }
 };
 
-Platform64::Platform64(Cpu& main,const std::filesystem::path& exports,const std::filesystem::path& game):main_(main),game_(std::filesystem::absolute(game)){
+Platform64::Platform64(Cpu& main,const std::filesystem::path& exports,const std::filesystem::path& game):main_(main),game_(std::filesystem::absolute(game)),exports_(std::filesystem::absolute(exports)){
     auto* space=nfsu2::guest::current_address_space();
     if(!space)throw Fault("Platform64 needs the guest arena (nfsu2::guest::create_arena) before it is built");
     if(g_current)throw Fault("Platform64 supports one active game image per process");
     if(!std::filesystem::is_directory(game_))throw Fault("game asset directory does not exist");
+    audio_banks::attach();
     process_id_=GetCurrentProcessId();
     main_.map(image_base,image_size);
     for(const auto& block:image_blocks){
@@ -56,10 +58,14 @@ Platform64::Platform64(Cpu& main,const std::filesystem::path& exports,const std:
     main_.pc=entry_point;
     install_exception_imports();
     g_current=this;
+    GuestPlatform::set_active(this);
 }
 Platform64::~Platform64(){
     stopping_=true;
     g_current=nullptr;
+    if(GuestPlatform::active()==this)GuestPlatform::set_active(nullptr);
+    if(trace_)trace_<<"AUDIO BANKS bound="<<audio_banks::banks_bound()<<" entries into their translated code="<<audio_banks::entries()<<std::endl;
+    audio_banks::detach();   // the guest threads have stopped (the layers above wait for them before the platform goes)
     main_context_.reset();
     if(auto* space=nfsu2::guest::current_address_space())if(peb_)space->free(peb_);
 }
@@ -100,6 +106,11 @@ void Platform64::override_import(const char* name,unsigned argument_count,Native
     for(size_t i=0;i<std::size(imports);++i)if(std::strcmp(imports[i].name,name)==0){slots_[i]=std::make_unique<Handler>(*handler);}
     by_name_[name]=std::move(handler);
 }
+Platform64::NativeHook Platform64::import_override(const char* name) const{
+    std::lock_guard lock(const_cast<std::mutex&>(mutex_));
+    auto found=by_name_.find(name);
+    return found==by_name_.end()?NativeHook{}:found->second->fn;
+}
 uint32_t Platform64::add_method_token(unsigned argument_count,NativeHook hook){
     std::lock_guard lock(mutex_);
     if(methods_.size()>=method_token_slots)throw Fault("out of method tokens");
@@ -113,6 +124,12 @@ uint32_t Platform64::token_for(const char* name){
     if(dynamic_token_base+uint32_t(dynamic_names_.size()+1)*16>=dynamic_token_end)throw Fault("out of dynamic import tokens");
     dynamic_names_.push_back(name);
     return dynamic_token_base+uint32_t(dynamic_names_.size()-1)*16;
+}
+void Platform64::register_dynamic_region(uint32_t base,uint32_t size){
+    if(uint64_t(base)<uint64_t(image_base)+image_size && uint64_t(base)+size>image_base)return;   // the translated image
+    if(auto* code=run_time_code_.load())code->add_region(base,size);
+    std::lock_guard lock(mutex_);
+    if(trace_)trace_<<"RUN-TIME CODE region base="<<hex(base)<<" size="<<hex(size)<<(audio_banks::bound(base)?" (an audio bank, translated)":"")<<'\n';
 }
 void Platform64::throw_if_stopping(const char* what) const{if(stopping_)throw Fault(std::string("the platform is stopping (")+what+")");}
 
@@ -149,6 +166,8 @@ void Platform64::note_import(const std::string& label,Cpu& c){
 }
 
 bool Platform64::dispatch(Cpu& c){
+    if(audio_banks::run(c))return true;                                                   // the audio banks' code, translated ahead of time
+    if(auto* code=run_time_code_.load(std::memory_order_relaxed);code && code->run(c))return true;   // tests only
     const uint32_t token=c.pc;
     if(token<import_token_base)return false;
     if(token==exception_handler_token || token==exception_unwind_token || token==exception_filter_token)return exception_return(c);
@@ -156,20 +175,76 @@ bool Platform64::dispatch(Cpu& c){
     Handler* handler=find_handler(token,label);
     if(label.empty())return false;                         // not a token of this platform (the range check above is only a fast reject)
     if(trace_.is_open())note_import(label,c);
+    // NFSU2_STOP_AT_IMPORT=<name>: the run ends (a Fault) at the first call of that import, a deterministic place for tests to compare engines.
+    static const std::string stop_at=[]{char text[64];return std::string(GetEnvironmentVariableA("NFSU2_STOP_AT_IMPORT",text,sizeof(text))?text:"");}();
+    if(!stop_at.empty() && label.size()>stop_at.size() && label.compare(label.size()-stop_at.size()-1,std::string::npos,"!"+stop_at)==0)
+        throw Fault("stopped at import "+label+" (NFSU2_STOP_AT_IMPORT)");
     if(!handler){
         std::ostringstream message;message<<"unimplemented guest import "<<label<<" (token "<<hex(token)<<", return="<<hex(uint32_t(m<4>(c,r<4>(c,16))))<<")";
         throw Fault(message.str());
     }
+    ++handler->calls;   // a diagnostic: the trace ends with the busiest imports
     if(handler->raw){handler->fn(c);return true;}
+    // NFSU2_TRACE_FAILS=1: every call that sets a last error is written to the trace with its arguments (what the game was told).
+    static const bool trace_fails=[]{char text[8];return GetEnvironmentVariableA("NFSU2_TRACE_FAILS",text,sizeof(text))!=0;}();
+    const uint32_t error_cell=last_error_slot(c),error_before=trace_fails?uint32_t(m<4>(c,error_cell)):0;
     const uint32_t value=handler->fn(c);
+    if(trace_fails){
+        const uint32_t error_after=uint32_t(m<4>(c,error_cell));
+        if(error_after && error_after!=error_before){
+            std::ostringstream text;text<<"FAIL "<<label<<" error="<<error_after<<" result="<<hex(value)<<" args";
+            for(unsigned i=0;i<4;++i){
+                const uint32_t a=uint32_t(m<4>(c,r<4>(c,16)+4+4*i));text<<' '<<hex(a);
+                if(a>=0x10000){   // an argument that points at printable text is shown (a file name, a module name)
+                    std::string t;auto* space=nfsu2::guest::current_address_space();
+                    for(unsigned k=0;k<80 && space && space->host(a+k,1);++k){const char ch=char(*space->host(a+k,1));if(!ch)break;if(ch<32||ch>126){t.clear();break;}t+=ch;}
+                    if(t.size()>2)text<<" \""<<t<<'"';
+                }
+            }
+            note(text.str());
+        }
+    }
     const uint32_t sp=uint32_t(r<4>(c,16)),back=uint32_t(m<4>(c,sp));
     wr<4>(c,0,value);wr<4>(c,16,sp+4+handler->argc*4);c.pc=back;wr<4>(c,644,back);
     return true;
 }
 
+// NFSU2_DUMP_MODULES=<folder>: every module the game's run-time loader (0x7212e5) is given is written there before it is relocated (a build-time tool for the
+// ahead-of-time translation of those modules, docs/AUDIO_MODULES.md): the image (an ABKC bank whole, by its size at +0x14; anything else up to 64 KiB), the
+// loader's fixup table, and a line per module in modules.txt. It checks tools/extract_audio_modules.py, which reads the same banks from the game's files.
+// The reference engine reaches the loader one instruction at a time; the fast one may pass it.
+namespace{
+void dump_module(Cpu& c,const std::filesystem::path& folder){
+    static unsigned count=0;
+    auto* space=nfsu2::guest::current_address_space();
+    const uint32_t sp=uint32_t(r<4>(c,16)),image=uint32_t(m<4>(c,sp+4)),fixups=uint32_t(m<4>(c,sp+8));
+    std::error_code ec;std::filesystem::create_directories(folder,ec);
+    // An ABKC bank (the game's audio banks carry their code): its size is the word at +0x14; anything else is dumped up to 64 KiB.
+    uint32_t size=0;const bool bank=space && space->host(image,0x18) && uint32_t(m<4>(c,image))==0x434b4241u;
+    const uint32_t limit=bank?std::min<uint32_t>(uint32_t(m<4>(c,image+0x14)),16u<<20):0x10000;
+    while(size<limit && space && space->host(image+size,std::min<uint32_t>(0x100,limit-size)))size+=std::min<uint32_t>(0x100,limit-size);
+    std::vector<uint8_t> bytes(size);if(size)std::memcpy(bytes.data(),nfsu2::guest::ptr<void>(image),size);
+    const uint32_t fixup_count=space && space->host(fixups,4)?uint32_t(m<4>(c,fixups)):0;
+    std::vector<uint8_t> table(4+4*std::min<uint32_t>(fixup_count,0x4000));
+    if(space && space->host(fixups,uint32_t(table.size())))std::memcpy(table.data(),nfsu2::guest::ptr<void>(fixups),table.size());
+    const std::string stem="module_"+std::to_string(count++);
+    std::ofstream(folder/(stem+".bin"),std::ios::binary).write(reinterpret_cast<const char*>(bytes.data()),std::streamsize(bytes.size()));
+    std::ofstream(folder/(stem+"_fixups.bin"),std::ios::binary).write(reinterpret_cast<const char*>(table.data()),std::streamsize(table.size()));
+    std::ofstream(folder/"modules.txt",std::ios::app)<<stem<<(bank?" ABKC":"")<<" image="<<hex(image)<<" readable="<<hex(size)<<" fixups="<<hex(fixups)<<" fixup_count="<<fixup_count<<" sha256="<<sha256(bytes)<<'\n';
+}
+}
 uint32_t Platform64::execute(Cpu& c,uint32_t stop,uint64_t budget){
+    static const std::filesystem::path dump_folder=[]{char text[512];return std::filesystem::path(GetEnvironmentVariableA("NFSU2_DUMP_MODULES",text,sizeof(text))?text:"");}();
+    // NFSU2_WATCH=<hex guest address>: the trace says where a byte of guest memory changes (reference engine: one instruction per step; a diagnostic of the main thread).
+    static const uint32_t watch=[]{char text[32];return GetEnvironmentVariableA("NFSU2_WATCH",text,sizeof(text))?uint32_t(std::strtoul(text,nullptr,16)):0u;}();
+    uint8_t watched=0;if(watch && &c==&main_)watched=uint8_t(m<1>(c,watch));
     for(uint64_t i=0;i<budget;++i){
+        if(watch && &c==&main_){const uint8_t now=uint8_t(m<1>(c,watch));if(now!=watched){note("WATCH "+hex(watch)+" "+std::to_string(watched)+" -> "+std::to_string(now)+" at instruction "+std::to_string(c.instructions)+", pc="+hex(c.pc)+", previous pc "+hex(last_pc_));watched=now;}last_pc_=c.pc;}
         if(c.pc==stop)return uint32_t(r<4>(c,0));
+        if(c.pc==audio_banks::kLoader){                                                   // the reference engine reaches the loader here (the fast one: its hook)
+            if(!dump_folder.empty())dump_module(c,dump_folder);
+            audio_banks::bank_loader_starts(c);
+        }
         if(stopping_)throw Fault("the platform is stopping");
         if(dispatch(c))continue;
         step(c);
@@ -177,7 +252,9 @@ uint32_t Platform64::execute(Cpu& c,uint32_t stop,uint64_t budget){
     throw Fault("instruction budget exhausted");
 }
 
-uint32_t Platform64::callback(uint32_t address,std::initializer_list<uint32_t> arguments){
+uint32_t Platform64::callback(uint32_t address,std::initializer_list<uint32_t> arguments){return call_guest(address,0,0,arguments);}
+uint32_t Platform64::call_guest(uint32_t address,uint32_t ecx,uint32_t edx,std::initializer_list<uint32_t> arguments){return call_guest_words(address,ecx,edx,arguments.begin(),arguments.size());}
+uint32_t Platform64::call_guest_words(uint32_t address,uint32_t ecx,uint32_t edx,const uint32_t* words,size_t count){
     // A processor per nesting level and thread that is inside a callback at the same time, kept for the next one (creating one maps a stack).
     std::unique_ptr<Context> context;
     {std::lock_guard lock(mutex_);if(!pool_.empty()){context=std::move(pool_.back());pool_.pop_back();}}
@@ -185,8 +262,9 @@ uint32_t Platform64::callback(uint32_t address,std::initializer_list<uint32_t> a
     struct Giveback{Platform64& p;std::unique_ptr<Context>& c;~Giveback(){std::lock_guard lock(p.mutex_);p.pool_.push_back(std::move(c));}} giveback{*this,context};
     Cpu& c=*context->cpu;
     initialize(c,context->stack,context->teb);
+    wr<4>(c,4,ecx);wr<4>(c,8,edx);
     const uint32_t sp=uint32_t(r<4>(c,16));
-    unsigned i=0;for(uint32_t a:arguments)wm<4>(c,sp+4+4*i++,a);
+    for(size_t i=0;i<count;++i)wm<4>(c,sp+4+4*uint32_t(i),words[i]);
     c.pc=address;
     return execute(c,return_sentinel,std::numeric_limits<uint64_t>::max());
 }
@@ -198,6 +276,12 @@ void Platform64::run(uint64_t budget,const std::filesystem::path& log){
         execute(main_,return_sentinel,budget);
         throw Fault("guest entry point returned");
     }catch(const std::exception& e){
+        {   // the busiest imports: where a game that is not going anywhere spends its calls
+            std::vector<std::pair<uint64_t,std::string>> busy;
+            for(size_t i=0;i<slots_.size();++i)if(slots_[i] && slots_[i]->calls)busy.emplace_back(slots_[i]->calls,std::string(imports[i].dll)+"!"+imports[i].name);
+            std::sort(busy.rbegin(),busy.rend());
+            trace_<<"BUSIEST";for(size_t i=0;i<busy.size() && i<12;++i)trace_<<' '<<busy[i].second<<'='<<busy[i].first;trace_<<'\n';
+        }
         trace_<<"STOP "<<e.what()<<" instructions="<<main_.instructions<<" PC="<<hex(main_.pc)<<" ESP="<<hex(uint32_t(r<4>(main_,16)))<<'\n';trace_.flush();
         throw;
     }

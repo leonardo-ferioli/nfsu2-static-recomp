@@ -1,0 +1,7 @@
+{
+ "comment": "Not a mod: hooks the platform needs in the translated code. audio_bank_loader runs when the game's audio-bank loader (0x7212e5) starts, while the bank is still as in the file, so the platform binds the bank's translated code (audio_banks.hpp, docs/AUDIO_MODULES_TRANSLATION.md).",
+ "vars": [],
+ "hooks": [
+  {"name": "audio_bank_loader", "begin": 7475941, "end": null, "mode": "before", "pop": 0}
+ ]
+}

@@ -3655,7 +3655,7 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B50b460:L50b460:{bud-=14;NFSU2_TR(0x50b460);
-if(mod_hook_table[23]&&!mod_bypass_take(23)){SPILL_OUT();c.pc=0x50b460u;mod_hook_table[23](c);SPILL_IN();{u32 sp_=r4(G+16);u32 ra_=m4(sp_);w4(G+16,sp_+4u);TAIL_DYNAMIC(ra_);}}
+if(mod_hook_table[24]&&!mod_bypass_take(24)){SPILL_OUT();c.pc=0x50b460u;mod_hook_table[24](c);SPILL_IN();{u32 sp_=r4(G+16);u32 ra_=m4(sp_);w4(G+16,sp_+4u);TAIL_DYNAMIC(ra_);}}
 u8 U[4];
 __builtin_memmove((U+0),(R+20),4);
 w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));

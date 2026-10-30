@@ -45,7 +45,8 @@ int main(int argc, char** argv) {
         NativePlatform p(c, argv[1], argv[2]);
 
         // Before installation: every variable has the game's original value and no hook is installed.
-        for (unsigned i = 0; i < mod_hook_count; ++i) check(mod_hook_table[i] == nullptr, "hooks start empty");
+        for (unsigned i = 0; i < mod_hook_count; ++i)   // the platform's own hook (mods/platform_spec.json) is installed by the platform
+            check(mod_hook_table[i] == nullptr || std::string(mod_hook_names[i]) == "audio_bank_loader", "hooks start empty");
         check(get_var("hud_pos_x") == bits(320.0f), "original HUD origin kept until a mod installs");
 
         // Install with the defaults (settings file in a temporary folder instead of the registry).

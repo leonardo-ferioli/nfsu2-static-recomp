@@ -44,7 +44,7 @@ void set_transform(Cpu& c) {
         matrix[0] *= scale;
         matrix[5] *= scale;
     }
-    set_reg(c, EAX, call_function("fn_set_transform", 0, 0, {nfsu2::guest::to_guest(matrix), u32_at(esp + 4)}));
+    set_reg(c, EAX, call_function("fn_set_transform", 0, 0, {guest_scratch(matrix, sizeof(matrix)), u32_at(esp + 4)}));
 }
 
 // A video that starts without its object would crash the game: continue after the start code instead.

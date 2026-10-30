@@ -1,3 +1,6 @@
 [submodule "third_party/bgfx.cmake"]
 	path = third_party/bgfx.cmake
 	url = https://github.com/bkaradzic/bgfx.cmake
+[submodule "third_party/nue-engine"]
+	path = third_party/nue-engine
+	url = https://github.com/leonardo-ferioli/NUE-Engine.git

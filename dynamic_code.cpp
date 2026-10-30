@@ -9,7 +9,7 @@
 #include <mutex>
 #include <sstream>
 #include <unordered_map>
-#ifdef NFSU2_NATIVE32
+#if defined(NFSU2_NATIVE32) || defined(_WIN32)
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
 #include <windows.h>
@@ -197,7 +197,7 @@ public:
         int4 done = 0;
         while (done < size) {
             MEMORY_BASIC_INFORMATION info{};
-            const uintptr_t position = uintptr_t(at + done);
+            const uintptr_t position = uintptr_t(nfsu2::guest::ptr<void>(uint32_t(at + done)));   // the host address of the guest address
             if (!VirtualQuery(reinterpret_cast<void*>(position), &info, sizeof(info)) || info.State != MEM_COMMIT ||
                 (info.Protect & (PAGE_NOACCESS | PAGE_GUARD)))
                 break;
@@ -973,6 +973,9 @@ struct DynamicCode::Impl {
     Impl() : translator(&loader, &context) {
         char text[16];
         if (GetEnvironmentVariableA("NFSU2_INTERP_MODE", text, sizeof(text)) && text[0] >= '0' && text[0] <= '3') mode = text[0] - '0';
+#ifndef NFSU2_GUEST_IDENTITY
+        if (mode > 2) mode = 2;   // mode 3 emits x86-32 machine code: only the 32-bit host can run it
+#endif
     }
 };
 
@@ -1067,6 +1070,9 @@ DecodedInstruction DynamicCode::decode_raw(uint32_t address) {
 void DynamicCode::set_mode(int mode) {
     std::lock_guard lock(impl_->mutex);
     impl_->mode = mode < 0 ? 0 : mode > 3 ? 3 : mode;
+#ifndef NFSU2_GUEST_IDENTITY
+    if (impl_->mode > 2) impl_->mode = 2;   // mode 3 emits x86-32 machine code: only the 32-bit host can run it
+#endif
     for (auto& entry : impl_->blocks) impl_->retired.push_back(entry.second);
     impl_->blocks.clear();
     ++impl_->generation;

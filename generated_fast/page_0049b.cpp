@@ -5177,7 +5177,7 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B49b600:L49b600:{bud-=6;NFSU2_TR(0x49b600);
-if(mod_hook_table[4]&&!mod_bypass_take(4)){SPILL_OUT();c.pc=0x49b600u;mod_hook_table[4](c);SPILL_IN();{u32 sp_=r4(G+16);u32 ra_=m4(sp_);w4(G+16,sp_+12u);TAIL_DYNAMIC(ra_);}}
+if(mod_hook_table[5]&&!mod_bypass_take(5)){SPILL_OUT();c.pc=0x49b600u;mod_hook_table[5](c);SPILL_IN();{u32 sp_=r4(G+16);u32 ra_=m4(sp_);w4(G+16,sp_+12u);TAIL_DYNAMIC(ra_);}}
 u8 U[8];
 w4(U+0,u32(u32(u32(0x8ull))+u32(r4(G+16))));
 __builtin_memmove((U+4),gp(u32(r4(U+0))),4);
@@ -5610,7 +5610,7 @@ w4(G+0,a0);w4(G+4,a1);w4(G+16,a4);__builtin_memcpy(F,R+512,32);
 #define TAIL_DYNAMIC(T) TAIL_PRED(T,)
 #define NFSU2_FAULT(msg,pc) do{fm=(msg);fpc=(pc);goto FLT;}while(0)
 B49b690:L49b690:{bud-=6;NFSU2_TR(0x49b690);
-if(mod_hook_table[6]&&!mod_bypass_take(6)){SPILL_OUT();c.pc=0x49b690u;mod_hook_table[6](c);SPILL_IN();{u32 sp_=r4(G+16);u32 ra_=m4(sp_);w4(G+16,sp_+4u);TAIL_DYNAMIC(ra_);}}
+if(mod_hook_table[7]&&!mod_bypass_take(7)){SPILL_OUT();c.pc=0x49b690u;mod_hook_table[7](c);SPILL_IN();{u32 sp_=r4(G+16);u32 ra_=m4(sp_);w4(G+16,sp_+4u);TAIL_DYNAMIC(ra_);}}
 u8 U[4];
 __builtin_memmove((U+0),(R+24),4);
 w4(G+16,u32(u32(r4(G+16))-u32(u32(0x4ull))));

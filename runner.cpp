@@ -11,14 +11,56 @@ using ActivePlatform=nfsu2raw::NativePlatform;
 #include "platform.hpp"
 using ActivePlatform=nfsu2raw::Platform;
 #include "platform64.hpp"
+#ifdef NFSU2_HAS_MODS
+#include "mods_widescreen.hpp"
+#include "mods_detail.hpp"
+#endif
 #include "win32_facade.hpp"
+#include "platform/audio/dsound_install.hpp"
+#include "platform/audio/null_sink.hpp"
 #endif
 #include <chrono>
+#include <thread>
+#include <mutex>
+#include <atomic>
 #include <cstdio>
 #include <cstdlib>
 #include <iostream>
 
 using namespace nfsu2raw;
+#ifndef NFSU2_NATIVE32
+// A silent output that keeps real time: a null sink whose clock is advanced 10 ms every 10 ms by a thread. The game's audio start-up waits for the play
+// cursor to move, so a sink with a frozen clock (the test NullSink) would keep it waiting for ever; no sound card is opened.
+class PacedNullSink final : public nfsu2::platform::audio::AudioSink {
+public:
+    using Status=nfsu2::platform::Status;
+    ~PacedNullSink() override{close();}
+    Status open(const nfsu2::platform::audio::SinkDesc& d,nfsu2::platform::audio::SinkCallback cb,void* user) override{return sink_.open(d,cb,user);}
+    nfsu2::platform::audio::OutputLayout actual() const override{return sink_.actual();}
+    Status start() override{
+        const Status s=sink_.start();
+        if(s==Status::ok && !thread_.joinable()){
+            stop_=false;
+            thread_=std::thread([this]{
+                const uint32_t frames=sink_.actual().sample_rate/100;
+                while(!stop_){std::this_thread::sleep_for(std::chrono::milliseconds(10));std::lock_guard lock(mutex_);sink_.advance(frames);}
+            });
+        }
+        return s;
+    }
+    Status stop() override{return sink_.stop();}
+    void close() override{stop_=true;if(thread_.joinable())thread_.join();sink_.close();}
+    bool running() const override{return sink_.running();}
+    uint64_t frames_played() const override{return sink_.frames_played();}
+    nfsu2::platform::audio::SinkLatency latency() const override{return sink_.latency();}
+    nfsu2::platform::audio::SinkStats stats() const override{return sink_.stats();}
+private:
+    nfsu2::platform::audio::NullSink sink_{480,480};
+    std::thread thread_;
+    std::mutex mutex_;
+    std::atomic<bool> stop_{false};
+};
+#endif
 int main(int argc,char** argv){
     try {
 #ifndef NFSU2_GUEST_IDENTITY
@@ -33,9 +75,21 @@ int main(int argc,char** argv){
             Cpu c;Platform64 p(c,argv[2],argv[3]);
             std::string error;auto options=parse_win32_layer(argc>5?argv[5]:"all",error);if(!error.empty())throw Fault("unknown Win32 group "+error);
             Win32Facade facade(p,options);
+            // DirectSound: the NUE layer over a null sink (headless; no sound card is opened), the guest's handles meaning what the Win32 layer says.
+            const nfsu2::platform::audio::GuestHandles handles{[&](uint32_t h){facade.set_event(h);},[&](uint32_t h){return facade.is_window(h);}};
+            nfsu2::platform::audio::AudioSettings audio;audio.enabled=true;audio.sink_factory=[]{return std::unique_ptr<nfsu2::platform::audio::AudioSink>(std::make_unique<PacedNullSink>());};
+            std::string audio_why;if(!nfsu2::platform::audio::install_dsound(p,audio,[](const std::string& t){std::cout<<t<<std::endl;},audio_why,&handles))std::cout<<"DirectSound not installed: "<<audio_why<<std::endl;
+#ifdef NFSU2_HAS_MODS
+            // NFSU2_BOOT64_MODS=1: the mods with their default settings (the launcher's [MAIN]/[MISC]/... defaults), as the product installs them before the game runs.
+            if(const char* mods=std::getenv("NFSU2_BOOT64_MODS")){
+                WidescreenSettings settings;
+                if(std::string(mods)=="all"){settings.windowed_mode=1;settings.console_gamma=true;settings.custom_user_directory="UserFiles";}   // every mod that touches the window, the registry and the device
+                std::cout<<install_widescreen(settings)<<std::endl<<install_detail(DetailSettings{})<<std::endl;
+            }   // opt-in: the engine comparison (fast64_boot) runs the unmodded game   // opt-in: the engine comparison (fast64_boot) runs the unmodded game
+#endif
             const auto log=std::filesystem::absolute(argv[2]).parent_path()/"logs/boot64_trace.log";
             std::cout<<"Platform64: "<<facade.installed_report()<<"\ntrace: "<<log<<std::endl;
-            try{p.run(std::stoull(argv[4]),log);}catch(const std::exception& e){std::cout<<"STOP "<<e.what()<<"\ninstructions="<<c.instructions<<std::endl;return 0;}
+            try{p.run(std::stoull(argv[4]),log);}catch(const std::exception& e){std::cout<<"STOP "<<e.what()<<"\ninstructions="<<c.instructions<<std::endl;nfsu2::platform::audio::shutdown_dsound([](const std::string& t){std::cout<<t<<std::endl;});return 0;}
             return 0;
         }
 #endif

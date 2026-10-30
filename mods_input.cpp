@@ -146,7 +146,9 @@ void joy_state(Cpu& c) {
 }
 
 void mouse_state(Cpu& c) {
-    if (nfsu2::guest::host_handle<HWND>(u32_at(address_of("hwnd"))) != GetForegroundWindow()) return;
+#ifdef NFSU2_GUEST_IDENTITY
+    if (host_object<HWND>(u32_at(address_of("hwnd"))) != GetForegroundWindow()) return;   // the window of another program has the focus
+#endif
     const uint32_t state = reg(c, ESP) + 8;
     g_mouse.delta_x = i32_at(state);
     g_mouse.delta_y = i32_at(state + 4);
@@ -203,7 +205,7 @@ void menu_text(Cpu& c) {
         const char* replacement = nullptr;
         if (g_last_input_was_pad) replacement = g_settings.improve_gamepad != 2 ? kMenuTextsXbox[i] : kMenuTextsPlayStation[i];
         else if (g_settings.improve_gamepad == 3) replacement = kMenuTextsPc[i];
-        if (replacement) set_reg(c, EAX, nfsu2::guest::to_guest(replacement));
+        if (replacement) set_reg(c, EAX, guest_constant(replacement, std::strlen(replacement) + 1));
         break;
     }
 }

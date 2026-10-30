@@ -31,8 +31,15 @@ public:
     void override_import(const char* name, unsigned argument_count, NativeHook hook) override;
     uint32_t add_method_token(unsigned argument_count, NativeHook hook) override;
     uint32_t callback(uint32_t address, std::initializer_list<uint32_t> arguments) override;
+    uint32_t call_guest(uint32_t address, uint32_t ecx, uint32_t edx, std::initializer_list<uint32_t> arguments) override;
+    uint32_t call_guest_words(uint32_t address, uint32_t ecx, uint32_t edx, const uint32_t* words, size_t count) override;
+    NativeHook import_override(const char* name) const override;
     uint32_t token_for(const char* name) override;
     void throw_if_stopping(const char* what) const override;
+    // Code made executable at run time: the audio banks' code, translated ahead of time and bound when their loader starts (audio_banks.hpp). The region
+    // is logged; a test may plug a RunTimeCode in (guest_platform.hpp) for code without a translation. The product has none.
+    void register_dynamic_region(uint32_t base, uint32_t size) override;
+    void set_run_time_code(RunTimeCode* code) { run_time_code_.store(code); }
 
     static constexpr uint32_t method_token_base = 0xf1000000u;
     static constexpr unsigned method_token_slots = 8192;
@@ -56,7 +63,7 @@ public:
     uint32_t last_error_slot(Cpu& c) const { return uint32_t(r<4>(c, 0x110)) + 0x34; }   // the guest address of GetLastError's cell
 
 private:
-    struct Handler { unsigned argc; NativeHook fn; bool raw = false; };   // raw: the handler sets the registers and pc itself (the structured exception machinery)
+    struct Handler { unsigned argc; NativeHook fn; bool raw = false; uint64_t calls = 0; };   // raw: the handler sets the registers and pc itself (the structured exception machinery)
     struct Context;                                              // a guest processor with its stack and thread block
     std::unique_ptr<Context> make_context();
     void initialize(Cpu& c, uint32_t stack, uint32_t teb);
@@ -77,6 +84,9 @@ private:
     std::vector<std::string> dynamic_names_;                     // token_for(): tokens 0xf0010000 + 16 * index
     std::vector<std::unique_ptr<Handler>> methods_;
     std::map<std::string, bool> traced_;
+    std::filesystem::path exports_;
+    std::atomic<RunTimeCode*> run_time_code_{nullptr};
+    uint32_t last_pc_ = 0;                                       // NFSU2_WATCH
 
     // Structured exceptions (platform64_seh.cpp): RaiseException, RtlUnwind and UnhandledExceptionFilter run as a state machine on the dispatch loop, not as nested
     // C++ calls: each guest handler is entered with a return address in a reserved token range and its return lands in exception_return(). A handler that
