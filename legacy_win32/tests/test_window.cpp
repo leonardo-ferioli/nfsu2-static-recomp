@@ -114,8 +114,7 @@ static void test_window_platform() {
     input.key(225 /* left shift */, true, 3500);
     input.key(5 /* B */, true, 4000);
     Msg m;
-    CHECK(f.windows.peek_message(m, 0, 0, 0, pm::noremove).value == false);    // nothing until the platform pumps
-    input.pump();
+    // No explicit pump: the message loop pumps the input itself (a key reaches the program as a message whether or not it uses DirectInput).
     CHECK(f.windows.peek_message(m, 0, 0, 0, pm::remove).value && m.message == wm::keydown && m.wparam == 'A');
     CHECK((m.lparam & 0xFF0000) >> 16 == 0x1E);                               // scan code of A
     CHECK(f.windows.translate_message(m));
@@ -140,6 +139,57 @@ static void test_window_platform() {
     CHECK(f.windows.get_cursor_pos(x, y) && x == 100 && y == 50);
 }
 REGISTER_TEST("window_platform", test_window_platform);
+
+// The game's top-level window drives the platform window: the mode (borderless when it covers the display without a frame), the frame and the rectangle.
+static void test_window_drives_platform() {
+    null::NullInput input;
+    null::NullWindow native;
+    null::NullDisplay display(1280, 720);
+    Fixture f;
+    f.windows.attach_platform(&native, &input, &display);
+    WndClass cls; cls.name = "G"; cls.proc = 2;
+    f.windows.register_class(cls);
+
+    CreateParams hidden; hidden.class_name = "G"; hidden.style = ws::popup; hidden.width = 1280; hidden.height = 720;      // not visible: nothing reaches the platform window
+    auto w = f.windows.create_window(hidden);
+    CHECK_EQ(native.mode_changes, 0u);
+    f.windows.show_window(w.value, sw::show);
+    CHECK(native.mode == nfsu2::platform::WindowMode::borderless && native.mode_changes == 1);       // covers the display, no frame: borderless full screen
+    f.windows.show_window(w.value, sw::show);
+    CHECK_EQ(native.mode_changes, 1u);                                                               // nothing changed: nothing asked
+    // The game leaves full screen: a framed window of 800x600 at (40, 30).
+    f.windows.set_window_long(w.value, gwl::style, int32_t(ws::overlappedwindow | ws::visible));
+    f.windows.set_window_pos(w.value, 40, 30, 800, 600);
+    CHECK(native.mode == nfsu2::platform::WindowMode::windowed && !native.frame.borderless && native.frame.resizable);
+    CHECK(native.outer.left == 40 && native.outer.top == 30 && native.outer.right == 840 && native.outer.bottom == 630);
+    // Back to a borderless window of the display's size.
+    f.windows.set_window_long(w.value, gwl::style, int32_t(ws::popup | ws::visible));
+    f.windows.set_window_pos(w.value, 0, 0, 1280, 720);
+    CHECK(native.mode == nfsu2::platform::WindowMode::borderless);
+    // A second top-level window (a dialog) does not take the platform window over; a child never does.
+    const unsigned changes = native.mode_changes;
+    CreateParams dialog; dialog.class_name = "G"; dialog.style = ws::overlappedwindow | ws::visible; dialog.width = 300; dialog.height = 200;
+    f.windows.create_window(dialog);
+    CHECK_EQ(native.mode_changes, changes);
+}
+
+// A program passes GetDesktopWindow() as the parent of its main window: that is still a top-level window.
+static void test_window_desktop_parent() {
+    null::NullInput input;
+    null::NullWindow native;
+    null::NullDisplay display(1280, 720);
+    Fixture f;
+    f.windows.attach_platform(&native, &input, &display);
+    WndClass cls; cls.name = "G"; cls.proc = 2;
+    f.windows.register_class(cls);
+    CreateParams p; p.class_name = "G"; p.style = ws::popup | ws::visible; p.width = 1280; p.height = 720; p.parent = f.windows.get_desktop_window();
+    auto w = f.windows.create_window(p);
+    CHECK(w.value != 0);
+    CHECK(native.mode == nfsu2::platform::WindowMode::borderless && native.mode_changes == 1);
+    CHECK(f.windows.get_focus() == w.value && f.windows.get_foreground_window() == w.value);          // and it is activated like one
+}
+REGISTER_TEST("window_drives_platform", test_window_drives_platform);
+REGISTER_TEST("window_desktop_parent", test_window_desktop_parent);
 
 #if defined(_WIN32)
 namespace {

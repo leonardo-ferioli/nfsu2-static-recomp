@@ -93,6 +93,19 @@ ldi::ActionFormat read_action_format(uint32_t address) {
     return f;
 }
 
+// One line per call and one per action, for NFSU2_DINPUT_TRACE: the genre and the semantics the game asks for (what the controller tables are written from).
+std::vector<std::string> describe_action_format(const char* method, const ldi::ActionFormat& f) {
+    std::vector<std::string> lines;
+    char text[200];
+    std::snprintf(text, sizeof text, "%s: genre=0x%08x buffer=%u actions=%zu axis range %d..%d", method, f.genre, f.buffer_size, f.actions.size(), f.axis_min, f.axis_max);
+    lines.push_back(text);
+    for (size_t i = 0; i < f.actions.size(); ++i) {
+        std::snprintf(text, sizeof text, "  action[%zu] semantic=0x%08x flags=0x%x app=0x%x objid=0x%x how=0x%x", i, f.actions[i].semantic, f.actions[i].flags, f.actions[i].app_data, f.actions[i].object_id, f.actions[i].how);
+        lines.push_back(text);
+    }
+    return lines;
+}
+
 void write_action_results(uint32_t address, const ldi::ActionFormat& f) {
     const uint8_t* b = ptr<const uint8_t>(address);
     uint32_t action_size, actions;
@@ -213,6 +226,10 @@ void Win32Facade::Impl::install_dinput() {
         const uint32_t callback = arg(c, 3), reference = arg(c, 4);
         const ldi::ActionFormat format = read_action_format(arg(c, 2));
         const auto devices = self->di->enum_devices_by_semantics(format, arg(c, 5));
+        if (trace) {
+            for (const auto& line : describe_action_format("EnumDevicesBySemantics", format)) self->platform.log_line("dinput: " + line);
+            self->platform.log_line("dinput: EnumDevicesBySemantics lists " + std::to_string(devices.size()) + " device(s)");
+        }
         uint32_t remaining = uint32_t(devices.size());
         for (const auto& d : devices) {
             std::shared_ptr<ldi::Device> device;
@@ -380,10 +397,11 @@ void Win32Facade::Impl::install_dinput() {
     vt.push_back(token(5, unimplemented));          // SendDeviceData
     vt.push_back(token(5, unimplemented));          // EnumEffectsInFile
     vt.push_back(token(5, unimplemented));          // WriteEffectToFile
-    vt.push_back(token(4, [device_of](Cpu& c) -> uint32_t {                                                    // BuildActionMap(this, DIACTIONFORMATA*, user, flags)
+    vt.push_back(token(4, [self, device_of](Cpu& c) -> uint32_t {                                              // BuildActionMap(this, DIACTIONFORMATA*, user, flags)
         auto d = device_of(arg(c, 0));
         if (!d || !arg(c, 1)) return ldi::hr::invalid_param;
         ldi::ActionFormat f = read_action_format(arg(c, 1));
+        if (trace) for (const auto& line : describe_action_format("BuildActionMap", f)) self->platform.log_line("dinput: " + line);
         const ldi::Hresult r = d->build_action_map(f, cstr(arg(c, 2)), arg(c, 3));
         if (r == ldi::hr::ok) write_action_results(arg(c, 1), f);
         return r;

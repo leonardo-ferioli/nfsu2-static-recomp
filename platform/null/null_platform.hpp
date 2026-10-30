@@ -32,6 +32,7 @@ public:
     Status adopt(NativeSurface s) override { surface = s; exists = true; return Status::ok; }
     bool adopted() override { return exists; }
     void destroy() override { exists = false; }
+    Status set_mode(WindowMode m) override { mode = m; ++mode_changes; return Status::ok; }
     NativeSurface native_surface() override { return surface; }
     void set_frame(FrameStyle f) override { frame = f; }
     void refresh_frame() override { ++refreshes; }
@@ -62,7 +63,7 @@ public:
     FrameStyle frame;
     Rect outer;
     bool exists = false, shown = false, cursor_inside = true, cursor_visible = true;
-    unsigned refreshes = 0, placements = 0, clip_releases = 0;
+    unsigned refreshes = 0, placements = 0, clip_releases = 0, mode_changes = 0;
     std::deque<WindowEvent> events;
 };
 

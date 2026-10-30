@@ -63,6 +63,9 @@ int main() {
         check(window.client_rect().right == 800 && window.client_rect().bottom == 600, "client size after placing");
         window.place_outer(10, 20, 320, 200);
         check(window.outer_rect().left == 10 && window.outer_rect().top == 20 && window.outer_rect().right == 330 && window.outer_rect().bottom == 220, "place_outer");
+        check(window.set_mode(WindowMode::borderless) == Status::ok, "set_mode borderless");
+        check(window.set_mode(WindowMode::borderless) == Status::ok, "the same mode again is not an error");
+        check(window.set_mode(WindowMode::windowed) == Status::ok, "set_mode windowed");
         window.set_frame({true, false});
         window.refresh_frame();
         window.show_cursor(false);

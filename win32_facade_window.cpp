@@ -6,6 +6,7 @@
 // WndProc, exactly as on Windows). The platform window and input feed the message queue (WindowSystem::attach_platform); a headless host gets fixtures that report a
 // 1280x720 display and produce no events.
 #include "win32_facade_internal.hpp"
+#include "host_os.hpp"
 #include "platform/null/null_platform.hpp"
 #include "platform/null/null_services.hpp"
 #include <chrono>
@@ -63,6 +64,21 @@ void Win32Facade::Impl::install_user32() {
     windows->attach_platform(window, input, display);
 
     auto fail_with = [](Cpu& c, uint32_t error) { set_error(c, error); return 0u; };
+    if (host_os::environment_set("NFSU2_NUE_WINDOW_TRACE")) {
+        for (const auto& d : display->list(false)) {
+            char text[200];
+            std::snprintf(text, sizeof text, "display %u%s: current %ux%u, desktop %ux%u, scale %.2f", d.id, d.primary ? " (primary)" : "", d.current.width, d.current.height, d.desktop_width, d.desktop_height, double(d.content_scale));
+            platform.log_line(std::string("user32: ") + text);
+        }
+        platform.log_line("user32: screen metrics " + std::to_string(windows->get_system_metrics(0)) + "x" + std::to_string(windows->get_system_metrics(1)));
+    }
+    // NFSU2_NUE_WINDOW_TRACE=1: the game's calls that decide the platform window (create, show, style, position) with their arguments.
+    static const bool trace = host_os::environment_set("NFSU2_NUE_WINDOW_TRACE");
+    auto note = [this](const char* format, uint32_t a = 0, uint32_t b = 0, uint32_t c2 = 0, uint32_t d = 0, uint32_t e = 0, uint32_t f = 0) {
+        char text[200];
+        std::snprintf(text, sizeof text, format, a, b, c2, d, e, f);
+        platform.log_line(std::string("user32: ") + text);
+    };
 
     // ---- classes and windows
     on("RegisterClassExA", 1, [this](Cpu& c) -> uint32_t {
@@ -75,7 +91,7 @@ void Win32Facade::Impl::install_user32() {
         if (!r) { set_error(c, r.error); return 0u; }
         return 1u;
     });
-    on("CreateWindowExA", 12, [this](Cpu& c) -> uint32_t {
+    on("CreateWindowExA", 12, [this, note](Cpu& c) -> uint32_t {
         lw::CreateParams cp;
         cp.ex_style = arg(c, 0);
         cp.class_name = name_or_id(arg(c, 1));
@@ -84,11 +100,18 @@ void Win32Facade::Impl::install_user32() {
         cp.x = int32_t(arg(c, 4)); cp.y = int32_t(arg(c, 5)); cp.width = int32_t(arg(c, 6)); cp.height = int32_t(arg(c, 7));
         cp.parent = arg(c, 8); cp.menu = arg(c, 9); cp.instance = arg(c, 10); cp.param = arg(c, 11);
         auto r = windows->create_window(cp);
+        if (trace) note("CreateWindowExA style 0x%x ex 0x%x at %d,%d size %dx%d", cp.style, cp.ex_style, uint32_t(cp.x), uint32_t(cp.y), uint32_t(cp.width), uint32_t(cp.height));
+        if (trace) note("  parent %x (the desktop window is %x)", cp.parent, windows->get_desktop_window());
         if (!r) { set_error(c, r.error); return 0u; }
         return r.value;
     });
     on("DestroyWindow", 1, [this](Cpu& c) -> uint32_t { auto r = windows->destroy_window(arg(c, 0)); if (!r) { set_error(c, r.error); return 0u; } return 1u; });
-    on("ShowWindow", 2, [this](Cpu& c) -> uint32_t { auto r = windows->show_window(arg(c, 0), arg(c, 1)); if (!r) { set_error(c, r.error); return 0u; } return r.value ? 1u : 0u; });
+    on("ShowWindow", 2, [this, note](Cpu& c) -> uint32_t {
+        auto r = windows->show_window(arg(c, 0), arg(c, 1));
+        if (trace) { auto rect = windows->get_window_rect(arg(c, 0)); auto style = windows->get_window_long(arg(c, 0), -16); note("ShowWindow %x command %u: style 0x%x rect left %d top %d right %d", arg(c, 0), arg(c, 1), uint32_t(style.value), uint32_t(rect.value.left), uint32_t(rect.value.top), uint32_t(rect.value.right)); }
+        if (!r) { set_error(c, r.error); return 0u; }
+        return r.value ? 1u : 0u;
+    });
     on("UpdateWindow", 1, [this](Cpu& c) -> uint32_t { auto r = windows->update_window(arg(c, 0)); if (!r) { set_error(c, r.error); return 0u; } return 1u; });
     on("IsIconic", 1, [this](Cpu& c) -> uint32_t { auto r = windows->is_iconic(arg(c, 0)); return r && r.value ? 1u : 0u; });
     on("GetWindowRect", 2, [this](Cpu& c) -> uint32_t { auto r = windows->get_window_rect(arg(c, 0)); if (!r) { set_error(c, r.error); return 0u; } write_rect(arg(c, 1), r.value); return 1u; });
@@ -98,8 +121,9 @@ void Win32Facade::Impl::install_user32() {
         return 1u;
     });
     on("SetRect", 5, [](Cpu& c) -> uint32_t { write_rect(arg(c, 0), {int32_t(arg(c, 1)), int32_t(arg(c, 2)), int32_t(arg(c, 3)), int32_t(arg(c, 4))}); return 1u; });
-    on("SetWindowLongA", 3, [this](Cpu& c) -> uint32_t {
+    on("SetWindowLongA", 3, [this, note](Cpu& c) -> uint32_t {
         auto r = windows->set_window_long(arg(c, 0), int32_t(arg(c, 1)), int32_t(arg(c, 2)));
+        if (trace) note("SetWindowLongA %x index %d value 0x%x", arg(c, 0), arg(c, 1), arg(c, 2));
         if (!r) { set_error(c, r.error); return 0u; }
         return uint32_t(r.value);
     });
