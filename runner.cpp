@@ -12,6 +12,8 @@ using ActivePlatform=nfsu2raw::NativePlatform;
 using ActivePlatform=nfsu2raw::Platform;
 #include "platform64.hpp"
 #include "win32_facade.hpp"
+#include "platform/audio/dsound_install.hpp"
+#include "platform/audio/null_sink.hpp"
 #endif
 #include <chrono>
 #include <cstdio>
@@ -33,9 +35,13 @@ int main(int argc,char** argv){
             Cpu c;Platform64 p(c,argv[2],argv[3]);
             std::string error;auto options=parse_win32_layer(argc>5?argv[5]:"all",error);if(!error.empty())throw Fault("unknown Win32 group "+error);
             Win32Facade facade(p,options);
+            // DirectSound: the NUE layer over a null sink (headless; no sound card is opened), the guest's handles meaning what the Win32 layer says.
+            const nfsu2::platform::audio::GuestHandles handles{[&](uint32_t h){facade.set_event(h);},[&](uint32_t h){return facade.is_window(h);}};
+            nfsu2::platform::audio::AudioSettings audio;audio.enabled=true;audio.sink_factory=[]{return std::unique_ptr<nfsu2::platform::audio::AudioSink>(std::make_unique<nfsu2::platform::audio::NullSink>(480,480));};
+            std::string audio_why;if(!nfsu2::platform::audio::install_dsound(p,audio,[](const std::string&){},audio_why,&handles))std::cout<<"DirectSound not installed: "<<audio_why<<std::endl;
             const auto log=std::filesystem::absolute(argv[2]).parent_path()/"logs/boot64_trace.log";
             std::cout<<"Platform64: "<<facade.installed_report()<<"\ntrace: "<<log<<std::endl;
-            try{p.run(std::stoull(argv[4]),log);}catch(const std::exception& e){std::cout<<"STOP "<<e.what()<<"\ninstructions="<<c.instructions<<std::endl;return 0;}
+            try{p.run(std::stoull(argv[4]),log);}catch(const std::exception& e){std::cout<<"STOP "<<e.what()<<"\ninstructions="<<c.instructions<<std::endl;nfsu2::platform::audio::shutdown_dsound([](const std::string&){});return 0;}
             return 0;
         }
 #endif
