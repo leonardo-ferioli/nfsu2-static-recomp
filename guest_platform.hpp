@@ -15,6 +15,14 @@
 
 namespace nfsu2raw {
 
+// Tests only: something that runs code the game makes executable at run time without a translation (the SLEIGH interpreter, which the tests compare
+// the translations with). The product plugs nothing in: such code is an error there.
+struct RunTimeCode {
+    virtual ~RunTimeCode() = default;
+    virtual void add_region(uint32_t base, uint32_t size) = 0;   // a region the guest made executable
+    virtual bool run(Cpu& c) = 0;                                // c.pc is outside the image: run it if it is yours, set c.pc to where control went
+};
+
 class GuestPlatform {
 public:
     using NativeHook = std::function<uint32_t(Cpu&)>;
@@ -53,8 +61,9 @@ public:
     virtual const std::filesystem::path& game_directory() const { static const std::filesystem::path none; return none; }
     // One line for the run's log (NativePlatform: logs/native_trace.log). Platforms without a log write it to stderr.
     virtual void log_line(const std::string& text) { std::cerr << text << "\n"; }
-    // Memory the guest made executable outside the translated image holds code generated at run time (the audio engine's relocatable modules): control that
-    // reaches it is interpreted. Default: not supported.
+    // Memory the guest made executable outside the translated image (VirtualProtect / VirtualAlloc). The game's only such code is in its audio banks,
+    // whose translation is generated ahead of time and bound when the bank loader starts (audio_banks.hpp); nothing is interpreted in the product.
+    // The platform logs the region and tells a RunTimeCode plugged in by a test.
     virtual void register_dynamic_region(uint32_t base, uint32_t size) { (void)base; (void)size; }
     // The layer above is shutting down: guest threads and waits must come back (throw_if_stopping raises from now on). Default: nothing to do.
     virtual void stop_guest() {}

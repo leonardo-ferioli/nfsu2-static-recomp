@@ -8,7 +8,6 @@
 // takes one from a per-host-thread pool, so a handler may call back into the guest while the guest is waiting inside it.
 #include "guest_platform.hpp"
 #include "guest_arena.hpp"
-#include "dynamic_code.hpp"
 #include <atomic>
 #include <filesystem>
 #include <fstream>
@@ -37,11 +36,10 @@ public:
     NativeHook import_override(const char* name) const override;
     uint32_t token_for(const char* name) override;
     void throw_if_stopping(const char* what) const override;
-    // Code generated at run time (the audio engine's modules) is interpreted by SLEIGH (dynamic_code.hpp) over the guest arena. The specification is
-    // NFSU2_SLEIGH_SPEC, else <program folder>/sleigh/x86.sla, else third_party/sleigh_spec/x86.sla beside the export folder.
+    // Code made executable at run time: the audio banks' code, translated ahead of time and bound when their loader starts (audio_banks.hpp). The region
+    // is logged; a test may plug a RunTimeCode in (guest_platform.hpp) for code without a translation. The product has none.
     void register_dynamic_region(uint32_t base, uint32_t size) override;
-    void set_dynamic_code_specification(const std::filesystem::path& file) { dynamic_specification_ = file; }
-    uint64_t dynamic_instructions() const { return dynamic_executed_; }
+    void set_run_time_code(RunTimeCode* code) { run_time_code_.store(code); }
 
     static constexpr uint32_t method_token_base = 0xf1000000u;
     static constexpr unsigned method_token_slots = 8192;
@@ -86,10 +84,8 @@ private:
     std::vector<std::string> dynamic_names_;                     // token_for(): tokens 0xf0010000 + 16 * index
     std::vector<std::unique_ptr<Handler>> methods_;
     std::map<std::string, bool> traced_;
-    std::filesystem::path exports_, dynamic_specification_;
-    std::unique_ptr<DynamicCode> dynamic_owner_;
-    std::atomic<DynamicCode*> dynamic_{nullptr};
-    std::atomic<uint64_t> dynamic_executed_{0};
+    std::filesystem::path exports_;
+    std::atomic<RunTimeCode*> run_time_code_{nullptr};
     uint32_t last_pc_ = 0;                                       // NFSU2_WATCH
 
     // Structured exceptions (platform64_seh.cpp): RaiseException, RtlUnwind and UnhandledExceptionFilter run as a state machine on the dispatch loop, not as nested

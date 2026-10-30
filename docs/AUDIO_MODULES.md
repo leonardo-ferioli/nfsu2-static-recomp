@@ -49,10 +49,22 @@ The loader (`0x7212e5`, arguments: the image, the fixup table):
 (`[offset, function index]`), relocations (`[offset, value in the file]`), symbols. `code{}`: the bytes of each distinct code
 range by its sha256, stored once.
 
-## How the translation is meant to be bound
+## How the translation is bound (audio_banks.hpp)
 
-The translated code of a range is position independent: constants that are relocations become `image + value`, fixups become
-direct calls to the executable's translated functions, branches inside the bank stay relative. At run time the platform
-computes the sha256 of `[code_begin, code_end)` when the loader starts (the bytes are still the file's) and attaches the
-translated code to that image base; a bank with no translation is an error in the product (no interpreter), and SLEIGH only
-runs in the tests that compare it with the translation.
+The translated code of a range (generated_audio/, docs/AUDIO_MODULES_TRANSLATION.md) is position independent: relocated
+constants become `image + value`, fixups become direct calls to the executable's translated functions, branches inside the
+bank stay relative.
+
+- **When the loader starts.** The fast code has a platform hook at `0x7212e5` (`audio_bank_loader`, `mods/platform_spec.json`,
+  mode "before"); the reference engines check their pc there. `audio_banks::bank_loader_starts` reads the bank's section
+  table, takes the sha256 of `[code_begin, code_end)` (the bytes are still the file's) and binds the translation at
+  `image + code_begin`. A bank loaded over an older one replaces it. A bank whose code has no translation stops the game with a
+  message naming the hash: there is no interpreter to fall back to.
+- **When control gets there.** Both platforms' dispatch (`NativePlatform`, `Platform64`) call `audio_banks::run` first for an
+  address outside the image: one comparison against the range of all bound banks, then the translation runs until control
+  leaves the bank.
+- **SLEIGH** is only in the tests (`nfsu2_sleigh_interpreter`: `audio_modules`, `fast_dynamic`, `fast_dynamic_boot`,
+  `dynamic_decode_dump`); they plug it into a platform through `RunTimeCode` (guest_platform.hpp). The product libraries,
+  the launcher and its package have none of it.
+- **Log.** `AUDIO BANK bound at …` per bank, `AUDIO BANK code at … entered (translated)` the first time each bank's code
+  runs, `RUN-TIME CODE region … (an audio bank, translated)` for each region the loader makes executable.

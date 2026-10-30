@@ -28,19 +28,34 @@ endif()
 if(WIN32)
     target_link_libraries(nfsu2_audio PUBLIC ole32 avrt)
 endif()
-# Ghidra's SLEIGH engine (Apache 2.0), used only to interpret code that is generated at run time (dynamic_code.hpp), on both hosts.
+# Ghidra's SLEIGH engine (Apache 2.0): TESTS ONLY. The product is translated ahead of time on every host (the audio banks' code too: generated_audio/,
+# audio_banks.hpp); the tests run SLEIGH's interpreter (dynamic_code.hpp) to compare the translations with the specification.
 file(GLOB SLEIGH_SOURCES third_party/sleigh/*.cc)
 add_library(sleigh_runtime STATIC ${SLEIGH_SOURCES})
 target_include_directories(sleigh_runtime PRIVATE third_party/zlib_shim third_party/sleigh)
 target_compile_definitions(sleigh_runtime PRIVATE _WINDOWS)
 target_compile_options(sleigh_runtime PRIVATE -O2 -w -Wno-c++11-narrowing)
 set_target_properties(sleigh_runtime PROPERTIES CXX_STANDARD 17)
-set_source_files_properties(dynamic_code.cpp PROPERTIES INCLUDE_DIRECTORIES "${CMAKE_CURRENT_SOURCE_DIR}/third_party/sleigh;${CMAKE_CURRENT_SOURCE_DIR}/third_party/zlib_shim")
+add_library(nfsu2_sleigh_interpreter STATIC dynamic_code.cpp)   # tests only: link it after an engine library
+target_include_directories(nfsu2_sleigh_interpreter PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}" third_party/sleigh third_party/zlib_shim)
+target_compile_options(nfsu2_sleigh_interpreter PRIVATE -O2)
+target_link_libraries(nfsu2_sleigh_interpreter PUBLIC sleigh_runtime)
 if(CMAKE_SIZEOF_VOID_P EQUAL 4)
-    set(PLATFORM_SOURCE native32.cpp native32_reservation.cpp speed.cpp dynamic_code.cpp platform/services.cpp platform/win32/win32_services.cpp platform/null/null_platform.cpp nue_d3d9/src/d3d9_trace.cpp nue_d3d9/src/null_gpu.cpp d3d9_recorder.cpp win32_facade.cpp win32_facade_dinput.cpp win32_facade_extra.cpp win32_facade_loader.cpp win32_facade_system.cpp win32_facade_window.cpp platform/audio/dsound_install.cpp)
+    target_compile_definitions(nfsu2_sleigh_interpreter PRIVATE NFSU2_NATIVE32=1)
+endif()
+# The audio banks' code, translated ahead of time (tools/gen_audio_modules.py): the same files for every host and engine.
+file(GLOB AUDIO_UNITS CONFIGURE_DEPENDS generated_audio/audio_*.cpp)
+add_library(nfsu2_audio_code STATIC ${AUDIO_UNITS})
+target_include_directories(nfsu2_audio_code PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
+target_compile_options(nfsu2_audio_code PRIVATE -O2 -g0 -fno-fast-math -fno-strict-aliasing -Wno-unused-label)
+if(CMAKE_SIZEOF_VOID_P EQUAL 4)
+    target_compile_options(nfsu2_audio_code PRIVATE -mfpmath=sse)
+endif()
+if(CMAKE_SIZEOF_VOID_P EQUAL 4)
+    set(PLATFORM_SOURCE native32.cpp native32_reservation.cpp speed.cpp audio_banks.cpp platform/services.cpp platform/win32/win32_services.cpp platform/null/null_platform.cpp nue_d3d9/src/d3d9_trace.cpp nue_d3d9/src/null_gpu.cpp d3d9_recorder.cpp win32_facade.cpp win32_facade_dinput.cpp win32_facade_extra.cpp win32_facade_loader.cpp win32_facade_system.cpp win32_facade_window.cpp platform/audio/dsound_install.cpp)
     add_link_options(-Wl,/BASE:0x00400000 -Wl,/DYNAMICBASE:NO -Wl,/LARGEADDRESSAWARE:NO -Wl,/SAFESEH:NO "-Wl,/sectionlayout:@${CMAKE_CURRENT_SOURCE_DIR}/native32_sections.txt")
 else()
-    set(PLATFORM_SOURCE platform.cpp platform64.cpp platform64_seh.cpp speed.cpp dynamic_code.cpp guest_arena.cpp win32_facade.cpp win32_facade_dinput.cpp win32_facade_extra.cpp win32_facade_loader.cpp win32_facade_system.cpp win32_facade_window.cpp platform/audio/dsound_install.cpp platform/services.cpp platform/win32/win32_services.cpp platform/null/null_platform.cpp)   # the guest lives in vectors or, when an arena exists, in the arena; the Win32 facade serves both hosts
+    set(PLATFORM_SOURCE platform.cpp platform64.cpp platform64_seh.cpp speed.cpp audio_banks.cpp guest_arena.cpp win32_facade.cpp win32_facade_dinput.cpp win32_facade_extra.cpp win32_facade_loader.cpp win32_facade_system.cpp win32_facade_window.cpp platform/audio/dsound_install.cpp platform/services.cpp platform/win32/win32_services.cpp platform/null/null_platform.cpp)   # the guest lives in vectors or, when an arena exists, in the arena; the Win32 facade serves both hosts
     # The Direct3D 9 group of the facade (win32_facade_d3d9.cpp) over the layer nue_d3d9 (its core: Direct3D 9 semantics, shader translation, null GPU) and
     # SPIRV-Cross, vendored by the bgfx.cmake submodule. Without the submodule the group is left out and asking for it fails with a message.
     set(NUE_SPIRV_CROSS "${CMAKE_CURRENT_SOURCE_DIR}/third_party/bgfx.cmake/bgfx/3rdparty/spirv-cross")
@@ -77,9 +92,7 @@ target_include_directories(nfsu2_raw PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
 set(RAW_OPT_LEVEL "2" CACHE STRING "Optimization level for the statically translated runtime")
 target_compile_options(nfsu2_raw PRIVATE "-O${RAW_OPT_LEVEL}" -g0 -fno-fast-math -fno-strict-aliasing)
 target_link_libraries(nfsu2_raw PUBLIC bcrypt user32 winmm nfsu2_audio)
-if(TARGET sleigh_runtime)
-    target_link_libraries(nfsu2_raw PUBLIC sleigh_runtime)
-endif()
+target_link_libraries(nfsu2_raw PUBLIC nfsu2_audio_code)
 # Differential-test instrumentation lives in runtime.cpp for every backend; fast pages opt in per library.
 set_source_files_properties(runtime.cpp PROPERTIES COMPILE_DEFINITIONS NFSU2_DIFF_TRACE=1)
 # Fast backend (generated_fast/): one function per page, local register file, native integers.
@@ -87,8 +100,6 @@ set_source_files_properties(runtime.cpp PROPERTIES COMPILE_DEFINITIONS NFSU2_DIF
 set(FAST_DIR "generated_fast" CACHE STRING "Directory holding the generated fast pages (use generated_fast_dev for subset experiments)")
 if(CMAKE_SIZEOF_VOID_P EQUAL 4 AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${FAST_DIR}/dispatch.cpp")
     file(GLOB FAST_UNITS CONFIGURE_DEPENDS ${FAST_DIR}/page_*.cpp)
-    file(GLOB AUDIO_UNITS CONFIGURE_DEPENDS generated_audio/audio_*.cpp)   # the audio banks' code, translated (tools/gen_audio_modules.py): the same files for both hosts
-    list(APPEND FAST_UNITS ${AUDIO_UNITS})
     foreach(variant fast fast_trace)
         set(exclude "")
         if(variant STREQUAL "fast_trace")
@@ -100,7 +111,7 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 4 AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${FAST_DI
         target_include_directories(nfsu2_${variant} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
         target_compile_options(nfsu2_${variant} PRIVATE "-O${RAW_OPT_LEVEL}" -g0 -fno-fast-math -fno-strict-aliasing -mfpmath=sse -Wno-unused-label -ffunction-sections)
         target_link_libraries(nfsu2_${variant} PUBLIC bcrypt user32 winmm shell32 advapi32 nfsu2_audio)
-        target_link_libraries(nfsu2_${variant} PUBLIC sleigh_runtime)
+        target_link_libraries(nfsu2_${variant} PUBLIC nfsu2_audio_code)
     endforeach()
     target_compile_definitions(nfsu2_fast_trace PRIVATE NFSU2_DIFF_TRACE=1)
     add_executable(speed_fast runner.cpp)
@@ -108,7 +119,7 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 4 AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${FAST_DI
     target_link_options(speed_fast PRIVATE "-Wl,/MAP:$<TARGET_FILE_DIR:speed_fast>/speed_fast.map")
     # Product launcher: reads the user's SPEED2.EXE at run time (no game bytes inside the program).
     add_executable(dynamic_decode_dump EXCLUDE_FROM_ALL dynamic_decode_dump.cpp)
-    target_link_libraries(dynamic_decode_dump PRIVATE nfsu2_fast)
+    target_link_libraries(dynamic_decode_dump PRIVATE nfsu2_fast nfsu2_sleigh_interpreter)
     # The guest image blocks as data inside the launcher: it does not need SPEED2.EXE at run time.
     find_package(Python3 COMPONENTS Interpreter)
     set(IMAGE_DATA_CPP "${CMAKE_BINARY_DIR}/image_data.cpp")
@@ -129,9 +140,6 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 4 AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${FAST_DI
         target_link_options(nfsu2_launcher PRIVATE "-Wl,/order:@${SPEED_ORDER_FILE}" "-Wl,/ignore:4037")
         set_property(TARGET nfsu2_launcher APPEND PROPERTY LINK_DEPENDS "${SPEED_ORDER_FILE}")
     endif()
-    # Declared dependency: the SLEIGH specification the runtime P-code interpreter reads (dynamic_code.hpp).
-    add_custom_command(TARGET nfsu2_launcher POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_SOURCE_DIR}/third_party/sleigh_spec/x86.sla" "$<TARGET_FILE_DIR:nfsu2_launcher>/sleigh/x86.sla")
     add_executable(speed_fast_trace EXCLUDE_FROM_ALL runner.cpp)
     target_compile_definitions(speed_fast_trace PRIVATE NFSU2_DIFF_TRACE=1)
     target_link_libraries(speed_fast_trace PRIVATE nfsu2_fast_trace)
@@ -164,11 +172,11 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 4 AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${FAST_DI
     target_link_libraries(fast_native_bench PRIVATE nfsu2_fast psapi)
     target_link_options(fast_native_bench PRIVATE "-Wl,/MAP:$<TARGET_FILE_DIR:fast_native_bench>/fast_native_bench.map")
     add_executable(fast_dynamic_tests dynamic_code_tests.cpp)
-    target_link_libraries(fast_dynamic_tests PRIVATE nfsu2_fast)
+    target_link_libraries(fast_dynamic_tests PRIVATE nfsu2_fast nfsu2_sleigh_interpreter)
     if(AUDIO_UNITS)
         # The translated code of the audio banks against the SLEIGH interpreter (audio_module_tests.cpp).
         add_executable(audio_module_tests audio_module_tests.cpp)
-        target_link_libraries(audio_module_tests PRIVATE nfsu2_fast)
+        target_link_libraries(audio_module_tests PRIVATE nfsu2_fast nfsu2_sleigh_interpreter)
     endif()
     if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/generated_optests/optests_table.cpp")
         # Operation-level differential test (python tools/gen_fast_optests.py first).
@@ -223,13 +231,11 @@ endif()
 # (not tracked: 400 MB of source; the mods still need the platform interface of GuestPlatform), run by Platform64 over the guest arena.
 if(CMAKE_SIZEOF_VOID_P EQUAL 8 AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/generated_fast64/dispatch.cpp")
     file(GLOB FAST64_UNITS CONFIGURE_DEPENDS generated_fast64/page_*.cpp)
-    file(GLOB AUDIO_UNITS64 CONFIGURE_DEPENDS generated_audio/audio_*.cpp)
-    list(APPEND FAST64_UNITS ${AUDIO_UNITS64})
     add_library(nfsu2_fast64 STATIC runtime.cpp userops.cpp ${PLATFORM_SOURCE} generated_fast64/dispatch.cpp generated_fast64/mods_tables.cpp mods_runtime.cpp mods_core.cpp mods_resolution.cpp mods_rendering.cpp mods_frontend.cpp mods_anchor.cpp mods_system.cpp mods_input.cpp mods_nos.cpp mods_registry.cpp mods_gamma.cpp mods_widescreen.cpp mods_detail.cpp ${FAST64_UNITS})
     target_compile_definitions(nfsu2_fast64 PUBLIC NFSU2_FAST_BACKEND=1)
     target_include_directories(nfsu2_fast64 PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
     target_compile_options(nfsu2_fast64 PRIVATE "-O${RAW_OPT_LEVEL}" -g0 -fno-fast-math -fno-strict-aliasing -Wno-unused-label -ffunction-sections)
-    target_link_libraries(nfsu2_fast64 PUBLIC legacy_win32_host bcrypt user32 winmm shell32 advapi32 nfsu2_audio sleigh_runtime)
+    target_link_libraries(nfsu2_fast64 PUBLIC legacy_win32_host bcrypt user32 winmm shell32 advapi32 nfsu2_audio nfsu2_audio_code)
     if(NFSU2_D3D9_GROUP)
         target_link_libraries(nfsu2_fast64 PUBLIC nfsu2_d3d9_layer)
         target_compile_definitions(nfsu2_fast64 PRIVATE NFSU2_FACADE_D3D9=1)

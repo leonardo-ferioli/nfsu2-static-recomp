@@ -61,13 +61,12 @@ void apply_performance_hints() {
     SetPriorityClass(GetCurrentProcess(), ABOVE_NORMAL_PRIORITY_CLASS);
 }
 constexpr const char* version_text = "NFS Underground 2 - NUE launcher 0.1 (fast backend)";
-// third_party/sleigh_spec/x86.sla (see PROVENANCE.txt there).
-constexpr const char* sleigh_spec_sha256 = "52bb7d8371a164f6726702cdd1b5bc46a6341912798d59e1a935f405c51d8b46";
 // Exit codes: 0 normal, 2 usage or configuration, 3 game directory or executable, 4 verification, 5 run stopped, 124 watchdog.
 enum Exit { ok = 0, usage = 2, game_files = 3, verification = 4, stopped = 5, watchdog = 124 };
 
 struct Config {
-    fs::path game_dir, log_dir, config_file, sleigh_spec, record_dir;
+    fs::path game_dir, log_dir, config_file, record_dir;
+    bool sleigh_spec_ignored = false;   // launcher.ini of an older package names the interpreter's specification: everything is translated now
     std::string win32_layer;   // groups of Win32 and DirectInput functions answered by the legacy_win32 library instead of the real Windows (--win32-layer; empty: none)
     unsigned record_frames = 120, record_capture_every = 30, record_start_frame = 0, record_max_mb = 3072;   // Direct3D 9 call recorder (--record-d3d9)
     unsigned log_max_kb = 1024, log_keep = 3, watchdog_seconds = 0;
@@ -294,7 +293,7 @@ void apply_setting(Config& config, const std::string& key, const std::string& va
     auto path_value = [&] { fs::path p(value); return fs::absolute(p.is_relative() ? base / p : p); };
     if (key == "game_dir") config.game_dir = path_value();
     else if (key == "log_dir") config.log_dir = path_value();
-    else if (key == "sleigh_spec") config.sleigh_spec = path_value();
+    else if (key == "sleigh_spec") config.sleigh_spec_ignored = true;
     else if (key == "log_max_kb") config.log_max_kb = unsigned(number_value(1u << 20));
     else if (key == "record_d3d9") config.record_dir = path_value();
     else if (key == "win32_layer") config.win32_layer = value;
@@ -569,23 +568,8 @@ static int launcher_main(int argc, char** argv) {
         return Exit::game_files;
     }
 
-    // Declared dependency (dynamic_code.hpp): the SLEIGH specification used to interpret code that the game generates at
-    // run time. It never touches SPEED2.EXE's own code, so a missing file only matters once the game loads such code.
-    const fs::path sleigh_spec = config.sleigh_spec.empty() ? exe_directory() / "sleigh" / "x86.sla" : config.sleigh_spec;
-    {
-        std::error_code ec;
-        if (fs::is_regular_file(sleigh_spec, ec)) {
-            const std::string actual = sha256_file(sleigh_spec);
-            if (actual != sleigh_spec_sha256) {
-                report_failure(config, "La especificacion SLEIGH no es la esperada: " + sleigh_spec.string() + "\n  encontrado: " + actual + "\n  esperado:   " + sleigh_spec_sha256);
-                return Exit::verification;
-            }
-            logger.info("SLEIGH specification verified for run-time generated code: " + sleigh_spec.string());
-        } else {
-            logger.warn("SLEIGH specification not found (" + sleigh_spec.string() + "): code the game generates at run time cannot be interpreted and will stop the program");
-            if (config.verify_only) std::cout << "AVISO: falta " << sleigh_spec.string() << " (necesaria para el codigo que el juego genera en ejecucion).\n";
-        }
-    }
+    // Everything runs translated ahead of time, the code in the game's audio banks too (audio_banks.hpp): there is no interpreter to configure.
+    if (config.sleigh_spec_ignored) logger.info("launcher.ini: sleigh_spec is no longer used (the audio banks' code is translated ahead of time)");
 
     if (config.profile) SetEnvironmentVariableA("NFSU2_PROFILE", "1");
     apply_performance_hints();
@@ -599,7 +583,6 @@ static int launcher_main(int argc, char** argv) {
             logger.info(std::string("speed layer: native calls ") + onoff(speed.native_calls) + ", predicted returns " + onoff(speed.predict) +
                         ", cached lookups " + onoff(speed.lookups));
         }
-        platform.set_dynamic_code_specification(sleigh_spec);
         const unsigned fps_cap = widescreen_effective_fps_limit(config.widescreen);
         platform.set_frame_limit(fps_cap);
         platform.set_state_cache(config.state_cache);

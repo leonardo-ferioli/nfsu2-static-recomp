@@ -3,6 +3,7 @@
 #include <windows.h>
 #include <bcrypt.h>
 #include "platform64.hpp"
+#include "audio_banks.hpp"
 #include <algorithm>
 #include <iomanip>
 #include <limits>
@@ -36,6 +37,7 @@ Platform64::Platform64(Cpu& main,const std::filesystem::path& exports,const std:
     if(!space)throw Fault("Platform64 needs the guest arena (nfsu2::guest::create_arena) before it is built");
     if(g_current)throw Fault("Platform64 supports one active game image per process");
     if(!std::filesystem::is_directory(game_))throw Fault("game asset directory does not exist");
+    audio_banks::attach();
     process_id_=GetCurrentProcessId();
     main_.map(image_base,image_size);
     for(const auto& block:image_blocks){
@@ -62,6 +64,8 @@ Platform64::~Platform64(){
     stopping_=true;
     g_current=nullptr;
     if(GuestPlatform::active()==this)GuestPlatform::set_active(nullptr);
+    if(trace_)trace_<<"AUDIO BANKS bound="<<audio_banks::banks_bound()<<" entries into their translated code="<<audio_banks::entries()<<std::endl;
+    audio_banks::detach();   // the guest threads have stopped (the layers above wait for them before the platform goes)
     main_context_.reset();
     if(auto* space=nfsu2::guest::current_address_space())if(peb_)space->free(peb_);
 }
@@ -122,25 +126,10 @@ uint32_t Platform64::token_for(const char* name){
     return dynamic_token_base+uint32_t(dynamic_names_.size()-1)*16;
 }
 void Platform64::register_dynamic_region(uint32_t base,uint32_t size){
-    if(uint64_t(base)<uint64_t(image_base)+image_size && uint64_t(base)+size>image_base)return;   // the translated image is never interpreted
+    if(uint64_t(base)<uint64_t(image_base)+image_size && uint64_t(base)+size>image_base)return;   // the translated image
+    if(auto* code=run_time_code_.load())code->add_region(base,size);
     std::lock_guard lock(mutex_);
-    if(!dynamic_owner_){
-        std::filesystem::path specification=dynamic_specification_;
-        if(specification.empty()){
-            char variable[1024];
-            if(GetEnvironmentVariableA("NFSU2_SLEIGH_SPEC",variable,sizeof(variable)))specification=variable;
-            else{
-                wchar_t module[MAX_PATH*2];const DWORD n=GetModuleFileNameW(nullptr,module,DWORD(std::size(module)));
-                specification=std::filesystem::path(module,module+n).parent_path()/"sleigh"/"x86.sla";
-                if(!std::filesystem::exists(specification))specification=exports_.parent_path()/"third_party"/"sleigh_spec"/"x86.sla";
-            }
-        }
-        dynamic_owner_=std::make_unique<DynamicCode>(specification);
-        dynamic_.store(dynamic_owner_.get());
-        if(trace_)trace_<<"DYNAMIC CODE interpreter ready: "<<specification.string()<<'\n';
-    }
-    dynamic_owner_->add_region(base,size);
-    if(trace_)trace_<<"DYNAMIC CODE region registered base="<<hex(base)<<" size="<<hex(size)<<'\n';
+    if(trace_)trace_<<"RUN-TIME CODE region base="<<hex(base)<<" size="<<hex(size)<<(audio_banks::bound(base)?" (an audio bank, translated)":"")<<'\n';
 }
 void Platform64::throw_if_stopping(const char* what) const{if(stopping_)throw Fault(std::string("the platform is stopping (")+what+")");}
 
@@ -177,10 +166,8 @@ void Platform64::note_import(const std::string& label,Cpu& c){
 }
 
 bool Platform64::dispatch(Cpu& c){
-    if(auto* code=dynamic_.load();code && code->contains(c.pc)){          // interpreted code: run it while it stays in its region
-        const uint64_t before=c.instructions;code->run(c,1u<<18);dynamic_executed_+=c.instructions-before;
-        return true;
-    }
+    if(audio_banks::run(c))return true;                                                   // the audio banks' code, translated ahead of time
+    if(auto* code=run_time_code_.load(std::memory_order_relaxed);code && code->run(c))return true;   // tests only
     const uint32_t token=c.pc;
     if(token<import_token_base)return false;
     if(token==exception_handler_token || token==exception_unwind_token || token==exception_filter_token)return exception_return(c);
@@ -254,7 +241,10 @@ uint32_t Platform64::execute(Cpu& c,uint32_t stop,uint64_t budget){
     for(uint64_t i=0;i<budget;++i){
         if(watch && &c==&main_){const uint8_t now=uint8_t(m<1>(c,watch));if(now!=watched){note("WATCH "+hex(watch)+" "+std::to_string(watched)+" -> "+std::to_string(now)+" at instruction "+std::to_string(c.instructions)+", pc="+hex(c.pc)+", previous pc "+hex(last_pc_));watched=now;}last_pc_=c.pc;}
         if(c.pc==stop)return uint32_t(r<4>(c,0));
-        if(!dump_folder.empty() && c.pc==0x7212e5u)dump_module(c,dump_folder);
+        if(c.pc==audio_banks::kLoader){                                                   // the reference engine reaches the loader here (the fast one: its hook)
+            if(!dump_folder.empty())dump_module(c,dump_folder);
+            audio_banks::bank_loader_starts(c);
+        }
         if(stopping_)throw Fault("the platform is stopping");
         if(dispatch(c))continue;
         step(c);
