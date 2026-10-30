@@ -176,10 +176,12 @@ void Platform64::note_import(const std::string& label,Cpu& c){
 }
 
 bool Platform64::dispatch(Cpu& c){
-    if(audio_banks::run(c))return true;                                                   // the audio banks' code, translated ahead of time
-    if(auto* code=run_time_code_.load(std::memory_order_relaxed);code && code->run(c))return true;   // tests only
     const uint32_t token=c.pc;
-    if(token<import_token_base)return false;
+    if(token<import_token_base){                                                          // code: the audio banks' and the tests' (tokens are all above)
+        if(audio_banks::run(c))return true;                                               // the audio banks' code, translated ahead of time
+        if(auto* code=run_time_code_.load(std::memory_order_relaxed);code && code->run(c))return true;   // tests only
+        return false;
+    }
     if(token==exception_handler_token || token==exception_unwind_token || token==exception_filter_token)return exception_return(c);
     bool known=false;
     Handler* handler=find_handler(token,known,nullptr);

@@ -95,6 +95,22 @@ int main(int argc, char** argv) {
         check(g.call("VirtualQuery", {0x400000, info, 28}) == 28 && m<4>(c, info) == 0x400000 && m<4>(c, info + 16) == 0x1000 /* MEM_COMMIT */ && m<4>(c, info + 12) >= 0x1000,
               "VirtualQuery describes the image");
 
+        // The cost of one call through dispatch (what the speed layer's hook does for every import and Direct3D method of the game): informational, not checked.
+        {
+            const uint32_t slot = g.call("TlsAlloc", {}), token = p.import_token("TlsGetValue");
+            constexpr int kCalls = 1000000;
+            const auto start = std::chrono::steady_clock::now();
+            for (int i = 0; i < kCalls; ++i) g.call_token(token, {slot});
+            const double ns = std::chrono::duration<double, std::nano>(std::chrono::steady_clock::now() - start).count() / kCalls;
+            std::printf("dispatch: %.1f ns per import call (TlsGetValue, %d calls)\n", ns, kCalls);
+            const uint32_t last_error = p.import_token("GetLastError");
+            const auto again = std::chrono::steady_clock::now();
+            for (int i = 0; i < kCalls; ++i) g.call_token(last_error, {});
+            std::printf("dispatch: %.1f ns per import call (GetLastError: one guest memory read, %d calls)\n",
+                        std::chrono::duration<double, std::nano>(std::chrono::steady_clock::now() - again).count() / kCalls, kCalls);
+            g.call("TlsFree", {slot});
+        }
+
         // modules: a served function has a token, an unserved one is not found
         const uint32_t kernel = g.call("GetModuleHandleA", {g.text("kernel32.dll")});
         check(kernel != 0 && g.call("GetModuleHandleA", {0}) == 0x400000, "module handles");
