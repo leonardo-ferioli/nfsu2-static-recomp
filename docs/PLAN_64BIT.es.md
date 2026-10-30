@@ -73,8 +73,11 @@ sin ventana sigue dando la misma secuencia de imports en Windows x64 (`fast64_bo
 Salida: el arranque llega al bucle principal **sin intérprete**, con la misma secuencia de imports y el mismo audio mezclado que con SLEIGH.
 
 ### F3. Ventana, GPU, entrada y audio reales, primero en Windows x64
-1. Gráficos: `Win32LayerOptions::d3d9_gpu` con la GPU de NUE (bgfx, modo MANAGED) sobre la ventana de la plataforma (dueño: sesión D3D9).
-2. Ventana: el grupo user32 sobre `nue_window` (la ventana del juego es una ventana de NUE; el HWND del guest es un token).
+Regla: la ventana sale del backend SDL3 de NUE (`nue_window_create`, y `nue_window_get_native` da el handle nativo para bgfx; nue-engine,
+rama core). Nadie crea ventanas Win32 a mano, ni ocultas para pruebas. Orden, y ninguna ventana se abre sin la autorización del usuario:
+nue-core abre la ventana SDL3 visible en Windows x64 y comprueba el handle; nue-gfx confirma que bgfx dibuja sobre él; después se conecta el juego.
+1. Ventana: `platform::Window` del juego envuelve la ventana de NUE; el grupo user32 la usa (el HWND del guest sigue siendo un token).
+2. Gráficos: `Win32LayerOptions::d3d9_gpu` con la GPU de NUE (bgfx) sobre esa ventana (la fábrica bgfx de la sesión D3D9 ya acepta cualquier `platform::Window`).
 3. Entrada: teclado, ratón y mando de NUE hacia la fachada de DirectInput y los mensajes de ventana.
 4. Audio: el stream de NUE como salida del mezclador de DirectSound.
 5. Mods portados, no desactivados: modos de ventana sobre la ventana de NUE (la misma lógica de `mods_system`), ajustes en archivo sobre
