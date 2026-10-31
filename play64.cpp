@@ -2,7 +2,11 @@
 // Platform64 + the Win32 layer ("all" groups) running the translated game in the guest arena. Everything the game asks of Windows is answered by the Win32
 // layer; nothing here creates a window of the operating system or calls its graphics or audio API.
 //
-//   nfsu2_play64 <export dir> <game dir> [--budget N]
+//   nfsu2_play64 <export dir> <game dir> [--budget N] [--world-detail original|high|max] [--car-detail original|max]
+//
+// --world-detail / --car-detail: the [detail] settings of the 32-bit launcher (launcher.ini, mods_detail.hpp): how far the scenery keeps its detailed
+// model and whether cars and tyres always use theirs. The default is what the package's launcher.ini carries (tools/package_launcher.py): high and max.
+// original is the game's own LOD switch, which swaps distant scenery and traffic to the detailed model late.
 //
 // Threads: NUE, the window and the nue_gfx context are created on this thread, which then runs the guest's main thread: the game's message loop pumps NUE's
 // events (PeekMessage -> the Win32 layer -> the platform window) and every Direct3D 9 call reaches the layer here. The game's settings (its registry) are
@@ -37,10 +41,19 @@ std::string read_file(const fs::path& p) { std::ifstream f(p, std::ios::binary);
 }  // namespace
 
 int main(int argc, char** argv) {
-    if (argc < 3) { std::cerr << "usage: nfsu2_play64 <export dir> <game dir> [--budget N]\n"; return 2; }
+    const char* usage = "usage: nfsu2_play64 <export dir> <game dir> [--budget N] [--world-detail original|high|max] [--car-detail original|max]\n";
+    if (argc < 3) { std::cerr << usage; return 2; }
     const fs::path exports = fs::absolute(argv[1]), game = fs::absolute(argv[2]);
     uint64_t budget = ~0ull;
-    for (int i = 3; i + 1 < argc; ++i) if (!std::strcmp(argv[i], "--budget")) budget = std::stoull(argv[++i]);
+    DetailSettings detail;
+    detail.world = 1; detail.cars = true;   // the package's launcher.ini: world_detail=high, car_detail=max
+    for (int i = 3; i + 1 < argc; i += 2) {
+        const std::string option = argv[i], value = argv[i + 1];
+        if (option == "--budget") budget = std::stoull(value);
+        else if (option == "--world-detail" && (value == "original" || value == "high" || value == "max")) detail.world = value == "original" ? 0 : value == "high" ? 1 : 2;
+        else if (option == "--car-detail" && (value == "original" || value == "max")) detail.cars = value == "max";
+        else { std::cerr << "unknown option or value: " << option << " " << value << "\n" << usage; return 2; }
+    }
 
     nue_init_desc init;
     NUE_STRUCT_INIT(&init);
@@ -115,11 +128,11 @@ int main(int argc, char** argv) {
             std::string why;
             if (!pa::install_dsound(p, audio, say, why, &handles)) say("DirectSound not installed: " + why);
 
-            // The mods with the product's defaults (the launcher's [MAIN] / [MISC] defaults).
+            // The mods with the product's defaults (the launcher's [MAIN] / [MISC] defaults; [detail] as the package's launcher.ini or the options).
             WidescreenSettings widescreen;
             widescreen.custom_user_directory = "UserFiles";   // the game's saves and settings: this host has no shell folders (SHGetFolderPathA)
             say(install_widescreen(widescreen));
-            say(install_detail(DetailSettings{}));
+            say(install_detail(detail));
 
             const fs::path log = exports.parent_path() / "logs" / "play64_trace.log";
             fs::create_directories(log.parent_path());
