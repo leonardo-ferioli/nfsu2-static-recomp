@@ -72,6 +72,12 @@ private:
     // `label` (optional: building it allocates, so the call path asks only when it traces or reports) receives "dll!name", "dynamic!name" or "method#n".
     Handler* find_handler(uint32_t token, bool& known, std::string* label);
     void note_import(const std::string& label, Cpu& c);
+    uint32_t stack_word(Cpu& c, uint32_t address);
+
+    // Read once when the platform is built, not on every call: NFSU2_STOP_AT_IMPORT and NFSU2_TRACE_FAILS (see dispatch), and the arena.
+    nfsu2::guest::AddressSpace* space_ = nullptr;
+    std::string stop_at_;
+    bool trace_fails_ = false;
 
     Cpu& main_;
     std::filesystem::path game_;

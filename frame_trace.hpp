@@ -24,14 +24,18 @@ namespace nfsu2raw::frame_trace {
 
 enum Kind : unsigned { read, wait, sleep, present, kinds };
 
-inline int level() {
-    static const int value = [] {
-        const char* text = std::getenv("NFSU2_FRAME_TRACE");
-        if (!text || !*text || *text == '0') return 0;
-        return *text == '2' ? 2 : 1;
-    }();
-    return value;
+inline int read_level() {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    const char* text = std::getenv("NFSU2_FRAME_TRACE");
+#pragma clang diagnostic pop
+    if (!text || !*text || *text == '0') return 0;
+    return *text == '2' ? 2 : 1;
 }
+// Read once when the program starts (a namespace-scope variable, not a function-local static: the scopes of every native call ask, and a local static
+// is a guard check through thread-local storage on every ask).
+inline const int g_level = read_level();
+inline int level() { return g_level; }
 inline bool enabled() { return level() >= 1; }
 inline bool calls_enabled() { return level() >= 2; }
 inline uint64_t now_ns() { return uint64_t(std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now().time_since_epoch()).count()); }

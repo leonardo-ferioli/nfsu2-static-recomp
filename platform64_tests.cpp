@@ -100,12 +100,17 @@ int main(int argc, char** argv) {
             const uint32_t slot = g.call("TlsAlloc", {}), token = p.import_token("TlsGetValue");
             constexpr int kCalls = 1000000;
             const auto start = std::chrono::steady_clock::now();
-            for (int i = 0; i < kCalls; ++i) g.call_token(token, {slot});
+            // The calls are set up as the translated code does: the stack written straight into the arena (wm<4> would add Cpu::pointer's region search).
+            auto* stack = nfsu2::guest::ptr<uint32_t>(g.base_sp);
+            for (int i = 0; i < kCalls; ++i) {
+                wr<4>(c, 16, g.base_sp); stack[0] = Platform64::return_sentinel; stack[1] = slot; c.pc = token;
+                p.dispatch(c);
+            }
             const double ns = std::chrono::duration<double, std::nano>(std::chrono::steady_clock::now() - start).count() / kCalls;
             std::printf("dispatch: %.1f ns per import call (TlsGetValue, %d calls)\n", ns, kCalls);
             const uint32_t last_error = p.import_token("GetLastError");
             const auto again = std::chrono::steady_clock::now();
-            for (int i = 0; i < kCalls; ++i) g.call_token(last_error, {});
+            for (int i = 0; i < kCalls; ++i) { wr<4>(c, 16, g.base_sp); stack[0] = Platform64::return_sentinel; c.pc = last_error; p.dispatch(c); }
             std::printf("dispatch: %.1f ns per import call (GetLastError: one guest memory read, %d calls)\n",
                         std::chrono::duration<double, std::nano>(std::chrono::steady_clock::now() - again).count() / kCalls, kCalls);
             g.call("TlsFree", {slot});

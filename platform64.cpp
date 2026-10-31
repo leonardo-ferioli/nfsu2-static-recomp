@@ -40,6 +40,9 @@ struct Platform64::Context{
 Platform64::Platform64(Cpu& main,const std::filesystem::path& exports,const std::filesystem::path& game):main_(main),game_(std::filesystem::absolute(game)),exports_(std::filesystem::absolute(exports)){
     auto* space=nfsu2::guest::current_address_space();
     if(!space)throw Fault("Platform64 needs the guest arena (nfsu2::guest::create_arena) before it is built");
+    space_=space;
+    stop_at_=host_os::environment("NFSU2_STOP_AT_IMPORT");
+    trace_fails_=host_os::environment_set("NFSU2_TRACE_FAILS");
     if(g_current)throw Fault("Platform64 supports one active game image per process");
     if(!std::filesystem::is_directory(game_))throw Fault("game asset directory does not exist");
     audio_banks::attach();
@@ -186,8 +189,8 @@ bool Platform64::dispatch(Cpu& c){
     bool known=false;
     Handler* handler=find_handler(token,known,nullptr);
     if(!known)return false;                                // not a token of this platform (the range check above is only a fast reject)
-    // NFSU2_STOP_AT_IMPORT=<name>: the run ends (a Fault) at the first call of that import, a deterministic place for tests to compare engines.
-    static const std::string stop_at=host_os::environment("NFSU2_STOP_AT_IMPORT");
+    // NFSU2_STOP_AT_IMPORT=<name> (stop_at_): the run ends (a Fault) at the first call of that import, a deterministic place for tests to compare engines.
+    const std::string& stop_at=stop_at_;
     // The label ("dll!name") is built only when something needs it: a first call to trace, a stop to check, a fault to report. This is the path of every
     // call the game makes (tens of thousands a frame in a race).
     const bool first_call=trace_.is_open() && handler && !std::atomic_ref<bool>(handler->noted).load(std::memory_order_relaxed);
@@ -206,9 +209,9 @@ bool Platform64::dispatch(Cpu& c){
                           :token>=method_token_base?"(Direct3D methods)":"(dynamic imports)";
     frame_trace::NativeScope timed(timed_name);
     if(handler->raw){handler->fn(c);return true;}
-    // NFSU2_TRACE_FAILS=1: every call that sets a last error is written to the trace with its arguments (what the game was told).
-    static const bool trace_fails=host_os::environment_set("NFSU2_TRACE_FAILS");
-    const uint32_t error_cell=last_error_slot(c),error_before=trace_fails?uint32_t(m<4>(c,error_cell)):0;
+    // NFSU2_TRACE_FAILS=1 (trace_fails_): every call that sets a last error is written to the trace with its arguments (what the game was told).
+    const bool trace_fails=trace_fails_;
+    const uint32_t error_cell=trace_fails?last_error_slot(c):0,error_before=trace_fails?uint32_t(m<4>(c,error_cell)):0;
     const uint32_t value=handler->fn(c);
     if(trace_fails){
         const uint32_t error_after=uint32_t(m<4>(c,error_cell));
@@ -226,9 +229,15 @@ bool Platform64::dispatch(Cpu& c){
             note(text.str());
         }
     }
-    const uint32_t sp=uint32_t(r<4>(c,16)),back=uint32_t(m<4>(c,sp));
+    const uint32_t sp=uint32_t(r<4>(c,16)),back=stack_word(c,sp);
     wr<4>(c,0,value);wr<4>(c,16,sp+4+handler->argc*4);c.pc=back;wr<4>(c,644,back);
     return true;
+}
+// The return address on the guest stack. The stacks of this platform are in the arena (not regions of the processor), so the arena answers first;
+// m<4> (the processor's regions, then the arena) is the fallback and reports a bad stack.
+uint32_t Platform64::stack_word(Cpu& c,uint32_t address){
+    if(const uint8_t* p=space_->host(address,4)){uint32_t v;std::memcpy(&v,p,4);return v;}
+    return uint32_t(m<4>(c,address));
 }
 
 // NFSU2_DUMP_MODULES=<folder>: every module the game's run-time loader (0x7212e5) is given is written there before it is relocated (a build-time tool for the
