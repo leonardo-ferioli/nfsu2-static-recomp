@@ -66,6 +66,9 @@ int main(int argc, char** argv) {
         NUE_STRUCT_INIT(&gd);
         gd.window = nfsu2::platform::nue_backend::nue_window_of(*services.window);
         gd.renderer = NUE_RENDERER_AUTO;
+        // The game asks for 16x anisotropic filtering on most draws. Without this flag bgfx resets every anisotropic sampler to 1x (on Direct3D 11:
+        // MaxAnisotropy 1): far and grazing surfaces (road, map, traffic) blur, and the sharp top mip level only shows close to the camera.
+        gd.flags = NUE_GFX_MAXANISOTROPY;
         gd.max_texture_handles = 16384; gd.max_buffer_handles = 16384; gd.max_framebuffer_handles = 1024;
         gd.transient_vertex_mb = 64; gd.transient_index_mb = 16;
         gd.shader_cache_dir = "cache:shaders/d3d9";
