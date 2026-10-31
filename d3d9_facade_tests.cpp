@@ -14,6 +14,7 @@
 #include <cstring>
 #include <iostream>
 #include <string>
+#include <thread>
 #include <vector>
 
 using namespace nfsu2raw;
@@ -187,12 +188,22 @@ int main(int argc, char** argv) {
             const auto start = std::chrono::steady_clock::now();
             for (int i = 0; i < kCalls; ++i) {
                 wr<4>(c, 16, sp);
-                wm<4>(c, sp, Platform64::return_sentinel); wm<4>(c, sp + 4, device); wm<4>(c, sp + 8, 27); wm<4>(c, sp + 12, uint32_t(i & 1));
+                // the stack written straight into the arena, as the translated code does (wm<4> would add Cpu::pointer's region search)
+                uint32_t* stack = nfsu2::guest::ptr<uint32_t>(sp);
+                stack[0] = Platform64::return_sentinel; stack[1] = device; stack[2] = 27; stack[3] = uint32_t(i & 1);
                 c.pc = token;
                 p.dispatch(c);
             }
             std::cout << "dispatch: " << std::chrono::duration<double, std::nano>(std::chrono::steady_clock::now() - start).count() / kCalls
                       << " ns per Device::SetRenderState call (" << kCalls << " calls)\n";
+        }
+        {   // The device is not D3DCREATE_MULTITHREADED, so its methods go without the group's lock; a call from another thread turns the lock on (a line
+            // in the log) and is served.
+            uint32_t from_other = 1;
+            std::thread([&] { from_other = g.com(device, Dev_SetRenderState, {27, 0}); }).join();
+            check(from_other == kOk && g.com(device, Dev_GetRenderState, {27, value}) == kOk && g.word(value) == 0, "a method called from another thread");
+            check(g.com(device, Dev_SetRenderState, {27, 1}) == kOk && g.com(device, Dev_GetRenderState, {27, value}) == kOk && g.word(value) == 1,
+                  "the device's thread calls on after that, under the lock");
         }
         const uint32_t viewport = g.alloc(24);
         check(g.com(device, Dev_GetViewport, {viewport}) == kOk && g.word(viewport + 8) == back_w && g.word(viewport + 12) == back_h, "the viewport covers the back buffer");

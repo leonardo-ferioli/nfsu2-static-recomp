@@ -35,6 +35,9 @@
 #include <cstdlib>
 #include <map>
 #include <tuple>
+#if defined(_WIN64) && (defined(__x86_64__) || defined(_M_X64))
+#include <intrin.h>
+#endif
 
 namespace nfsu2raw {
 namespace d9 = nue::d3d9;
@@ -50,6 +53,7 @@ constexpr uint32_t kUsageRenderTarget = 1, kUsageDepthStencil = 2, kUsageQueryVe
 constexpr uint32_t kPoolSystemMem = 2, kPoolScratch = 3;
 constexpr uint32_t kLockReadOnly = 0x10;
 constexpr uint32_t kCreateFpuPreserve = 0x2;
+constexpr uint32_t kCreateMultithreaded = 0x4;   // D3DCREATE_MULTITHREADED: the application asks the runtime to serialise its calls
 constexpr uint32_t kTypeSurface = 1, kTypeTexture = 3, kTypeCubeTexture = 5, kTypeVertexBuffer = 6, kTypeIndexBuffer = 7;
 constexpr uint32_t kDevTypeHal = 1;
 
@@ -160,11 +164,57 @@ struct DeviceState {
 GuestPlatform* g_log_platform = nullptr;
 void layer_log(const char* message) { if (g_log_platform) g_log_platform->log_line(std::string("d3d9 layer: ") + message); }
 
+// A per-thread address: on Windows x64 the thread's own TEB (one load through GS), elsewhere a thread-local byte.
+inline const void* thread_tag() {
+#if defined(_WIN64) && (defined(__x86_64__) || defined(_M_X64))
+    return reinterpret_cast<const void*>(__readgsqword(0x30));   // NT_TIB.Self
+#else
+    static thread_local char tag;
+    return &tag;
+#endif
+}
+
+// The group's lock: recursive, as std::recursive_mutex, but taken and released inline with one atomic operation each when nobody waits
+// (std::recursive_mutex measured 15 of the 42 ns of a SetRenderState through the platform's dispatch, this one 12). A waiter sleeps on the state word
+// (std::atomic::wait). States: 0 free, 1 held, 2 held with waiters.
+class GroupLock {
+public:
+    void lock() {
+        const void* const me = thread_tag();
+        if (owner_.load(std::memory_order_relaxed) == me) { ++depth_; return; }   // only this thread can have stored its own tag
+        int expected = 0;
+        if (!state_.compare_exchange_strong(expected, 1, std::memory_order_acquire, std::memory_order_relaxed)) {
+            if (expected != 2) expected = state_.exchange(2, std::memory_order_acquire);
+            while (expected != 0) {
+                state_.wait(2, std::memory_order_relaxed);
+                expected = state_.exchange(2, std::memory_order_acquire);
+            }
+        }
+        owner_.store(me, std::memory_order_relaxed);
+        depth_ = 1;
+    }
+    void unlock() {
+        if (--depth_) return;
+        owner_.store(nullptr, std::memory_order_relaxed);
+        if (state_.exchange(0, std::memory_order_release) == 2) state_.notify_one();
+    }
+
+private:
+    std::atomic<int> state_{0};
+    std::atomic<const void*> owner_{nullptr};
+    unsigned depth_ = 0;   // touched only by the owner
+};
+
 }  // namespace
 
 struct D3D9Group {
     Win32Facade::Impl& impl;
-    std::recursive_mutex m;
+    GroupLock m;
+    // Whether the methods take the lock. Direct3D 9 serialises an application's calls only when the device was made with D3DCREATE_MULTITHREADED; the
+    // game's device is not (behaviour 0x50) and it calls from its render thread alone, so after its CreateDevice the calls go without the lock (12 of the
+    // ~40 ns of a call, tens of thousands of calls a frame). A call from another thread then turns the lock back on for good, with a line in the log.
+    std::atomic<bool> serialise{true};
+    const void* device_thread = nullptr;   // the thread that made the device (read only while serialise is false)
     std::unordered_map<uint32_t, std::unique_ptr<Object>> objects;   // by the guest address of the COM object
     uint32_t vtables[size_t(Kind::count)] = {};
     std::unique_ptr<DeviceState> dev;
@@ -545,13 +595,23 @@ void D3D9Group::install() {
 #pragma clang diagnostic pop
     load_modes();
 
-    // One token per vtable slot. Every handler runs under the group's lock; `name` is what the trace and a fault report.
-    auto method = [g](std::vector<uint32_t>& table, const char* name, unsigned argc, std::function<uint32_t(Cpu&)> fn) {
+    // One token per vtable slot. A handler runs under the group's lock unless the device is single-threaded (see serialise); `name` is what the trace
+    // and a fault report. The body is held by value (a template, not a second std::function): the game makes tens of thousands of these calls a frame.
+    auto method = [g](std::vector<uint32_t>& table, const char* name, unsigned argc, auto fn) {
         table.push_back(g->impl.platform.add_method_token(argc, [g, name, fn = std::move(fn)](Cpu& c) -> uint32_t {
             frame_trace::NamedScope timed(name);   // NFSU2_FRAME_TRACE: the method by name (its time is already in the dispatch's native time)
+            auto call = [&]() -> uint32_t {
+                if (g->trace && g->traced.insert(name).second) g->impl.platform.log_line(std::string("d3d9: first call of ") + name);
+                return fn(c);
+            };
+            if (!g->serialise.load(std::memory_order_relaxed)) {
+                if (thread_tag() == g->device_thread) return call();
+                g->serialise.store(true, std::memory_order_relaxed);
+                g->impl.platform.log_line(std::string("d3d9: ") + name + " called from a thread other than the device's (no D3DCREATE_MULTITHREADED): "
+                                          "every call takes the lock from now on");
+            }
             std::lock_guard lock(g->m);
-            if (g->trace && g->traced.insert(name).second) g->impl.platform.log_line(std::string("d3d9: first call of ") + name);
-            return fn(c);
+            return call();
         }));
     };
     auto not_served = [](const char* name) { return [name](Cpu&) -> uint32_t { throw Fault(std::string("Direct3D 9: ") + name + " is not served"); }; };
@@ -757,6 +817,8 @@ void D3D9Group::install() {
         g->apply_window_mode(pp[8] != 0);
         const uint32_t creation[4] = {arg(c, 1), arg(c, 2), arg(c, 3), arg(c, 4)};
         std::memcpy(d.creation, creation, sizeof creation);
+        g->device_thread = thread_tag();   // see serialise (this call still holds the lock it took)
+        g->serialise.store((arg(c, 4) & kCreateMultithreaded) != 0, std::memory_order_relaxed);
         Object& device = g->make(Kind::device);
         d.address = device.address;
         device.device = device.address;
