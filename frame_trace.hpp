@@ -2,7 +2,8 @@
 // NFSU2_FRAME_TRACE: where the frames of the game go, on a host where the Win32 layer serves the game (the 64-bit host). Present marks the frames.
 //
 //   NFSU2_FRAME_TRACE=1  frames only: a line for every slow frame (over twice the median of the recent ones and at least 25 ms) with what the presenting
-//                        thread spent in file reads, waits, sleeps and Present and the guest instructions it ran, and a summary every 10 s (fps, slowest frame).
+//                        thread spent in file reads, waits, sleeps and Present and the guest instructions it ran, and a summary every 10 s (fps, slowest frame,
+//                        and the reads of the other guest threads: the streamer's count, megabytes, time and slowest single read).
 //                        Nothing is timed per call: the fps of the summary are the game's own.
 //   NFSU2_FRAME_TRACE=2  the same, plus the time inside every import and Direct3D method the presenting thread calls (the time stamp counter: a few ns per
 //                        call, still tens of thousands of calls a frame), split in the summary into native calls and guest code, with the busiest calls.
@@ -59,6 +60,9 @@ struct State {
     // summary window
     uint64_t window_ns = 0, window_frames = 0, window_slow = 0, window_native_ticks = 0, window_instructions = 0;
     double window_max = 0;
+    // reads of the other guest threads (the streamer) in the window: count, bytes, time, and the slowest single read (written by those threads)
+    uint64_t window_other_reads = 0, window_other_bytes = 0, window_other_ns = 0;
+    std::atomic<uint64_t> other_read_max_ns{0};
     // the main thread's calls by name (static names: the import table's and the Direct3D methods'), for the top list of the summary
     struct Call { const char* name = nullptr; uint64_t ticks = 0, calls = 0; };
     std::array<Call, 1024> table{};
@@ -120,6 +124,8 @@ public:
             s.other_read_ns += spent;
             s.other_read_bytes += bytes_;
             s.other_reads += 1;
+            uint64_t seen = s.other_read_max_ns.load(std::memory_order_relaxed);
+            while (spent > seen && !s.other_read_max_ns.compare_exchange_weak(seen, spent, std::memory_order_relaxed)) {}
         }
     }
     void bytes(uint32_t n) { bytes_ = n; }
@@ -159,6 +165,7 @@ inline void end_frame(uint64_t instructions) {
     const uint64_t bytes = s.read_bytes.exchange(0);
     const double other_ms = double(s.other_read_ns.exchange(0)) / 1e6;
     const uint64_t other_bytes = s.other_read_bytes.exchange(0), other_reads = s.other_reads.exchange(0);
+    s.window_other_reads += other_reads; s.window_other_bytes += other_bytes; s.window_other_ns += uint64_t(other_ms * 1e6);
     const bool slow = have >= 16 && ms >= 25.0 && ms > 2.0 * median;
     if (slow)
         std::fprintf(stderr,
@@ -179,6 +186,9 @@ inline void end_frame(uint64_t instructions) {
         std::fprintf(stderr, "frame trace: last %.1f s: %llu frames, %.1f fps, slowest %.1f ms, %llu slow frame(s); per frame %.2f ms, %.1f M guest instructions",
                      double(s.window_ns) / 1e9, static_cast<unsigned long long>(s.window_frames), double(s.window_frames) * 1e9 / double(s.window_ns), s.window_max,
                      static_cast<unsigned long long>(s.window_slow), double(s.window_ns) / 1e6 / frames, double(s.window_instructions) / 1e6 / frames);
+        std::fprintf(stderr, "; other threads' reads %llu (%.1f MB, %.1f ms, slowest %.1f ms)", static_cast<unsigned long long>(s.window_other_reads),
+                     double(s.window_other_bytes) / 1048576.0, double(s.window_other_ns) / 1e6, double(s.other_read_max_ns.exchange(0)) / 1e6);
+        s.window_other_reads = s.window_other_bytes = s.window_other_ns = 0;
         if (calls_enabled()) {
             const double native_frame_ms = to_ms(s.window_native_ticks) / frames;
             std::fprintf(stderr, "; native calls %.2f ms, the rest (guest code) %.2f ms\n", native_frame_ms,
