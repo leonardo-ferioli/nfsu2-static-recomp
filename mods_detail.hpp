@@ -10,6 +10,11 @@ struct DetailSettings {
     // model whenever it is loaded, 4 px). The detailed model still has to be loaded by the game's streamer.
     int world = 0;
     bool cars = false;   // cars and tyres always use their detailed model (the engine's own LOD override)
+    // Track streamer look-ahead in seconds (0 = off, the game as it is). The streamer loads the sections listed for the drivable section
+    // the player is in; with a look-ahead it also loads those of the point this many seconds ahead at the car's current velocity, through
+    // the streamer's second position (the one a second player would use), so the map ahead is loading before the car gets there.
+    // Needs the main-loop hook of the widescreen fix (install_widescreen with the fix on).
+    float streamer_lookahead = 0.0f;
 };
 // Applies the settings (before the translated entry point runs); returns a description for the log.
 std::string install_detail(const DetailSettings& settings);

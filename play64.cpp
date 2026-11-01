@@ -2,11 +2,13 @@
 // Platform64 + the Win32 layer ("all" groups) running the translated game in the guest arena. Everything the game asks of Windows is answered by the Win32
 // layer; nothing here creates a window of the operating system or calls its graphics or audio API.
 //
-//   nfsu2_play64 <export dir> <game dir> [--budget N] [--world-detail original|high|max] [--car-detail original|max]
+//   nfsu2_play64 <export dir> <game dir> [--budget N] [--world-detail original|high|max] [--car-detail original|max] [--streamer-lookahead SECONDS]
 //
 // --world-detail / --car-detail: the [detail] settings of the 32-bit launcher (launcher.ini, mods_detail.hpp): how far the scenery keeps its detailed
 // model and whether cars and tyres always use theirs. The default: scenery original (the game's own LOD switch; high cost about 10 fps in a race, 42-47
 // against 54-58, and the late loading of the map is the game's streamer, on 32-bit too) and cars max (as the package's launcher.ini).
+// --streamer-lookahead: the track streamer also loads the sections of the point that many seconds ahead of the car (0 = off, the default; at most 10;
+// mods_detail.hpp). Experimental: more sections are loaded at once, in the streamer's own memory pool.
 //
 // Threads: NUE, the window and the nue_gfx context are created on this thread, which then runs the guest's main thread: the game's message loop pumps NUE's
 // events (PeekMessage -> the Win32 layer -> the platform window) and every Direct3D 9 call reaches the layer here. The game's settings (its registry) are
@@ -24,6 +26,7 @@
 #include "platform/audio/nue/nue_sink.hpp"
 #include "nue/nue.h"
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 #include <filesystem>
 #include <fstream>
@@ -41,7 +44,7 @@ std::string read_file(const fs::path& p) { std::ifstream f(p, std::ios::binary);
 }  // namespace
 
 int main(int argc, char** argv) {
-    const char* usage = "usage: nfsu2_play64 <export dir> <game dir> [--budget N] [--world-detail original|high|max] [--car-detail original|max]\n";
+    const char* usage = "usage: nfsu2_play64 <export dir> <game dir> [--budget N] [--world-detail original|high|max] [--car-detail original|max] [--streamer-lookahead SECONDS]\n";
     if (argc < 3) { std::cerr << usage; return 2; }
     const fs::path exports = fs::absolute(argv[1]), game = fs::absolute(argv[2]);
     uint64_t budget = ~0ull;
@@ -52,6 +55,7 @@ int main(int argc, char** argv) {
         if (option == "--budget") budget = std::stoull(value);
         else if (option == "--world-detail" && (value == "original" || value == "high" || value == "max")) detail.world = value == "original" ? 0 : value == "high" ? 1 : 2;
         else if (option == "--car-detail" && (value == "original" || value == "max")) detail.cars = value == "max";
+        else if (option == "--streamer-lookahead" && !value.empty() && value.find_first_not_of("0123456789.") == std::string::npos) detail.streamer_lookahead = std::strtof(value.c_str(), nullptr);
         else { std::cerr << "unknown option or value: " << option << " " << value << "\n" << usage; return 2; }
     }
 
