@@ -5,8 +5,8 @@
 //   nfsu2_play64 <export dir> <game dir> [--budget N] [--world-detail original|high|max] [--car-detail original|max]
 //
 // --world-detail / --car-detail: the [detail] settings of the 32-bit launcher (launcher.ini, mods_detail.hpp): how far the scenery keeps its detailed
-// model and whether cars and tyres always use theirs. The default is what the package's launcher.ini carries (tools/package_launcher.py): high and max.
-// original is the game's own LOD switch, which swaps distant scenery and traffic to the detailed model late.
+// model and whether cars and tyres always use theirs. The default: scenery original (the game's own LOD switch; high cost about 10 fps in a race, 42-47
+// against 54-58, and the late loading of the map is the game's streamer, on 32-bit too) and cars max (as the package's launcher.ini).
 //
 // Threads: NUE, the window and the nue_gfx context are created on this thread, which then runs the guest's main thread: the game's message loop pumps NUE's
 // events (PeekMessage -> the Win32 layer -> the platform window) and every Direct3D 9 call reaches the layer here. The game's settings (its registry) are
@@ -46,7 +46,7 @@ int main(int argc, char** argv) {
     const fs::path exports = fs::absolute(argv[1]), game = fs::absolute(argv[2]);
     uint64_t budget = ~0ull;
     DetailSettings detail;
-    detail.world = 1; detail.cars = true;   // the package's launcher.ini: world_detail=high, car_detail=max
+    detail.world = 0; detail.cars = true;   // scenery original, cars and tyres always detailed (see above)
     for (int i = 3; i + 1 < argc; i += 2) {
         const std::string option = argv[i], value = argv[i + 1];
         if (option == "--budget") budget = std::stoull(value);
